@@ -127,7 +127,7 @@ at the beginning and End of the word.
 
 <h4>Other commands</h4>
 <pre style="margin-top: 2px">
-<span class=cmd>A</span>     Download the <a href=#archive>Archive</a> for offline play.
+<span class=cmd>A</span>     Download the <a href=#archive>Archive</a> and <a href=#pangram_mode>pangrams</a> for offline play.
 <span class=cmd>n &lt;date&gt;</span>   New puzzle from the given date - 10/20 or 2/5/19
 <span class=cmd>lg</span>    Show the <a href=#log>timestamped log</a> 25 lines at a time.
       Return goes to next page, q quits.
@@ -143,14 +143,15 @@ at the beginning and End of the word.
 <span class=cmd>g</span>     After confirmation Give up and show all words.
 <span class=cmd>x&lt;num&gt;</span>  Remove (eXclude) puzzle #num.
 <span class=cmd>R</span>     Show Rankings with percentage of maximum.
-<span class=cmd>S &lt;word&gt;</span> Search for the word in the archive.
+<span class=cmd>S &lt;word&gt;</span> Search for the word in the <a href=#archive>archive</span>.
 <span class=cmd>f</span>     Find other puzzles with the <a href=#same_7_letters>same 7 letters</a>.
 <span class=cmd>L</span>     List current puzzles with the 7 letters and center.
 <span class=cmd>!...</span>  Execute a system command - like 'date'.
 </pre>
 
 <h2>Assist Strategy</h2>
-Many people who solve the puzzle try to use as few hints as possible.
+Many people who solve the puzzle try to use as few hints (aka assists)
+as possible.
 The ultimate is to achieve QBABM = Queen Bee <i>all by myself</i>.
 This is possible but rather difficult.
 In this command line version there are many ways to get hints but
@@ -313,7 +314,7 @@ td {
 </style>
 <a name=same_7_letters></a>
 <h2>Same 7 Letters</h2>
-In the large NYT Spelling Bee archive there are many puzzles that share the
+In the large NYT Spelling Bee <a href=#archive>archive</a> there are many puzzles that share the
 same set of 7 letters and hence the same pangrams.   
 For example, here are 3 that
 have occurred on 5 different dates:
@@ -378,7 +379,8 @@ matriarch*
 </ul>
 The lines are shown 25 at at time.  At the ... prompt
 you can hit Return to go on to the next page or type q to quit.
-Each puzzle has its own log.
+Each puzzle has its own log.  The <span class=cmd>lga</span> command shows the log
+including the assists that were requested.
 <a name=archive></a>
 <h2>Archive</h2>
 The archive was gathered mostly from

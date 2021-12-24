@@ -11,6 +11,14 @@ tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
 print "Content-Type: text/html; charset=ISO-8859-1\n\n";
 my $pi = $ENV{PATH_INFO};
 $pi =~ s{\A /}{}xms;        # chop the leading /
+
+my ($min, $hour, $day, $month) = (localtime)[ 1..4 ];
+++$month;
+open my $out, '>>', 'nytbee_log.txt';
+printf {$out} "%02d/%02d %02d:%02d $ENV{REMOTE_ADDR} $pi\n",
+              $month, $day, $hour, $min;
+close $out;
+
 if (exists $puzzle{$pi}) {
     print $puzzle{$pi};
 }

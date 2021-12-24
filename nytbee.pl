@@ -851,7 +851,7 @@ while (1) {
         #       word: when d <word>
         #       lga - assists are logged
         #       x more words added if Genius rank
-        #       
+        #       2 issues with logging assists
         print "version: 1.1\n";
         next COMMAND;
     }
@@ -916,7 +916,7 @@ EOF
     }
     elsif ($word eq 'o') {
 print <<'EOF';
-A     Download the puzzle Archive for offline play.
+A     Download the Archive and pangrams for offline play.
 n <date>   New puzzle from the given date
 lg    Show the timestamped log in 25 line pages.
       Return goes to the next page, q quits.
@@ -948,7 +948,7 @@ EOF
         show_word_table();
         print "\n";
         show_two_letters();
-        if (!($table_shown & 3)) {
+        if (!($table_shown & 3 == 3)) {
             $table_shown |= 3;
             $assists += 15;
             Log "* t - $assists\n";
@@ -1155,7 +1155,7 @@ EOF
                         print reveal($w, $nlets, $beg_end), "\n";
                     }
                     $assists += @w;
-                    Log "* $cmd $let$len - $assists\n";
+                    Log "* $cmd $nlets $let$len - $assists\n";
                 }
             }
         }
