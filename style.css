@@ -1,0 +1,56 @@
+body {
+    margin: .4in;
+    font-size: 18pt;
+    font-family: Helvetica;
+}
+a {
+    color: blue;
+    text-decoration: none;
+}
+h1 {
+    font-size: 35pt;
+}
+h2 {
+    margin-bottom: 5px;
+}
+h4 {
+    margin-top: 15px;
+    margin-bottom: 0px;
+}
+.c0 {
+    margin-left: 78mm;
+}
+.c1 {
+    font-family: Helvetica;
+    color: black;
+}
+.c2 {
+    height: 20mm;
+    margin-top: 4mm;
+    margin-left: 12mm; 
+}
+.c3 {
+    font-family: Courier;
+    font-weight: normal;
+    margin-left: 7mm; 
+}
+.green {
+    color: green;
+}
+.bold {
+    font-weight: bold;
+}
+.cl {
+    color: red;
+}
+.cmd {
+    color: darkred;
+}
+pre {
+    color: green;
+    font-family: Courier;
+    font-size: 16pt;
+}
+.black {
+    color: black;
+}

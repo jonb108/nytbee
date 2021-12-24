@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+# a poor man's database
+use DB_File;
+my %puzzle;
+tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
+
+# a poor man's CGI:
+print "Content-Type: text/html; charset=ISO-8859-1\n\n";
+my $seven = $ENV{PATH_INFO};
+$seven =~ s{\A /}{}xms;
+
+while (my ($dt, $puz) = each %puzzle) {
+    if (substr($puz, 0, 7) eq $seven) {
+        print $dt . uc(substr($puz, 8, 1)) . "\n";
+    }
+}

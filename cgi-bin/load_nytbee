@@ -1,0 +1,16 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+use DB_File;
+my %puzzle;
+tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
+
+open my $in, '<', 'nytbee.txt';
+while (my $line = <$in>) {
+    chomp $line;
+    my ($front, $words) = split /\s*\|\s*/, $line;
+    my ($date, $seven, $center, @pangrams) = split ' ', $front;
+    my @words = split ' ', $words;
+    $puzzle{$date} = "$seven $center @pangrams | @words";
+}

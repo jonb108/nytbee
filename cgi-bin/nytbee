@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+# a poor man's database
+use DB_File;
+my %puzzle;
+tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
+
+# a poor man's CGI:
+print "Content-Type: text/html; charset=ISO-8859-1\n\n";
+my $pi = $ENV{PATH_INFO};
+$pi =~ s{\A /}{}xms;        # chop the leading /
+if (exists $puzzle{$pi}) {
+    print $puzzle{$pi};
+}
+else {
+    print "no puzzle\n";
+}

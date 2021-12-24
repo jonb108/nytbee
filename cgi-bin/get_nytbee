@@ -1,0 +1,52 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+use DB_File;
+my %puzzle;
+tie %puzzle, 'DB_File',
+             '/var/www/vhosts/85/241411/webspace/cgi-bin/nyt_puzzles.dbm';
+
+# It is now 3:00 a.m. EST.
+# Try to get the Spelling Bee words for today.
+# If they're not ready yet, sleep 1 second.
+#
+my ($day, $month, $year) = (localtime())[3 .. 5];
+++$month;
+$year += 1900;
+my $cur_date = sprintf "%4d-%02d-%02d", $year, $month, $day;
+my $gameData;
+SLEEP_LOOP:
+while (1) {
+    my $html = `curl -sk https://www.nytimes.com/puzzles/spelling-bee`;
+    ($gameData) = $html =~ m! "today": \s* \{ ([^}]*) \} !xms;
+        # \s* because there really isn't any space
+        # even though Safari shows it
+    my ($printDate) = $gameData =~ m{"printDate": \s* "([^"]+)"}xms;
+    if ($printDate eq $cur_date) {
+        last SLEEP_LOOP;
+    }
+    sleep 1;
+}
+my ($words) = $gameData =~ m{"answers":\[ ([^]]*) \]}xms;
+my @words = sort $words =~ m{"([^"]*)"}xmsg;
+my ($validLetters) = $gameData =~ m{ "validLetters": \s* \[ ([^\]]*) \] }xms;
+my $seven = join '', sort $validLetters =~ m{"(.)"}xmsg;
+my ($center) = $gameData =~ m{ "centerLetter": \s* "(.)" }xms;
+
+# pangrams
+my @pangrams;
+WORD:
+for my $w (@words) {
+    if (length $w < 7) {
+        next WORD;
+    }
+    my %seen;
+    my @lets = grep { !$seen{$_}++; } split //, $w;
+    if (@lets == 7) {
+        push @pangrams, $w;
+    }
+}
+
+my $dt = sprintf "%04d%02d%02d", $year, $month, $day;
+$puzzle{$dt} = "$seven $center @pangrams | @words";
