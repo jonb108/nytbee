@@ -30,10 +30,10 @@ my $start_time = time();
 
 sub we_are_offline {
     if (! defined $offline) {
-        my $data = `curl -sk $cgi/nytbee/20191020`;   # my 70th birthday
-        $offline = $data? 0: 1;
+        my $data = `curl -sk http://logicalpoetry.com/nytbee/online`;
+        $offline = $data eq "online\n"? 0: 1;
     }
-D "offline = $offline";
+    D "offline = $offline";
     return $offline;
 }
 my $keep = 0;
@@ -47,6 +47,7 @@ if (-r $status_file) {
         my ($date8, $s) = $line =~ m{\A (\d+)(..) \z}xms;
         $status{$date8} = $s;
     }
+    close $in;
 }
 my %archive;       # many puzzles going back to 7/29/2018
 my $last_arch_dt;  # last date in the archive
