@@ -853,6 +853,7 @@ while (1) {
         #       lga - assists are logged
         #       x more words added if Genius rank
         #       2 issues with logging assists
+        #       when in pangram mode and a pangram is fully revealed
         print "version: 1.1\n";
         next COMMAND;
     }
@@ -1532,11 +1533,21 @@ EOH
                 for my $p (@pangrams) {
                     print main::reveal($p, $nlets, 0), "\n";
                 }
+                @pangrams = grep { length != $nlets } @pangrams;
+                if (! @pangrams) {
+                    print "\nnew pangram:\n";
+                    next PG;
+                }
             }
             elsif ($cmd eq 'e') {
                 ++$nlets;
                 for my $p (@pangrams) {
                     print main::reveal($p, $nlets, 1), "\n";
+                }
+                @pangrams = grep { length != $nlets } @pangrams;
+                if (! @pangrams) {
+                    print "\nnew pangram:\n";
+                    next PG;
                 }
             }
             elsif ($cmd eq 'd') {
