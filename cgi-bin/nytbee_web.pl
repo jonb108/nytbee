@@ -4,11 +4,35 @@ use warnings;
 
 =comment
 
-ny times logo image at top
-need popup help window
-advantage: more than one word at a time, the hints and definitions
+advantages: more than one word at a time, the hints and definitions
 more entertaining and more colorful
-random date
+archive, random date
+
+ny times logo image at top?
+need help in new window - link at top
+reserve blue for links
+    not for not okay error messages
+
+track IPs
+
+commands:
+    c clear and restart after js confirmation
+    g for give up - show all words after js confirmation
+    s <word> search for other puzzles with this word
+    f search for other puzzles with this 7
+
+track assists?
+don't always have the hints table and two letter list?
+    onclick of buttons (or links) change display of divs from none to block?
+    hints/two let separate?
+    and remember the settings in hidden fields
+    the hints table includes the 
+        "Words: 54, Points: 259, Pangrams: 1, Bingo"
+    line
+    use just divs - look up side-by-side again
+        tables sort of suck for this purpose
+
+
 dictionary definitions - from nytbee command line
     d e4
     d de
@@ -162,6 +186,63 @@ sub compute_score_and_rank {
 
 compute_score_and_rank();
 
+# if no definition
+# drop a final d or a final ed
+# or ly?????
+# and mark it as such
+# the online dictionaries often give many different 
+# definitions - let's just show 3 at the most.
+# that's enough.  or maybe just 1?
+# or all if Dcmd.
+sub define {
+    my ($word, $Dcmd, $dont_tally_assists, $dont_mask) = @_;
+
+    my ($html, @defs);
+
+    # merriam-webster
+    $html = `curl -skL https://www.merriam-webster.com/dictionary/$word`;
+    # to catch an adequate definition for 'bought':
+    @defs = $html =~  m{meaning\s+of\s+$word\s+is\s+(.*?)[.]\s+How\s+to}xmsi;
+    push @defs, $html =~ m{dtText(.*?)\n}xmsg;
+    if ($Dcmd || ! @defs) {
+        # some definitions (like 'from') use a different format
+        # no clue why
+        push @defs, ($html =~ m{"unText">(.*?)</span>}xmsg);
+    }
+    for my $def (@defs) {
+        $def =~ s{\s+ \z}{}xms;     # trailing space
+        $def =~ s{<[^>]*>}{}xmsg;   # strip tags
+        $def =~ s{.*:\s+}{}xms;
+    }
+    if (! @defs) {
+        # collins
+        $html = `curl -skL https://www.lexico.com/en/definition/$word`;
+        @defs = $html =~ m{Lexical\s+data\s+-\s+en-us">(.*?)</span>}xmsg;
+    }
+    my $stars = '*' x length $word;
+    # sometimes the definition is duplicated so ...
+    my %seen;
+    my @tidied_defs;
+    DEF:
+    for my $d (@defs) {
+        $d =~ s{<[^>]*>}{}xmsg; # excise any tags
+        $d =~ s{[^[:print:]]}{}xmsg; # excise any non-printing chars
+        $d =~ s{$word}{$stars}xmsgi unless $dont_mask;    # hide the word
+        if ($seen{$d}++) {
+            next DEF;
+        }
+        push @tidied_defs, $d;
+    }
+    if (! $Dcmd) {
+        @tidied_defs = splice @tidied_defs, 0, 3;
+    }
+    return join '',
+           map {
+               "<li>$_</li>\n";
+           }
+           @tidied_defs;
+}
+
 sub reveal {
     my ($word, $nlets, $beg_end) = @_;
 
@@ -223,7 +304,7 @@ if (my ($ev, $nlets, $term)
         }
     }
     if ($message) {
-        $message = "The hint \U$cmd\E yields:<ul>$message</ul>\n";
+        $message = "The hint \U$cmd\E yields:<ul>$message</ul><p>\n";
     }
     $params{new_words} = '';
 }
@@ -247,7 +328,78 @@ elsif ($cmd eq 'r') {
         $message .= "</tr>\n";
     }
     $message .= "</table>\n";
-    $message = "<ul>$message</ul>";
+    $message = "<ul>$message</ul><p>";
+    $params{new_words} = '';
+}
+elsif ($cmd =~ m{\A (d|da) \s+ (p|[a-z]\d|[a-z][a-z]) \z}xms) {
+    my $Dcmd = $1 eq 'da';
+    my $term = $2;
+    my $line = "&mdash;" x 4;
+    if ($term eq 'p') {
+        $message = 'pangrams:';
+        for my $p (grep { !$is_found{$_} } @pangrams) {
+            $message .= "<ul>"
+                     .  define($p, $Dcmd, 1)
+                     .  "</ul>"
+                     .  "--";
+                     ;
+        }
+        $message =~ s{--\z}{<p>}xms;
+        $message =~ s{--}{$line<br>}xmsg;
+        $params{new_words} = '';
+    }
+    elsif ($term =~ m{([a-z])(\d)}xms) {
+        my $let = $1;
+        my $len = $2;
+        $message = "\U$term:<br>";
+        for my $w (
+            grep {
+                ! $is_found{$_}
+                && length == $len
+                && substr($_, 0, 1) eq $let
+            }
+            @ok_words
+        ) {
+            $message .= "<ul>"
+                     .  define($w, $Dcmd, 1)
+                     .  "</ul>"
+                     .  "--";
+                     ;
+        }
+        $message =~ s{--\z}{<p>}xms;
+        $message =~ s{--}{$line<br>}xmsg;
+        $params{new_words} = '';
+    }
+    elsif ($term =~ m{([a-z][a-z])}xms) {
+        my $lets = $1;
+        $message = "\U$term:<br>";
+        for my $w (
+            grep {
+                ! $is_found{$_}
+                && substr($_, 0, 2) eq $lets
+            }
+            @ok_words
+        ) {
+            $message .= "<ul>"
+                     .  define($w, $Dcmd, 1)
+                     .  "</ul>"
+                     .  "--";
+                     ;
+        }
+        $message =~ s{--\z}{<p>}xms;
+        $message =~ s{--}{$line<br>}xmsg;
+        $params{new_words} = '';
+    }
+}
+elsif ($cmd =~ m{\A (d|da) \s+ ([a-z]+) \z}xms) {
+    my $Dcmd = $1 eq 'da';
+    my $word = $2;
+    $message = ucfirst($word)
+             . ":"
+             . "<ul>"
+             . define($word, $Dcmd, 1, 1)
+             . "</ul><p>"
+             ;
     $params{new_words} = '';
 }
 
@@ -297,9 +449,11 @@ compute_score_and_rank();
 if ($not_okay_words) {
     $message = <<"EOH";
 These words were not okay:
+<p>
 <ul>
 $not_okay_words
 </ul>
+<p>
 EOH
 }
 
@@ -442,9 +596,17 @@ print <<"EOH";
 <html>
 <head>
 <style>
+ul {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+li {
+    width: 700px;
+}
 .two_lets {
     text-align: left;
     text-indent: .4in;
+    /* display: none; */
 }
 td, th {
     text-align: right;
