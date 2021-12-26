@@ -4,17 +4,9 @@ use warnings;
 
 =comment
 
-is it POST or GET?
-    hitting Return gives long url
-need new web page for nytbee_cmd.pl
 ny times logo image at top
 need popup help window
-.rankX - increasing size and redness pink to magenta?
-emoticons for some of the ranks?
-images for genius and queen bee?
 advantage: more than one word at a time, the hints and definitions
-    the archive, random
-keep track of assists? or not?
 more entertaining and more colorful
 random date
 dictionary definitions - from nytbee command line
@@ -27,7 +19,6 @@ dictionary definitions - from nytbee command line
     # or at bottom
     S word  
     f       
-track IP addresses
 
 in hidden fields we store the minimum state we need:
     date, puzzle data from archive, found words
@@ -60,34 +51,33 @@ sub my_today {
 }
 
 # puzzle from which date?
-# date from form (dt), date from hidden field (date), or today
+# date from new_words/command field (n, n11 n12/23/18)
+# date from hidden field (date), or today
 #
-my $date = $params{dt};
+my $cmd = lc $params{new_words};
+$cmd =~ s{\A \s* | \s* \z}{}xmsg;
+my $first = date('5/29/18');
+my $date;
 my $today = my_today();
-# blank = today
-# r     = random between 5/29/18 and today
-# 3     = 3rd of the current month
-# 10/3  = Oct 3 of current year
-# 9/3/18 = that date
-# 08/14/2021 = that date
-#
-if ($date) {
-    my $first = date('5/29/18');
-    if ($date =~ m{\A \s* r}xmsi) {
-        my $ndays = $today - $first + 1;
-        $date = $first + int(rand $ndays);
-        $date = $date->as_d8();
-    }
-    else {
-        $date = date($date);
-        if ($date) {
-            # it is a valid date but ...
-            if ($first <= $date && $date <= today()) {
-                $date = $date->as_d8();
-            }
-            else {
-                $date = '';
-            }
+if ($cmd eq 'n') {
+    # random date since $first
+    my $ndays = $today - $first + 1;
+    $date = $first + int(rand $ndays);
+    $date = $date->as_d8();
+    $params{new_words} = '';
+    $params{found_words} = '';
+}
+elsif ($cmd =~ m{\A n \s* (\d.*) \z}xms) {
+    $date = date($1);
+    if ($date) {
+        # it is a valid date but is it in the range?
+        if ($first <= $date && $date <= today()) {
+            $date = $date->as_d8();
+            $params{new_words} = '';
+            $params{found_words} = '';
+        }
+        else {
+            $date = '';
         }
     }
 }
@@ -95,6 +85,7 @@ if (! $date) {
     $date = $params{date};      # hidden field
 }
 if (! $date) {
+    # today
     $date = my_today()->as_d8();
 }
 my $show_date = date($date)->format("%B %e, %Y");
@@ -112,42 +103,92 @@ my %is_ok_word = map { $_ => 1 } @ok_words;
 my @six = map { uc }
           grep { $_ ne $center }
           @seven;
-
 # scramble
 my @new;
 push @new, splice @six, rand @six, 1 while @six;
 @six = @new;
 
+sub word_score {
+    my ($w) = @_;
+    my $l = length $w;
+    return ($l == 4? 1: $l) + ($is_pangram{$w}? 7: 0);
+}
+my $max_score = 0;
+for my $w (@ok_words) {
+    $max_score += word_score($w);
+}
+my @ranks = (
+    { name => 'Beginner',   value => 0 },
+    { name => 'Good Start', value => int(.02*$max_score + 0.5) },
+    { name => 'Moving Up',  value => int(.05*$max_score + 0.5) },
+    { name => 'Good',       value => int(.08*$max_score + 0.5) },
+    { name => 'Solid',      value => int(.15*$max_score + 0.5) },
+    { name => 'Nice',       value => int(.25*$max_score + 0.5) },
+    { name => 'Great',      value => int(.40*$max_score + 0.5) },
+    { name => 'Amazing',    value => int(.50*$max_score + 0.5) },
+    { name => 'Genius',     value => int(.70*$max_score + 0.5) },
+    { name => 'Queen Bee',  value => $max_score },
+);
+
 my @found = split ' ', $params{found_words};
 my %is_found = map { $_ => 1 } @found;
 
+my $score;
+my $rank_name;
+my $rank;
+
+sub compute_score_and_rank {
+    $score = 0;
+    for my $w (@found) {
+        $score += word_score($w);
+    }
+    RANK:
+    for my $r (0 .. $#ranks-1) {
+        # note that $#ranks is Queen Bee == 9
+        if (   $score >= $ranks[$r]->{value}
+            && $score <  $ranks[$r+1]->{value}
+        ) {
+            $rank_name = $ranks[$r]->{name};
+            $rank = $r;
+            last RANK;
+        }
+    }
+    # special case:
+    if ($score >= $max_score) {
+        $rank = 9;
+        $rank_name = 'Queen Bee';
+    }
+}
+
+compute_score_and_rank();
+
 sub reveal {
     my ($word, $nlets, $beg_end) = @_;
+
+    my $dash = ' &ndash;';
     my $lw = length $word;
     if ($nlets > $lw) {
         $nlets = $lw;
     }
     if (! $beg_end) {
-        return uc substr($word, 0, $nlets)
-             . ('-' x ($lw-$nlets))
+        return uc(substr($word, 0, $nlets))
+             . ($dash x ($lw-$nlets))
     }
     my $c2 = int($nlets/2);
     my $c1 = $nlets - $c2;
     my $cu = $lw - $nlets;
-    return uc substr($word, 0, $c1)
-           . ('-' x $cu)
-           . uc substr($word, $lw-$c2)
+    return uc(substr($word, 0, $c1))
+           . ($dash x $cu)
+           . uc(substr($word, $lw-$c2))
            ;
 }
 
 my $message = "";
 # do we have a reveal command?
 my $reveal = "";
-my $cmd = lc $params{new_words};
-$cmd =~ s{\s}{}xmsg;
 if (my ($ev, $nlets, $term)
     = $cmd =~ m{
-        \A ([ev])(\d+)(p|[a-z]\d+|[a-z][a-z]) \z
+        \A ([ev])\s*(\d+)\s*(p|[a-z]\s*\d+|[a-z]\s*[a-z]) \z
       }xms
 ) {
     my $end = $ev eq 'e';
@@ -156,7 +197,7 @@ if (my ($ev, $nlets, $term)
             $message .= reveal($p, $nlets, $end) . "<br>\n";;
         }
     }
-    elsif (my ($first, $len) = $term =~ m{\A ([a-z])(\d+)}xms) {
+    elsif (my ($first, $len) = $term =~ m{\A ([a-z])\s*(\d+)}xms) {
         for my $w (
             grep {
                 ! $is_found{$_}
@@ -170,6 +211,7 @@ if (my ($ev, $nlets, $term)
     }
     else {
         # $term is two letters
+        $term =~ s{\s}{}xmsg;
         for my $w (
             grep {
                 ! $is_found{$_}
@@ -181,11 +223,36 @@ if (my ($ev, $nlets, $term)
         }
     }
     if ($message) {
-        $message = "The hint \U$params{new_words}\E yields:<ul>$message</ul>\n";
+        $message = "The hint \U$cmd\E yields:<ul>$message</ul>\n";
     }
     $params{new_words} = '';
 }
-# now what new words do we have?
+elsif ($cmd eq 'r') {
+    $message = "<table cellpadding=5>\n";
+    for my $r (0 .. 9) {
+        $message .= "<tr>"
+                 .  "<th>$ranks[$r]->{name}</th>"
+                 .  "<td>$ranks[$r]->{value}</td>"
+                 ;
+        if ($rank == $r) {
+            my $more = '';
+            if ($rank != 9) {
+                $more = ' '
+                      . ($ranks[$r+1]->{value} - $score)
+                      . ' more'
+                      ;
+            }
+            $message .= "<td>*$more</td>";
+        }
+        $message .= "</tr>\n";
+    }
+    $message .= "</table>\n";
+    $message = "<ul>$message</ul>";
+    $params{new_words} = '';
+}
+
+# so we have dealt with the various commands.
+# what new words might we have instead?
 my @new_words = map {
                     lc
                 }
@@ -222,6 +289,11 @@ for my $w (@new_words) {
         $is_new_word{$w} = 1;
     }
 }
+
+# now that we have added the new words to @found
+# we can recompute score and rank
+compute_score_and_rank();
+
 if ($not_okay_words) {
     $message = <<"EOH";
 These words were not okay:
@@ -246,49 +318,6 @@ my $found_so_far
              sort
              @found;
 
-# now compute score and max score
-#
-sub word_score {
-    my ($w) = @_;
-    my $l = length $w;
-    return ($l == 4? 1: $l) + ($is_pangram{$w}? 7: 0);
-}
-my ($max_score, $score) = (0, 0);
-for my $w (@ok_words) {
-    $max_score += word_score($w);
-}
-for my $w (@found) {
-    $score += word_score($w);
-}
-my @ranks = (
-    { name => 'Beginner',   value => 0 },
-    { name => 'Good Start', value => int(.02*$max_score + 0.5) },
-    { name => 'Moving Up',  value => int(.05*$max_score + 0.5) },
-    { name => 'Good',       value => int(.08*$max_score + 0.5) },
-    { name => 'Solid',      value => int(.15*$max_score + 0.5) },
-    { name => 'Nice',       value => int(.25*$max_score + 0.5) },
-    { name => 'Great',      value => int(.40*$max_score + 0.5) },
-    { name => 'Amazing',    value => int(.50*$max_score + 0.5) },
-    { name => 'Genius',     value => int(.70*$max_score + 0.5) },
-    { name => 'Queen Bee',  value => $max_score },
-);
-my $rank_name;
-my $rank;
-RANK:
-for my $r (0 .. $#ranks-1) {
-    # note that $#ranks is Queen Bee == 9
-    if (   $score >= $ranks[$r]->{value}
-        && $score <  $ranks[$r+1]->{value}
-    ) {
-        $rank_name = $ranks[$r]->{name};
-        $rank = $r;
-        last RANK;
-    }
-}
-if ($score == $max_score) {
-    $rank = 9;
-    $rank_name = 'Queen Bee';
-}
 # for fun - color too?? yeah.
 my @font_size = qw/
     12 14 16 20 
@@ -386,6 +415,27 @@ for my $i (0 .. $#two) {
     }
 }
 
+# generate the rank colors and font sizes
+my $rank_colors_fonts = "";
+for my $i (0 .. 9) {
+    my $color = 205-10*$i;
+    my $size = 15+3*$i;
+    $rank_colors_fonts .= <<"EOCSS";
+.rank$i {
+    font-size: ${size}pt;
+    color: rgb(255, $color, 255);
+}
+EOCSS
+}
+
+my $image = '';
+my $log = 'http://logicalpoetry.com';
+if (7 <= $rank && $rank <= 9) {
+    my $name = lc $ranks[$rank]->{name};
+    $name =~ s{\s.*}{}xms;  # for queen bee
+    $image = "<img class=image src=$log/pics/$name.jpg>";
+}
+
 # now to display everything
 
 print <<"EOH";
@@ -408,8 +458,8 @@ pre {
     font-size: 24pt;
 }
 body {
-    margin-top: .5in;
-    margin-left: .5in;
+    margin-top: .3in;
+    margin-left: .3in;
     font-size: 18pt;
     font-family: Arial;
 }
@@ -445,28 +495,21 @@ input, .submit {
     color: white;
 }
 .rank_name {
-    margin-left: 1in;
+    margin-left: .5in;
 }
-.rank0 {
-    font-size: 20pt;
-    color: pink;
-}
-.rank1 {
-    font-size: 25pt;
-    color: red;
-}
+$rank_colors_fonts
 .rank9 {
-    font-size: 38pt;
-    color: magenta;
     font-weight: bold;
+}
+.image {
+    width: 150px;
 }
 </style>
 </head>
 <body>
-<form>NY Times Spelling Bee<br>
-Puzzle for $show_date <span class=over>Date: <input type=text size=10 name=dt></span></form>
+NY Times Spelling Bee Puzzle<br>$show_date
 <p>
-<form id=main name=form>
+<form id=main name=form method=POST>
 <input type=hidden name=date value='$date'>
 <input type=hidden name=puzzle value='$puzzle'>
 <input type=hidden name=found_words value='@found'>
@@ -476,14 +519,14 @@ Puzzle for $show_date <span class=over>Date: <input type=text size=10 name=dt></
      $six[4]   $six[5]
 </pre>
 $message
-New words: <input class=new_words type=text size=40 name=new_words><br>
+<input class=new_words type=text size=30 name=new_words><br>
 </form>
-Words you have found:<br>
 <div class=found_so_far>
 $found_so_far
 </div>
 <p>
 Score: $score<span class='rank_name rank$rank'>$rank_name</span>
+$image
 <p>
 Words: $nwords, Points: $max_score, Pangrams: $npangrams$perfect$bingo
 <p>
@@ -494,7 +537,6 @@ $hint_table
 $two_lets
 </td></tr>
 </table>
-<!-- <form><button type=submit formaction='http://logicalpoetry.com' formtarget=_blank>home</button></form> -->
 </body>
 <script>document.form.new_words.focus();</script>
 </html>
