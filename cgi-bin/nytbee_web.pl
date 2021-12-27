@@ -20,6 +20,7 @@ commands:
     g for give up - show all words after js confirmation
     s <word> search for other puzzles with this word
     f search for other puzzles with this 7
+    # in separate window?
 
 track assists?
 don't always have the hints table and two letter list?
@@ -31,18 +32,6 @@ don't always have the hints table and two letter list?
     line
     use just divs - look up side-by-side again
         tables sort of suck for this purpose
-
-
-dictionary definitions - from nytbee command line
-    d e4
-    d de
-    d p
-    d word
-
-    # in separate window?
-    # or at bottom
-    S word  
-    f       
 
 in hidden fields we store the minimum state we need:
     date, puzzle data from archive, found words
@@ -75,15 +64,16 @@ sub my_today {
 }
 
 # puzzle from which date?
-# date from new_words/command field (n, n11 n12/23/18)
-# date from hidden field (date), or today
+# date from new_words/command field (nr, n11 n12/23/18)
+# date from hidden field (date)
+# today
 #
 my $cmd = lc $params{new_words};
 $cmd =~ s{\A \s* | \s* \z}{}xmsg;
 my $first = date('5/29/18');
 my $date;
 my $today = my_today();
-if ($cmd eq 'n') {
+if ($cmd eq 'nr') {
     # random date since $first
     my $ndays = $today - $first + 1;
     $date = $first + int(rand $ndays);
@@ -463,7 +453,7 @@ my $found_so_far
              map {
                  $is_pangram{lc $_}? length == 7? "<span class=purple>$_</span>"
                                  :             "<span class=green>$_</span>"
-                : $is_new_word{lc $_}? "<span class=red1>$_</span>"
+                : $is_new_word{lc $_}? "<span class=new_word>$_</span>"
                  : $_
              }
              map {
@@ -596,6 +586,19 @@ print <<"EOH";
 <html>
 <head>
 <style>
+.float-child {
+    float: left;
+}
+.hint_table {
+    display: none;
+}
+.two_lets {
+    display: none;
+    margin-left: 10mm;
+}
+.new_word {
+    color: brown;
+}
 ul {
     margin-top: 0px;
     margin-bottom: 0px;
@@ -603,18 +606,13 @@ ul {
 li {
     width: 700px;
 }
-.two_lets {
-    text-align: left;
-    text-indent: .4in;
-    /* display: none; */
-}
 td, th {
     text-align: right;
     font-size: 17pt;
     font-family: Arial;
 }
 .not_okay {
-    color: blue;
+    color: red;
 }
 pre {
     font-size: 24pt;
@@ -649,7 +647,7 @@ input, .submit {
 }
 .found_so_far {
     margin-left: .5in;
-    width: 600px;
+    width: 800px;
     word-spacing: 10px;
 }
 .submit {
@@ -667,6 +665,18 @@ $rank_colors_fonts
     width: 150px;
 }
 </style>
+<script>
+function hint_table() {
+    document.getElementById('hint_table').style.display = 'block';
+    document.getElementById('ht_link').style.display = 'none';
+    document.form.new_words.focus();
+}
+function two_lets() {
+    document.getElementById('two_lets').style.display = 'block';
+    document.getElementById('tl_link').style.display = 'none';
+    document.form.new_words.focus();
+}
+</script>
 </head>
 <body>
 NY Times Spelling Bee Puzzle<br>$show_date
@@ -692,13 +702,20 @@ $image
 <p>
 Words: $nwords, Points: $max_score, Pangrams: $npangrams$perfect$bingo
 <p>
-<table cellpadding=20 border=0>
-<tr><td>
-$hint_table
-</td><td class=two_lets>
-$two_lets
-</td></tr>
-</table>
+<a href=# id=ht_link onclick='hint_table();'>Hint Table</a>
+<a href=# id=tl_link onclick='two_lets()'>Two Letters</a>
+<div class=float-container>
+    <div class=float-child>
+        <div id=hint_table class=hint_table>
+        $hint_table
+        </div>
+    </div>
+    <div class=float-child>
+        <div id=two_lets class=two_lets>
+        $two_lets
+        </div>
+    </div>
+</div>
 </body>
 <script>document.form.new_words.focus();</script>
 </html>
