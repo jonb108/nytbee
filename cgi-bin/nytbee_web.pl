@@ -353,7 +353,6 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d|[a-z][a-z]) \z}xms
     my $term = $2;
     my $line = "&mdash;" x 4;
     if ($term eq 'p') {
-        $message = 'pangrams:';
         for my $p (grep { !$is_found{$_} } @pangrams) {
             $message .= "<ul>"
                      .  define($p, $Dcmd, 1)
@@ -361,8 +360,11 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d|[a-z][a-z]) \z}xms
                      .  "--";
                      ;
         }
-        $message =~ s{--\z}{<p>}xms;
+        $message =~ s{--\z}{}xms;
         $message =~ s{--}{$line<br>}xmsg;
+        if ($message) {
+            $message = "pangrams:$message<p>";
+        }
         $params{new_words} = '';
     }
     elsif ($term =~ m{([a-z])(\d)}xms) {
@@ -420,7 +422,14 @@ elsif ($cmd =~ m{\A (d|da) \s+ ([a-z]+) \z}xms) {
     $params{new_words} = '';
 }
 elsif ($cmd =~ m{\A g \s+ y \z}xms) {
-    my @words = map { ucfirst } @ok_words;
+    my @words = 
+             map {
+                 $is_pangram{lc $_}? length == 7? "<span class=purple>$_</span>"
+                                    :             "<span class=green>$_</span>"
+                :                    $_
+             }
+             map { ucfirst }
+             @ok_words;
     $message = "<p class=mess>@words<p>";
     $params{new_words} = '';
 }
@@ -712,7 +721,6 @@ input, .submit {
     color: purple;
 }
 .found_so_far {
-    margin-left: .5in;
     width: 600px;
     word-spacing: 10px;
 }
