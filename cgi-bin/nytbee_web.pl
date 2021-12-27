@@ -147,6 +147,21 @@ my @ranks = (
 my @found = split ' ', $params{found_words};
 my %is_found = map { $_ => 1 } @found;
 
+my $ht_chosen = $params{ht_chosen};
+my $tl_chosen = $params{tl_chosen};
+my $ht_disp = $ht_chosen? "block": "none";
+my $tl_disp = $tl_chosen? "block": "none";
+my $links = "";
+if (!$ht_chosen) {
+    $links .= "<a href=# id=ht_link onclick='hint_table();'>Hint Table</a>";
+}
+if (!$tl_chosen) {
+    if ($links) {
+        $links .= "&nbsp;" x 4;
+    }
+    $links .= "<a href=# id=tl_link onclick='two_lets()'>Two Letters</a>";
+}
+
 my $score;
 my $rank_name;
 my $rank;
@@ -586,14 +601,18 @@ print <<"EOH";
 <html>
 <head>
 <style>
+a {
+    text-decoration: none;
+    color: blue;
+}
 .float-child {
     float: left;
 }
 .hint_table {
-    display: none;
+    display: $ht_disp;
 }
 .two_lets {
-    display: none;
+    display: $tl_disp; 
     margin-left: 10mm;
 }
 .new_word {
@@ -647,7 +666,7 @@ input, .submit {
 }
 .found_so_far {
     margin-left: .5in;
-    width: 800px;
+    width: 600px;
     word-spacing: 10px;
 }
 .submit {
@@ -669,11 +688,13 @@ $rank_colors_fonts
 function hint_table() {
     document.getElementById('hint_table').style.display = 'block';
     document.getElementById('ht_link').style.display = 'none';
+    document.getElementById('ht_chosen').value = '1';
     document.form.new_words.focus();
 }
 function two_lets() {
     document.getElementById('two_lets').style.display = 'block';
     document.getElementById('tl_link').style.display = 'none';
+    document.getElementById('tl_chosen').value = '1';
     document.form.new_words.focus();
 }
 </script>
@@ -685,6 +706,8 @@ NY Times Spelling Bee Puzzle<br>$show_date
 <input type=hidden name=date value='$date'>
 <input type=hidden name=puzzle value='$puzzle'>
 <input type=hidden name=found_words value='@found'>
+<input type=hidden name=ht_chosen id=ht_chosen value=$ht_chosen>
+<input type=hidden name=tl_chosen id=tl_chosen value=$tl_chosen>
 <pre>
      $six[0]   $six[1]
    $six[2]   <span class=red2>\U$center\E</span>   $six[3]
@@ -702,8 +725,7 @@ $image
 <p>
 Words: $nwords, Points: $max_score, Pangrams: $npangrams$perfect$bingo
 <p>
-<a href=# id=ht_link onclick='hint_table();'>Hint Table</a>
-<a href=# id=tl_link onclick='two_lets()'>Two Letters</a>
+$links
 <div class=float-container>
     <div class=float-child>
         <div id=hint_table class=hint_table>
