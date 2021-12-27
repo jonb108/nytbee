@@ -4,8 +4,34 @@ use warnings;
 
 =comment
 
+_will_ work on the phone but it's awkward.
+so we won't try to have the 7 letters clickable/tappable
+
+words in the order I saw them?
+    and toggle back/forth
+    the w command?
+    sure, why not
+    we do have the order
+
+can we save the state of the puzzle
+    by ip address?  maybe
+        just ip+date => found, timestamp
+    for when they return or refresh
+    fun!
+    and purge ones more than a week old
+    save after every word found
+        also whether they have hints/twolets
+        and # assists?
+
+dac on 12/23/21
+    after getting acquaint and acquit
+    still says AC:      why?
+
 advantages: more than one word at a time, the hints and definitions
 more entertaining and more colorful
+
+return clears any message
+    and also scrambles the letters
 archive, random date
 
 ny times logo image at top?
@@ -16,29 +42,24 @@ reserve blue for links
 track IPs
 
 commands:
-    c clear and restart after js confirmation
-    g for give up - show all words after js confirmation
-    s <word> search for other puzzles with this word
-    f search for other puzzles with this 7
-    # in separate window?
+    s <word> search for other puzzles with a word
 
-track assists?
-don't always have the hints table and two letter list?
-    onclick of buttons (or links) change display of divs from none to block?
-    hints/two let separate?
-    and remember the settings in hidden fields
-    the hints table includes the 
-        "Words: 54, Points: 259, Pangrams: 1, Bingo"
-    line
-    use just divs - look up side-by-side again
-        tables sort of suck for this purpose
+track and tally assists?
+
+spacing issues - above hint table and two lets when no links are there
+and space in front of two lets just once after choosing hint table.
+should be able to fix this...
+
+log?  track assists?
+1 2 - for random hints when not using the Hints Table or Two Letters
+    yes
 
 in hidden fields we store the minimum state we need:
     date, puzzle data from archive, found words
 and we compute the rest - score, max_score, rankings, hint table
 it is plenty fast
 
-the trick is to store the puzzle state
+the usual web trick is to store the puzzle state
 in a stateless environment... with hidden fields.
 
 =cut
@@ -82,7 +103,7 @@ if ($cmd =~ m{\A n \s* r \z}xms) {
     my $ndays = $today - $first + 1;
     $date = $first + int(rand $ndays);
     $date = $date->as_d8();
-    $params{new_words} = '';
+    $cmd = '';
     $params{found_words} = '';
     $new_puzzle = 1;
 }
@@ -92,9 +113,9 @@ elsif ($cmd =~ m{\A n \s* (\d.*) \z}xms) {
         # it is a valid date but is it in the range?
         if ($first <= $date && $date <= today()) {
             $date = $date->as_d8();
-            $params{new_words} = '';
             $params{found_words} = '';
             $new_puzzle = 1;
+            $cmd = '';
         }
         else {
             $date = '';
@@ -319,9 +340,9 @@ if (my ($ev, $nlets, $term)
         }
     }
     if ($message) {
-        $message = "The hint \U$cmd\E yields:<ul>$message</ul><p>\n";
+        $message = "\U$cmd\E:<ul>$message</ul><p>\n";
     }
-    $params{new_words} = '';
+    $cmd = '';
 }
 elsif ($cmd eq 'r') {
     $message = "<table cellpadding=5>\n";
@@ -344,7 +365,7 @@ elsif ($cmd eq 'r') {
     }
     $message .= "</table>\n";
     $message = "<ul>$message</ul><p>";
-    $params{new_words} = '';
+    $cmd = '';
 }
 elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d|[a-z][a-z]) \z}xms
        || $cmd =~ m{\A (da) \s+ (p|[a-z]\d|[a-z][a-z]) \z}xms
@@ -363,14 +384,14 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d|[a-z][a-z]) \z}xms
         $message =~ s{--\z}{}xms;
         $message =~ s{--}{$line<br>}xmsg;
         if ($message) {
-            $message = "pangrams:$message<p>";
+            $message = "Pangrams:$message<p>";
         }
-        $params{new_words} = '';
+        $cmd = '';
     }
     elsif ($term =~ m{([a-z])(\d)}xms) {
         my $let = $1;
         my $len = $2;
-        $message = "\U$term:<br>";
+        $message = '';
         for my $w (
             grep {
                 ! $is_found{$_}
@@ -387,11 +408,14 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d|[a-z][a-z]) \z}xms
         }
         $message =~ s{--\z}{<p>}xms;
         $message =~ s{--}{$line<br>}xmsg;
-        $params{new_words} = '';
+        if ($message) {
+            $message = "\U$term\E:<br>$message<p>";
+        }
+        $cmd = '';
     }
     elsif ($term =~ m{([a-z][a-z])}xms) {
         my $lets = $1;
-        $message = "\U$term:<br>";
+        $message = '';
         for my $w (
             grep {
                 ! $is_found{$_}
@@ -407,19 +431,21 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d|[a-z][a-z]) \z}xms
         }
         $message =~ s{--\z}{<p>}xms;
         $message =~ s{--}{$line<br>}xmsg;
-        $params{new_words} = '';
+        if ($message) {
+            $message = "\U$term\E:<br>$message<p>";
+        }
+        $cmd = '';
     }
 }
 elsif ($cmd =~ m{\A (d|da) \s+ ([a-z]+) \z}xms) {
     my $Dcmd = $1 eq 'da';
     my $word = $2;
-    $message = ucfirst($word)
-             . ":"
+    $message = "\U$word:"
              . "<ul>"
              . define($word, $Dcmd, 1, 1)
              . "</ul><p>"
              ;
-    $params{new_words} = '';
+    $cmd = '';
 }
 elsif ($cmd =~ m{\A g \s+ y \z}xms) {
     my @words = 
@@ -431,12 +457,12 @@ elsif ($cmd =~ m{\A g \s+ y \z}xms) {
              map { ucfirst }
              @ok_words;
     $message = "<p class=mess>@words<p>";
-    $params{new_words} = '';
+    $cmd = '';
 }
 elsif ($cmd =~ m{\A c \s+ y \z}xms) {
     @found = ();
     %is_found = ();
-    $params{new_words} = '';
+    $cmd = '';
 }
 elsif ($cmd eq 'f') {
     # look for same 7
@@ -455,17 +481,46 @@ elsif ($cmd eq 'f') {
                   . ($dt eq $date? ' *': '')
                   . "<br>\n";
               }
-              sort @dates;
-    $message .= "<p>";
-    $params{new_words} = '';
+              sort
+              @dates
+              ;
+    $message = "$message<p>";
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A s \s+ ([a-z]+) \s* \z}xms) {
+    # search the archive for the word
+    # we're really searching everything after the |
+    my $word = $1;
+    my @dates;
+    while (my ($dt, $puz) = each %puzzle) {
+        if ($puz =~ m{\b$word\b}xms) {
+            push @dates, $dt;
+        }
+    }
+    $message = join '',
+               map {
+                   m{\A ..(..)(..)(..)}xms;
+                   "$2/$3/$1<br>";
+               }
+               sort
+               @dates
+               ;
+    if ($message) {
+        $message = "\U$word\E:<br>$message<p>";
+    }
+    $cmd = '';
 }
 
 # so we have dealt with the various commands.
+# except for 1 and 2, that is.
 # what new words might we have instead?
-my @new_words = map {
-                    lc
-                }
-                split ' ', $params{new_words};
+my @new_words;
+if ($cmd !~ m{\A [12] \z}xms) {
+    @new_words = map {
+                     lc
+                 }
+                 split ' ', $cmd;
+}
 sub check_word {
     my ($w) = @_;
     if (length $w < 4) {
@@ -500,7 +555,8 @@ for my $w (@new_words) {
 }
 
 # now that we have added the new words to @found
-# we can recompute score and rank
+# we can recompute score and rank - why REcompute?
+# why compute above?
 compute_score_and_rank();
 
 if ($not_okay_words) {
@@ -529,13 +585,6 @@ my $found_so_far
              sort
              @found;
 
-# for fun - color too?? yeah.
-my @font_size = qw/
-    12 14 16 20 
-    24 28 32 36
-    40 48
-/;
-
 my %sums;
 my %two_lets;
 my $max_len = 0;
@@ -554,6 +603,38 @@ for my $w (@ok_words) {
     ++$sums{$c1}{$l};
     ++$two_lets{$c2};
 }
+
+# now that #we have computed %sums and %two_lets
+# perhaps $cmd was not words to add after all...
+if ($cmd eq '1') {
+    # find a random non-zero entry in the hint table
+    my @entries;
+    for my $l (4 .. $max_len) {
+        for my $c (sort @seven) {
+            if ($sums{$c}{$l}) {
+                push @entries, "\U$c$l-$sums{$c}{$l}";
+            }
+        }
+    }
+    if (@entries) {
+        # not Queen Bee yet
+        $message = $entries[ rand @entries ] . '<p>';
+    }
+}
+elsif ($cmd eq '2') {
+    # random non-zero entry in %two_lets
+    my @entries;
+    for my $k (sort keys %two_lets) {
+        if ($two_lets{$k}) {
+            push @entries, "\U$k-$two_lets{$k}";
+        }
+    }
+    if (@entries) {
+        # not Queen Bee yet
+        $message = $entries[ rand @entries ] . '<p>';
+    }
+}
+
 my $bingo = ", Bingo";
 CHAR:
 for my $c (@seven) {
@@ -653,6 +734,9 @@ print <<"EOH";
 <html>
 <head>
 <style>
+.help {
+    margin-left: .7in;
+}
 .mess {
     width: 600px;
     word-spacing: 10px;
@@ -755,7 +839,7 @@ function two_lets() {
 </script>
 </head>
 <body>
-NY Times Spelling Bee Puzzle<br>$show_date
+NY Times Spelling Bee Puzzle<span class=help><a target=_blank href='http://logicalpoetry.com/nytbee'>Help</a><br>$show_date
 <p>
 <form id=main name=form method=POST>
 <input type=hidden name=date value='$date'>
@@ -782,7 +866,7 @@ $links
 <div class=float-container>
     <div class=float-child>
         <div id=hint_table class=hint_table>
-Words: $nwords, Points: $max_score, Pangrams: $npangrams$perfect$bingo
+Words: $nwords, Points: $max_score<br>Pangrams: $npangrams$perfect$bingo
 <p>
         $hint_table
         </div>
