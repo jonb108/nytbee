@@ -38,6 +38,9 @@ in hidden fields we store the minimum state we need:
 and we compute the rest - score, max_score, rankings, hint table
 it is plenty fast
 
+the trick is to store the puzzle state
+in a stateless environment... with hidden fields.
+
 =cut
 
 use CGI;
@@ -73,13 +76,15 @@ $cmd =~ s{\A \s* | \s* \z}{}xmsg;
 my $first = date('5/29/18');
 my $date;
 my $today = my_today();
-if ($cmd eq 'nr') {
+my $new_puzzle = 0;
+if ($cmd =~ m{\A n \s* r \z}xms) {
     # random date since $first
     my $ndays = $today - $first + 1;
     $date = $first + int(rand $ndays);
     $date = $date->as_d8();
     $params{new_words} = '';
     $params{found_words} = '';
+    $new_puzzle = 1;
 }
 elsif ($cmd =~ m{\A n \s* (\d.*) \z}xms) {
     $date = date($1);
@@ -89,6 +94,7 @@ elsif ($cmd =~ m{\A n \s* (\d.*) \z}xms) {
             $date = $date->as_d8();
             $params{new_words} = '';
             $params{found_words} = '';
+            $new_puzzle = 1;
         }
         else {
             $date = '';
@@ -101,10 +107,14 @@ if (! $date) {
 if (! $date) {
     # today
     $date = my_today()->as_d8();
+    $new_puzzle = 1;
 }
 my $show_date = date($date)->format("%B %e, %Y");
 
+# we have a valid date.
+# get the puzzle data
 my $puzzle = $puzzle{$date};
+
 my ($s, $t) = split /[|]/, $puzzle;
 my ($seven, $center, @pangrams) = split ' ', $s;
 my @seven = split //, $seven;
@@ -144,11 +154,12 @@ my @ranks = (
     { name => 'Queen Bee',  value => $max_score },
 );
 
+# now get the current data from the parameters
 my @found = split ' ', $params{found_words};
 my %is_found = map { $_ => 1 } @found;
 
-my $ht_chosen = $params{ht_chosen};
-my $tl_chosen = $params{tl_chosen};
+my $ht_chosen = $new_puzzle? 0: $params{ht_chosen};
+my $tl_chosen = $new_puzzle? 0: $params{tl_chosen};
 my $ht_disp = $ht_chosen? "block": "none";
 my $tl_disp = $tl_chosen? "block": "none";
 my $links = "";
@@ -161,7 +172,6 @@ if (!$tl_chosen) {
     }
     $links .= "<a href=# id=tl_link onclick='two_lets()'>Two Letters</a>";
 }
-
 my $score;
 my $rank_name;
 my $rank;
@@ -336,7 +346,9 @@ elsif ($cmd eq 'r') {
     $message = "<ul>$message</ul><p>";
     $params{new_words} = '';
 }
-elsif ($cmd =~ m{\A (d|da) \s+ (p|[a-z]\d|[a-z][a-z]) \z}xms) {
+elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d|[a-z][a-z]) \z}xms
+       || $cmd =~ m{\A (da) \s+ (p|[a-z]\d|[a-z][a-z]) \z}xms
+) {
     my $Dcmd = $1 eq 'da';
     my $term = $2;
     my $line = "&mdash;" x 4;
@@ -405,6 +417,37 @@ elsif ($cmd =~ m{\A (d|da) \s+ ([a-z]+) \z}xms) {
              . define($word, $Dcmd, 1, 1)
              . "</ul><p>"
              ;
+    $params{new_words} = '';
+}
+elsif ($cmd =~ m{\A g \s+ y \z}xms) {
+    my @words = map { ucfirst } @ok_words;
+    $message = "<p class=mess>@words<p>";
+    $params{new_words} = '';
+}
+elsif ($cmd =~ m{\A c \s+ y \z}xms) {
+    @found = ();
+    %is_found = ();
+    $params{new_words} = '';
+}
+elsif ($cmd eq 'f') {
+    # look for same 7
+    my @dates;
+    while (my ($dt, $puz) = each %puzzle) {
+        if (substr($puz, 0, 7) eq $seven) {
+            push @dates, $dt . uc substr($puz, 8, 1);
+        }
+    }
+    $message = join '',
+               map {
+                  my ($dt, $y, $m, $d, $c) =  m{
+                      \A (.. (..)(..)(..))(.) \z 
+                  }xms;
+                  "$m/$d/$y $c"
+                  . ($dt eq $date? ' *': '')
+                  . "<br>\n";
+              }
+              sort @dates;
+    $message .= "<p>";
     $params{new_words} = '';
 }
 
@@ -601,6 +644,10 @@ print <<"EOH";
 <html>
 <head>
 <style>
+.mess {
+    width: 600px;
+    word-spacing: 10px;
+}
 a {
     text-decoration: none;
     color: blue;
@@ -616,14 +663,14 @@ a {
     margin-left: 10mm;
 }
 .new_word {
-    color: brown;
+    color: coral;
 }
 ul {
     margin-top: 0px;
     margin-bottom: 0px;
 }
 li {
-    width: 700px;
+    width: 600px;
 }
 td, th {
     text-align: right;
@@ -723,12 +770,12 @@ $found_so_far
 Score: $score<span class='rank_name rank$rank'>$rank_name</span>
 $image
 <p>
-Words: $nwords, Points: $max_score, Pangrams: $npangrams$perfect$bingo
-<p>
 $links
 <div class=float-container>
     <div class=float-child>
         <div id=hint_table class=hint_table>
+Words: $nwords, Points: $max_score, Pangrams: $npangrams$perfect$bingo
+<p>
         $hint_table
         </div>
     </div>
