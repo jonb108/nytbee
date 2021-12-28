@@ -21,7 +21,7 @@ can we save the state of the puzzle
     and purge ones more than a week old
     save after every word found
         also whether they have hints/twolets
-        and # assists?
+        and # hints?
 
 dac on 12/23/21
     after getting acquaint and acquit
@@ -44,13 +44,13 @@ track IPs
 commands:
     s <word> search for other puzzles with a word
 
-track and tally assists?
+track and tally nhints?
 
 spacing issues - above hint table and two lets when no links are there
 and space in front of two lets just once after choosing hint table.
 should be able to fix this...
 
-log?  track assists?
+log?
 1 2 - for random hints when not using the Hints Table or Two Letters
     yes
 
@@ -178,21 +178,12 @@ my @ranks = (
 # now get the current data from the parameters
 my @found = split ' ', $params{found_words};
 my %is_found = map { $_ => 1 } @found;
+my $in_order = 0;
 
 my $ht_chosen = $new_puzzle? 0: $params{ht_chosen};
 my $tl_chosen = $new_puzzle? 0: $params{tl_chosen};
-my $ht_disp = $ht_chosen? "block": "none";
-my $tl_disp = $tl_chosen? "block": "none";
-my $links = "";
-if (!$ht_chosen) {
-    $links .= "<a href=# id=ht_link onclick='hint_table();'>Hint Table</a>";
-}
-if (!$tl_chosen) {
-    if ($links) {
-        $links .= "&nbsp;" x 4;
-    }
-    $links .= "<a href=# id=tl_link onclick='two_lets()'>Two Letters</a>";
-}
+my $nhints = $params{nhints};    # from before
+
 my $score;
 my $rank_name;
 my $rank;
@@ -220,6 +211,7 @@ sub compute_score_and_rank {
     }
 }
 
+# to be ready for the 'r' command
 compute_score_and_rank();
 
 # if no definition
@@ -231,7 +223,7 @@ compute_score_and_rank();
 # that's enough.  or maybe just 1?
 # or all if Dcmd.
 sub define {
-    my ($word, $Dcmd, $dont_tally_assists, $dont_mask) = @_;
+    my ($word, $Dcmd, $dont_tally_hints, $dont_mask) = @_;
 
     my ($html, @defs);
 
@@ -272,6 +264,9 @@ sub define {
     if (! $Dcmd) {
         @tidied_defs = splice @tidied_defs, 0, 3;
     }
+    if (@tidied_defs && ! $dont_tally_hints) {
+        ++$nhints;
+    }
     return join '',
            map {
                "<li>$_</li>\n";
@@ -294,6 +289,7 @@ sub reveal {
     my $c2 = int($nlets/2);
     my $c1 = $nlets - $c2;
     my $cu = $lw - $nlets;
+    ++$nhints;
     return uc(substr($word, 0, $c1))
            . ($dash x $cu)
            . uc(substr($word, $lw-$c2))
@@ -376,7 +372,7 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d|[a-z][a-z]) \z}xms
     if ($term eq 'p') {
         for my $p (grep { !$is_found{$_} } @pangrams) {
             $message .= "<ul>"
-                     .  define($p, $Dcmd, 1)
+                     .  define($p, $Dcmd, 0)
                      .  "</ul>"
                      .  "--";
                      ;
@@ -401,7 +397,7 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d|[a-z][a-z]) \z}xms
             @ok_words
         ) {
             $message .= "<ul>"
-                     .  define($w, $Dcmd, 1)
+                     .  define($w, $Dcmd, 0)
                      .  "</ul>"
                      .  "--";
                      ;
@@ -424,7 +420,7 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d|[a-z][a-z]) \z}xms
             @ok_words
         ) {
             $message .= "<ul>"
-                     .  define($w, $Dcmd, 1)
+                     .  define($w, $Dcmd, 0)
                      .  "</ul>"
                      .  "--";
                      ;
@@ -456,12 +452,16 @@ elsif ($cmd =~ m{\A g \s+ y \z}xms) {
              }
              map { ucfirst }
              @ok_words;
+    $nhints += 100;
     $message = "<p class=mess>@words<p>";
     $cmd = '';
 }
 elsif ($cmd =~ m{\A c \s+ y \z}xms) {
     @found = ();
     %is_found = ();
+    $nhints = 0;
+    $ht_chosen = 0;
+    $tl_chosen = 0;
     $cmd = '';
 }
 elsif ($cmd eq 'f') {
@@ -510,6 +510,10 @@ elsif ($cmd =~ m{\A s \s+ ([a-z]+) \s* \z}xms) {
     }
     $cmd = '';
 }
+elsif ($cmd eq 'w') {
+    $in_order = 1;
+    $cmd = '';
+}
 
 # so we have dealt with the various commands.
 # except for 1 and 2, that is.
@@ -554,9 +558,7 @@ for my $w (@new_words) {
     }
 }
 
-# now that we have added the new words to @found
-# we can recompute score and rank - why REcompute?
-# why compute above?
+# now that we have added the new words...
 compute_score_and_rank();
 
 if ($not_okay_words) {
@@ -582,8 +584,8 @@ my $found_so_far
              map {
                 ucfirst
              }
-             sort
-             @found;
+              $in_order? @found
+             :           sort @found;
 
 my %sums;
 my %two_lets;
@@ -618,6 +620,7 @@ if ($cmd eq '1') {
     }
     if (@entries) {
         # not Queen Bee yet
+        ++$nhints;
         $message = $entries[ rand @entries ] . '<p>';
     }
 }
@@ -631,6 +634,7 @@ elsif ($cmd eq '2') {
     }
     if (@entries) {
         # not Queen Bee yet
+        ++$nhints;
         $message = $entries[ rand @entries ] . '<p>';
     }
 }
@@ -726,6 +730,27 @@ if (7 <= $rank && $rank <= 9) {
     my $name = lc $ranks[$rank]->{name};
     $name =~ s{\s.*}{}xms;  # for queen bee
     $image = "<img class=image src=$log/pics/$name.jpg>";
+}
+
+my $disp_nhints = "";
+if ($nhints) {
+    $disp_nhints = "<br>Hints: "
+                 . ($nhints
+                    + ($ht_chosen? 10: 0)
+                    + ($tl_chosen?  5: 0));
+}
+
+my $ht_disp = $ht_chosen? "block": "none";
+my $tl_disp = $tl_chosen? "block": "none";
+my $links = "";
+if (!$ht_chosen) {
+    $links .= "<a href=# id=ht_link onclick='hint_table();'>Hint Table</a>";
+}
+if (!$tl_chosen) {
+    if ($links) {
+        $links .= "&nbsp;" x 4;
+    }
+    $links .= "<a href=# id=tl_link onclick='two_lets()'>Two Letters</a>";
 }
 
 # now to display everything
@@ -845,6 +870,7 @@ NY Times Spelling Bee Puzzle<span class=help><a target=_blank href='http://logic
 <input type=hidden name=date value='$date'>
 <input type=hidden name=puzzle value='$puzzle'>
 <input type=hidden name=found_words value='@found'>
+<input type=hidden name=nhints value=$nhints>
 <input type=hidden name=ht_chosen id=ht_chosen value=$ht_chosen>
 <input type=hidden name=tl_chosen id=tl_chosen value=$tl_chosen>
 <pre>
@@ -861,6 +887,7 @@ $found_so_far
 <p>
 Score: $score<span class='rank_name rank$rank'>$rank_name</span>
 $image
+$disp_nhints
 <p>
 $links
 <div class=float-container>
