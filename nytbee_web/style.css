@@ -1,59 +1,84 @@
-body {
-    margin: .4in;
-    font-size: 18pt;
-    font-family: Helvetica;
-}
-.blue {
-    color: blue;
-}
-a {
-    color: blue;
-    text-decoration: none;
-}
-h1 {
-    font-size: 35pt;
-}
-h2 {
-    margin-bottom: 5px;
-}
-h4 {
-    margin-top: 15px;
-    margin-bottom: 0px;
-}
-.c0 {
-    margin-left: 78mm;
-}
-.c1 {
-    font-family: Helvetica;
-    color: black;
-}
-.c2 {
-    height: 20mm;
-    margin-top: 4mm;
-    margin-left: 12mm; 
-}
-.c3 {
-    font-family: Courier;
-    font-weight: normal;
-    margin-left: 7mm; 
-}
-.green {
-    color: green;
-}
-.bold {
-    font-weight: bold;
-}
-.cl {
-    color: red;
-}
-.cmd {
-    color: darkred;
-}
-pre {
-    color: green;
-    font-family: Courier;
-    font-size: 16pt;
-}
-.black {
-    color: black;
-}
+<DOCTYPE html>
+<html lang=en>
+<head>
+<title>The Spelling Bee Puzzle of the New York Times</title>
+<link rel='stylesheet' type='text/css' href='style.css'/>
+</head>
+<body>
+<h2>How to Play</h2>
+<h2>Words and Commands</h2>
+<p>
+In the text field you enter words that satisfy the rules of the puzzle.<br>
+You can enter more than one word at a time.
+<p>
+Pressing Return will clear any messages and permute the 6 outer letters.
+<p>
+There are also several commands you can enter in the text field:
+
+<pre>
+<span class=cmd>R</span>    Show the rankings.  It will show how many
+     points are needed to get to the next rank.
+<span class=cmd>W</span>    Show the found words in the order they were found.
+<span class=cmd>NR</span>   New puzzle from a Random date.
+<span class=cmd>N &lt;date&gt;</span>  New puzzle from the given date.
+     You can enter dates in several ways.
+     10/20/19 or 9/23 (current year) or 15 (current month)
+     Dates must be on or after May 29, 2018.
+</pre>
+
+Commands that give hints:
+
+<pre>
+<span class=cmd>DP</span>   Define the Pangram(s).
+<span class=cmd>DB4</span>  Define the words beginning with B of length 4.
+<span class=cmd>DTR</span>  Define the words beginning with TR.
+<span class=cmd>D &lt;word&gt;</span>  Define the word.  No hints tallied.
+
+<span class=cmd>V2P</span>  Reveal the first two letters of the pangram(s).
+<span class=cmd>V3M8</span> Reveal the first 3 letters of the word(s)
+     beginning with M of length 8.
+<span class=cmd>V5GL</span> Reveal the first 5 letters of the word(s)
+     beginning with GL.  
+
+     Using <span class=cmd>E</span> instead of <span class=cmd>V</span> in the above commands reveals
+     letters both at the front and at the End of the word.  
+     Note: Revealing the entire word is not allowed.
+
+<span class=cmd>1</span>  Show a random entry from the Hint Table.
+<span class=cmd>2</span>  Show a random entry from the Two Letter List.
+
+   These will work even if the Table and List are not shown. 
+</pre>
+
+Other commands:
+
+<pre>
+<span class=cmd>C Y</span>  Clear the puzzle and start over.
+<span class=cmd>G Y</span>  Give up and show the word list.
+<span class=cmd>F</span>    Find other dates that use the same seven letters.
+<span class=cmd>S &lt;word&gt;</span>  Find other dates where the word is used.
+<span class=cmd>DA ...</span> The <span class=cmd>D</span> command gives at most 3 definitions.
+       <span class=cmd>DA</span> will give them All.
+</pre>
+<h2>Hint Strategy</h2>
+Many people who solve the puzzle try to use as few hints
+as possible.
+The ultimate is to achieve QBABM = Queen Bee <i>all by myself</i>.
+This is possible but rather difficult.
+There are many ways to get hints and
+each time your 'hint total' is increased.
+The number of hints are tallied like so:
+<ul>
+<pre>
+<span class=black>Command        # of hints</span>
+<span class=blue>Hints Table</span>    10
+<span class=blue>Two Letters</span>     5
+<span class=cmd>D,DA</span>            3 for each word
+<span class=cmd>V,E</span>             2 for each word
+<span class=cmd>1</span>               1
+<span class=cmd>2</span>               1
+<span class=cmd>G Y</span>           100
+</pre>
+</ul>
+</body>
+</html>

@@ -4,55 +4,31 @@ use warnings;
 
 =comment
 
-_will_ work on the phone but it's awkward.
-so we won't try to have the 7 letters clickable/tappable
-
-words in the order I saw them?
-    and toggle back/forth
-    the w command?
-    sure, why not
-    we do have the order
-
 can we save the state of the puzzle
     by ip address?  maybe
         just ip+date => found, timestamp
     for when they return or refresh
     fun!
-    and purge ones more than a week old
+    with timestamp and purge ones more than a week old
     save after every word found
         also whether they have hints/twolets
         and # hints?
 
-dac on 12/23/21
-    after getting acquaint and acquit
-    still says AC:      why?
+create your own games that include S
+    and add them to the collection
 
-advantages: more than one word at a time, the hints and definitions
-more entertaining and more colorful
-
-return clears any message
-    and also scrambles the letters
-archive, random date
+_will_ work on the phone but it's awkward.
+so we won't try to have the 7 letters clickable/tappable
 
 ny times logo image at top?
-need help in new window - link at top
-reserve blue for links
-    not for not okay error messages
 
-track IPs
-
-commands:
-    s <word> search for other puzzles with a word
-
-track and tally nhints?
+track IPs - when new puzzle is started, plus time/date
 
 spacing issues - above hint table and two lets when no links are there
 and space in front of two lets just once after choosing hint table.
 should be able to fix this...
 
 log?
-1 2 - for random hints when not using the Hints Table or Two Letters
-    yes
 
 in hidden fields we store the minimum state we need:
     date, puzzle data from archive, found words
@@ -265,7 +241,7 @@ sub define {
         @tidied_defs = splice @tidied_defs, 0, 3;
     }
     if (@tidied_defs && ! $dont_tally_hints) {
-        ++$nhints;
+        $nhints += 3;
     }
     return join '',
            map {
@@ -279,9 +255,10 @@ sub reveal {
 
     my $dash = ' &ndash;';
     my $lw = length $word;
-    if ($nlets > $lw) {
-        $nlets = $lw;
+    if ($nlets >= $lw) {
+        return "Sorry, that would reveal too much! :)";
     }
+    $nhints += 2;
     if (! $beg_end) {
         return uc(substr($word, 0, $nlets))
              . ($dash x ($lw-$nlets))
@@ -289,7 +266,6 @@ sub reveal {
     my $c2 = int($nlets/2);
     my $c1 = $nlets - $c2;
     my $cu = $lw - $nlets;
-    ++$nhints;
     return uc(substr($word, 0, $c1))
            . ($dash x $cu)
            . uc(substr($word, $lw-$c2))
@@ -487,13 +463,18 @@ elsif ($cmd eq 'f') {
     $message = "$message<p>";
     $cmd = '';
 }
-elsif ($cmd =~ m{\A s \s+ ([a-z]+) \s* \z}xms) {
-    # search the archive for the word
-    # we're really searching everything after the |
+elsif ($cmd =~ m{\A s \s+ ([/a-z]+) \s* \z}xms) {
+    # search the archive for the word (or a regex - undocumented).
+    # we're searching everything after the |
     my $word = $1;
+    my $regex = $word;
+    if ($regex !~ s{\A /}{}xms) {
+        $regex = "\\b$regex\\b";
+    }
     my @dates;
     while (my ($dt, $puz) = each %puzzle) {
-        if ($puz =~ m{\b$word\b}xms) {
+        $puz =~ s{\A [^|]* [|]}{}xms;
+        if ($puz =~ m{$regex}xms) {
             push @dates, $dt;
         }
     }
@@ -563,8 +544,6 @@ compute_score_and_rank();
 
 if ($not_okay_words) {
     $message = <<"EOH";
-These words were not okay:
-<p>
 <ul>
 $not_okay_words
 </ul>
@@ -729,11 +708,11 @@ my $log = 'http://logicalpoetry.com';
 if (7 <= $rank && $rank <= 9) {
     my $name = lc $ranks[$rank]->{name};
     $name =~ s{\s.*}{}xms;  # for queen bee
-    $image = "<img class=image src=$log/pics/$name.jpg>";
+    $image = "<img class=image_$name src=$log/pics/$name.jpg>";
 }
 
 my $disp_nhints = "";
-if ($nhints) {
+if ($nhints || $ht_chosen || $tl_chosen) {
     $disp_nhints = "<br>Hints: "
                  . ($nhints
                     + ($ht_chosen? 10: 0)
@@ -799,7 +778,7 @@ td, th {
     color: red;
 }
 pre {
-    font-size: 24pt;
+    font-size: 26pt;
 }
 body {
     margin-top: .3in;
@@ -844,8 +823,14 @@ $rank_colors_fonts
 .rank9 {
     font-weight: bold;
 }
-.image {
-    width: 150px;
+.image_amazing {
+    width: 75px;
+}
+.image_genius {
+    width: 125px;
+}
+.image_queen {
+    width: 175px;
 }
 </style>
 <script>
@@ -864,7 +849,7 @@ function two_lets() {
 </script>
 </head>
 <body>
-NY Times Spelling Bee Puzzle<span class=help><a target=_blank href='http://logicalpoetry.com/nytbee'>Help</a><br>$show_date
+NY Times Spelling Bee Puzzle<span class=help><a target=_blank href='http://logicalpoetry.com/nytbee_web/help.html'>Help</a><br>$show_date
 <p>
 <form id=main name=form method=POST>
 <input type=hidden name=date value='$date'>
