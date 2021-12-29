@@ -882,7 +882,7 @@ function add_hints(n) {
 </script>
 </head>
 <body>
-NY Times Spelling Bee Puzzle<span class=help><a target=_blank href='http://logicalpoetry.com/nytbee_web/help.html'>Help</a><br>$show_date
+NY Times Spelling Bee Puzzle<span class=help><a target=_blank href='http://logicalpoetry.com/nytbee_web/help.html#commands'>Help</a><br>$show_date
 <p>
 <form id=main name=form method=POST>
 <input type=hidden name=date value='$date'>
