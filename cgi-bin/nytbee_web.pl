@@ -4,15 +4,8 @@ use warnings;
 
 =comment
 
-can we save the state of the puzzle
-    by ip address?  maybe
-        just ip+date => found, timestamp
-    for when they return or refresh
-    fun!
-    with timestamp and purge ones more than a week old
-    save after every word found
-        also whether they have hints/twolets
-        and # hints?
+with timestamp? and purge ones more than a week or so old?
+another command to bring up the games your IP has saved?
 
 create your own games that include S
     and add them to the collection
@@ -21,12 +14,6 @@ _will_ work on the phone but it's awkward.
 so we won't try to have the 7 letters clickable/tappable
 
 ny times logo image at top?
-
-track IPs - when new puzzle is started, plus time/date
-
-spacing issues - above hint table and two lets when no links are there
-and space in front of two lets just once after choosing hint table.
-should be able to fix this...
 
 log?
 
@@ -48,6 +35,8 @@ my %params = $q->Vars();
 use DB_File;
 my %puzzle;
 tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
+my %ip_date;
+tie %ip_date, 'DB_File', 'ip_date.dbm';
 
 use Date::Simple qw/
     today
@@ -70,6 +59,7 @@ sub my_today {
 #
 my $cmd = lc $params{new_words};
 $cmd =~ s{\A \s* | \s* \z}{}xmsg;
+
 my $first = date('5/29/18');
 my $date;
 my $today = my_today();
@@ -79,9 +69,15 @@ if ($cmd =~ m{\A n \s* r \z}xms) {
     my $ndays = $today - $first + 1;
     $date = $first + int(rand $ndays);
     $date = $date->as_d8();
-    $cmd = '';
     $params{found_words} = '';
     $new_puzzle = 1;
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A n \s* t \z}xms) {
+    $date = $today->as_d8();
+    $params{found_words} = '';
+    $new_puzzle = 1;
+    $cmd = '';
 }
 elsif ($cmd =~ m{\A n \s* (\d.*) \z}xms) {
     $date = date($1);
@@ -151,14 +147,25 @@ my @ranks = (
     { name => 'Queen Bee',  value => $max_score },
 );
 
-# now get the current data from the parameters
-my @found = split ' ', $params{found_words};
-my %is_found = map { $_ => 1 } @found;
-my $in_order = 0;
+my (@found, $nhints, $ht_chosen, $tl_chosen);
+my $d8;
+# try to concoct a unique identifier for the person
+# and their browser
+my $ua = $ENV{HTTP_USER_AGENT};
+$ua =~ s{\D}{}xms;
+my $key = "$ENV{REMOTE_ADDR}$ua $date";
+if (exists $ip_date{$key}) {
+    ($d8, $nhints, $ht_chosen, $tl_chosen, @found) = split ' ', $ip_date{$key};
+}
+else {
+    $nhints    = $new_puzzle? 0: $params{nhints} || 0;    # from before
+    $ht_chosen = $new_puzzle? 0: $params{ht_chosen};
+    $tl_chosen = $new_puzzle? 0: $params{tl_chosen};
+    @found     = $new_puzzle? (): split ' ', $params{found_words};
+}
 
-my $ht_chosen = $new_puzzle? 0: $params{ht_chosen};
-my $tl_chosen = $new_puzzle? 0: $params{tl_chosen};
-my $nhints = $params{nhints};    # from before
+my %is_found = map { $_ => 1 } @found;
+my $in_order = 0;       # see below near 'w' and the display of @found
 
 my $score;
 my $rank_name;
@@ -256,12 +263,15 @@ sub reveal {
     my $dash = ' &ndash;';
     my $lw = length $word;
     if ($nlets >= $lw) {
-        return "Sorry, that would reveal too much! :)";
+        # silently ignore this
+        return;
     }
     $nhints += 2;
     if (! $beg_end) {
         return uc(substr($word, 0, $nlets))
-             . ($dash x ($lw-$nlets))
+               . ($dash x ($lw-$nlets))
+               . "<br>"
+               ;
     }
     my $c2 = int($nlets/2);
     my $c1 = $nlets - $c2;
@@ -269,13 +279,28 @@ sub reveal {
     return uc(substr($word, 0, $c1))
            . ($dash x $cu)
            . uc(substr($word, $lw-$c2))
+           . "<br>"
            ;
 }
 
 my $message = "";
 # do we have a reveal command?
 my $reveal = "";
-if (my ($ev, $nlets, $term)
+if ($cmd eq 'ht') {
+    if (! $ht_chosen) {
+        $ht_chosen = 1;
+        $nhints += 10;
+    }
+    $cmd = '';
+}
+elsif ($cmd eq 'tl') {
+    if (! $tl_chosen) {
+        $tl_chosen = 1;
+        $nhints += 5;
+    }
+    $cmd = '';
+}
+elsif (my ($ev, $nlets, $term)
     = $cmd =~ m{
         \A ([ev])\s*(\d+)\s*(p|[a-z]\s*\d+|[a-z]\s*[a-z]) \z
       }xms
@@ -283,32 +308,42 @@ if (my ($ev, $nlets, $term)
     my $end = $ev eq 'e';
     if ($term eq 'p') {
         for my $p (grep { ! $is_found{$_} } @pangrams) {
-            $message .= reveal($p, $nlets, $end) . "<br>\n";;
+            $message .= reveal($p, $nlets, $end);
         }
     }
     elsif (my ($first, $len) = $term =~ m{\A ([a-z])\s*(\d+)}xms) {
-        for my $w (
-            grep {
-                ! $is_found{$_}
-                && substr($_, 0, 1) eq $first
-                && length == $len
+        if ($nlets == 1) {
+            # ignore
+        }
+        else {
+            for my $w (
+                grep {
+                    ! $is_found{$_}
+                    && substr($_, 0, 1) eq $first
+                    && length == $len
+                }
+                @ok_words
+            ) {
+                $message .= reveal($w, $nlets, $end);
             }
-            @ok_words
-        ) {
-            $message .= reveal($w, $nlets, $end) . "<br>\n";;
         }
     }
     else {
         # $term is two letters
-        $term =~ s{\s}{}xmsg;
-        for my $w (
-            grep {
-                ! $is_found{$_}
-                && substr($_, 0, 2) eq $term
+        if ($nlets == 1 || (! $end && $nlets == 2)) {
+            # ignore
+        }
+        else {
+            $term =~ s{\s}{}xmsg;       # if v2 a b instead of v2ab
+            for my $w (
+                grep {
+                    ! $is_found{$_}
+                    && substr($_, 0, 2) eq $term
+                }
+                @ok_words
+            ) {
+                $message .= reveal($w, $nlets, $end);
             }
-            @ok_words
-        ) {
-            $message .= reveal($w, $nlets, $end) . "<br>\n";;
         }
     }
     if ($message) {
@@ -519,8 +554,11 @@ sub check_word {
             return "\U$c\E is not in \U$seven";
         }
     }
-    if (! exists $is_ok_word{lc $w}) {
+    if (! exists $is_ok_word{$w}) {
         return "not in word list";
+    }
+    if ($is_found{$w}) {
+        return "already found";
     }
     return '';
 }
@@ -532,7 +570,7 @@ for my $w (@new_words) {
                         .  uc($w)
                         .  "</span>: $mess<br>";
     }
-    elsif (! $is_found{$w}) {
+    else {
         push @found, $w;
         $is_found{$w} = 1;
         $is_new_word{$w} = 1;
@@ -638,55 +676,62 @@ if ($nperfect) {
 }
 
 # the hint table
-my $hint_table = "<table cellpadding=2 border=0>\n";
-my $space = '&nbsp;' x 4;
-$hint_table .= "<tr><th>&nbsp;</th>";
-for my $l (4 .. $max_len) {
-    $hint_table .= "<th>$space$l</th>";
-}
-$hint_table .= "<th>$space&nbsp;&Sigma;</th></tr>\n";
-my $tot = 0;
-for my $c (@seven) {
-    $hint_table .= "<tr><th style='text-align: center'>\U$c\E</th>";
-    my $sum = 0;
+my $hint_table = "";
+if ($ht_chosen) {
+    $hint_table = "Words: $nwords, Points: $max_score<br>"
+                . "Pangrams: $npangrams$perfect$bingo";
+    $hint_table .= "<p><table cellpadding=2 border=0>\n";
+    my $space = '&nbsp;' x 4;
+    $hint_table .= "<tr><th>&nbsp;</th>";
     for my $l (4 .. $max_len) {
-        $hint_table .= "<td>" .  ($sums{$c}{$l} || '-') . "</td>";
-        $sum += $sums{$c}{$l};
+        $hint_table .= "<th>$space$l</th>";
     }
-    $hint_table .= "<th>$sum</th></tr>\n";
-    $tot += $sum;
-}
-$hint_table .= "<tr><th style='text-align: right'>&Sigma;</th>";
-for my $l (4 .. $max_len) {
-    my $sum = 0;
+    $hint_table .= "<th>$space&nbsp;&Sigma;</th></tr>\n";
+    my $tot = 0;
     for my $c (@seven) {
-        $sum += $sums{$c}{$l};
+        $hint_table .= "<tr><th style='text-align: center'>\U$c\E</th>";
+        my $sum = 0;
+        for my $l (4 .. $max_len) {
+            $hint_table .= "<td>" .  ($sums{$c}{$l} || '-') . "</td>";
+            $sum += $sums{$c}{$l};
+        }
+        $hint_table .= "<th>$sum</th></tr>\n";
+        $tot += $sum;
     }
-    $hint_table .= "<th>$sum</th>";
+    $hint_table .= "<tr><th style='text-align: right'>&Sigma;</th>";
+    for my $l (4 .. $max_len) {
+        my $sum = 0;
+        for my $c (@seven) {
+            $sum += $sums{$c}{$l};
+        }
+        $hint_table .= "<th>$sum</th>";
+    }
+    $hint_table .= "<th>$tot</th></tr>\n";
+    $hint_table .= "</table>\n";
 }
-$hint_table .= "<th>$tot</th></tr>\n";
-$hint_table .= "</table>\n";
 
 # two letter tallies
 my $two_lets = '';
-my @two = grep {
-              $two_lets{$_}
-          }
-          sort
-          keys %two_lets;
-TWO:
-for my $i (0 .. $#two) {
-    if ($two_lets{$two[$i]} == 0) {
-        next TWO;
-    }
-    $two_lets .= "\U$two[$i]-$two_lets{$two[$i]}";
-    if ($i < $#two
-        && substr($two[$i], 0, 1) ne substr($two[$i+1], 0, 1)
-    ) {
-        $two_lets .= "<p>";
-    }
-    else {
-        $two_lets .= '&nbsp;&nbsp;';
+if ($tl_chosen) {
+    my @two = grep {
+                  $two_lets{$_}
+              }
+              sort
+              keys %two_lets;
+    TWO:
+    for my $i (0 .. $#two) {
+        if ($two_lets{$two[$i]} == 0) {
+            next TWO;
+        }
+        $two_lets .= "\U$two[$i]-$two_lets{$two[$i]}";
+        if ($i < $#two
+            && substr($two[$i], 0, 1) ne substr($two[$i+1], 0, 1)
+        ) {
+            $two_lets .= "<p>";
+        }
+        else {
+            $two_lets .= '&nbsp;&nbsp;';
+        }
     }
 }
 
@@ -712,25 +757,12 @@ if (7 <= $rank && $rank <= 9) {
 }
 
 my $disp_nhints = "";
-if ($nhints || $ht_chosen || $tl_chosen) {
-    $disp_nhints = "<br>Hints: "
-                 . ($nhints
-                    + ($ht_chosen? 10: 0)
-                    + ($tl_chosen?  5: 0));
+if ($nhints) {
+    $disp_nhints .= "<br>Hints: $nhints";
 }
 
-my $ht_disp = $ht_chosen? "block": "none";
-my $tl_disp = $tl_chosen? "block": "none";
-my $links = "";
-if (!$ht_chosen) {
-    $links .= "<a href=# id=ht_link onclick='hint_table();'>Hint Table</a>";
-}
-if (!$tl_chosen) {
-    if ($links) {
-        $links .= "&nbsp;" x 4;
-    }
-    $links .= "<a href=# id=tl_link onclick='two_lets()'>Two Letters</a>";
-}
+# save IP address and state of the solve
+$ip_date{$key} = $today->as_d8() . " $nhints $ht_chosen $tl_chosen @found";
 
 # now to display everything
 
@@ -738,8 +770,12 @@ print <<"EOH";
 <html>
 <head>
 <style>
+.two_lets {
+    margin-top: 22mm;
+    margin-left: 15mm;
+}
 .help {
-    margin-left: .7in;
+    margin-left: 1in;
 }
 .mess {
     width: 600px;
@@ -751,13 +787,6 @@ a {
 }
 .float-child {
     float: left;
-}
-.hint_table {
-    display: $ht_disp;
-}
-.two_lets {
-    display: $tl_disp; 
-    margin-left: 10mm;
 }
 .new_word {
     color: coral;
@@ -834,17 +863,21 @@ $rank_colors_fonts
 }
 </style>
 <script>
-function hint_table() {
-    document.getElementById('hint_table').style.display = 'block';
-    document.getElementById('ht_link').style.display = 'none';
-    document.getElementById('ht_chosen').value = '1';
-    document.form.new_words.focus();
-}
-function two_lets() {
-    document.getElementById('two_lets').style.display = 'block';
-    document.getElementById('tl_link').style.display = 'none';
-    document.getElementById('tl_chosen').value = '1';
-    document.form.new_words.focus();
+function add_hints(n) {
+    var el = document.getElementById('nhints');
+    var s = el.innerHTML;
+    // s is either empty or is "<br>Hints: 34"
+    // we need to add 10 hints and redisplay
+    const regex = /\\d+/;
+    var x = s.match(regex);
+    var y;
+    if (x == null) {
+        y = 10;
+    }
+    else {
+        y = parseInt(x[0]) + n;
+    }
+    el.innerHTML = "<br>Hints: " + y;
 }
 </script>
 </head>
@@ -856,15 +889,15 @@ NY Times Spelling Bee Puzzle<span class=help><a target=_blank href='http://logic
 <input type=hidden name=puzzle value='$puzzle'>
 <input type=hidden name=found_words value='@found'>
 <input type=hidden name=nhints value=$nhints>
-<input type=hidden name=ht_chosen id=ht_chosen value=$ht_chosen>
-<input type=hidden name=tl_chosen id=tl_chosen value=$tl_chosen>
+<input type=hidden name=ht_chosen value=$ht_chosen>
+<input type=hidden name=tl_chosen value=$tl_chosen>
 <pre>
      $six[0]   $six[1]
    $six[2]   <span class=red2>\U$center\E</span>   $six[3]
      $six[4]   $six[5]
 </pre>
 $message
-<input class=new_words type=text size=30 name=new_words><br>
+<input class=new_words type=text size=40 name=new_words><br>
 </form>
 <div class=found_so_far>
 $found_so_far
@@ -874,12 +907,9 @@ Score: $score<span class='rank_name rank$rank'>$rank_name</span>
 $image
 $disp_nhints
 <p>
-$links
 <div class=float-container>
     <div class=float-child>
         <div id=hint_table class=hint_table>
-Words: $nwords, Points: $max_score<br>Pangrams: $npangrams$perfect$bingo
-<p>
         $hint_table
         </div>
     </div>

@@ -5,7 +5,25 @@
 <link rel='stylesheet' type='text/css' href='style.css'/>
 </head>
 <body>
+<h1>The Spelling Bee Puzzle of the New York Times</h1>
 <h2>How to Play</h2>
+<img style="margin-left: 17mm; width: 280px" src=hive.png>
+<ul>
+<li>Create words using letters from the "hive".
+<li>Words must contain at least 4 letters.
+<li>Words must include the center letter.
+<li>Letters can be used more than once.
+<p>
+<li>The list of allowed words does not include words
+that are obscure, hyphenated, or proper nouns.
+<li>No cussing either, sorry.
+<p>
+<li>Score points to increase your rating.
+<li>4-letter words are worth 1 point each.
+<li>Longer words earn 1 point per letter.
+<li>Each puzzle includes at least one "pangram" which uses every letter. These are worth 7 extra points!
+</ul>
+<a name=commands></a>
 <h2>Words and Commands</h2>
 <p>
 In the text field you enter words that satisfy the rules of the puzzle.<br>
@@ -16,33 +34,39 @@ Pressing Return will clear any messages and permute the 6 outer letters.
 There are also several commands you can enter in the text field:
 
 <pre>
-<span class=cmd>R</span>    Show the rankings.  It will show how many
+<span class=cmd>R</span>    Show the rankings.  It also shows how many
      points are needed to get to the next rank.
 <span class=cmd>W</span>    Show the found words in the order they were found.
 <span class=cmd>NR</span>   New puzzle from a Random date.
 <span class=cmd>N &lt;date&gt;</span>  New puzzle from the given date.
-     You can enter dates in several ways.
-     10/20/19 or 9/23 (current year) or 15 (current month)
+     You can enter dates in several ways:
+     10-20-19 or 9-23 (current year) or 15 (current month).
      Dates must be on or after May 29, 2018.
+<span class=cmd>NT</span>   Return to Today's puzzle.
 </pre>
 
 Commands that give hints:
 
 <pre>
-<span class=cmd>DP</span>   Define the Pangram(s).
+<span class=cmd>HT</span>   Show the Hint Table.
+<span class=cmd>TL</span>   Show the Two Letter List.
+
+<span class=cmd>DP</span>   Define the Pangrams.
 <span class=cmd>DB4</span>  Define the words beginning with B of length 4.
 <span class=cmd>DTR</span>  Define the words beginning with TR.
 <span class=cmd>D &lt;word&gt;</span>  Define the word.  No hints tallied.
 
-<span class=cmd>V2P</span>  Reveal the first two letters of the pangram(s).
-<span class=cmd>V3M8</span> Reveal the first 3 letters of the word(s)
+<span class=cmd>V2P</span>  Reveal the first two letters of the pangrams.
+<span class=cmd>V3M8</span> Reveal the first 3 letters of the words
      beginning with M of length 8.
-<span class=cmd>V5GL</span> Reveal the first 5 letters of the word(s)
+<span class=cmd>V5GL</span> Reveal the first 5 letters of the words
      beginning with GL.  
 
      Using <span class=cmd>E</span> instead of <span class=cmd>V</span> in the above commands reveals
-     letters both at the front and at the End of the word.  
-     Note: Revealing the entire word is not allowed.
+     letters at the front and at the <i>End</i> of the word.
+     Both define and reveal commands skip words that have
+     already been found.  Commands that reveal the entire word
+     are silently ignored as are commands like V2GL. 
 
 <span class=cmd>1</span>  Show a random entry from the Hint Table.
 <span class=cmd>2</span>  Show a random entry from the Two Letter List.
@@ -66,18 +90,18 @@ as possible.
 The ultimate is to achieve QBABM = Queen Bee <i>all by myself</i>.
 This is possible but rather difficult.
 There are many ways to get hints and
-each time your 'hint total' is increased.
+each increases your 'hint total'.
 The number of hints are tallied like so:
 <ul>
 <pre>
-<span class=black>Command        # of hints</span>
-<span class=blue>Hints Table</span>    10
-<span class=blue>Two Letters</span>     5
-<span class=cmd>D,DA</span>            3 for each word
-<span class=cmd>V,E</span>             2 for each word
-<span class=cmd>1</span>               1
-<span class=cmd>2</span>               1
-<span class=cmd>G Y</span>           100
+<span class=black>Command      # of hints</span>
+<span class=cmd>HT</span>          10
+<span class=cmd>TL</span>           5
+<span class=cmd>D,DA</span>         3 for each word
+<span class=cmd>V,E</span>          2 for each word
+<span class=cmd>1</span>            1
+<span class=cmd>2</span>            1
+<span class=cmd>G Y</span>        100
 </pre>
 </ul>
 </body>
