@@ -7,9 +7,13 @@
 <body>
 <h1>The Spelling Bee Puzzle of the New York Times</h1>
 <h2>How to Play</h2>
-<img style="margin-left: 17mm; width: 280px" src=hive.png>
+<pre class=hive>
+     D   G
+   H   <span class=red>L</span>   T
+     E   N
+</pre>
 <ul>
-<li>Create words using letters from the "hive".
+<li>Create words using the 7 letters.
 <li>Words must contain at least 4 letters.
 <li>Words must include the center letter.
 <li>Letters can be used more than once.
@@ -37,12 +41,8 @@ There are also several commands you can enter in the text field:
 <span class=cmd>R</span>    Show the rankings.  It also shows how many
      points are needed to get to the next rank.
 <span class=cmd>W</span>    Show the found words in the order they were found.
-<span class=cmd>NR</span>   New puzzle from a Random date.
-<span class=cmd>N &lt;date&gt;</span>  New puzzle from the given date.
-     You can enter dates in several ways:
-     10-20-19 or 9-23 (current year) or 15 (current month).
-     Dates must be on or after May 29, 2018.
-<span class=cmd>NT</span>   Return to Today's puzzle.
+<span class=cmd>C Y</span>  Clear the puzzle and start over.
+<span class=cmd>G Y</span>  Give up and show the word list.
 </pre>
 
 Commands that give hints:
@@ -55,6 +55,8 @@ Commands that give hints:
 <span class=cmd>DB4</span>  Define the words beginning with B of length 4.
 <span class=cmd>DTR</span>  Define the words beginning with TR.
 <span class=cmd>D &lt;word&gt;</span>  Define the word.  No hints tallied.
+<span class=cmd>DA ...</span> The <span class=cmd>D</span> command gives at most 3 definitions.
+       <span class=cmd>DA</span> will give them All.
 
 <span class=cmd>V2P</span>  Reveal the first two letters of the pangrams.
 <span class=cmd>V3M8</span> Reveal the first 3 letters of the words
@@ -73,16 +75,19 @@ Commands that give hints:
 
    These will work even if the Table and List are not shown. 
 </pre>
-
-Other commands:
-
+Commands to access the large NY Times <a href=#archive>Archive</a> of Spelling Bee puzzles:
 <pre>
-<span class=cmd>C Y</span>  Clear the puzzle and start over.
-<span class=cmd>G Y</span>  Give up and show the word list.
+<span class=cmd>NR</span>   New puzzle from a Random date.
+<span class=cmd>N &lt;date&gt;</span>  New puzzle from the given date.
+     You can enter dates in several ways:
+     10-20-19 or 9-23 (current year) or 15 (current month).
+     Dates must be on or after May 29, 2018.
+<span class=cmd>NT</span>   Return to Today's puzzle.
+<span class=cmd>L</span>    List the current puzzles.
+<span class=cmd>NP&lt;num&gt;</span>   Return to puzzle #num in the list.
+
 <span class=cmd>F</span>    Find other dates that use the same seven letters.
 <span class=cmd>S &lt;word&gt;</span>  Find other dates where the word is used.
-<span class=cmd>DA ...</span> The <span class=cmd>D</span> command gives at most 3 definitions.
-       <span class=cmd>DA</span> will give them All.
 </pre>
 <h2>Hint Strategy</h2>
 Many people who solve the puzzle try to use as few hints
@@ -94,14 +99,13 @@ each increases your 'hint total'.
 The number of hints are tallied like so:
 <ul>
 <pre>
-<span class=black>Command      # of hints</span>
-<span class=cmd>HT</span>          10
-<span class=cmd>TL</span>           5
-<span class=cmd>D,DA</span>         3 for each word
-<span class=cmd>V,E</span>          2 for each word
-<span class=cmd>1</span>            1
-<span class=cmd>2</span>            1
-<span class=cmd>G Y</span>        100
+<span class=cmd>HT</span>       10
+<span class=cmd>TL</span>        5
+<span class=cmd>D,DA</span>      3 for each word
+<span class=cmd>V,E</span>       2 for each word
+<span class=cmd>1</span>         1
+<span class=cmd>2</span>         1
+<span class=cmd>G Y</span>     100
 </pre>
 </ul>
 </body>

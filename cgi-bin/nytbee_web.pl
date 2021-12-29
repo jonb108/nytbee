@@ -4,13 +4,19 @@ use warnings;
 
 =comment
 
-with timestamp? and purge ones more than a week or so old?
-another command to bring up the games your IP has saved?
+L, NP\d+
+CP Y        clear all old puzzles (and revert to today)
 
-create your own games that include S
+with timestamp? and purge ones more than a month old
+another command to bring up the games your IP has saved? - L
+and one to open it - NP\d+
+    to distinguish it from N3 (3rd of this month)
+
+?create your own games that include S
     and add them to the collection
 
 _will_ work on the phone but it's awkward.
+most everyone has a laptop or desktop
 so we won't try to have the 7 letters clickable/tappable
 
 ny times logo image at top?
@@ -38,6 +44,14 @@ tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
 my %ip_date;
 tie %ip_date, 'DB_File', 'ip_date.dbm';
 
+# try to concoct a unique identifier for the person
+# and their browser
+my $ua = $ENV{HTTP_USER_AGENT};
+$ua =~ s{\D}{}xmsg;
+my $key = "$ENV{REMOTE_ADDR} $ua";
+
+my $message = "";
+
 use Date::Simple qw/
     today
     date
@@ -52,6 +66,11 @@ sub my_today {
     return $today;
 }
 
+sub dash_date {
+    my ($d8) = @_;
+    my ($y, $m, $d) = $d8 =~ m{\A ..(..)(..)(..) \z}xms;
+    return "$m-$d-$y";
+}
 # puzzle from which date?
 # date from new_words/command field (nr, n11 n12/23/18)
 # date from hidden field (date)
@@ -64,6 +83,17 @@ my $first = date('5/29/18');
 my $date;
 my $today = my_today();
 my $new_puzzle = 0;
+
+if (my ($puz_num) = $cmd =~ m{\A n \s* p \s* (\d+) \z}xms) {
+    my @puzzles = my_puzzles();
+    if ($puz_num > @puzzles) {
+        $message = "Not that many puzzles<p>";
+        $cmd = '';
+    }
+    else {
+        $cmd = "n$puzzles[$puz_num-1][0]";
+    }
+}
 if ($cmd =~ m{\A n \s* r \z}xms) {
     # random date since $first
     my $ndays = $today - $first + 1;
@@ -148,20 +178,24 @@ my @ranks = (
 );
 
 my (@found, $nhints, $ht_chosen, $tl_chosen);
-my $d8;
-# try to concoct a unique identifier for the person
-# and their browser
-my $ua = $ENV{HTTP_USER_AGENT};
-$ua =~ s{\D}{}xms;
-my $key = "$ENV{REMOTE_ADDR}$ua $date";
-if (exists $ip_date{$key}) {
-    ($d8, $nhints, $ht_chosen, $tl_chosen, @found) = split ' ', $ip_date{$key};
+my $key_date = $key . " $date";
+if (exists $ip_date{$key_date}) {
+    my ($d8, $rnk);
+    ($d8, $nhints, $ht_chosen, $tl_chosen, $rnk, @found)
+        = split ' ', $ip_date{$key_date};
 }
 else {
     $nhints    = $new_puzzle? 0: $params{nhints} || 0;    # from before
     $ht_chosen = $new_puzzle? 0: $params{ht_chosen};
     $tl_chosen = $new_puzzle? 0: $params{tl_chosen};
     @found     = $new_puzzle? (): split ' ', $params{found_words};
+}
+
+sub my_puzzles {
+    return map { [ substr($_, -8, 8), (split ' ', $ip_date{$_})[4] ] }
+           grep { index($_, $key) == 0 }
+           sort
+           keys %ip_date;
 }
 
 my %is_found = map { $_ => 1 } @found;
@@ -283,7 +317,6 @@ sub reveal {
            ;
 }
 
-my $message = "";
 # do we have a reveal command?
 my $reveal = "";
 if ($cmd eq 'ht') {
@@ -475,6 +508,20 @@ elsif ($cmd =~ m{\A c \s+ y \z}xms) {
     $tl_chosen = 0;
     $cmd = '';
 }
+elsif ($cmd eq 'l') {
+    my @puzzles = my_puzzles();
+    my $n = 1;
+    my $space = '&nbsp;' x 3;
+    for my $p (@puzzles) {
+        $message .= $n++ . ".$space"
+                 . dash_date($p->[0]) . $space
+                 . $ranks[$p->[1]]->{name}
+                 . '<br>'
+                 ;
+    }
+    $message =~ s{br>\z}{p>}xms;
+    $cmd = '';
+}
 elsif ($cmd eq 'f') {
     # look for same 7
     my @dates;
@@ -488,7 +535,7 @@ elsif ($cmd eq 'f') {
                   my ($dt, $y, $m, $d, $c) =  m{
                       \A (.. (..)(..)(..))(.) \z 
                   }xms;
-                  "$m/$d/$y $c"
+                  "$m-$d-$y $c"
                   . ($dt eq $date? ' *': '')
                   . "<br>\n";
               }
@@ -516,7 +563,7 @@ elsif ($cmd =~ m{\A s \s+ ([/a-z]+) \s* \z}xms) {
     $message = join '',
                map {
                    m{\A ..(..)(..)(..)}xms;
-                   "$2/$3/$1<br>";
+                   "$2-$3-$1<br>";
                }
                sort
                @dates
@@ -762,7 +809,8 @@ if ($nhints) {
 }
 
 # save IP address and state of the solve
-$ip_date{$key} = $today->as_d8() . " $nhints $ht_chosen $tl_chosen @found";
+$ip_date{$key_date} = $today->as_d8()
+                    . " $nhints $ht_chosen $tl_chosen $rank @found";
 
 # now to display everything
 
@@ -862,24 +910,6 @@ $rank_colors_fonts
     width: 175px;
 }
 </style>
-<script>
-function add_hints(n) {
-    var el = document.getElementById('nhints');
-    var s = el.innerHTML;
-    // s is either empty or is "<br>Hints: 34"
-    // we need to add 10 hints and redisplay
-    const regex = /\\d+/;
-    var x = s.match(regex);
-    var y;
-    if (x == null) {
-        y = 10;
-    }
-    else {
-        y = parseInt(x[0]) + n;
-    }
-    el.innerHTML = "<br>Hints: " + y;
-}
-</script>
 </head>
 <body>
 NY Times Spelling Bee Puzzle<span class=help><a target=_blank href='http://logicalpoetry.com/nytbee_web/help.html#commands'>Help</a><br>$show_date
