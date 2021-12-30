@@ -3,6 +3,14 @@ body {
     font-size: 18pt;
     font-family: Helvetica;
 }
+td, th {
+    font-size: 18pt;
+    vertical-align: top;
+}
+.red {
+    color: red;
+    font-weight: bold;
+}
 a {
     color: blue;
     text-decoration: none;
@@ -28,6 +36,8 @@ pre {
     font-family: Courier;
     font-size: 16pt;
 }
-.black {
+.hive {
     color: black;
+    font-family: Courier;
+    font-size: 28pt;
 }

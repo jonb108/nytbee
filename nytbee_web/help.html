@@ -30,65 +30,53 @@ that are obscure, hyphenated, or proper nouns.
 <a name=commands></a>
 <h2>Words and Commands</h2>
 <p>
-In the text field you enter words that satisfy the rules of the puzzle.<br>
+In the text field you enter words that satisfy the rules of the puzzle.
 You can enter more than one word at a time.
 <p>
 Pressing Return will clear any messages and permute the 6 outer letters.
 <p>
 There are also several commands you can enter in the text field:
-
-<pre>
-<span class=cmd>R</span>    Show the rankings.  It also shows how many
-     points are needed to get to the next rank.
-<span class=cmd>W</span>    Show the found words in the order they were found.
-<span class=cmd>C Y</span>  Clear the puzzle and start over.
-<span class=cmd>G Y</span>  Give up and show the word list.
-</pre>
-
+<p>
+<table cellpadding=5>
+<tr><td><span class=cmd>R</span></td><td>Show the rankings.  It also shows how many points are needed to get to the next rank.</td></tr>
+<tr><td><span class=cmd>W</span></td><td>Show the found words in the order they were found.</td></tr>
+<tr><td><span class=cmd>C&nbsp;Y</span></td><td>Clear the puzzle and start over.</td></tr>
+<tr><td><span class=cmd>G&nbsp;Y</span></td><td>Give up and show the word list.</td></tr>
+</table>
+<p>
+<br>
 Commands that give hints:
-
-<pre>
-<span class=cmd>HT</span>   Show the Hint Table.
-<span class=cmd>TL</span>   Show the Two Letter List.
-
-<span class=cmd>DP</span>   Define the Pangrams.
-<span class=cmd>DB4</span>  Define the words beginning with B of length 4.
-<span class=cmd>DTR</span>  Define the words beginning with TR.
-<span class=cmd>D &lt;word&gt;</span>  Define the word.  No hints tallied.
-<span class=cmd>DA ...</span> The <span class=cmd>D</span> command gives at most 3 definitions.
-       <span class=cmd>DA</span> will give them All.
-
-<span class=cmd>V2P</span>  Reveal the first two letters of the pangrams.
-<span class=cmd>V3M8</span> Reveal the first 3 letters of the words
-     beginning with M of length 8.
-<span class=cmd>V5GL</span> Reveal the first 5 letters of the words
-     beginning with GL.  
-
-     Using <span class=cmd>E</span> instead of <span class=cmd>V</span> in the above commands reveals
-     letters at the front and at the <i>End</i> of the word.
-     Both define and reveal commands skip words that have
-     already been found.  Commands that reveal the entire word
-     are silently ignored as are commands like V2GL. 
-
-<span class=cmd>1</span>  Show a random entry from the Hint Table.
-<span class=cmd>2</span>  Show a random entry from the Two Letter List.
-
-   These will work even if the Table and List are not shown. 
-</pre>
+<p>
+<table cellpadding=5>
+<tr><td><span class=cmd>HT</span></td><td>Show the Hint Table.</td></tr>
+<tr><td><span class=cmd>TL</span></td><td>Show the Two Letter List.<p></td></tr>
+<tr><td><span class=cmd>DP</span></td><td>Define the Pangrams.</td></tr>
+<tr><td><span class=cmd>DB4</span></td><td>Define the words beginning with B of length 4.</td></tr>
+<tr><td><span class=cmd>DTR</span></td><td>Define the words beginning with TR.</td></tr>
+<tr><td colspan=2><span class=cmd>D&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.  No hints tallied.</td></tr>
+<tr><td><span class=cmd>DA ...</span></td><td>The <span class=cmd>D</span> command gives at most 3 definitions. <span class=cmd>DA</span> will give them All.<p></td></tr>
+<tr><td><span class=cmd>V2P</span></td><td>Reveal the first two letters of the pangrams.</td></tr>
+<tr><td><span class=cmd>V3M8</span></td><td>Reveal the first 3 letters of the words beginning with M of length 8.</td></tr>
+<tr><td><span class=cmd>V5GL</span></td><td>Reveal the first 5 letters of the words beginning with GL.  
+<tr><td colspan=2>Using <span class=cmd>E</span> instead of <span class=cmd>V</span> reveals letters at the front and at the <i>End</i> of the word.  Commands that reveal the entire word are silently ignored.</td></tr>
+<tr><td colspan=2>Both define and reveal commands skip words that have already been found.<p></td></tr>
+<tr><td><span class=cmd>1</span></td><td>Show a random entry from the Hint Table.</td></tr>
+<tr><td><span class=cmd>2</span></td><td>Show a random entry from the Two Letter List.
+<tr><td colspan=2>These will work even if the Table and List are not shown.</td></tr>
+</table>
+<p>
+<br>
 Commands to access the large NY Times <a href=#archive>Archive</a> of Spelling Bee puzzles:
-<pre>
-<span class=cmd>NR</span>   New puzzle from a Random date.
-<span class=cmd>N &lt;date&gt;</span>  New puzzle from the given date.
-     You can enter dates in several ways:
-     10-20-19 or 9-23 (current year) or 15 (current month).
-     Dates must be on or after May 29, 2018.
-<span class=cmd>NT</span>   Return to Today's puzzle.
-<span class=cmd>L</span>    List the current puzzles.
-<span class=cmd>NP&lt;num&gt;</span>   Return to puzzle #num in the list.
-
-<span class=cmd>F</span>    Find other dates that use the same seven letters.
-<span class=cmd>S &lt;word&gt;</span>  Find other dates where the word is used.
-</pre>
+<p>
+<table cellpadding=5>
+<tr><td><span class=cmd>NR</span></td><td>New puzzle from a Random date.</td></tr>
+<tr><td><span class=cmd>N &lt;date&gt;</span></td><td>New puzzle from the given date.  You can enter dates in several ways: 10-20-19 or 9-23 (current year) or 15 (current month).  Dates must be on or after May 29, 2018.</td></tr>
+<tr><td><span class=cmd>T</span></td><td>Return to Today's puzzle.</td></tr>
+<tr><td><span class=cmd>L</span></td><td>List the current puzzles.</td></tr>
+<tr><td><span class=cmd>P&lt;num&gt;</span></td><td> Return to puzzle #num in the list.</td></tr>
+<tr><td><span class=cmd>F</span></td><td>Find other dates that use the same seven letters.</td></tr>
+<tr><td><span class=cmd>S&nbsp;&lt;word&gt;</span></td><td>Find other dates where the word is used.</td></tr>
+</table>
 <h2>Hint Strategy</h2>
 Many people who solve the puzzle try to use as few hints
 as possible.
@@ -97,16 +85,18 @@ This is possible but rather difficult.
 There are many ways to get hints and
 each increases your 'hint total'.
 The number of hints are tallied like so:
+<p>
 <ul>
-<pre>
-<span class=cmd>HT</span>       10
-<span class=cmd>TL</span>        5
-<span class=cmd>D,DA</span>      3 for each word
-<span class=cmd>V,E</span>       2 for each word
-<span class=cmd>1</span>         1
-<span class=cmd>2</span>         1
-<span class=cmd>G Y</span>     100
-</pre>
+<table cellpadding=5>
+<tr><th>Command</th><th align=left colspan=2>&nbsp;&nbsp;# hints</th></tr>
+<tr><td><span class=cmd>HT</span></td><td align=right>10</td></tr>
+<tr><td><span class=cmd>TL</span></td><td align=right>5</td></tr>
+<tr><td><span class=cmd>D,DA</span></td><td align=right>3</td><td>for each word</td></tr>
+<tr><td><span class=cmd>V,E</span></td><td align=right>2</td><td>for each word</td></tr>
+<tr><td><span class=cmd>1</span></td><td align=right>1</td></tr>
+<tr><td><span class=cmd>2</span></td><td align=right>1</td></tr>
+<tr><td><span class=cmd>G Y</span></td><td align=right>100</td></tr>
+</table>
 </ul>
 </body>
 </html>

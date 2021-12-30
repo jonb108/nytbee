@@ -33,7 +33,9 @@ in a stateless environment... with hidden fields.
 
 =cut
 
-use CGI;
+use CGI qw/
+    :standard
+/;
 my $q = CGI->new();
 print $q->header();
 my %params = $q->Vars();
@@ -48,7 +50,7 @@ tie %ip_date, 'DB_File', 'ip_date.dbm';
 # and their browser
 my $ua = $ENV{HTTP_USER_AGENT};
 $ua =~ s{\D}{}xmsg;
-my $key = "$ENV{REMOTE_ADDR} $ua";
+my $ip_id = "$ENV{REMOTE_ADDR} $ua";
 
 my $message = "";
 
@@ -84,7 +86,7 @@ my $date;
 my $today = my_today();
 my $new_puzzle = 0;
 
-if (my ($puz_num) = $cmd =~ m{\A n \s* p \s* (\d+) \z}xms) {
+if (my ($puz_num) = $cmd =~ m{\A p \s* (\d+) \z}xms) {
     my @puzzles = my_puzzles();
     if ($puz_num > @puzzles) {
         $message = "Not that many puzzles<p>";
@@ -103,7 +105,7 @@ if ($cmd =~ m{\A n \s* r \z}xms) {
     $new_puzzle = 1;
     $cmd = '';
 }
-elsif ($cmd =~ m{\A n \s* t \z}xms) {
+elsif ($cmd eq 't') {
     $date = $today->as_d8();
     $params{found_words} = '';
     $new_puzzle = 1;
@@ -178,11 +180,11 @@ my @ranks = (
 );
 
 my (@found, $nhints, $ht_chosen, $tl_chosen);
-my $key_date = $key . " $date";
-if (exists $ip_date{$key_date}) {
-    my ($d8, $rnk);
-    ($d8, $nhints, $ht_chosen, $tl_chosen, $rnk, @found)
-        = split ' ', $ip_date{$key_date};
+my $key = "$ip_id $date";
+if (exists $ip_date{$key}) {
+    my ($d8, $ap, $rnk);
+    ($d8, $nhints, $ap, $ht_chosen, $tl_chosen, $rnk, @found)
+        = split ' ', $ip_date{$key};
 }
 else {
     $nhints    = $new_puzzle? 0: $params{nhints} || 0;    # from before
@@ -192,9 +194,9 @@ else {
 }
 
 sub my_puzzles {
-    return map { [ substr($_, -8, 8), (split ' ', $ip_date{$_})[4] ] }
-           grep { index($_, $key) == 0 }
+    return map { [ substr($_, -8, 8), (split ' ', $ip_date{$_})[2, 5] ] }
            sort
+           grep { index($_, $ip_id) == 0 }
            keys %ip_date;
 }
 
@@ -317,6 +319,16 @@ sub reveal {
            ;
 }
 
+sub get_words {
+    my ($s, $l) = @_;
+    return grep {
+               $l? substr($_, 0, 1) eq $s 
+                   && length == $l
+              :    substr($_, 0, 2) eq $s
+           }
+           @ok_words;
+}
+
 # do we have a reveal command?
 my $reveal = "";
 if ($cmd eq 'ht') {
@@ -349,14 +361,7 @@ elsif (my ($ev, $nlets, $term)
             # ignore
         }
         else {
-            for my $w (
-                grep {
-                    ! $is_found{$_}
-                    && substr($_, 0, 1) eq $first
-                    && length == $len
-                }
-                @ok_words
-            ) {
+            for my $w (get_words($first, $len)) {
                 $message .= reveal($w, $nlets, $end);
             }
         }
@@ -368,13 +373,7 @@ elsif (my ($ev, $nlets, $term)
         }
         else {
             $term =~ s{\s}{}xmsg;       # if v2 a b instead of v2ab
-            for my $w (
-                grep {
-                    ! $is_found{$_}
-                    && substr($_, 0, 2) eq $term
-                }
-                @ok_words
-            ) {
+            for my $w (get_words($term)) {
                 $message .= reveal($w, $nlets, $end);
             }
         }
@@ -385,12 +384,11 @@ elsif (my ($ev, $nlets, $term)
     $cmd = '';
 }
 elsif ($cmd eq 'r') {
-    $message = "<table cellpadding=5>\n";
+    my $rows = '';
     for my $r (0 .. 9) {
-        $message .= "<tr>"
-                 .  "<th>$ranks[$r]->{name}</th>"
-                 .  "<td>$ranks[$r]->{value}</td>"
-                 ;
+        my $cols = td($ranks[$r]->{name})
+              .    td('&nbsp;' . $ranks[$r]->{value})
+              ;
         if ($rank == $r) {
             my $more = '';
             if ($rank != 9) {
@@ -399,12 +397,11 @@ elsif ($cmd eq 'r') {
                       . ' more'
                       ;
             }
-            $message .= "<td>*$more</td>";
+            $cols .= td("*$more");
         }
-        $message .= "</tr>\n";
+        $rows .= Tr($cols);
     }
-    $message .= "</table>\n";
-    $message = "<ul>$message</ul><p>";
+    $message = ul(table({ cellpadding => 2}, $rows)) . "<p>";
     $cmd = '';
 }
 elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d|[a-z][a-z]) \z}xms
@@ -432,14 +429,7 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d|[a-z][a-z]) \z}xms
         my $let = $1;
         my $len = $2;
         $message = '';
-        for my $w (
-            grep {
-                ! $is_found{$_}
-                && length == $len
-                && substr($_, 0, 1) eq $let
-            }
-            @ok_words
-        ) {
+        for my $w (get_words($let, $len)) {
             $message .= "<ul>"
                      .  define($w, $Dcmd, 0)
                      .  "</ul>"
@@ -456,13 +446,7 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d|[a-z][a-z]) \z}xms
     elsif ($term =~ m{([a-z][a-z])}xms) {
         my $lets = $1;
         $message = '';
-        for my $w (
-            grep {
-                ! $is_found{$_}
-                && substr($_, 0, 2) eq $lets
-            }
-            @ok_words
-        ) {
+        for my $w (get_words($lets)) {
             $message .= "<ul>"
                      .  define($w, $Dcmd, 0)
                      .  "</ul>"
@@ -511,15 +495,19 @@ elsif ($cmd =~ m{\A c \s+ y \z}xms) {
 elsif ($cmd eq 'l') {
     my @puzzles = my_puzzles();
     my $n = 1;
-    my $space = '&nbsp;' x 3;
     for my $p (@puzzles) {
-        $message .= $n++ . ".$space"
-                 . dash_date($p->[0]) . $space
-                 . $ranks[$p->[1]]->{name}
-                 . '<br>'
-                 ;
+        my $cur = $p->[0] eq $date? '*': '';
+        my $pg  = $p->[1]? '&nbsp;&nbsp;p': '';
+        $message .= Tr(
+                        td($n) . td($cur)
+                      . td(dash_date($p->[0])) 
+                      . td({ -style => 'text-align: left'},
+                           $ranks[$p->[2]]->{name})
+                      . td($pg)
+                    );
+        ++$n;
     }
-    $message =~ s{br>\z}{p>}xms;
+    $message = table({ cellpadding => 2}, $message) . "<p>";
     $cmd = '';
 }
 elsif ($cmd eq 'f') {
@@ -588,6 +576,8 @@ if ($cmd !~ m{\A [12] \z}xms) {
                  }
                  split ' ', $cmd;
 }
+my $not_okay_words;
+my %is_new_word;
 sub check_word {
     my ($w) = @_;
     if (length $w < 4) {
@@ -604,13 +594,8 @@ sub check_word {
     if (! exists $is_ok_word{$w}) {
         return "not in word list";
     }
-    if ($is_found{$w}) {
-        return "already found";
-    }
     return '';
 }
-my $not_okay_words;
-my %is_new_word;
 for my $w (@new_words) {
     if (my $mess = check_word($w)) {
         $not_okay_words .= "<span class=not_okay>" 
@@ -618,8 +603,12 @@ for my $w (@new_words) {
                         .  "</span>: $mess<br>";
     }
     else {
-        push @found, $w;
-        $is_found{$w} = 1;
+        if (! $is_found{$w}) {
+            push @found, $w;
+            $is_found{$w} = 1;
+        }
+        # words that were found before will
+        # be highlighted in the list.  no error.
         $is_new_word{$w} = 1;
     }
 }
@@ -808,9 +797,18 @@ if ($nhints) {
     $disp_nhints .= "<br>Hints: $nhints";
 }
 
+my $all_pangrams = 1;
+PAN:
+for my $p (@pangrams) {
+    if (! $is_found{$p}) {
+        $all_pangrams = 0;
+        last PAN;
+    }
+}
+
 # save IP address and state of the solve
-$ip_date{$key_date} = $today->as_d8()
-                    . " $nhints $ht_chosen $tl_chosen $rank @found";
+$ip_date{$key} = $today->as_d8()
+               . " $nhints $all_pangrams $ht_chosen $tl_chosen $rank @found";
 
 # now to display everything
 
