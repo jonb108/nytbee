@@ -4,9 +4,6 @@ use warnings;
 
 =comment
 
-L, NP\d+
-CP Y        clear all old puzzles (and revert to today)
-
 with timestamp? and purge ones more than a month old
 another command to bring up the games your IP has saved? - L
 and one to open it - NP\d+
@@ -46,13 +43,18 @@ tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
 my %ip_date;
 tie %ip_date, 'DB_File', 'ip_date.dbm';
 
+my $comm_dir = 'community_puzzles';
+my ($seven, $center, @pangrams);
+my @seven;
+my @ok_words;
+
 # try to concoct a unique identifier for the person
 # and their browser
 my $ua = $ENV{HTTP_USER_AGENT};
 $ua =~ s{\D}{}xmsg;
 my $ip_id = "$ENV{REMOTE_ADDR} $ua";
 
-my $message = "";
+my $message = '';
 
 use Date::Simple qw/
     today
@@ -70,6 +72,9 @@ sub my_today {
 
 sub dash_date {
     my ($d8) = @_;
+    if ($d8 =~ m{\A CP}xms) {
+        return $d8;
+    }
     my ($y, $m, $d) = $d8 =~ m{\A ..(..)(..)(..) \z}xms;
     return "$m-$d-$y";
 }
@@ -79,6 +84,9 @@ sub dash_date {
 # today
 #
 my $cmd = lc $params{new_words};
+    # $cmd is all in lower case
+    # even though it looks like we are typing upper case...
+    #
 $cmd =~ s{\A \s* | \s* \z}{}xmsg;
 
 my $first = date('5/29/18');
@@ -86,14 +94,89 @@ my $date;
 my $today = my_today();
 my $new_puzzle = 0;
 
+# Remove a set of current puzzles.
+if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
+    $nums =~ s{\s*-\s*}{-}xms;
+    my @terms = split /[,\s]+/, $nums;
+    my @nums;
+    for my $t (@terms) {
+        if ($t =~ m{\A \d+ \z}xms) {
+            push @nums, $t;
+        }
+        elsif (my ($start, $end) = $t =~ m{(\d+)-(\d+)}xms) {
+            if ($start > $end) {
+                $message = "Illegal range: $start-$end";
+                $cmd = '';
+            }
+            else {
+                push @nums, $start .. $end;
+            }
+        }
+        else {
+            $message = "Illegal puzzle numbers: $nums";
+            $cmd = '';
+        }
+    }
+    if ($cmd) {
+        my @puzzles = my_puzzles();
+        my $npuzzles = @puzzles;
+        for my $n (@nums) {
+            if ($n > $npuzzles) {
+                $message = "$n: There are only $npuzzles current puzzles";
+                $cmd = '';
+            }
+        }
+    }
+    if ($cmd) {
+        # it's weird - our puzzles are not in an array
+        # we need to get them each time...
+        # perhaps we can do it at the top and use it...???
+        #
+        # @nums are valid puzzle numbers (base 1)
+        my @puzzles = my_puzzles();
+        for my $n (@nums) {
+            # the key is complicated!
+            my $key = $ip_id . ' ' . $puzzles[$n-1][0];
+            delete $ip_date{$key};
+        }
+        @puzzles = my_puzzles();
+        if (! @puzzles) {
+            $cmd = 't';
+        }
+        else {
+            PUZ:
+            for my $p (@puzzles) {
+                if ($p->[0] eq $params{date}) {
+                    # we haven't deleted the current puzzle
+                    # so leave it
+                    $cmd = '';
+                    last PUZ;
+                }
+            }
+            if ($cmd) {
+                # we deleted the current puzzle
+                # so move to the last one
+                # we know we have at least one.
+                $cmd = 'p' . scalar(@puzzles);
+            }
+        }
+    }
+}
 if (my ($puz_num) = $cmd =~ m{\A p \s* (\d+) \z}xms) {
     my @puzzles = my_puzzles();
     if ($puz_num > @puzzles) {
-        $message = "Not that many puzzles<p>";
+        $message = "Not that many puzzles";
         $cmd = '';
     }
+    my $puz_id = $puzzles[$puz_num-1][0]; 
+    if ($puz_id =~ m{\A \d}xms) {
+        $cmd = "n$puz_id";
+    }
     else {
-        $cmd = "n$puzzles[$puz_num-1][0]";
+        # CP\d+
+        # but we need lower case cp
+        # since we have 
+        $cmd = lc $puz_id;
     }
 }
 if ($cmd =~ m{\A n \s* r \z}xms) {
@@ -104,6 +187,25 @@ if ($cmd =~ m{\A n \s* r \z}xms) {
     $params{found_words} = '';
     $new_puzzle = 1;
     $cmd = '';
+}
+elsif (my ($cp_num) = $cmd =~ m{\A c \s* p \s* (\d+) \z}xms) {
+    my $fname = "$comm_dir/$cp_num.txt";
+    if (! -f $fname) {
+        $message = "$cp_num: No such Community Puzzle";
+        $cmd = '';
+    }
+    else {
+        $date = "CP$cp_num";
+        my $href = do $fname;
+        $seven = $href->{seven};
+        @seven = split //, $seven;
+        $center = $href->{center};
+        @pangrams = split ' ', $href->{pangrams};
+        @ok_words = split ' ', $href->{words};
+        # the rest???
+        $new_puzzle = 1;
+        $cmd = '';
+    }
 }
 elsif ($cmd eq 't') {
     $date = $today->as_d8();
@@ -134,16 +236,31 @@ if (! $date) {
     $date = my_today()->as_d8();
     $new_puzzle = 1;
 }
-my $show_date = date($date)->format("%B %e, %Y");
+my $show_date;
 
-# we have a valid date.
-# get the puzzle data
-my $puzzle = $puzzle{$date};
+# we have a valid date. either d8 format or CP#
+# if d8 get the puzzle data
+if ($date =~ m{\A\d}xms) {
+    $show_date = date($date)->format("%B %e, %Y");
+    my $puzzle = $puzzle{$date};
 
-my ($s, $t) = split /[|]/, $puzzle;
-my ($seven, $center, @pangrams) = split ' ', $s;
-my @seven = split //, $seven;
-my (@ok_words) = split ' ', $t;
+    my ($s, $t) = split /[|]/, $puzzle;
+    ($seven, $center, @pangrams) = split ' ', $s;
+    @seven = split //, $seven;
+    @ok_words = split ' ', $t;
+}
+else {
+    # $date is CP\d+
+    my ($n) = $date =~ m{(\d+)}xms;
+    my $fname = "$comm_dir/$n.txt";
+    my $href = do $fname;
+    $seven = $href->{seven};
+    @seven = split //, $seven;
+    $center = $href->{center};
+    @pangrams = split ' ', $href->{pangrams};
+    @ok_words = split ' ', $href->{words};
+    $show_date = $date;
+}
 my $nwords = @ok_words;
 my $npangrams = @pangrams;
 
@@ -194,10 +311,16 @@ else {
 }
 
 sub my_puzzles {
-    return map { [ substr($_, -8, 8), (split ' ', $ip_date{$_})[2, 5] ] }
-           sort
-           grep { index($_, $ip_id) == 0 }
-           keys %ip_date;
+    return
+    map {
+        [
+            (split ' ', $_)[2],
+            (split ' ', $ip_date{$_})[2, 5]
+        ]
+    }
+    sort
+    grep { index($_, $ip_id) == 0 }
+    keys %ip_date;
 }
 
 my %is_found = map { $_ => 1 } @found;
@@ -322,9 +445,11 @@ sub reveal {
 sub get_words {
     my ($s, $l) = @_;
     return grep {
-               $l? substr($_, 0, 1) eq $s 
+               ! $is_found{$_}
+               &&
+               ($l? substr($_, 0, 1) eq $s 
                    && length == $l
-              :    substr($_, 0, 2) eq $s
+              :    substr($_, 0, 2) eq $s)
            }
            @ok_words;
 }
@@ -379,7 +504,7 @@ elsif (my ($ev, $nlets, $term)
         }
     }
     if ($message) {
-        $message = "\U$cmd\E:<ul>$message</ul><p>\n";
+        $message = "\U$cmd\E:<ul>$message</ul>";
     }
     $cmd = '';
 }
@@ -396,12 +521,17 @@ elsif ($cmd eq 'r') {
                       . ($ranks[$r+1]->{value} - $score)
                       . ' more'
                       ;
+                if ($rank == 8) {
+                    my $m = @ok_words - @found;
+                    my $pl = $m == 1? '': 's';
+                    $more .= ", $m more word$pl";
+                }
             }
             $cols .= td("*$more");
         }
         $rows .= Tr($cols);
     }
-    $message = ul(table({ cellpadding => 2}, $rows)) . "<p>";
+    $message = ul(table({ cellpadding => 2}, $rows));
     $cmd = '';
 }
 elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d|[a-z][a-z]) \z}xms
@@ -421,7 +551,7 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d|[a-z][a-z]) \z}xms
         $message =~ s{--\z}{}xms;
         $message =~ s{--}{$line<br>}xmsg;
         if ($message) {
-            $message = "Pangrams:$message<p>";
+            $message = "Pangrams:$message";
         }
         $cmd = '';
     }
@@ -436,10 +566,10 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d|[a-z][a-z]) \z}xms
                      .  "--";
                      ;
         }
-        $message =~ s{--\z}{<p>}xms;
+        $message =~ s{--\z}{}xms;
         $message =~ s{--}{$line<br>}xmsg;
         if ($message) {
-            $message = "\U$term\E:<br>$message<p>";
+            $message = "\U$term\E:<br>$message";
         }
         $cmd = '';
     }
@@ -453,10 +583,10 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d|[a-z][a-z]) \z}xms
                      .  "--";
                      ;
         }
-        $message =~ s{--\z}{<p>}xms;
+        $message =~ s{--\z}{}xms;
         $message =~ s{--}{$line<br>}xmsg;
         if ($message) {
-            $message = "\U$term\E:<br>$message<p>";
+            $message = "\U$term\E:<br>$message";
         }
         $cmd = '';
     }
@@ -479,9 +609,10 @@ elsif ($cmd =~ m{\A g \s+ y \z}xms) {
                 :                    $_
              }
              map { ucfirst }
+             grep { !$is_found{$_} }
              @ok_words;
-    $nhints += 100;
-    $message = "<p class=mess>@words<p>";
+    $nhints += @words * 5;
+    $message = "<p class=mess>@words";
     $cmd = '';
 }
 elsif ($cmd =~ m{\A c \s+ y \z}xms) {
@@ -500,14 +631,14 @@ elsif ($cmd eq 'l') {
         my $pg  = $p->[1]? '&nbsp;&nbsp;p': '';
         $message .= Tr(
                         td($n) . td($cur)
-                      . td(dash_date($p->[0])) 
+                      . td({ style => 'text-align: left' }, dash_date($p->[0])) 
                       . td({ -style => 'text-align: left'},
                            $ranks[$p->[2]]->{name})
                       . td($pg)
                     );
         ++$n;
     }
-    $message = table({ cellpadding => 2}, $message) . "<p>";
+    $message = table({ cellpadding => 2}, $message);
     $cmd = '';
 }
 elsif ($cmd eq 'f') {
@@ -530,7 +661,6 @@ elsif ($cmd eq 'f') {
               sort
               @dates
               ;
-    $message = "$message<p>";
     $cmd = '';
 }
 elsif ($cmd =~ m{\A s \s+ ([/a-z]+) \s* \z}xms) {
@@ -557,7 +687,7 @@ elsif ($cmd =~ m{\A s \s+ ([/a-z]+) \s* \z}xms) {
                @dates
                ;
     if ($message) {
-        $message = "\U$word\E:<br>$message<p>";
+        $message = "\U$word\E:<br>$message";
     }
     $cmd = '';
 }
@@ -621,7 +751,6 @@ if ($not_okay_words) {
 <ul>
 $not_okay_words
 </ul>
-<p>
 EOH
 }
 
@@ -674,7 +803,7 @@ if ($cmd eq '1') {
     if (@entries) {
         # not Queen Bee yet
         ++$nhints;
-        $message = $entries[ rand @entries ] . '<p>';
+        $message = $entries[ rand @entries ];
     }
 }
 elsif ($cmd eq '2') {
@@ -688,7 +817,7 @@ elsif ($cmd eq '2') {
     if (@entries) {
         # not Queen Bee yet
         ++$nhints;
-        $message = $entries[ rand @entries ] . '<p>';
+        $message = $entries[ rand @entries ];
     }
 }
 
@@ -728,7 +857,13 @@ if ($ht_chosen) {
         $hint_table .= "<tr><th style='text-align: center'>\U$c\E</th>";
         my $sum = 0;
         for my $l (4 .. $max_len) {
-            $hint_table .= "<td>" .  ($sums{$c}{$l} || '-') . "</td>";
+            $hint_table .= "<td>"
+                        .  ($sums{$c}{$l}?
+                               "<span class=pointer"
+                             . qq! onclick="define_ht('$c', $l);">!
+                             . "$sums{$c}{$l}</span>"
+                          : '&nbsp;-&nbsp;')
+                        . "</td>";
             $sum += $sums{$c}{$l};
         }
         $hint_table .= "<th>$sum</th></tr>\n";
@@ -747,6 +882,7 @@ if ($ht_chosen) {
 }
 
 # two letter tallies
+my $two_let_top_margin = $ht_chosen? 22: 0;
 my $two_lets = '';
 if ($tl_chosen) {
     my @two = grep {
@@ -759,7 +895,7 @@ if ($tl_chosen) {
         if ($two_lets{$two[$i]} == 0) {
             next TWO;
         }
-        $two_lets .= "\U$two[$i]-$two_lets{$two[$i]}";
+        $two_lets .= qq!<span class=pointer onclick="define_tl('$two[$i]');">\U$two[$i]-$two_lets{$two[$i]}</span>!;
         if ($i < $#two
             && substr($two[$i], 0, 1) ne substr($two[$i+1], 0, 1)
         ) {
@@ -810,14 +946,19 @@ for my $p (@pangrams) {
 $ip_date{$key} = $today->as_d8()
                . " $nhints $all_pangrams $ht_chosen $tl_chosen $rank @found";
 
+$message .= '<p>' if $message;
+
 # now to display everything
 
 print <<"EOH";
 <html>
 <head>
 <style>
+.pointer {
+    cursor: pointer;
+}
 .two_lets {
-    margin-top: 22mm;
+    margin-top: ${two_let_top_margin}mm;
     margin-left: 15mm;
 }
 .help {
@@ -831,7 +972,15 @@ a {
     text-decoration: none;
     color: blue;
 }
+.pointer {
+    cursor: pointer;
+    color: blue;
+}
 .float-child {
+    float: left;
+}
+.float-child2 {
+    margin-left: .4in;
     float: left;
 }
 .new_word {
@@ -846,7 +995,7 @@ li {
 }
 td, th {
     text-align: right;
-    font-size: 17pt;
+    font-size: 18pt;
     font-family: Arial;
 }
 .not_okay {
@@ -908,13 +1057,33 @@ $rank_colors_fonts
     width: 175px;
 }
 </style>
+<script>
+function define_tl(two_let) {
+    document.getElementById('new_words').value = 'D' + two_let;
+    document.getElementById('main').submit();
+}
+function define_ht(c, n) {
+    document.getElementById('new_words').value = 'D' + c + n;
+    document.getElementById('main').submit();
+}
+</script>
 </head>
 <body>
-NY Times Spelling Bee Puzzle<span class=help><a target=_blank href='http://logicalpoetry.com/nytbee_web/help.html#commands'>Help</a><br>$show_date
-<p>
+<div class=float-container>
+    <div class=float-child>
+        <a target=_blank href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date
+    </div>
+    <div class=float-child2>
+         <img width=50 src=/pics/bee-logo.jpg>
+    </div>
+    <div class=float-child>
+        <span class=help><a target=_blank href='http://logicalpoetry.com/nytbee_web/help.html#commands'>Help</a>
+    </div>
+</div>
+<br><br>
 <form id=main name=form method=POST>
 <input type=hidden name=date value='$date'>
-<input type=hidden name=puzzle value='$puzzle'>
+<!-- not needed?? <input type=hidden name=puzzle value='dollar puzzle'> -->
 <input type=hidden name=found_words value='@found'>
 <input type=hidden name=nhints value=$nhints>
 <input type=hidden name=ht_chosen value=$ht_chosen>
@@ -925,7 +1094,7 @@ NY Times Spelling Bee Puzzle<span class=help><a target=_blank href='http://logic
      $six[4]   $six[5]
 </pre>
 $message
-<input class=new_words type=text size=40 name=new_words><br>
+<input class=new_words type=text size=40 id=new_words name=new_words><br>
 </form>
 <div class=found_so_far>
 $found_so_far
@@ -934,7 +1103,6 @@ $found_so_far
 Score: $score<span class='rank_name rank$rank'>$rank_name</span>
 $image
 $disp_nhints
-<p>
 <div class=float-container>
     <div class=float-child>
         <div id=hint_table class=hint_table>

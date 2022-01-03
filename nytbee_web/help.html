@@ -1,16 +1,18 @@
 <DOCTYPE html>
 <html lang=en>
 <head>
-<title>The Spelling Bee Puzzle of the New York Times</title>
+<title>The Spelling Bee Puzzle of New York Times</title>
 <link rel='stylesheet' type='text/css' href='style.css'/>
 </head>
 <body>
-<h1>The Spelling Bee Puzzle of the New York Times</h1>
+<h1><img height=70 src='../pics/bee-logo.jpg'><br>The Spelling Bee Puzzle<br>of<br>
+<img height=70 src='../pics/NewYorkTimes.png'>
+</h1>
 <h2>How to Play</h2>
 <pre class=hive>
-     D   G
-   H   <span class=red>L</span>   T
-     E   N
+     T   F
+   E   <span class=red>N</span>   Y
+     L   U
 </pre>
 <ul>
 <li>Create words using the 7 letters.
@@ -41,7 +43,6 @@ There are also several commands you can enter in the text field:
 <tr><td><span class=cmd>R</span></td><td>Show the rankings.  It also shows how many points are needed to get to the next rank.</td></tr>
 <tr><td><span class=cmd>W</span></td><td>Show the found words in the order they were found.</td></tr>
 <tr><td><span class=cmd>C&nbsp;Y</span></td><td>Clear the puzzle and start over.</td></tr>
-<tr><td><span class=cmd>G&nbsp;Y</span></td><td>Give up and show the word list.</td></tr>
 </table>
 <p>
 <br>
@@ -62,19 +63,22 @@ Commands that give hints:
 <tr><td colspan=2>Both define and reveal commands skip words that have already been found.<p></td></tr>
 <tr><td><span class=cmd>1</span></td><td>Show a random entry from the Hint Table.</td></tr>
 <tr><td><span class=cmd>2</span></td><td>Show a random entry from the Two Letter List.
-<tr><td colspan=2>These will work even if the Table and List are not shown.</td></tr>
+<tr><td colspan=2>These will work even if the Table and List are not shown.<p></td></tr>
+<tr><td><span class=cmd>G&nbsp;Y</span></td><td>Give up and show the word list.</td></tr>
 </table>
 <p>
 <br>
-Commands to access the large NY Times <a href=#archive>Archive</a> of Spelling Bee puzzles:
+Commands to access the large NY Times <a href=#archive>Archive</a> of Spelling Bee puzzles <i>and</i> the puzzles <a href=#make_puzzle>created by the Hivemind Community</a>::
 <p>
 <table cellpadding=5>
 <tr><td><span class=cmd>NR</span></td><td>New puzzle from a Random date.</td></tr>
 <tr><td><span class=cmd>N &lt;date&gt;</span></td><td>New puzzle from the given date.  You can enter dates in several ways: 10-20-19 or 9-23 (current year) or 15 (current month).  Dates must be on or after May 29, 2018.</td></tr>
 <tr><td><span class=cmd>T</span></td><td>Return to Today's puzzle.</td></tr>
+<tr><td><span class=cmd>CP&lt;num&gt;</span></td><td>New Community Puzzle #num.</td></tr>
 <tr><td><span class=cmd>L</span></td><td>List the current puzzles.</td></tr>
-<tr><td><span class=cmd>P&lt;num&gt;</span></td><td> Return to puzzle #num in the list.</td></tr>
-<tr><td><span class=cmd>F</span></td><td>Find other dates that use the same seven letters.</td></tr>
+<tr><td><span class=cmd>P&lt;num&gt;</span></td><td>Return to puzzle #num in the list.</td></tr>
+<tr><td><span class=cmd>X&lt;nums&gt;</span></td><td>Remove the numbered puzzles from the list. You can give a range.  For example: X2&nbsp;4-6&nbsp;9&nbsp;&nbsp;&nbsp;This clears the words you found so if you choose the date again you will start afresh.</td></tr>
+<tr><td><span class=cmd>F</span></td><td>Find other dates that use the <a href=#same7>same seven letters</a>.</td></tr>
 <tr><td><span class=cmd>S&nbsp;&lt;word&gt;</span></td><td>Find other dates where the word is used.</td></tr>
 </table>
 <h2>Hint Strategy</h2>
@@ -87,7 +91,7 @@ each increases your 'hint total'.
 The number of hints are tallied like so:
 <p>
 <ul>
-<table cellpadding=5>
+<table cellpadding=3>
 <tr><th>Command</th><th align=left colspan=2>&nbsp;&nbsp;# hints</th></tr>
 <tr><td><span class=cmd>HT</span></td><td align=right>10</td></tr>
 <tr><td><span class=cmd>TL</span></td><td align=right>5</td></tr>
@@ -98,5 +102,290 @@ The number of hints are tallied like so:
 <tr><td><span class=cmd>G Y</span></td><td align=right>100</td></tr>
 </table>
 </ul>
+<h2>Without a Subscription?</h2>
+I <b>do</b> have a subscription to the Times.  It is a reliable,
+trusted, and curated source of information.
+Subscriptions help the many journalists stay focused on their story.
+<p>
+Is it illegal or unethical to play the NYT Spelling Bee without a subscription?
+When the puzzle page is loaded into the web browser
+the list of allowed words
+<i>is</i> visible &ndash; if you know where to look.
+This is what you will see in the page source:
+<pre>
+window.gameData = {
+    "today": {
+    "expiration": 1638345600,
+    "displayWeekday": "Tuesday",
+    "displayDate": "November 30, 2021",
+    "printDate": "2021-11-30",
+    "centerLetter": "h",
+    "outerLetters": ["d", "g", "i", "n", "o", "t"],
+    "validLetters": ["h", "d", "g", "i", "n", "o", "t"],
+    "pangrams": ["goodnight", "hotdogging"],
+    "answers": ["goodnight", "hotdogging", "dhoti", "doth",
+        "godhood", "goth", "hiding", "high", "hind",
+        "hinging", "hint", "hinting", "hitting", "hogging",
+        "honing", "hood", "hooding", "hoodoo", "hoot",
+        "hooting", "hotdog", "nigh", "night", "ninth",
+        "nothing", "thigh", "thin", "thing", "thinning",
+        "thong", "tight", "tithing", "tonight", "tooth"],
+...
+</pre>
+So the words in the puzzle <i>are</i> available publicly each day.
+The command line mechanism is simply an alternate way
+of using these words.
+<a name=same7></a>
+<h2>Same 7 Letters</h2>
+In the large NYT Spelling Bee <a href=#archive>archive</a> there are many puzzles that share the
+same set of 7 letters and hence the same pangrams.   
+For example, here are 3 that
+have occurred on 5 different dates:
+<ul>
+<table cellpadding=5 border=0>
+<tr><td class='green bold'>ADFLMPU</td><td>06-26-18</td><td>10-28-19</td><td>03-07-20</td><td>06-06-20</td><td>07-02-20</td></tr>
+<tr><td class='green bold'>BILMOTY</td><td>07-20-18</td><td>10-27-19</td><td>06-04-20</td><td>12-01-20</td><td>07-09-21</td></tr>
+<tr><td class='green bold'>GNORTUW</td><td>08-17-18</td><td>05-02-19</td><td>12-16-19</td><td>03-20-20</td><td>02-04-21</td></tr>
+</table>
+<p>
+<table cellpadding=5>
+<tr>
+<th># 7 letter sets</th>
+<th># of dates</th>
+</tr>
+<tr><td>3</td><td>5</td></tr>
+<tr><td>35</td><td>4</td></tr>
+<tr><td>97</td><td>3</td></tr>
+<tr><td>184</td><td>2</td></tr>
+</table>
+</ul>
+<p>
+The <span class=cmd>F</span> command finds other dates that use the
+same 7 letters as in the current puzzle.
+These other puzzles usually (but not always)
+have a different center letter.
+<a name=archive></a>
+<h2>Archive</h2>
+The archive was gathered mostly from
+<a href=https://nytbee.com>nytbee.com</a>
+and is added to daily at 3:00 a.m. EST by extracting the words
+from the New York Times site.  There are daily puzzles going all the way
+back to May 29, 2018.
+<p>
+Which puzzles from the large archive to play?
+You can get one at random with the <span class=cmd>NR</span> command or you could
+choose one with various attributes like ones with the most points or the
+fewest 4 letter words.
+Start the puzzle with the <span class=cmd>N</span> command like so: '<span class=cmd>N</span>12-16-21'.
+<p>
+<table>
+<tr><th align=center colspan=2>Most Pangrams</th></tr>
+<tr><td class=dt>12-16-21</td><td>8</td></tr>
+<tr><td class=dt>04-06-19</td><td>7</td></tr>
+<tr><td class=dt>01-22-21</td><td>7</td></tr>
+<tr><td class=dt>05-05-21</td><td>6</td></tr>
+<tr><td class=dt>05-24-21</td><td>6</td></tr>
+<tr><td class=dt>06-08-19</td><td>5</td></tr>
+<tr><td class=dt>12-19-19</td><td>5</td></tr>
+<tr><td class=dt>02-11-21</td><td>5</td></tr>
+</table>
+
+<p>
+
+<table border=0>
+<tr><td>
+    <table>
+    <tr><th align=center colspan=2 width=230>Fewest Points</th></tr>
+    <tr><td class=dt>05-17-19</td><td>50</td></tr>
+    <tr><td class=dt>05-24-20</td><td>52</td></tr>
+    <tr><td class=dt>12-14-19</td><td>55</td></tr>
+    <tr><td class=dt>06-24-20</td><td>57</td></tr>
+    <tr><td class=dt>06-26-19</td><td>59</td></tr>
+    <tr><td class=dt>08-06-21</td><td>59</td></tr>
+    <tr><td class=dt>05-06-20</td><td>60</td></tr>
+    <tr><td class=dt>06-09-19</td><td>61</td></tr>
+    </table>
+
+</td>
+<td>&nbsp;&nbsp;</td>
+<td>
+    <table border=0>
+    <tr><th align=center colspan=2 width=230>Most Points</th></tr>
+    <tr><td class=dt>01-22-21</td><td>537</td></tr>
+    <tr><td class=dt>04-06-19</td><td>444</td></tr>
+    <tr><td class=dt>08-28-21</td><td>431</td></tr>
+    <tr><td class=dt>07-19-21</td><td>424</td></tr>
+    <tr><td class=dt>05-24-21</td><td>406</td></tr>
+    <tr><td class=dt>03-23-19</td><td>404</td></tr>
+    <tr><td class=dt>02-11-21</td><td>392</td></tr>
+    <tr><td class=dt>05-05-21</td><td>390</td></tr>
+    </table>
+</td></tr>
+
+<tr><td align=center colspan=3>&nbsp;</td></tr>
+
+<tr><td>
+    <table>
+    <tr><th align=center colspan=2 width=230>Fewest Words</th><tr>
+    <tr><td class=dt>10-03-21</td><td>19</td></tr>
+    <tr><td class=dt>10-16-21</td><td>19</td></tr>
+    <tr><td class=dt>09-26-21</td><td>20</td></tr>
+    <tr><td class=dt>12-21-18</td><td>21</td></tr>
+    <tr><td class=dt>12-14-19</td><td>21</td></tr>
+    <tr><td class=dt>12-20-20</td><td>21</td></tr>
+    <tr><td class=dt>12-21-20</td><td>21</td></tr>
+    <tr><td class=dt>12-27-20</td><td>21</td></tr>
+    </table>
+</td>
+<td>&nbsp;&nbsp;</td>
+<td>
+    <table>
+    <tr><th align=center colspan=2 width=230>Most Words</th><tr>
+    <tr><td class=dt>06-08-19</td><td>81</td></tr>
+    <tr><td class=dt>07-28-19</td><td>76</td></tr>
+    <tr><td class=dt>01-22-21</td><td>75</td></tr>
+    <tr><td class=dt>06-10-21</td><td>75</td></tr>
+    <tr><td class=dt>12-15-19</td><td>74</td></tr>
+    <tr><td class=dt>09-23-20</td><td>74</td></tr>
+    <tr><td class=dt>05-24-21</td><td>74</td></tr>
+    <tr><td class=dt>10-15-18</td><td>73</td></tr>
+    </table>
+</td></tr>
+
+<tr><td align=center colspan=3>&nbsp;</td></tr>
+
+<tr><td>
+    <table>
+    <tr><th colspan=2 width=230>Fewest 4 Letter<br>Words</th></tr>
+    <tr><td class=dt>10-18-21</td><td>0</td></tr>
+    <tr><td class=dt>03-12-20</td><td>2</td></tr>
+    <tr><td class=dt>09-14-18</td><td>3</td></tr>
+    <tr><td class=dt>11-16-18</td><td>3</td></tr>
+    <tr><td class=dt>04-15-21</td><td>3</td></tr>
+    <tr><td class=dt>05-01-21</td><td>3</td></tr>
+    <tr><td class=dt>12-27-18</td><td>4</td></tr>
+    <tr><td class=dt>12-27-20</td><td>4</td></tr>
+    </table>
+</td>
+<td>&nbsp;&nbsp;</td>
+<td>
+    <table>
+    <tr><th colspan=2 width=230>Most 4 Letter<br>Words</th></tr>
+    <tr><td class=dt>11-14-18</td><td>36</td></tr>
+    <tr><td class=dt>06-08-19</td><td>36</td></tr>
+    <tr><td class=dt>08-12-20</td><td>36</td></tr>
+    <tr><td class=dt>11-20-20</td><td>36</td></tr>
+    <tr><td class=dt>12-26-18</td><td>34</td></tr>
+    <tr><td class=dt>01-09-21</td><td>34</td></tr>
+    <tr><td class=dt>12-05-19</td><td>33</td></tr>
+    <tr><td class=dt>11-25-20</td><td>32</td></tr>
+    </table>
+</td></tr>
+
+<tr><td colspan=3>&nbsp;</td></tr>
+
+<tr><td>
+    <table>
+    <tr><th colspan=2 width=230>Fewest with ED</th></tr>
+    <tr><td class=dt>06-27-2021</td><td>22</td></tr>
+    <tr><td class=dt>10-22-2021</td><td>23</td></tr>
+    <tr><td class=dt>10-05-2020</td><td>25</td></tr>
+    <tr><td class=dt>11-15-2020</td><td>27</td></tr>
+    <tr><td class=dt>09-19-2021</td><td>27</td></tr>
+    </table>
+
+</td>
+<td>&nbsp;&nbsp;</td>
+<td>
+    <table>
+    <tr><th colspan=2 width=230>Most with ED</th></tr>
+    <tr><td class=dt>01-02-2021</td><td>73</td></tr>
+    <tr><td class=dt>09-02-2020</td><td>72</td></tr>
+    <tr><td class=dt>08-28-2021</td><td>72</td></tr>
+    <tr><td class=dt>05-28-2021</td><td>68</td></tr>
+    <tr><td class=dt>06-12-2021</td><td>68</td></tr>
+    </table>
+</td></tr>
+
+<tr><td colspan=3>&nbsp;</td></tr>
+
+<tr><td>
+    <table>
+    <tr><th colspan=2 width=230>Fewest with ING</th></tr>
+    <tr><td class=dt>12-08-2020</td><td>21</td></tr>
+    <tr><td class=dt>12-27-2020</td><td>21</td></tr>
+    <tr><td class=dt>10-27-2020</td><td>23</td></tr>
+    <tr><td class=dt>10-02-2021</td><td>23</td></tr>
+    <tr><td class=dt>09-24-2021</td><td>24</td></tr>
+    </table>
+
+</td>
+<td>&nbsp;&nbsp;</td>
+<td>
+    <table>
+    <tr><th colspan=2 width=230>Most with ING</th></tr>
+    <tr><td class=dt>02-01-2021</td><td>72</td></tr>
+    <tr><td class=dt>07-19-2021</td><td>69</td></tr>
+    <tr><td class=dt>05-09-2021</td><td>68</td></tr>
+    <tr><td class=dt>02-19-2021</td><td>67</td></tr>
+    <tr><td class=dt>06-02-2021</td><td>50</td></tr>
+    </table>
+</td></tr>
+
+<tr><td colspan=3>&nbsp;</td></tr>
+
+<tr><td>
+    <table>
+    <tr><th colspan=2 width=230>Fewest with TION</th></tr>
+    <tr><td class=dt>09-21-2018</td><td>21</td></tr>
+    <tr><td class=dt>06-18-2019</td><td>21</td></tr>
+    <tr><td class=dt>09-21-2020</td><td>26</td></tr>
+    <tr><td class=dt>11-13-2020</td><td>27</td></tr>
+    <tr><td class=dt>08-23-2021</td><td>27</td></tr>
+    </table>
+
+</td>
+<td>&nbsp;&nbsp;</td>
+<td>
+    <table>
+    <tr><th colspan=2 width=230>Most with TION</th></tr>
+    <tr><td class=dt>01-22-2021</td><td>75</td></tr>
+    <tr><td class=dt>10-31-2019</td><td>69</td></tr>
+    <tr><td class=dt>05-05-2021</td><td>66</td></tr>
+    <tr><td class=dt>10-08-2021</td><td>66</td></tr>
+    <tr><td class=dt>12-31-2020</td><td>65</td></tr>
+    </table>
+</td></tr>
+</table>
+<p>
+<table border=0>
+<tr><th colspan=2>Center Letter - Most Words</th></tr>
+<tr><td class=let>A</td><td class=dt>12-15-19</td></tr>
+<tr><td class=let>B</td><td class=dt>09-02-20</td></tr>
+<tr><td class=let>C</td><td class=dt>10-12-18</td></tr>
+<tr><td class=let>D</td><td class=dt>07-23-21</td></tr>
+<tr><td class=let>E</td><td class=dt>01-02-21</td></tr>
+<tr><td class=let>F</td><td class=dt>10-19-21</td></tr>
+<tr><td class=let>G</td><td class=dt>04-19-20</td></tr>
+<tr><td class=let>H</td><td class=dt>12-11-19</td></tr>
+<tr><td class=let>I</td><td class=dt>01-22-20</td></tr>
+<tr><td class=let>J</td><td class=dt>none</td></tr>
+<tr><td class=let>K</td><td class=dt>09-20-20</td></tr>
+<tr><td class=let>L</td><td class=dt>01-09-21</td></tr>
+<tr><td class=let>M</td><td class=dt>03-31-19</td></tr>
+<tr><td class=let>N</td><td class=dt>06-25-19</td></tr>
+<tr><td class=let>O</td><td class=dt>06-08-19</td></tr>
+<tr><td class=let>P</td><td class=dt>02-02-20</td></tr>
+<tr><td class=let>Q</td><td class=dt>none</td></tr>
+<tr><td class=let>R</td><td class=dt>10-14-20</td></tr>
+<tr><td class=let>S</td><td class=dt>none</td></tr>
+<tr><td class=let>T</td><td class=dt>07-28-19</td></tr>
+<tr><td class=let>U</td><td class=dt>08-21-21</td></tr>
+<tr><td class=let>V</td><td class=dt>07-01-21</td></tr>
+<tr><td class=let>W</td><td class=dt>03-25-21</td></tr>
+<tr><td class=let>X</td><td class=dt>none</td></tr>
+<tr><td class=let>Y</td><td class=dt>07-30-21</td></tr>
+<tr><td class=let>Z</td><td class=dt>11-15-20</td></tr>
+</table>
 </body>
 </html>

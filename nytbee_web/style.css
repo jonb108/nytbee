@@ -3,6 +3,10 @@ body {
     font-size: 18pt;
     font-family: Helvetica;
 }
+.title {
+    width: 600px;
+    text-align: center;
+}
 td, th {
     font-size: 18pt;
     vertical-align: top;
@@ -17,6 +21,7 @@ a {
 }
 h1 {
     font-size: 35pt;
+    text-align: center;
 }
 h2 {
     margin-bottom: 5px;
