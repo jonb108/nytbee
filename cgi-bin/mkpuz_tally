@@ -1,0 +1,169 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use CGI;
+my $q = CGI->new();
+print $q->header();
+
+use BeeUtil qw/
+    uniq_chars
+    error
+/;
+
+my $word = $q->param('word');
+
+sub word_score {
+    my ($word, $pangram) = @_;
+    my $l = length $word;
+    return ($l == 4? 1: $l) + ($pangram? 7: 0);
+}
+
+my @lets = uniq_chars($word);
+if (@lets != 7) {
+    error "There are not 7 unique letters in '$word'. :(";
+}
+my $lets = join '', @lets;
+my $regex = qr{[^$lets]}xms;
+my (%tot, %btot);
+my (%score, %bscore);
+my (%four, %bfour);
+my ($npangrams, $bnpangrams) = (0, 0);
+open my $in, '<', 'pwords.txt';
+while (my $word = <$in>) {
+    chomp $word;
+    if ($word !~ $regex) {
+        my @uchars = uniq_chars($word);
+        my $pangram = @uchars == 7;
+        if ($pangram) {
+            ++$npangrams;
+        }
+        for my $c (@uchars) {
+            ++$tot{$c};
+            if (length $word == 4) {
+                ++$four{$c};
+            }
+            $score{$c} += word_score($word, $pangram);
+        }
+    }
+}
+close $in;
+my $pl = $npangrams == 1? '': 's';
+print <<"EOH";
+<html>
+<head>
+<style>
+body {
+    font-family: Arial;
+    margin: .5in;
+    font-size: 18pt;
+}
+td, th {
+    font-family: Arial;
+    font-size: 18pt;
+    text-align: right;
+}
+.let {
+    text-align: center;
+    font-weight: bold;
+    font-size: 24pt;
+}
+.word {
+    font-size: 30pt;
+    color: green;
+}
+.green {
+    color: green;
+}
+a {
+    text-decoration: none;
+    color: blue;
+}
+</style>
+</head>
+<body>
+<h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step 2</h1>
+The pangramic word is: <span class=word>$word</span>
+<p>
+For each of the 7 letters in the word we have done tallies of qualified words.
+A 'qualified' word is one that:
+<ul>
+<li>includes the center letter
+<li>is at least 4 letters long
+<li>uses only the seven letters: <span class=green>@lets</span>
+</ul>
+<p>
+Use the tallies to decide which letter should be the center one.
+Then click on one of the center letters in the table below.
+<p>
+<h2>Qualified words that have been used in the NYT Puzzle between 5/29/18 and 12/31/21:</h2>
+<p>
+$npangrams Pangram$pl
+<table cellpadding=5
+<tr>
+<th valign=bottom>Center<br>Letter</th>
+<th valign=bottom>Words</th>
+<th valign=bottom>4 Letter</th>
+<th valign=bottom>Score</th>
+</tr>
+EOH
+for my $c (sort @lets) {
+    print <<"EOH";
+<tr>
+<td class=let><a href='/cgi-bin/gwords?word=$word&center=$c'>\U$c\E</a></td>
+<td>$tot{$c}</td>
+<td>$four{$c}</td>
+<td>$score{$c}</td>
+</tr>
+EOH
+}
+print "</table>\n";
+
+# Okay.   Now for the Big lexicon
+#
+open my $in2, '<', 'fourminus.txt';
+while (my $bword = <$in2>) {
+    chomp $bword;
+    if ($bword !~ $regex) {
+        my @uchars = uniq_chars($bword);
+        my $pangram = @uchars == 7;
+        if ($pangram) {
+            ++$bnpangrams;
+        }
+        for my $c (@uchars) {
+            ++$btot{$c};
+            if (length $bword == 4) {
+                ++$bfour{$c};
+            }
+            $bscore{$c} += word_score($word, $pangram);
+        }
+    }
+}
+close $in2;
+my $bpl = $bnpangrams == 1? '': 's';
+print <<"EOH";
+<p>
+<h2>Other qualified words (some rare and esoteric)</h2>
+$bnpangrams pangram$bpl
+<table cellpadding=5
+<tr>
+<th valign=bottom>Center<br>Letter</th>
+<th valign=bottom>Words</th>
+<th valign=bottom>4 Letter</th>
+<th valign=bottom>Additional<br>Score</th>
+</tr>
+EOH
+for my $c (sort @lets) {
+    print <<"EOH";
+<tr>
+<td class=let>\U$c\E</td>
+<td>$btot{$c}</td>
+<td>$bfour{$c}</td>
+<td>$bscore{$c}</td>
+</tr>
+EOH
+}
+print <<'EOH';
+</table>
+</body>
+</html>
+EOH

@@ -1,0 +1,43 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+use CGI;
+my $q = CGI->new();
+print $q->header();
+
+use Data::Dumper;
+
+my %params = $q->Vars();
+
+my $dir = 'community_puzzles';
+open my $in, '<', "$dir/last_num.txt";
+my $n = <$in>;
+close $in;
+chomp $n;
+++$n;
+open my $out, '>', "$dir/last_num.txt";
+print {$out} "$n\n";
+close $out;
+
+open my $puz, '>', "community_puzzles/$n.txt";
+print {$puz} Dumper(\%params);
+close $puz;
+
+print <<"EOH";
+<html>
+<head>
+<link rel='stylesheet' type='text/css' href='http://logicalpoetry.com/nytbee_web/cgi_style.css'/>
+</head>
+<body>
+Finished. &#128077;<br>
+You have created an NYT Type Puzzle for the Hivemind Community.
+<p>
+Your puzzle is #$n.
+<p>
+Click <a target=_blank href=http://logicalpoetry.com/cgi-bin/nytbee_web.pl>here</a> to solve it.<br>
+You will use the <span class=cmd>CP$n</span> command to open it.
+</body>
+</html>
+EOH
+

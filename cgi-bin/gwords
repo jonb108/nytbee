@@ -1,0 +1,97 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use CGI;
+my $q = CGI->new();
+print $q->header();
+
+use BeeUtil qw/
+    uniq_chars
+/;
+
+my $word = $q->param('word');
+my @lets = uniq_chars($word);
+my $center = $q->param('center');
+my $seven = join '', @lets;
+my $regex = qr{[^$seven]}xms;
+print <<"EOH";
+<html>
+<head>
+<style>
+body {
+    font-size: 18pt;
+    margin: .5in;
+    font-family: Arial;
+}
+.word, .center {
+    font-size: 30pt;
+    font-weight: normal;
+    color: green;
+}
+input, button {
+    font-size: 18pt;
+}
+button {
+    background: lightgreen;
+}
+.red {
+    color: red;
+    font-size: 24pt;
+}
+</style>
+</head>
+<body>
+<h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step 3</h1>
+For the pangramic word <span class=word>$word</span> and center letter <span class=center>\U$center\E</span> we have identified the qualified words.
+<p>
+Check the words you want to include in the puzzle and press Submit at the bottom.  Make sure you include at least one pangram. They are marked with a red asterisk <span class=red>*</span>).
+
+<p>
+<form action=/cgi-bin/clues method=POST>
+<input type=hidden name=seven value=$seven>
+<input type=hidden name=center value=$center>
+<h2>Qualified words used in previous NYT Bee Puzzles:</h2>
+EOH
+open my $in, '<', 'pwords.txt';
+LINE:
+while (my $line = <$in>) {
+    chomp $line;
+    if ($line !~ $regex) {
+        if (index($line, $center) >= 0) {
+            print "<input type=checkbox name=ok value=$line checked>&nbsp;$line";
+            my @uchars = uniq_chars($line);
+            if (@uchars == 7) {
+                print " <span class=red>*</span>";
+            }
+            print "<br>\n";
+        }
+    }
+}
+close $in;
+print "<h2>More words (qualified but some are rare and esoteric):</h2>\n";
+print "Surprisingly, there are still many ordinary words that have not yet been used in the NYT puzzles.<p>\n";
+open my $in2, '<', 'fourminus.txt';
+LINE:
+while (my $line = <$in2>) {
+    chomp $line;
+    if ($line !~ $regex) {
+        if (index($line, $center) >= 0) {
+            print "<input type=checkbox name=ok value=$line>&nbsp;$line";
+            my @uchars = uniq_chars($line);
+            if (@uchars == 7) {
+                print " <span class=red>*</span>";
+            }
+            print "<br>\n";
+        }
+    }
+}
+close $in2;
+print <<'EOH';
+<p>
+Other qualified words to include:<br><input type=text size=40 name=other_words>
+<p>
+<button type=submit>Submit</button>
+</form>
+</body>
+</html>
+EOH

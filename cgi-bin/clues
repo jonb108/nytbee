@@ -1,0 +1,100 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use CGI;
+my $q = CGI->new();
+print $q->header();
+
+use BeeUtil qw/
+    uniq_chars
+    error
+/;
+
+my $seven = $q->param('seven');
+my $center = $q->param('center');
+my @other_words = split ' ', $q->param('other_words');
+my $regex = qr{[^$seven]}xms;
+
+# do these extra words 'qualify'?
+my @not_okay;
+for my $w (@other_words) {
+    if (length $w < 4
+        || $w =~ $regex
+        || index($w, $center) < 0
+    ) {
+        push @not_okay, $w;
+    }
+}
+if (@not_okay) {
+    error "These words do not qualify:<ul>"
+        . join('', map { "$_<br>\n" } @not_okay)
+        . "</ul>\n";
+}
+my @ok_words = sort $q->param('ok'), @other_words;
+# is there at least one pangram?
+my @pangrams;
+for my $w (@ok_words) {
+    if (uniq_chars($w) == 7) {
+        push @pangrams, $w;
+    }
+}
+if (! @pangrams) {
+    error "In the many words there is no pangram! :(";
+}
+my $seven = $q->param('seven');
+my $center = $q->param('center');
+
+print <<"EOH";
+<html>
+<head>
+<style>
+body {
+    margin: .5in;
+    font-family: Arial;
+}
+body, td, input, button {
+    font-size: 18pt;
+    font-family: Arial;
+}
+.submit {
+    background: lightgreen;
+}
+</style>
+</head>
+<body>
+<h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step 4</h1>
+Optionally, provide clues for each word.
+<p>
+<form name=form action=/cgi-bin/final method=POST>
+<input type=hidden name=seven value='$seven'>
+<input type=hidden name=center value='$center'>
+<input type=hidden name=words value='@ok_words'>
+<table cellpadding=5>
+EOH
+for my $w (@ok_words) {
+    print <<"EOH";
+<tr>
+<td>$w</td>
+<td><input type=text size=40 name=${w}_clue></td>
+</tr>
+EOH
+}
+print <<"EOH";
+</table>
+<p>
+<button class=submit type=submit>Submit</button>
+</body>
+</html>
+<script>document.form.$ok_words[0]_clue.focus();</script>
+EOH
+
+=comment
+
+The usual NYT Spelling Bee puzzle includes
+ALL normal qualifying words.   If there are clues for
+each word then the maker of the puzzle need not include ALL.
+Instead, it becomes a kind of crossword puzzle with clues where
+you know that the answer words are composed of the seven letters.
+You're not trying to 'find' all words that can be made.
+
+=cut
