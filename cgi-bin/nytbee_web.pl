@@ -534,8 +534,8 @@ elsif ($cmd eq 'r') {
     $message = ul(table({ cellpadding => 2}, $rows));
     $cmd = '';
 }
-elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d|[a-z][a-z]) \z}xms
-       || $cmd =~ m{\A (da) \s+ (p|[a-z]\d|[a-z][a-z]) \z}xms
+elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d+|[a-z][a-z]) \z}xms
+       || $cmd =~ m{\A (da) \s+ (p|[a-z]\d+|[a-z][a-z]) \z}xms
 ) {
     my $Dcmd = $1 eq 'da';
     my $term = $2;
@@ -555,7 +555,7 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d|[a-z][a-z]) \z}xms
         }
         $cmd = '';
     }
-    elsif ($term =~ m{([a-z])(\d)}xms) {
+    elsif ($term =~ m{([a-z])(\d+)}xms) {
         my $let = $1;
         my $len = $2;
         $message = '';
