@@ -4,6 +4,12 @@ use warnings;
 
 =comment
 
+XA - clear all and revert to today
+I - show information about the current puzzle CP - name, etc
+    for dated puzzles - show what?
+D MONONYM - give dictionary definition not the clue
+DA XY - give all dictionary definitions AND a clue if present
+
 with timestamp? and purge ones more than a month old
 another command to bring up the games your IP has saved? - L
 and one to open it - NP\d+
@@ -47,6 +53,7 @@ my $comm_dir = 'community_puzzles';
 my ($seven, $center, @pangrams);
 my @seven;
 my @ok_words;
+my %clue_for;
 
 # try to concoct a unique identifier for the person
 # and their browser
@@ -168,14 +175,14 @@ if (my ($puz_num) = $cmd =~ m{\A p \s* (\d+) \z}xms) {
         $message = "Not that many puzzles";
         $cmd = '';
     }
-    my $puz_id = $puzzles[$puz_num-1][0]; 
+    my $puz_id = $puzzles[$puz_num-1][0];
     if ($puz_id =~ m{\A \d}xms) {
         $cmd = "n$puz_id";
     }
     else {
         # CP\d+
         # but we need lower case cp
-        # since we have 
+        # since we have
         $cmd = lc $puz_id;
     }
 }
@@ -196,13 +203,6 @@ elsif (my ($cp_num) = $cmd =~ m{\A c \s* p \s* (\d+) \z}xms) {
     }
     else {
         $date = "CP$cp_num";
-        my $href = do $fname;
-        $seven = $href->{seven};
-        @seven = split //, $seven;
-        $center = $href->{center};
-        @pangrams = split ' ', $href->{pangrams};
-        @ok_words = split ' ', $href->{words};
-        # the rest???
         $new_puzzle = 1;
         $cmd = '';
     }
@@ -259,6 +259,7 @@ else {
     $center = $href->{center};
     @pangrams = split ' ', $href->{pangrams};
     @ok_words = split ' ', $href->{words};
+    %clue_for = $href->{clues} =~ m{([a-z]+)\^([^~]+)~}xmsg;
     $show_date = $date;
 }
 my $nwords = @ok_words;
@@ -269,10 +270,13 @@ my %is_ok_word = map { $_ => 1 } @ok_words;
 my @six = map { uc }
           grep { $_ ne $center }
           @seven;
-# scramble
-my @new;
-push @new, splice @six, rand @six, 1 while @six;
-@six = @new;
+
+if (! $cmd && ! $params{has_message}) {
+    # scramble
+    my @new;
+    push @new, splice @six, rand @six, 1 while @six;
+    @six = @new;
+}
 
 sub word_score {
     my ($w) = @_;
@@ -324,7 +328,6 @@ sub my_puzzles {
 }
 
 my %is_found = map { $_ => 1 } @found;
-my $in_order = 0;       # see below near 'w' and the display of @found
 
 my $score;
 my $rank_name;
@@ -360,12 +363,16 @@ compute_score_and_rank();
 # drop a final d or a final ed
 # or ly?????
 # and mark it as such
-# the online dictionaries often give many different 
+# the online dictionaries often give many different
 # definitions - let's just show 3 at the most.
 # that's enough.  or maybe just 1?
 # or all if Dcmd.
 sub define {
     my ($word, $Dcmd, $dont_tally_hints, $dont_mask) = @_;
+
+    if (exists $clue_for{$word}) {
+        return "<li style='list-style-type: circle'>$clue_for{$word}</li>";
+    }
 
     my ($html, @defs);
 
@@ -447,7 +454,7 @@ sub get_words {
     return grep {
                ! $is_found{$_}
                &&
-               ($l? substr($_, 0, 1) eq $s 
+               ($l? substr($_, 0, 1) eq $s
                    && length == $l
               :    substr($_, 0, 2) eq $s)
            }
@@ -602,7 +609,7 @@ elsif ($cmd =~ m{\A (d|da) \s+ ([a-z]+) \z}xms) {
     $cmd = '';
 }
 elsif ($cmd =~ m{\A g \s+ y \z}xms) {
-    my @words = 
+    my @words =
              map {
                  $is_pangram{lc $_}? length == 7? "<span class=purple>$_</span>"
                                     :             "<span class=green>$_</span>"
@@ -631,7 +638,7 @@ elsif ($cmd eq 'l') {
         my $pg  = $p->[1]? '&nbsp;&nbsp;p': '';
         $message .= Tr(
                         td($n) . td($cur)
-                      . td({ style => 'text-align: left' }, dash_date($p->[0])) 
+                      . td({ style => 'text-align: left' }, dash_date($p->[0]))
                       . td({ -style => 'text-align: left'},
                            $ranks[$p->[2]]->{name})
                       . td($pg)
@@ -652,7 +659,7 @@ elsif ($cmd eq 'f') {
     $message = join '',
                map {
                   my ($dt, $y, $m, $d, $c) =  m{
-                      \A (.. (..)(..)(..))(.) \z 
+                      \A (.. (..)(..)(..))(.) \z
                   }xms;
                   "$m-$d-$y $c"
                   . ($dt eq $date? ' *': '')
@@ -691,8 +698,64 @@ elsif ($cmd =~ m{\A s \s+ ([/a-z]+) \s* \z}xms) {
     }
     $cmd = '';
 }
-elsif ($cmd eq 'w') {
-    $in_order = 1;
+
+# now to prepare the display the words we have found
+# some subset, some order
+my $order = 0;
+my $prefix = '';
+my @words_found;
+if ($cmd eq 'w') {
+    @words_found = @found;
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A w \s* ([<>]) \s* (\d*)\z}xms) {
+    $order = $1 eq '>'? 1: -1;
+    my $limit = $2;
+    # by increasing or decreasing length
+    # time for a schwarzian transform!
+    @words_found = grep {
+                       $limit? $order == 1? length($_) > $limit
+                              :             length($_) < $limit
+                      :        1
+                   }
+                   map {
+                       $_->[1]
+                   }
+                   sort {
+                       $a->[0] <=> $b->[0]
+                       ||
+                       $a->[1] cmp $b->[1]
+                   }
+                   map {
+                       [ $order * length, $_ ]
+                   }
+                   @found;
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A w \s* (\d+) \z}xms) {
+    my $len = $1;    # words of a _given_ length
+    if ($len < 4) {
+        # makes no sense given all words are >= 4
+        # silently ignore this
+        @words_found = sort @found;
+    }
+    else {
+        @words_found = grep {
+                           length == $len
+                       }
+                       sort
+                       @found;
+    }
+    $cmd = '';
+}
+# must have space for W prefix command
+elsif ($cmd =~ m{\A w \s+ ([a-z]+)}xms) {
+    $prefix = $1;
+    @words_found = grep {
+                       m{\A $prefix}xms
+                   }
+                   sort
+                   @found;
     $cmd = '';
 }
 
@@ -728,7 +791,7 @@ sub check_word {
 }
 for my $w (@new_words) {
     if (my $mess = check_word($w)) {
-        $not_okay_words .= "<span class=not_okay>" 
+        $not_okay_words .= "<span class=not_okay>"
                         .  uc($w)
                         .  "</span>: $mess<br>";
     }
@@ -746,6 +809,10 @@ for my $w (@new_words) {
 # now that we have added the new words...
 compute_score_and_rank();
 
+if (! $prefix && ! @words_found) {
+    @words_found = sort @found;
+}
+
 if ($not_okay_words) {
     $message = <<"EOH";
 <ul>
@@ -754,20 +821,37 @@ $not_okay_words
 EOH
 }
 
-# ??? better way to handle ucfirst???
-my $found_so_far
-           = join ' ',
-             map {
-                 $is_pangram{lc $_}? length == 7? "<span class=purple>$_</span>"
-                                 :             "<span class=green>$_</span>"
-                : $is_new_word{lc $_}? "<span class=new_word>$_</span>"
-                 : $_
-             }
-             map {
-                ucfirst
-             }
-              $in_order? @found
-             :           sort @found;
+# time to display the words we have found
+# in various orders and various subsets
+# which were set above.
+# perhaps have a break between words of diff lengths
+# in case we had w < or w >.
+my $found_words = '';
+my $prev_length = 0;
+for my $w (@words_found) {
+    my $lw = length($w);
+    my $uw = ucfirst $w;
+    if ($is_pangram{$w}) {
+        if ($lw == 7) {
+            $w = "<span class=purple>$uw</span>";
+        }
+        else {
+            $w = "<span class=green>$uw</span>";
+        }
+    }
+    elsif ($is_new_word{$w}) {
+        $w = "<span class=new_word>$uw</span>";
+    }
+    else {
+        $w = $uw;
+    }
+    my $pre = ! $prev_length               ? ''
+             :$order && $lw != $prev_length? '<br>'
+             :                               ' '
+             ;
+    $found_words .= "$pre$w";
+    $prev_length = $lw;
+}
 
 my %sums;
 my %two_lets;
@@ -946,7 +1030,11 @@ for my $p (@pangrams) {
 $ip_date{$key} = $today->as_d8()
                . " $nhints $all_pangrams $ht_chosen $tl_chosen $rank @found";
 
-$message .= '<p>' if $message;
+my $has_message = 0;
+if ($message) {
+    $message .= '<p>';
+    $has_message = 1;
+}
 
 # now to display everything
 
@@ -1032,7 +1120,7 @@ input, .submit {
 .purple {
     color: purple;
 }
-.found_so_far {
+.found_words {
     width: 600px;
     word-spacing: 10px;
 }
@@ -1088,6 +1176,7 @@ function define_ht(c, n) {
 <input type=hidden name=nhints value=$nhints>
 <input type=hidden name=ht_chosen value=$ht_chosen>
 <input type=hidden name=tl_chosen value=$tl_chosen>
+<input type=hidden name=has_message value=$has_message>
 <pre>
      $six[0]   $six[1]
    $six[2]   <span class=red2>\U$center\E</span>   $six[3]
@@ -1096,8 +1185,8 @@ function define_ht(c, n) {
 $message
 <input class=new_words type=text size=40 id=new_words name=new_words><br>
 </form>
-<div class=found_so_far>
-$found_so_far
+<div class=found_words>
+$found_words
 </div>
 <p>
 Score: $score<span class='rank_name rank$rank'>$rank_name</span>
