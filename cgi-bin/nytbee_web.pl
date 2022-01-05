@@ -4,11 +4,13 @@ use warnings;
 
 =comment
 
+F and S - look in Community Puzzles as well...
+
 XA - clear all and revert to today
 I - show information about the current puzzle CP - name, etc
     for dated puzzles - show what?
 D MONONYM - give dictionary definition not the clue
-DA XY - give all dictionary definitions AND a clue if present
+DA XY - give all dictionary definitions from all 3 dictionaries AND a clue if present
 
 with timestamp? and purge ones more than a month old
 another command to bring up the games your IP has saved? - L
@@ -288,16 +290,16 @@ for my $w (@ok_words) {
     $max_score += word_score($w);
 }
 my @ranks = (
-    { name => 'Beginner',   value => 0 },
-    { name => 'Good Start', value => int(.02*$max_score + 0.5) },
-    { name => 'Moving Up',  value => int(.05*$max_score + 0.5) },
-    { name => 'Good',       value => int(.08*$max_score + 0.5) },
-    { name => 'Solid',      value => int(.15*$max_score + 0.5) },
-    { name => 'Nice',       value => int(.25*$max_score + 0.5) },
-    { name => 'Great',      value => int(.40*$max_score + 0.5) },
-    { name => 'Amazing',    value => int(.50*$max_score + 0.5) },
-    { name => 'Genius',     value => int(.70*$max_score + 0.5) },
-    { name => 'Queen Bee',  value => $max_score },
+    { name => 'Beginner',   pct =>   0, value => 0 },
+    { name => 'Good Start', pct =>   2, value => int(.02*$max_score + 0.5) },
+    { name => 'Moving Up',  pct =>   5, value => int(.05*$max_score + 0.5) },
+    { name => 'Good',       pct =>   9, value => int(.08*$max_score + 0.5) },
+    { name => 'Solid',      pct =>  15, value => int(.15*$max_score + 0.5) },
+    { name => 'Nice',       pct =>  25, value => int(.25*$max_score + 0.5) },
+    { name => 'Great',      pct =>  40, value => int(.40*$max_score + 0.5) },
+    { name => 'Amazing',    pct =>  50, value => int(.50*$max_score + 0.5) },
+    { name => 'Genius',     pct =>  70, value => int(.70*$max_score + 0.5) },
+    { name => 'Queen Bee',  pct => 100, value => $max_score },
 );
 
 my (@found, $nhints, $ht_chosen, $tl_chosen);
@@ -429,7 +431,7 @@ sub reveal {
     my $dash = ' &ndash;';
     my $lw = length $word;
     if ($nlets >= $lw) {
-        # silently ignore this
+        # silently ignore
         return;
     }
     $nhints += 2;
@@ -490,7 +492,7 @@ elsif (my ($ev, $nlets, $term)
     }
     elsif (my ($first, $len) = $term =~ m{\A ([a-z])\s*(\d+)}xms) {
         if ($nlets == 1) {
-            # ignore
+            # silently gnore
         }
         else {
             for my $w (get_words($first, $len)) {
@@ -501,7 +503,7 @@ elsif (my ($ev, $nlets, $term)
     else {
         # $term is two letters
         if ($nlets == 1 || (! $end && $nlets == 2)) {
-            # ignore
+            # silently ignore
         }
         else {
             $term =~ s{\s}{}xmsg;       # if v2 a b instead of v2ab
@@ -515,12 +517,15 @@ elsif (my ($ev, $nlets, $term)
     }
     $cmd = '';
 }
-elsif ($cmd eq 'r') {
+elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
+    my $percent = $1;
     my $rows = '';
     for my $r (0 .. 9) {
-        my $cols = td($ranks[$r]->{name})
-              .    td('&nbsp;' . $ranks[$r]->{value})
-              ;
+        my $cols = td($ranks[$r]->{name});
+        if ($percent) {
+            $cols .= td("$ranks[$r]->{pct}%");
+        }
+        $cols .= td('&nbsp;' . $ranks[$r]->{value});
         if ($rank == $r) {
             my $more = '';
             if ($rank != 9) {
@@ -538,7 +543,7 @@ elsif ($cmd eq 'r') {
         }
         $rows .= Tr($cols);
     }
-    $message = ul(table({ cellpadding => 2}, $rows));
+    $message = ul(table({ cellpadding => 3}, $rows));
     $cmd = '';
 }
 elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d+|[a-z][a-z]) \z}xms

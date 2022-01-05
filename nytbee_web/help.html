@@ -1,5 +1,6 @@
 <DOCTYPE html>
 <html lang=en>
+<!-- look for 'line' ... command line-->
 <head>
 <title>The Spelling Bee Puzzle of New York Times</title>
 <link rel='stylesheet' type='text/css' href='style.css'/>
@@ -55,20 +56,20 @@ Commands that give hints:
 <tr><td><span class=cmd>DB4</span></td><td>Define the words beginning with B of length 4.</td></tr>
 <tr><td><span class=cmd>DTR</span></td><td>Define the words beginning with TR.</td></tr>
 <tr><td colspan=2><span class=cmd>D&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.  No hints tallied.</td></tr>
-<tr><td><span class=cmd>DA ...</span></td><td>The <span class=cmd>D</span> command gives at most 3 definitions. <span class=cmd>DA</span> will give them All.<p></td></tr>
+<tr><td><span class=cmd>DA ...</span></td><td>The <span class=cmd>D</span> command gives at most 3 definitions. <span class=cmd>DA</span> will give them All.</td></tr>
+<tr><td colspan=2>Definitions come from 3 dictionaries: Merriam-Webster, Collins, and Oxford.  With Community Puzzles if there is a clue for a word it is shown instead of the dictionary definition.<p></td></tr>
 <tr><td><span class=cmd>V2P</span></td><td>Reveal the first two letters of the pangrams.</td></tr>
 <tr><td><span class=cmd>V3M8</span></td><td>Reveal the first 3 letters of the words beginning with M of length 8.</td></tr>
 <tr><td><span class=cmd>V5GL</span></td><td>Reveal the first 5 letters of the words beginning with GL.  
-<tr><td colspan=2>Using <span class=cmd>E</span> instead of <span class=cmd>V</span> reveals letters at the front and at the <i>End</i> of the word.  Commands that reveal the entire word are silently ignored.</td></tr>
+<tr><td colspan=2>Using <span class=cmd>E</span> instead of <span class=cmd>V</span> reveals letters at the front and at the End of the word.  Commands that reveal the entire word are silently ignored (as are commands like V1M8 or V2GL).</td></tr>
 <tr><td colspan=2>Both define and reveal commands skip words that have already been found.<p></td></tr>
 <tr><td><span class=cmd>1</span></td><td>Show a random entry from the Hint Table.</td></tr>
 <tr><td><span class=cmd>2</span></td><td>Show a random entry from the Two Letter List.
 <tr><td colspan=2>These will work even if the Table and List are not shown.<p></td></tr>
-<tr><td><span class=cmd>G&nbsp;Y</span></td><td>Give up and show the word list.</td></tr>
 </table>
 <p>
 <br>
-Commands to access the large NY Times <a href=#archive>Archive</a> of Spelling Bee puzzles <i>and</i> the puzzles <a href=#make_puzzle>created by the Hivemind Community</a>::
+Commands to access the large NY Times <a href=#archive>Archive</a> of Spelling Bee puzzles <i>and</i> the puzzles <a href=#make_puzzle>created by the Hivemind Community</a>:
 <p>
 <table cellpadding=5>
 <tr><td><span class=cmd>NR</span></td><td>New puzzle from a Random date.</td></tr>
@@ -78,8 +79,6 @@ Commands to access the large NY Times <a href=#archive>Archive</a> of Spelling B
 <tr><td><span class=cmd>L</span></td><td>List the current puzzles.</td></tr>
 <tr><td><span class=cmd>P&lt;num&gt;</span></td><td>Return to puzzle #num in the list.</td></tr>
 <tr><td><span class=cmd>X&lt;nums&gt;</span></td><td>Remove the numbered puzzles from the list. You can give a range.  For example: X2&nbsp;4-6&nbsp;9&nbsp;&nbsp;&nbsp;This clears the words you found so if you choose the date again you will start afresh.</td></tr>
-<tr><td><span class=cmd>F</span></td><td>Find other dates that use the <a href=#same7>same seven letters</a>.</td></tr>
-<tr><td><span class=cmd>S&nbsp;&lt;word&gt;</span></td><td>Find other dates where the word is used.</td></tr>
 </table>
 <h2>Hint Strategy</h2>
 Many people who solve the puzzle try to use as few hints
@@ -99,19 +98,42 @@ The number of hints are tallied like so:
 <tr><td><span class=cmd>V,E</span></td><td align=right>2</td><td>for each word</td></tr>
 <tr><td><span class=cmd>1</span></td><td align=right>1</td></tr>
 <tr><td><span class=cmd>2</span></td><td align=right>1</td></tr>
-<tr><td><span class=cmd>G Y</span></td><td align=right>100</td></tr>
+<tr><td><span class=cmd>G&nbsp;Y</span></td><td align=right>5</td><td>for each word</td></tr>
 </table>
 </ul>
+<h2>Power User Commands</h2>
+Limited use ..., it's fun to add functionality for the simple
+joy of programming!
+With a text command oriented interface one doesn't have to
+fiddle endlessly with the graphic interface
+and fret about "user friendliness".  Users <i>will</i> adapt to the idea
+of single (or two) letter command words.
+<ul>
+<table cellpadding=3>
+<tr><td><span class=cmd>F</span></td><td>Find other puzzles that use the same seven letters.</td></tr>
+<tr><td><span class=cmd>S&nbsp;&lt;word&gt;</span></td><td>Find other puzzles where the word is used.</td></tr>
+<tr><td><span class=cmd>R%</span></td><td>Show the rankings with the percentage of the maximum score.</td></tr>
+<tr><td><span class=cmd>W&gt;</span></td><td>Show the found words in order of increasing length.</td></tr>
+<tr><td><span class=cmd>W&gt;n</span></td><td>Show the found words of length greater than n.</td></tr>
+<tr><td><span class=cmd>W&lt;</span></td><td>Show the found words in order of decreasing length.</td></tr>
+<tr><td><span class=cmd>W&lt;n</span></td><td>Show the found words of length less than n.</td></tr>
+<tr><td><span class=cmd>Wn</span></td><td>Show the found words of length n.</td></tr>
+<tr><td><span class=cmd>W&nbsp;&lt;prefix&gt;</span></td><td>Show the found words that start with &lt;prefix&gt;.</td></tr>
+<tr><td><span class=cmd>G&nbsp;Y</span></td><td>Give up and show the words you have not yet found.</td></tr>
+</table>
+</ul>
+
 <h2>Without a Subscription?</h2>
+Is it illegal or unethical to play the NYT Spelling Bee puzzles without a subscription?
+<p>
 I <b>do</b> have a subscription to the Times.  It is a reliable,
 trusted, and curated source of information.
 Subscriptions help the many journalists stay focused on their story.
 <p>
-Is it illegal or unethical to play the NYT Spelling Bee without a subscription?
 When the puzzle page is loaded into the web browser
 the list of allowed words
 <i>is</i> visible &ndash; if you know where to look.
-This is what you will see in the page source:
+This is what you will see in the HTML/Javascript page source:
 <pre>
 window.gameData = {
     "today": {
@@ -135,7 +157,7 @@ window.gameData = {
 So the words in the puzzle <i>are</i> available publicly each day.
 The command line mechanism is simply an alternate way
 of using these words.
-<a name=same7></a>
+<a name=same_7_letters></a>
 <h2>Same 7 Letters</h2>
 In the large NYT Spelling Bee <a href=#archive>archive</a> there are many puzzles that share the
 same set of 7 letters and hence the same pangrams.   
