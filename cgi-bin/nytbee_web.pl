@@ -618,8 +618,10 @@ elsif ($cmd =~ m{\A g \s+ y \z}xms) {
              map { ucfirst }
              grep { !$is_found{$_} }
              @ok_words;
-    $nhints += @words * 5;
-    $message = "<p class=mess>@words";
+    if (@words) {
+        $nhints += @words * 5;
+        $message = "<p class=mess>@words";
+    }
     $cmd = '';
 }
 elsif ($cmd =~ m{\A c \s+ y \z}xms) {
@@ -734,6 +736,9 @@ elsif ($cmd =~ m{\A w \s* ([<>]) \s* (\d*)\z}xms) {
 }
 elsif ($cmd =~ m{\A w \s* (\d+) \z}xms) {
     my $len = $1;    # words of a _given_ length
+    $prefix = 1;     # set this so that if there are no
+                     # words of length $len we will display
+                     # nothing instead of the whole list
     if ($len < 4) {
         # makes no sense given all words are >= 4
         # silently ignore this
@@ -845,8 +850,8 @@ for my $w (@words_found) {
     else {
         $w = $uw;
     }
-    my $pre = ! $prev_length               ? ''
-             :$order && $lw != $prev_length? '<br>'
+    my $pre = ! $prev_length               ? ($order? "$lw: ": '')
+             :$order && $lw != $prev_length? "<br>$lw: "
              :                               ' '
              ;
     $found_words .= "$pre$w";
