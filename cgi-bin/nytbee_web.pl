@@ -7,8 +7,6 @@ use warnings;
 F and S - look in Community Puzzles as well...
 
 XA - clear all and revert to today
-I - show information about the current puzzle CP - name, etc
-    for dated puzzles - show what?
 D MONONYM - give dictionary definition not the clue
 DA XY - give all dictionary definitions from all 3 dictionaries AND a clue if present
 
@@ -617,9 +615,7 @@ elsif ($cmd =~ m{\A (d|da) \s+ ([a-z]+) \z}xms) {
 elsif ($cmd =~ m{\A g \s+ y \z}xms) {
     my @words =
              map {
-                 $is_pangram{lc $_}? length == 7? "<span class=purple>$_</span>"
-                                    :             "<span class=green>$_</span>"
-                :                    $_
+                 $is_pangram{lc $_}? color_pg($_): $_
              }
              map { ucfirst }
              grep { !$is_found{$_} }
@@ -636,6 +632,25 @@ elsif ($cmd =~ m{\A c \s+ y \z}xms) {
     $nhints = 0;
     $ht_chosen = 0;
     $tl_chosen = 0;
+    $cmd = '';
+}
+elsif ($cmd eq 'sc') {
+    my $rows = '';
+    my $tot = 0;
+    my $space = '&nbsp;' x 1;
+    for my $w (@found) {
+        my $sc = word_score($w);
+        $tot += $sc;
+        my $s = ucfirst $w;
+        if ($is_pangram{$w}) {
+            $s = color_pg($s);
+        }
+        $rows .= Tr(td($s), td($space.$sc), td($space.$space.$tot));
+    }
+    $message = table({ cellpadding => 2 }, $rows);
+    my $more = @ok_words - @found;
+    my $pl = $more == 1? '': 's';
+    $message .= "<p> $more more word$pl to find";
     $cmd = '';
 }
 elsif ($cmd eq 'l') {
@@ -832,6 +847,12 @@ $not_okay_words
 EOH
 }
 
+sub color_pg {
+    my ($pg) = @_;
+    my $class = length($pg) == 7? 'purple': 'green';
+    return "<span class=$class>$pg</span>";
+}
+
 # time to display the words we have found
 # in various orders and various subsets
 # which were set above.
@@ -843,12 +864,7 @@ for my $w (@words_found) {
     my $lw = length($w);
     my $uw = ucfirst $w;
     if ($is_pangram{$w}) {
-        if ($lw == 7) {
-            $w = "<span class=purple>$uw</span>";
-        }
-        else {
-            $w = "<span class=green>$uw</span>";
-        }
+        $w = color_pg($uw);
     }
     elsif ($is_new_word{$w}) {
         $w = "<span class=new_word>$uw</span>";
@@ -1193,7 +1209,7 @@ function define_ht(c, n) {
          <img width=50 src=/pics/bee-logo.jpg>
     </div>
     <div class=float-child>
-        <span class=help><a target=_blank href='http://logicalpoetry.com/nytbee_web/help.html#commands'>Help</a>
+        <span class=help><a target=_blank href='http://logicalpoetry.com/nytbee/help.html#words'>Help</a>
     </div>
 </div>
 <br><br>

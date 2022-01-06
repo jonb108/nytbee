@@ -11,6 +11,9 @@ td, th {
     font-size: 18pt;
     vertical-align: top;
 }
+.top {
+    margin-left: .5in;
+}
 .red {
     color: red;
     font-weight: bold;
