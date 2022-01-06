@@ -37,6 +37,7 @@ h4 {
     color: darkred;
 }
 pre {
+    margin-top: 0px;
     color: green;
     font-family: Courier;
     font-size: 16pt;

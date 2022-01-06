@@ -239,6 +239,7 @@ if (! $date) {
     $new_puzzle = 1;
 }
 my $show_date;
+my $cp_href;
 
 # we have a valid date. either d8 format or CP#
 # if d8 get the puzzle data
@@ -255,13 +256,13 @@ else {
     # $date is CP\d+
     my ($n) = $date =~ m{(\d+)}xms;
     my $fname = "$comm_dir/$n.txt";
-    my $href = do $fname;
-    $seven = $href->{seven};
+    $cp_href = do $fname;
+    $seven = $cp_href->{seven};
     @seven = split //, $seven;
-    $center = $href->{center};
-    @pangrams = split ' ', $href->{pangrams};
-    @ok_words = split ' ', $href->{words};
-    %clue_for = $href->{clues} =~ m{([a-z]+)\^([^~]+)~}xmsg;
+    $center = $cp_href->{center};
+    @pangrams = split ' ', $cp_href->{pangrams};
+    @ok_words = split ' ', $cp_href->{words};
+    %clue_for = $cp_href->{clues} =~ m{([a-z]+)\^([^~]+)~}xmsg;
     $show_date = $date;
 }
 my $nwords = @ok_words;
@@ -543,7 +544,7 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
         }
         $rows .= Tr($cols);
     }
-    $message = ul(table({ cellpadding => 3}, $rows));
+    $message = ul(table({ cellpadding => 4}, $rows));
     $cmd = '';
 }
 elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d+|[a-z][a-z]) \z}xms
@@ -652,7 +653,7 @@ elsif ($cmd eq 'l') {
                     );
         ++$n;
     }
-    $message = table({ cellpadding => 2}, $message);
+    $message = table({ cellpadding => 4}, $message);
     $cmd = '';
 }
 elsif ($cmd eq 'f') {
@@ -933,13 +934,31 @@ for my $p (keys %is_pangram) {
 if ($nperfect) {
     $perfect = " ($nperfect Perfect)"
 }
+if ($cmd eq 'i') {
+    $message = "Words: $nwords, Points: $max_score, "
+             . "Pangrams: $npangrams$perfect$bingo";
+    if ($date =~ m{\A CP}xms) {
+        my ($n) = $date =~ m{(\d+)}xms;
+        my $created = date($cp_href->{created})->format("%B %e, %Y");
+        my $s = "";
+        for my $w (qw/ title name location contact /) {
+            if (my $t = $cp_href->{$w}) {
+                if ($w eq 'contact' && index($t, '@') >= 0) {
+                    $t = "<a href='mailto:$t?"
+                       . "subject=Community Puzzle #$n'>$t</a>";
+                }
+                $s .= "$t<br>";
+            }
+        }
+        $message .= "<br>Community Puzzle #$n - $created<ul>$s</ul>";
+    }
+    $cmd = '';
+}
 
 # the hint table
 my $hint_table = "";
 if ($ht_chosen) {
-    $hint_table = "Words: $nwords, Points: $max_score<br>"
-                . "Pangrams: $npangrams$perfect$bingo";
-    $hint_table .= "<p><table cellpadding=2 border=0>\n";
+    $hint_table = "<table cellpadding=2 border=0>\n";
     my $space = '&nbsp;' x 4;
     $hint_table .= "<tr><th>&nbsp;</th>";
     for my $l (4 .. $max_len) {
@@ -976,7 +995,6 @@ if ($ht_chosen) {
 }
 
 # two letter tallies
-my $two_let_top_margin = $ht_chosen? 22: 0;
 my $two_lets = '';
 if ($tl_chosen) {
     my @two = grep {
@@ -1056,7 +1074,7 @@ print <<"EOH";
     cursor: pointer;
 }
 .two_lets {
-    margin-top: ${two_let_top_margin}mm;
+    margin-top: 0mm;
     margin-left: 15mm;
 }
 .help {
