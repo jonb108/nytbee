@@ -1,0 +1,41 @@
+body {
+    font-family: Arial;
+    margin: .5in;
+    font-size: 18pt;
+}
+td, th {
+    font-family: Arial;
+    font-size: 18pt;
+    text-align: right;
+}
+.let {
+    text-align: center;
+    font-weight: bold;
+    font-size: 24pt;
+}
+.word {
+    font-size: 30pt;
+    color: green;
+}
+.green {
+    color: green;
+}
+a {
+    text-decoration: none;
+    color: blue;
+}
+input, button {
+    font-size: 18pt;
+}
+.red {
+    color: red;
+}
+button {
+    background: lightgreen;
+}
+.star {
+    font-size: 24pt;
+}
+.cmd {
+    color: darkred;
+}

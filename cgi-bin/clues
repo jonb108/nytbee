@@ -47,7 +47,7 @@ my $center = $q->param('center');
 print <<"EOH";
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='http://logicalpoetry.com/nytbee_web/cgi_style.css'/>
+<link rel='stylesheet' type='text/css' href='http://logicalpoetry.com/nytbee/cgi_style.css'/>
 </head>
 <body>
 <h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>4</span></h1>

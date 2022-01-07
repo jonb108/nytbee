@@ -27,7 +27,7 @@ close $puz;
 print <<"EOH";
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='http://logicalpoetry.com/nytbee_web/cgi_style.css'/>
+<link rel='stylesheet' type='text/css' href='http://logicalpoetry.com/nytbee/cgi_style.css'/>
 </head>
 <body>
 Finished. &#128077;<br>
@@ -35,7 +35,7 @@ You have created an NYT Type Puzzle for the Hivemind Community.
 <p>
 Your puzzle is #$n.
 <p>
-Click <a target=_blank href=http://logicalpoetry.com/cgi-bin/nytbee_web.pl>here</a> to solve it.<br>
+Click <a target=_blank href=http://logicalpoetry.com/cgi-bin/nytbee.pl>here</a> to solve it.<br>
 You will use the <span class=cmd>CP$n</span> command to open it.
 </body>
 </html>
