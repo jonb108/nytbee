@@ -47,28 +47,17 @@ my $center = $q->param('center');
 print <<"EOH";
 <html>
 <head>
-<style>
-body {
-    margin: .5in;
-    font-family: Arial;
-}
-body, td, input, button {
-    font-size: 18pt;
-    font-family: Arial;
-}
-.submit {
-    background: lightgreen;
-}
-</style>
+<link rel='stylesheet' type='text/css' href='http://logicalpoetry.com/nytbee_web/cgi_style.css'/>
 </head>
 <body>
-<h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step 4</h1>
+<h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>4</span></h1>
 Optionally, provide clues for each word.
 <p>
-<form name=form action=/cgi-bin/final method=POST>
+<form name=form action=/cgi-bin/get_clues method=POST>
 <input type=hidden name=seven value='$seven'>
 <input type=hidden name=center value='$center'>
 <input type=hidden name=words value='@ok_words'>
+<input type=hidden name=pangrams value='@pangrams'>
 <table cellpadding=5>
 EOH
 for my $w (@ok_words) {
