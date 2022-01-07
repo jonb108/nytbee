@@ -726,6 +726,7 @@ elsif ($cmd =~ m{\A s \s+ ([/a-z]+) \s* \z}xms) {
 # some subset, some order
 my $order = 0;
 my $prefix = '';
+my $limit = 0;
 my @words_found;
 if ($cmd eq 'w') {
     @words_found = @found;
@@ -733,12 +734,12 @@ if ($cmd eq 'w') {
 }
 elsif ($cmd =~ m{\A w \s* ([<>]) \s* (\d*)\z}xms) {
     $order = $1 eq '>'? 1: -1;
-    my $limit = $2;
+    $limit = $2;
     # by increasing or decreasing length
     # time for a schwarzian transform!
     @words_found = grep {
-                       $limit? $order == 1? length($_) > $limit
-                              :             length($_) < $limit
+                       $limit? ($order == 1? length($_) > $limit
+                               :             length($_) < $limit)
                       :        1
                    }
                    map {
@@ -835,7 +836,8 @@ for my $w (@new_words) {
 # now that we have added the new words...
 compute_score_and_rank();
 
-if (! $prefix && ! @words_found) {
+if (! $prefix && ! $limit && ! @words_found) {
+    # the default when there are no restrictions
     @words_found = sort @found;
 }
 
