@@ -1,0 +1,105 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use CGI;
+my $q = CGI->new();
+print $q->header();
+
+use Date::Simple qw/
+    today
+/;
+my $d8 = today->as_d8();
+
+use BeeUtil qw/
+    word_score
+/;
+
+my %params = $q->Vars();
+
+# we choose ~ and ^ as characters
+# that are very unlikely to be used
+# in the clue - what if they are?
+my $clues = join '',
+            map {
+                my $k = $_;
+                my $w = $k; $w =~ s{_clue\z}{}xms;
+                my $clue = $params{$k};
+                $clue =~ s{\A\s*|\s*\z}{}xmsg;
+                $clue =~ s{"}{'}xmsg;        # double quote => single quote
+                "$w^$clue~"
+            }
+            grep { 
+                m/_clue\z/xms 
+                &&
+                $params{$_} =~ m{\S}   # why not just $params{$_}?
+            }
+            keys %params;
+my $seven = $params{seven};
+my $center = $params{center};
+my $words = $params{words};
+my $pangrams = $params{pangrams};
+my %is_pangram = map { $_ => 1 } split ' ', $pangrams;
+my @words = split ' ', $words;
+my $nwords = @words;
+my $points = 0;
+for my $w (@words) {
+    $points += word_score($w, $is_pangram{$w});
+}
+print <<"EOH";
+<html>
+<head>
+<link rel='stylesheet' type='text/css' href='http://logicalpoetry.com/nytbee_web/cgi_style.css'/>
+</head>
+<body>
+<h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>5</span></h1>
+<form action=final_mkpuz method=POST>
+<input type=hidden name=seven value='$seven'>
+<input type=hidden name=center value='$center'>
+<input type=hidden name=words value='$words'>
+<input type=hidden name=pangrams value='$pangrams'>
+<input type=hidden name=clues value="$clues">
+<input type=hidden name=created value='$d8'>
+Words: $nwords, Points: $points<br>
+Pangrams: <span class=green>$pangrams</span><p>
+Finally, provide some information about the puzzle and about yourself.
+All fields are optional.  The PIN is recommended to authenticate
+yourself for later editing of the puzzle.
+<p>
+<table cellpadding=5>
+<tr>
+<th>Puzzle Title</th>
+<td><input type=text name=title size=40></td>
+</tr>
+
+<tr>
+<th>Name</th>
+<td><input type=text name=name size=40></td>
+</tr>
+
+<tr>
+<th>Location</th>
+<td><input type=text name=location size=40></td>
+</tr>
+
+<tr>
+<th>Contact<br>Information</th>
+<td><input type=text name=contact size=40></td>
+</tr>
+
+<tr>
+<th>PIN</th>
+<td style="text-align: left"><input type=text name=pin size=4> 4 digits</td>
+</tr>
+
+<tr>
+<th>&nbsp;</th>
+<td style="text-align: left"><button class=submit type=submit>Submit</button></td>
+</tr>
+
+</table>
+</form>
+</body>
+</html>
+<script>document.form.xxx.focus();</script>
+</form>
+EOH
