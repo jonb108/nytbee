@@ -17,40 +17,21 @@ my $regex = qr{[^$seven]}xms;
 print <<"EOH";
 <html>
 <head>
-<style>
-body {
-    font-size: 18pt;
-    margin: .5in;
-    font-family: Arial;
-}
-.word, .center {
-    font-size: 30pt;
-    font-weight: normal;
-    color: green;
-}
-input, button {
-    font-size: 18pt;
-}
-button {
-    background: lightgreen;
-}
-.red {
-    color: red;
-    font-size: 24pt;
-}
-</style>
+<link rel='stylesheet' type='text/css' href='http://logicalpoetry.com/nytbee_web/cgi_style.css'/>
 </head>
 <body>
-<h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step 3</h1>
+<h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>3</a></h1>
 For the pangramic word <span class=word>$word</span> and center letter <span class=center>\U$center\E</span> we have identified the qualified words.
 <p>
-Check the words you want to include in the puzzle and press Submit at the bottom.  Make sure you include at least one pangram. They are marked with a red asterisk <span class=red>*</span>).
+Check the words you want to include in the puzzle and press Submit at the bottom.  Make sure you include at least one pangram. They are marked with a red asterisk <span class='red star'>*</span>).
 
 <p>
 <form action=/cgi-bin/clues method=POST>
 <input type=hidden name=seven value=$seven>
 <input type=hidden name=center value=$center>
 <h2>Qualified words used in previous NYT Bee Puzzles:</h2>
+You can, of course, UNcheck these words, if you wish.
+<p>
 EOH
 open my $in, '<', 'pwords.txt';
 LINE:
@@ -69,7 +50,7 @@ while (my $line = <$in>) {
 }
 close $in;
 print "<h2>More words (qualified but some are rare and esoteric):</h2>\n";
-print "Surprisingly, there are still many ordinary words that have not yet been used in the NYT puzzles.<p>\n";
+print "Surprisingly, there are still many ordinary words that have not yet been used in any of the NYT puzzles.<p>\n";
 open my $in2, '<', 'fourminus.txt';
 LINE:
 while (my $line = <$in2>) {

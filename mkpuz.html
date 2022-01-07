@@ -1,42 +1,21 @@
 <html>
 <head>
-<style>
-body {
-    font-family: Arial;
-    font-size: 18pt;
-    margin-top: .5in;
-    margin-left: .5in;
-    margin-bottom: .5in;
-}
-input, button {
-    font-size: 18pt;
-}
-button {
-    background: lightgreen;
-}
-a {
-    text-decoration: none;
-    color: blue;
-}
-.green {
-    color: green;
-    font-size: 20pt;
-}
-</style>
+<title>The Spelling Bee Puzzle of New York Times</title>
+<link rel='stylesheet' type='text/css' href='cgi_style.css'/>
 </head>
 <body>
-<h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step 1</h1>
-<form name=form action=/cgi-bin/mkpuz_tally>
+<h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>1</span></h1>
+<form name=form action=/cgi-bin/mkpuz_tally method=POST>
 Enter a pangramic word:<p>
 <input type=text name=word size=15>
 <p>
 <button type=submit>Submit</button>
 <p>
-A pangramic word is one that has exactly 7 unique letters.
+In this context a pangramic word is one that has exactly 7 unique letters.
 <p>
 Here are some lists of pangramic words:
 <p>
-<a target=pangramic href='pangrams.txt'>From the NYT Puzzles</a> (from 5/29/31 to 12/31/21)
+<a target=pangramic href='pangrams.txt'>From the NYT Puzzles</a> (from 5/29/18 to 12/31/21)
 <p>
 <a target=pangramic href='comm_not_puz.txt'>From a list of 10,000 commonly used words</a> (from <a href='https://englishgrammarhere.com/vocabulary/10000-most-common-words-in-english/'>englishgrammarhere.com</a>)
 <p>

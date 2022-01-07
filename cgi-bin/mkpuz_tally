@@ -1,4 +1,14 @@
 #!/usr/bin/perl
+# if no pangrams at all - give error
+# note about dictionary definitions - so no need for all clues
+# clues are more subtle - like a crossword clue
+# in clue form - have link for dict definition
+# look for 'command line' in the help
+# will there be issues with too many users?
+#       fast-cgi, mod_perl
+#       a dedicated server and domain
+# Q for an inspiring quote
+#       vegan and progressive centric
 use strict;
 use warnings;
 use CGI;
@@ -8,15 +18,10 @@ print $q->header();
 use BeeUtil qw/
     uniq_chars
     error
+    word_score
 /;
 
 my $word = $q->param('word');
-
-sub word_score {
-    my ($word, $pangram) = @_;
-    my $l = length $word;
-    return ($l == 4? 1: $l) + ($pangram? 7: 0);
-}
 
 my @lets = uniq_chars($word);
 if (@lets != 7) {
@@ -51,41 +56,14 @@ my $pl = $npangrams == 1? '': 's';
 print <<"EOH";
 <html>
 <head>
-<style>
-body {
-    font-family: Arial;
-    margin: .5in;
-    font-size: 18pt;
-}
-td, th {
-    font-family: Arial;
-    font-size: 18pt;
-    text-align: right;
-}
-.let {
-    text-align: center;
-    font-weight: bold;
-    font-size: 24pt;
-}
-.word {
-    font-size: 30pt;
-    color: green;
-}
-.green {
-    color: green;
-}
-a {
-    text-decoration: none;
-    color: blue;
-}
-</style>
+<link rel='stylesheet' type='text/css' href='http://logicalpoetry.com/nytbee_web/cgi_style.css'/>
 </head>
 <body>
-<h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step 2</h1>
+<h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>2</span></h1>
 The pangramic word is: <span class=word>$word</span>
 <p>
-For each of the 7 letters in the word we have done tallies of qualified words.
-A 'qualified' word is one that:
+For each of the 7 unique letters in the word we have done tallies of 'qualified' words.
+A qualified word is one that:
 <ul>
 <li>includes the center letter
 <li>is at least 4 letters long
