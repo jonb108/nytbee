@@ -1,0 +1,59 @@
+word   count    a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  
+--------------------------------------------------------------------------------------------
+bulb       2                                     1                          1               
+bulk       2                                     1                          1               
+bull       2                                     1                          1               
+luau       2                                     1                          1               
+lull       2                                     1                          1               
+lulu       2                                     1                          1               
+aural      1                                     1                                          
+balk       1                                     1                                          
+ball       1                                     1                                          
+bawl       1                                     1                                          
+blab       1                                     1                                          
+bluff      1                                                                1               
+blur       1                                     1                                          
+blurb      1                                     1                                          
+brawl      1                                     1                                          
+bubba      1                                                                1               
+buck       1                                                                1               
+buff       1                                                                1               
+bulwark    1                                     1                                          
+burl       1                                     1                                          
+caul       1                                                                1               
+caulk      1                                                                1               
+club       1                                                                1               
+cluck      1                                                                1               
+cuff       1                                                                1               
+cull       1                                                                1               
+flub       1                                                                1               
+fluff      1                                                                1               
+full       1                                                                1               
+fullback   1                                                                1               
+illy       1                            1                                                   
+inky       1                            1                                                   
+kill       1                            1                                                   
+kiln       1                            1                                                   
+kink       1                            1                                                   
+kinkily    1                            1                                                   
+kinky      1                            1                                                   
+kiwi       1                            1                                                   
+krill      1                            1                                                   
+lark       1                                     1                                          
+lily       1                            1                                                   
+link       1                            1                                                   
+luck       1                                                                1               
+lurk       1                                     1                                          
+ninny      1                            1                                                   
+rill       1                            1                                                   
+rink       1                            1                                                   
+rural      1                                     1                                          
+walk       1                                     1                                          
+wall       1                                     1                                          
+wiki       1                            1                                                   
+will       1                            1                                                   
+wily       1                            1                                                   
+wink       1                            1                                                   
+winy       1                            1                                                   
+wiry       1                            1                                                   
+wrinkly    1                            1                                                   

@@ -1,0 +1,301 @@
+=comment
+
+===========
+
+https://swilliams.io/fun/hex/
+    just one? yes.
+    https://swilliams.io/fun/hex/sevenletterwords.txt
+    https://swilliams.io/resources/dictionary.txt
+    https://swilliams.io/fun/hex/hexgame.js
+        why does it always choose TERRORIFIC?
+        a different one each day - how is it chosen?
+    not curated - only from the dictionary.txt
+    pretty good!
+    it's like a bonus game
+    no ranks
+    queen bee?
+    doesn't remember your words if refresh or start again
+
+to make a Windows executable:
+https://stackoverflow.com/questions/2948405/how-to-compile-a-perl-script-to-a-windows-executable-with-strawberry-perl?answertab=votes#tab-top
+
+installing PAR::Packer was a doozy!
+but it works!  yay!
+
+On the MS Windows box:
+Load the web site with the Apple Mac Installation
+Download nytbee.pl to the c:\Users\jonbj\Downloads directory
+
+> cd c:\Strawberry\perl\bin
+> pp -o c:\Users\jonbj\Desktop\nytbee.exe c:\Users\jonbj\Downloads\nytbee.pl
+
+> cd c:\Users\jonbj\Desktop
+> ftp logicalpoetry.com     (user:logicalpoetr password: soHuM108!)
+
+ftp> cd webspace/httpdocs/logicalpoetry.com/nytbee
+ftp> bin
+ftp> put nytbee.exe
+ftp> quit
+===========
+
+https://addons.mozilla.org/en-US/firefox/addon/beecheating/
+    firefox addon to cheat - try it!
+
+https://designobserver.com/feature/on-bee-ing/40373
+
+https://github.com/philshem/open-spelling-bee
+    python - does not use NYT Bee puzzles or word list
+    funky interface
+
+https://towardsdatascience.com/solving-the-new-york-times-spelling-bee-puzzle-in-python-511bcb5ea65e
+https://github.com/AvonleaFisher/NYT-Spelling-Bee-Solver-Function
+    downloaded into NYT-Spelling-Bee-Solver-Function/
+
+https://mattomath.wordpress.com/2020/11/16/secrets-of-the-spelling-bee/
+    clever and thorough analysis of words used in the NYT Bee
+https://www.cs.rpi.edu/academics/courses/fall21/csci1200/calendar.php
+    rpi.edu
+    C++ class assignment - see Sept 16
+    get .zip and .pdf
+    see hw.pdf and provided_files/
+senior project
+    web implementation of SB at Bryn Mawr
+    Bryn_Mawr.pdf
+
+https://github.com/the-almighty-carl/nyt-spelling-bee-solver
+
+https://slate.com/culture/2021/08/nyt-spelling-bee-sam-ezersky.html
+
+https://aaron-santacruz03.medium.com/programming-nyt-spelling-bee-solver-and-creator-b88f124cf2a0
+
+https://github.com/lzha97/spelling_bee
+
+https://github.com/wchargin/spelling-bee/blob/master/README.md
+
+https://compedu.stanford.edu/codeinplace/public/projects/0275.html
+
+
+Programmers who made the code for NYT Bee:
+https://nytimes.wd5.myworkdayjobs.com/NYT/job/New-York-NY/Senior-Director-of-Engineering_REQ-008935
+
+Z
+history?
+
+Perl is superb at text manipulation so it well suited
+    to the task of Spelling Bee.
+It's just text.  No real need for fancy graphics.
+
+the full css, js to implement the spelling bee is very large
+even when minimized!
+
+NYTBee.com (Chris McLeester) provides answers to all puzzles.
+It's like an archive.
+But you can't _play_ the many previous days puzzles.
+The New York Times does not provide a Spelling Bee archive.
+not at midnight or .. the index.html file does not point properly at midnight?
+https://nytbee.com/Bee_20211128.html is there but not nytbee.com
+
+Another site:
+spellingbeeanswers.com - not at midnight
+You can see the archive.  A nice display (with score on hover)
+but you can't play it!  It has ads. :(
+Lots of crap in the HTML.  For the ads?
+no contact email
+
+https://www.nytimes.com/2021/10/20/crosswords/spelling-bee-forum.html
+hints for previous days
+going back how far?
+2021/09/20 is the first - interesting - it IS recent
+    or perhaps they aren't saving the earlier ones?
+
+and:
+https://nytspellingbeeanswers.org - not at midnight
+a word press site
+fancy format - but big deal
+bottom/top letters - no - they can be permuted
+all words are in length order; no secondary sort
+asking for comment - what purpose?
+only back to Jan 18, 2021
+again, can't play the puzzles
+lame
+
+https://www.shunn.net/bee/ - yes at midnight
+I've seen his name before... where?
+ads on the site :( VERY annoying
+shows the grid 
+but not the 2 letter counts
+can't play the puzzle
+it solves it for you...
+his archive goes back to 5/29/2018
+an entertaining faq
+https://www.shunn.net/blog/2020/08/you_cant_spell_preventable_without_a_bee.html
+again, you can't play puzzles from the archive !
+yet another software engineer plays with the bee.
+it's part of his general blog
+feedback@shun.net
+nyt says the bee goes back to May 9, 2018
+print edition to 2014
+
+https://nytimes-spellingbee.com - not at midnight
+ads on the site :(
+it looks like it is 'branded' with the NYT logo
+Stole the javascript/css/html from nytimes.com? yes.
+in iframe links to nytbee.com - with permission?
+be12343to@gmail.com
+the iframe embeds this:
+https://nytimes-spellingbee.com/nytimes-spelling-bee.embed
+https://games-online.io/game/bee
+stolen javascript:
+    https://games-online.io/game/bee/resouce/js/o_spelling-bee.js
+somehow they get around the necessity of logging in
+no archive
+
+and another:
+
+https://spellingbeetimes.com - yes at midnight
+https://spellingbeetimes.com/2021/11/26/new-york-times-nyt-spelling-bee-answers-and-solution-for-november-26-2021/
+lots of ads :(
+they have definitions - from somewhere - but not one for BIKING on 11/26/21?
+back to 2/4/2020
+they even generate a youtube video!  lame
+
+and:
+https://freebee.fun
+enhanced free version of the game
+you can play it.  no ads.
+github: https://github.com/freebee-game/console-client/releases/tag/freebee-1.8
+    need to compile.   didn't just work :(
+on web:
+https://freebee.fun/play/
+Brian Callahan <bcallah@openbsd.org>
+
+another:
+https://the-frenemy.com/nyt-spelling-bee-answers-daily/
+not at midnight - lame - empty with "COMING SOON"
+ads :( lame.
+generated from scraping...
+goes back to 1/1/21
+lots of other word puzzles as well
+no contact email :(
+
+another:
+https://hejhej.dev/bee/today - not at midnight
+no ads yeah! :)
+i'm not the first to scrape the words from the nytimes.com site!
+
+a reddit site for discussion:
+https://www.reddit.com/r/NYTSpellingBee
+
+
+wikipedia:
+https://en.wikipedia.org/wiki/The_New_York_Times_Spelling_Bee
+links on the wiki:
+https://slate.com/human-interest/2020/02/spelling-bee-new-york-times-praise.html
+https://graziadaily.co.uk/life/in-the-news/new-york-times-spelling-bee/
+http://www.washingtonpost.com/entertainment/style-invitational-week-1424-we-bee-back--a-neologism-contest/2021/02/18/ed04fe48-6fe2-11eb-b8a9-b9467510f0fe_story.html
+    made up words
+https://www.nytimes.com/2020/10/16/crosswords/spellingbee-puzzles.html
+https://www.democratandchronicle.com/story/news/local/columnists/memmott/2020/08/24/the-new-york-times-spelling-bee-game-makes-sense-during-these-scrambled-times/113474864/
+
+puzzles are a kind of mental masturbation
+    a great time waster
+    so is endless fiddling with software :)
+    nerdy obsessive
+    but at least with software you have something
+    useful at the end.  useful to others, too...
+
+
+At nytimes.com/puzzles/spelling-bee the allowed words ARE within the html.
+Is it all available to curl even when not logged in?
+The gameData is, yes.  So Chris McLeester grabs it all each day and 
+stores it - as do I now.
+I grabbed his archive in case it goes away.
+    - except for 4 dates that were missing.
+
+the missing ones I grabbed from https://shunn.net/bee
+in addition to ones from may 29, 2018 to july 28, 2018
+
+What is his lexicon for his list of words that are not allowed?
+
+Making software is another way to enjoy the puzzle.
+Not everyone can do it.
+But you make something that others can enjoy.
+
+Tell Deb Amlen about Pangram Haiku and my latest software fun.
+Tell her about Chris McLeester and nytbee.com
+    and the other sites as well - if she didn't know...
+
+With my program you can play without a subscription.
+    (not okay?)
+
+Those WITH subscriptions can use my program to play and practice
+    as much as they like.   With days that
+    are not today you don't have the pleasure of knowing that
+    others are doing the same puzzle.
+    There is no sense of community.  
+    Instead of crossword type clues from the community
+    you have dictionary definitions.
+    It's also just fun to easily define any word.  
+
+JQSX - none as center letter
+as of 11/28/21 there are 1281 puzzles in the archive
+first in archive is on 5/29/2018
+Spelling Bee began on 5/9/2018
+
+Do Windows machines come with perl installed?
+    No.
+    OSX does.
+    I could make an executable for windows.
+        Is curl available?
+
+Donate a little to Chris McLeester.
+chris@nytbee.com
+See donate button on 8/16/2021.
+but not on ?
+<input type=image> yes in Chrome not in Safari?  why?
+
+I include all rows and columns of the word table
+even if the sum is 0.  Different than the NYT Bee.
+
+Trying to find the first day it was offered
+I went back in time 2019 or earlier - he uses a different
+format - why?  It is static text that he generated with
+a script that has evolved?
+He didn't go back and make them all the same.
+
+20180729 - first one
+20180802 - flawed - no puzzle on 7/6/18
+20180803 - flawed 
+20180804 - new format
+
+20190608:
+This puzzle's 81 possible answers rank it in the 100th percentile of all puzzles.
+The last time there were more answers than this was on never. 
+The highest number of answers was 81 on June 8, 2019. 
+
+    Not true - highest number of answers SO FAR
+
+who really cares about the graphs? no one!
+it requires the browser to load lots of code - bokeh, etc
+
+what is all the crap in the HTML?
+    for bokeh?
+
+history of commands?
+    nah
+
+list words in the order they were found?
+    how to store this in the file?
+    forget it
+
+redo in Python?
+redo in Javascript?
+redo in Ruby?
+it's a text manipulation exercise
+
+do I need a Puzzle object?
+it might clarify some things even though
+but we have only one instance at a time.
+it would proliferate the occurence of -> and self->{}
+
+=cut

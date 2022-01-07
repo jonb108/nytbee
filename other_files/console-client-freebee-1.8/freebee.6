@@ -1,0 +1,57 @@
+.\"
+.\" freebee - Free Bee spelling bee game
+.\"
+.\" Copyright (c) 2020 Brian Callahan <bcallah@openbsd.org>
+.\"
+.\" Permission to use, copy, modify, and distribute this software for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+.\" WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+.\" MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+.\" ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+.\" WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+.\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+.\"
+.Dd July 14, 2020
+.Dt FREEBEE 6
+.Os
+.Sh NAME
+.Nm freebee
+.Nd Free Bee spelling bee game
+.Sh SYNOPSIS
+.Nm
+.Sh DESCRIPTION
+.Nm
+is a game where the player creates anagrams.
+The goal of
+.Nm
+is to make as many words as possible with the seven provided letters.
+The player does not have to use every letter and can use letters more than
+once.
+The only requirements are that the center letter must be used at least once
+in every word and words must be at least four letters long.
+.Pp
+Four letter words are worth one point.
+Words longer than four letters are worth one point per letter.
+Pangrams, words that use all seven letters, are worth one point per letter
+plus an additional seven points.
+All games have at least one pangram and many games have multiple.
+.Pp
+The game is won when enough points are earned to become the Queen Bee.
+.Pp
+There are two types of games, daily and random.
+Daily games are updated once per day and are downloaded from the Free Bee
+website at
+.Lk https://freebee.fun .
+Random games are generated on-the-fly whenever desired.
+.Sh EXIT STATUS
+The
+.Nm
+game exits 0 on success, and >0 if an error occurs.
+.Sh AUTHORS
+.Nm
+was written by
+.An Brian Callahan Aq Mt bcallah@openbsd.org .

@@ -1,0 +1,28 @@
+letter   #center   avg center   #other   avg other
+--------------------------------------------------
+a                                           
+b                                           
+c                                    1       226.0
+d                                           
+e                                    1       226.0
+f                                           
+g                                           
+h                                           
+i                                           
+j                                           
+k                                           
+l                                    1       226.0
+m                                    1       226.0
+n                                           
+o                                    1       226.0
+p                                    1       226.0
+q                                           
+r                                           
+s                                           
+t              1        226.0               
+u                                           
+v                                           
+w                                           
+x                                           
+y                                           
+z                                           
