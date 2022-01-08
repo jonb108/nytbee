@@ -1196,12 +1196,12 @@ if ($message) {
 }
 my $produce_collect
     = "<a target=_blank href='$log/nytbee/mkpuz.html'>"
-    . "Produce Puzzle</a>";
+    . "Create Puzzle</a>";
 if ($date =~ m{\A \d}xms) {
     $produce_collect
         .= "<br><a target=_blank"
         .  " href='$log/cgi-bin/nytbee_mkclues?date=$date'>"
-        .  "Collect Clues</a>";
+        .  "Add Clues</a>";
 }
 
 # now to display everything
