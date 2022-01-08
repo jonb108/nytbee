@@ -4,18 +4,33 @@ use warnings;
 
 =comment
 
+at some point it becomes Art
+practical use yields to beauty
+to others its over the top impracticality
+    seems insane and a waste of time
+    but to the artist
+    it gives meaning to life and is therapeutic
+
+somehow cache the results of getting nyt hints?
+
 ToDo:
 DA should give clues PLUS all definitions from all dictionaries
 D/DA word should not give clues - just definitions
 
 I - show who has given hints for the NYT Puzzle
+different colors for different clue providers
+    up to 5 different - green, purple, ...
+returning to Collect Clues will show the clues from before
+    do you can update them
+
 
 F and S - look in Community Puzzles as well...
 
 XA - clear all and revert to today
     sure why not
 D MONONYM - give dictionary definition not the clue
-DA XY - give all dictionary definitions from all 3 dictionaries AND a clue if present
+DA XY - give all dictionary definitions from all 3 dictionaries
+    AND a clue if present
 DA F4 - same as DA XY
 
 saved games - with timestamp? and purge ones more than a month old
@@ -30,7 +45,10 @@ and we compute the rest - score, max_score, rankings, hint table
 it is plenty fast
 
 the usual web trick is to store the puzzle state
-in a stateless environment... with hidden fields.
+in a stateless environment... with hidden fields
+and using ip_id index into dbm and cookies
+I want to avoid a registration step
+    so we use ip and browser signature
 
 =cut
 
@@ -61,7 +79,13 @@ my ($seven, $center, @pangrams);
 my @seven;
 my @ok_words;
 my %clue_for;
-my %nyt_clues_for;
+
+# see sub load_nyt_clues
+my %nyt_clues_for;        # key is word,
+                          # value is [ { person_id => x, clue => y }, ... ]
+my %nyt_cluer_name_of;    # key is person_id
+my %nyt_cluer_color_for;  # key is person_id
+
 my $ip_id = ip_id();
 my $log = 'http://logicalpoetry.com';
 
@@ -254,10 +278,6 @@ if ($date =~ m{\A\d}xms) {
     ($seven, $center, @pangrams) = split ' ', $s;
     @seven = split //, $seven;
     @ok_words = split ' ', $t;
-    if ($puzzle_has_clues{$date}) {
-        my $href = eval `curl -skL $log/cgi-bin/nytbee_get_clues/$date`;
-        %nyt_clues_for = %$href;
-    }
 }
 else {
     # Community Puzzles
@@ -287,6 +307,43 @@ if (! $cmd && ! $params{has_message}) {
     my @new;
     push @new, splice @six, rand @six, 1 while @six;
     @six = @new;
+}
+
+# this is done lazily 
+# if we are going to do a define
+# or an I (info)
+#
+# this is all very syntactically intense.
+# also see 'i' and sub define
+# is there a better data structure?
+# perhaps have the colors in nytbee_get_clues or nytbee_get_cluers?
+sub load_nyt_clues {
+    if ($puzzle_has_clues{$date}) {
+        # eliminate $href???
+        %nyt_clues_for
+            = %{ eval `curl -skL $log/cgi-bin/nytbee_get_clues/$date` };
+        %nyt_cluer_name_of
+            = %{ eval `curl -skL $log/cgi-bin/nytbee_get_cluers/$date` };
+        my @cluer_colors = qw /
+            darkred
+            skyblue
+            seagreen
+            gray
+            purple 
+        /;
+        my $n = 0;
+        for my $person_id (
+            sort {
+                # sort by name:
+                $nyt_cluer_name_of{$a} cmp $nyt_cluer_name_of{$b}
+            }
+            # keys are person_id
+            keys %nyt_cluer_name_of
+        ) {
+            $nyt_cluer_color_for{$person_id} = $cluer_colors[$n];
+            ++$n;
+        }
+    }
 }
 
 sub word_score {
@@ -389,10 +446,15 @@ sub define {
         return "<li style='list-style-type: circle'>$clue_for{$word}</li>";
     }
     # community contributed NYT Bee Puzzle clues
+    my $lw = length($word);
     if (exists $nyt_clues_for{$word}) {
         my $s = '';
-        for my $cl (@{$nyt_clues_for{$word}}) {
-            $s .= "<li style='list-style-type: circle'>$cl</li>\n";
+        for my $href (@{$nyt_clues_for{$word}}) {
+            $s .= "<li style='list-style-type: circle'>"
+               .  "<span style='color: $nyt_cluer_color_for{$href->{person_id}}'>"
+               .  "$href->{clue} - $lw"
+               .  "</span>"
+               .  "</li>\n";
         }
         if (! $dont_tally_hints) {
             # just one word, perhaps several hints for that word
@@ -574,6 +636,7 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
 elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d+|[a-z][a-z]) \z}xms
        || $cmd =~ m{\A (da) \s+ (p|[a-z]\d+|[a-z][a-z]) \z}xms
 ) {
+    load_nyt_clues;
     my $Dcmd = $1 eq 'da';
     my $term = $2;
     my $line = "&mdash;" x 4;
@@ -593,6 +656,7 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d+|[a-z][a-z]) \z}xms
         $cmd = '';
     }
     elsif ($term =~ m{([a-z])(\d+)}xms) {
+        load_nyt_clues;
         my $let = $1;
         my $len = $2;
         $message = '';
@@ -611,6 +675,7 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d+|[a-z][a-z]) \z}xms
         $cmd = '';
     }
     elsif ($term =~ m{([a-z][a-z])}xms) {
+        load_nyt_clues;
         my $lets = $1;
         $message = '';
         for my $w (get_words($lets)) {
@@ -629,6 +694,7 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d+|[a-z][a-z]) \z}xms
     }
 }
 elsif ($cmd =~ m{\A (d|da) \s+ ([a-z]+) \z}xms) {
+    # dictionary definitions not clues
     my $Dcmd = $1 eq 'da';
     my $word = $2;
     $message = "\U$word:"
@@ -1000,6 +1066,24 @@ if ($cmd eq 'i') {
         }
         $message .= "<br>Community Puzzle #$n - $created<ul>$s</ul>";
     }
+    else {
+        load_nyt_clues;
+        if (%nyt_cluer_name_of) {
+            my @names;
+            for my $person_id (
+                sort {
+                    $nyt_cluer_name_of{$a} cmp $nyt_cluer_name_of{$b}
+                }
+                keys %nyt_cluer_name_of
+            ) {
+                push @names,
+                    "<span style='color: $nyt_cluer_color_for{$person_id}'>"
+                  . $nyt_cluer_name_of{$person_id}
+                  . "</span>";
+            }
+            $message .= "<br>Clues by " . join ', ', @names;
+        }
+    }
     $cmd = '';
 }
 
@@ -1110,10 +1194,15 @@ if ($message) {
     $message .= '<p>';
     $has_message = 1;
 }
-# ???if nyt puzzle is current you should be able
-# to create a community puzzle with this link...
-my $create = $date =~ m{\A CP}xms? 'nytbee/mkpuz.html'
-            :                      "cgi-bin/nytbee_mkclues?date=$date";
+my $produce_collect
+    = "<a target=_blank href='$log/nytbee/mkpuz.html'>"
+    . "Produce Puzzle</a>";
+if ($date =~ m{\A \d}xms) {
+    $produce_collect
+        .= "<br><a target=_blank"
+        .  " href='$log/cgi-bin/nytbee_mkclues?date=$date'>"
+        .  "Collect Clues</a>";
+}
 
 # now to display everything
 # cgi-bin/style.css?
@@ -1134,6 +1223,9 @@ print <<"EOH";
 }
 .help {
     margin-left: 1in;
+}
+.produce_collect, .help {
+    font-size: 13pt;
 }
 .mess {
     width: 600px;
@@ -1262,7 +1354,7 @@ function define_ht(c, n) {
          <img width=50 src=/pics/bee-logo.jpg>
     </div>
     <div class=float-child3>
-        <span class=help><a target=_blank href='$log/nytbee/help.html#words'>Help</a><br><a target=_blank href='$log/$create'>Create</a></span>
+        <span class=help><a target=_blank href='$log/nytbee/help.html#words'>Help</a></span><br><span class=produce_collect>$produce_collect</span>
     </div>
 </div>
 <br><br>

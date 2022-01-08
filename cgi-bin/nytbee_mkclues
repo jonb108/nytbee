@@ -13,7 +13,6 @@ use CGI qw/
 my $q = CGI->new();
 print $q->header();
 my $date = $q->param('date');
-#my $date = '20220104';
 
 use Date::Simple qw/
     date
@@ -26,15 +25,29 @@ use BeeUtil qw/
 /;
 
 my $ip_id = ip_id();
-my $sth = $dbh->prepare(<<'EOH');
+my $sth = $dbh->prepare(<<'EOS');
     
-    SELECT name
+    SELECT id, name
       FROM bee_person
      WHERE ip_id = ?
 
-EOH
+EOS
 $sth->execute($ip_id);
-my $name = $sth->fetchrow_array();
+my ($person_id, $name) = $sth->fetchrow_array();
+
+my $sth_clue = $dbh->prepare(<<'EOS');
+
+    SELECT word, clue
+      FROM bee_clue
+     WHERE person_id = ?
+       AND date = ?
+
+EOS
+$sth_clue->execute($person_id, $date);
+my %clue_for;
+while (my ($word, $clue) = $sth_clue->fetchrow_array()) {
+    $clue_for{$word} = $clue;
+}
 
 my $puzzle = $puzzle{$date};
 $puzzle =~ s{\A [^|]* [|]\ s* }{}xms;
@@ -46,11 +59,11 @@ print <<"EOH";
 <link rel='stylesheet' type='text/css' href='/nytbee/cgi_style.css'/>
 </head>
 <body>
-<h2>Hints for the NYT Puzzle words<br>on $show_date</h2>
+<h2>Clues for the NYT Puzzle<br>on $show_date</h2>
 <form name=form action=nytbee_mkclues2>
 <input type=hidden name=date value='$date'>
 <p>
-You don't have to give a  hint for <i>all</i> of the words.
+You don't need to give clues for all of the words.
 <p>
 <table cellpadding=3>
 <tr><td>Your Name</td><td><input name=name size=30 value='$name'></td></tr>
@@ -58,7 +71,11 @@ You don't have to give a  hint for <i>all</i> of the words.
 EOH
 for my $w (@words) {
     my $uw = ucfirst $w;
-    print Tr(td($uw), td("<input type=text size=30 name=${w}_clue>")), "\n";
+    print Tr(
+              td($uw),
+              td("<input type=text size=30 name=${w}_clue"
+               . qq! value="! . ($clue_for{$w}||'') . qq!">!)
+          ), "\n";
 }
 print Tr(td('&nbsp'), td({ style => 'text-align: left;' }, "<button type=submit>Submit</button>")), "\n";
 print <<"EOH";

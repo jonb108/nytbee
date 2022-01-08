@@ -11,17 +11,18 @@ use Bee_DBH qw/
     $dbh
 /;
 
-my $sth = $dbh->prepare(<<'EOH');
+my $sth = $dbh->prepare(<<'EOS');
     
-    SELECT word, clue
+    SELECT person_id, word, clue
       FROM bee_clue
      WHERE date = ?
+ ORDER BY person_id
 
-EOH
+EOS
 $sth->execute($date);
 my %clues;
-while (my ($word, $clue) = $sth->fetchrow_array()) {
-    push @{$clues{$word}}, $clue;
+while (my ($person_id, $word, $clue) = $sth->fetchrow_array()) {
+    push @{$clues{$word}}, { person_id => $person_id, clue => $clue };
 }
 use Data::Dumper;
 $Data::Dumper::Terse = 1;

@@ -45,7 +45,7 @@ my %clue_for
           my $clue = trim($params{$w});
           $clue =~ s{"}{'}xmsg;
           $w =~ s{_clue\z}{}xms;
-          $w => $clue
+          $w => ucfirst $clue
       }
       grep {
           m{_clue\z}xms
@@ -74,63 +74,63 @@ use Bee_DBH qw/
     $dbh
 /;
 
-my $sth = $dbh->prepare(<<'EOH');
+my $sth = $dbh->prepare(<<'EOS');
 
     SELECT id, name
       FROM bee_person
      WHERE ip_id = ?
 
-EOH
+EOS
 my $ip_id = ip_id();
 $sth->execute($ip_id);
 my ($person_id, $name) = $sth->fetchrow_array();
 if ($person_id) {
     if ($name ne $pname) {
         # exising location but name changed
-        my $up_sth = $dbh->prepare(<<'EOH');
+        my $up_sth = $dbh->prepare(<<'EOS');
 
         UPDATE bee_person
            SET name = ?
          WHERE ip_id = ?
 
-EOH
+EOS
         $up_sth->execute($pname, $ip_id);
     }
     # else name did not change
 }
 else {
     # new name from new location
-    my $ins_sth = $dbh->prepare(<<'EOH');
+    my $ins_sth = $dbh->prepare(<<'EOS');
 
     INSERT 
       INTO bee_person
            (ip_id, name)
     VALUES (?, ?)
 
-EOH
+EOS
     $ins_sth->execute($ip_id, $pname);
     $person_id = $dbh->last_insert_id(undef, undef, 'bee_person', 'id');
 }
 
 # clear old clues from this person for this date
-my $sth_clear = $dbh->prepare(<<'EOH');
+my $sth_clear = $dbh->prepare(<<'EOS');
     
     DELETE
       FROM bee_clue
      WHERE person_id = ?
        AND date = ?
 
-EOH
+EOS
 $sth_clear->execute($person_id, $date);
 
-my $ins_clue_sth = $dbh->prepare(<<'EOH');
+my $ins_clue_sth = $dbh->prepare(<<'EOS');
 
     INSERT
       INTO bee_clue
            (person_id, date, word, clue)
     VALUES (?, ?, ?, ?)
 
-EOH
+EOS
 
 # generate the pastable text for the forum
 print <<"EOH";
@@ -148,21 +148,12 @@ body {
 EOH
 my $prev_l2 = '';
 for my $w (sort keys %clue_for) {
+    my $lw = length($w);
     my $l2 = substr($w, 0, 2);
-    my $lw = length $w;
-    $ins_clue_sth->execute($person_id, $date, $w, "$clue_for{$w} - $lw");
+    $ins_clue_sth->execute($person_id, $date, $w, $clue_for{$w});
     if ($prev_l2 ne $l2) {
         print "<p>\U$l2\E<br>\n";
     }
     print ucfirst($clue_for{$w}) . " - $lw<br>\n";
     $prev_l2 = $l2;
 }
-
-=comment
-
-then make nytbee_get_clues
-    with params date, words
-    it returns a single string which is then split apart (or Dumper?)
-        at D or DA command time
-
-=cut
