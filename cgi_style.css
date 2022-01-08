@@ -8,6 +8,9 @@ td, th {
     font-size: 18pt;
     text-align: right;
 }
+.left {
+    text-align: left;
+}
 .let {
     text-align: center;
     font-weight: bold;

@@ -1,0 +1,145 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+=comment
+
+later we can optimize things
+like filling in _prior_ clues and people's names
+depending on the ip and browser nums
+
+=cut
+
+# a poor man's database
+use DB_File;
+my %puzzle_has_clues;
+tie %puzzle_has_clues, 'DB_File', 'nyt_puzzles_has_clues.dbm';
+
+use CGI qw/
+    :standard
+/;
+use CGI::Carp qw/
+    warningsToBrowser
+    fatalsToBrowser
+/;
+my $q = CGI->new();
+print $q->header();
+
+use BeeUtil qw/
+    trim
+/;
+
+my $date = $q->param('date');       #  hidden field
+my $pname = $q->param('name');
+
+my %params = $q->Vars();
+
+my %clue_for
+    = map {
+          my $w = $_;
+          my $clue = trim($params{$w});
+          $clue =~ s{"}{'}xmsg;
+          $w =~ s{_clue\z}{}xms;
+          $w => $clue
+      }
+      grep {
+          m{_clue\z}xms
+          &&
+          $params{$_}
+      }
+      keys %params;
+
+$puzzle_has_clues{$date} = 1;
+
+#for my $w (sort keys %clue_for) {
+#    print "$w => $clue_for{$w}<br>\n";
+#}
+my $ua = $ENV{HTTP_USER_AGENT};
+$ua =~ s{\D}{}xmsg;
+my $ip_id = "$ENV{REMOTE_ADDR} $ua";
+
+use Bee_DBH qw/
+    $dbh
+/;
+
+my $sth = $dbh->prepare(<<'EOH');
+
+    SELECT id, name
+      FROM bee_person
+     WHERE ip_id = ?
+
+EOH
+$sth->execute($ip_id);
+my ($person_id, $name) = $sth->fetchrow_array();
+if ($person_id) {
+    if ($name ne $pname) {
+        # exising location but name changed
+        my $up_sth = $dbh->prepare(<<'EOH');
+
+        UPDATE bee_person
+           SET name = ?
+         WHERE ip_id = ?
+
+EOH
+        $up_sth->execute($pname, $ip_id);
+    }
+    # else name did not change
+}
+else {
+    # new name from new location
+    my $ins_sth = $dbh->prepare(<<'EOH');
+
+    INSERT 
+      INTO bee_person
+           (ip_id, name)
+    VALUES (?, ?)
+
+EOH
+    $ins_sth->execute($ip_id, $pname);
+    $person_id = $dbh->last_insert_id(undef, undef, 'bee_person', 'id');
+}
+
+# clear old clues from this person for this date
+my $sth_clear = $dbh->prepare(<<'EOH');
+    
+    DELETE
+      FROM bee_clue
+     WHERE person_id = ?
+       AND date = ?
+
+EOH
+$sth_clear->execute($person_id, $date);
+
+my $ins_clue_sth = $dbh->prepare(<<'EOH');
+
+    INSERT
+      INTO bee_clue
+           (person_id, date, word, clue)
+    VALUES (?, ?, ?, ?)
+
+EOH
+for my $w (sort keys %clue_for) {
+    $ins_clue_sth->execute($person_id, $date, $w, $clue_for{$w});
+}
+
+print "done\n";
+# generate the pastable text for the forum
+
+=comment
+
+insert into mysql database
+two tables - bee_person, bee_clue
+bee_person  (id, ip_id, name) ip_id is ip+browser - id is integer shorthand
+bee_clue    (person_id, date, word, clue)
+        primary key is (person_id, date, word)
+
+1 - update any existing person record for the person
+2 - clear all clues for this person and date
+3 - insert all word, clue
+
+then make nytbee_get_clues
+    with params date, words
+    it returns a single string which is then split apart (or Dumper?)
+        at D or DA command time
+
+=cut

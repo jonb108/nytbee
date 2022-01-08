@@ -43,6 +43,10 @@ my $q = CGI->new();
 print $q->header();
 my %params = $q->Vars();
 
+use BeeUtil qw/
+    trim
+/;
+
 use DB_File;
 my %puzzle;
 tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
@@ -94,7 +98,7 @@ my $cmd = lc $params{new_words};
     # $cmd is all in lower case
     # even though it looks like we are typing upper case...
     #
-$cmd =~ s{\A \s* | \s* \z}{}xmsg;
+$cmd = trim($cmd);
 
 my $first = date('5/29/18');
 my $date;
@@ -388,7 +392,7 @@ sub define {
         push @defs, ($html =~ m{"unText">(.*?)</span>}xmsg);
     }
     for my $def (@defs) {
-        $def =~ s{\s+ \z}{}xms;     # trailing space
+        $def = trim($def);
         $def =~ s{<[^>]*>}{}xmsg;   # strip tags
         $def =~ s{.*:\s+}{}xms;
     }
@@ -1081,8 +1085,13 @@ if ($message) {
     $message .= '<p>';
     $has_message = 1;
 }
+# ???if nyt puzzle is current you should be able
+# to create a community puzzle with this link...
+my $create = $date =~ m{\A CP}xms? 'nytbee/mkpuz.html'
+            :                      "cgi-bin/nytbee_mkclues?date=$date";
 
 # now to display everything
+# cgi-bin/style.css?
 
 print <<"EOH";
 <html>
@@ -1110,12 +1119,18 @@ a {
     cursor: pointer;
     color: blue;
 }
-.float-child {
+.float-child1 {
     float: left;
+    text-align: left;
 }
 .float-child2 {
-    margin-left: .4in;
     float: left;
+    margin-left: .3in;
+}
+.float-child3 {
+    float: left;
+    margin-left: .2in;
+    text-align: right;
 }
 .new_word {
     color: coral;
@@ -1204,14 +1219,14 @@ function define_ht(c, n) {
 </head>
 <body>
 <div class=float-container>
-    <div class=float-child>
+    <div class=float-child1>
         <a target=_blank href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date
     </div>
     <div class=float-child2>
          <img width=50 src=/pics/bee-logo.jpg>
     </div>
-    <div class=float-child>
-        <span class=help><a target=_blank href='http://logicalpoetry.com/nytbee/help.html#words'>Help</a>
+    <div class=float-child3>
+        <span class=help><a target=_blank href='http://logicalpoetry.com/nytbee/help.html#words'>Help</a><br><a target=_blank href='http://logicalpoetry.com/$create'>Create</a></span>
     </div>
 </div>
 <br><br>
@@ -1239,12 +1254,12 @@ Score: $score<span class='rank_name rank$rank'>$rank_name</span>
 $image
 $disp_nhints
 <div class=float-container>
-    <div class=float-child>
+    <div class=float-child4>
         <div id=hint_table class=hint_table>
         $hint_table
         </div>
     </div>
-    <div class=float-child>
+    <div class=float-child5>
         <div id=two_lets class=two_lets>
         $two_lets
         </div>

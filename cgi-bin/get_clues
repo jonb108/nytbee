@@ -12,6 +12,7 @@ my $d8 = today->as_d8();
 
 use BeeUtil qw/
     word_score
+    trim
 /;
 
 my %params = $q->Vars();
@@ -24,7 +25,7 @@ my $clues = join '',
                 my $k = $_;
                 my $w = $k; $w =~ s{_clue\z}{}xms;
                 my $clue = $params{$k};
-                $clue =~ s{\A\s*|\s*\z}{}xmsg;
+                $clue = trim($clue);
                 $clue =~ s{"}{'}xmsg;        # double quote => single quote
                 "$w^$clue~"
             }

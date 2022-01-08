@@ -1,0 +1,52 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+# a poor man's database
+use DB_File;
+my %puzzle;
+tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
+
+use CGI qw/
+    :standard
+/;
+my $q = CGI->new();
+print $q->header();
+my $date = $q->param('date');
+
+use Date::Simple qw/
+    date
+/;
+
+my $puzzle = $puzzle{$date};
+$puzzle =~ s{\A [^|]* [|]\ s* }{}xms;
+my @words = $puzzle =~ m{([a-z]+)}xmsg;
+my $show_date = date($date)->format("%B %e, %Y");
+print <<"EOH";
+<html>
+<head>
+<link rel='stylesheet' type='text/css' href='/nytbee/cgi_style.css'/>
+</head>
+<body>
+<h2>Hints for the NYT Puzzle words<br>on $show_date</h2>
+<form name=form action=nytbee_mkclues2>
+<input type=hidden name=date value='$date'>
+<p>
+Note: You don't have to give a  hint for <i>all</i> of the words.
+<p>
+<table cellpadding=3>
+<tr><td>Your Name</td><td><input name=name size=30></td></tr>
+<tr><td colspan=2>&nbsp;</td></tr>
+EOH
+for my $w (@words) {
+    my $uw = ucfirst $w;
+    print Tr(td($uw), td("<input type=text size=30 name=${w}_clue>")), "\n";
+}
+print Tr(td('&nbsp'), td({ style => 'text-align: left;' }, "<button type=submit>Submit</button>")), "\n";
+print <<"EOH";
+</table>
+</body>
+</html>
+<!-- <script>document.form.$words[0]_clue.focus()</script> -->
+<script>document.form.name.focus()</script>
+EOH

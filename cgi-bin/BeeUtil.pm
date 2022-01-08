@@ -6,6 +6,7 @@ our @EXPORT_OK = qw/
     uniq_chars
     error
     word_score
+    trim
 /;
 
 sub uniq_chars {
@@ -42,6 +43,12 @@ sub word_score {
     my ($word, $pangram) = @_;
     my $l = length $word;
     return ($l == 4? 1: $l) + ($pangram? 7: 0);
+}
+
+sub trim {
+    my ($s) = @_;
+    $s =~ s{\A \s* | \s* \z}{}xmsg;
+    return $s;
 }
 
 

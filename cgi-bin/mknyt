@@ -1,0 +1,13 @@
+drop table if exists bee_person;
+create table bee_person (
+    id int(11) primary key auto_increment,
+    ip_id varchar(100),
+    name varchar(40)
+);
+drop table if exists bee_clue;
+create table bee_clue (
+    person_id int(11),
+    date varchar(8),
+    word varchar(100),
+    clue varchar(200)
+);
