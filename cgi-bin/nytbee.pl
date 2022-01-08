@@ -4,27 +4,25 @@ use warnings;
 
 =comment
 
+ToDo:
+DA should give clues PLUS all definitions from all dictionaries
+D/DA word should not give clues - just definitions
+
+I - show who has given hints for the NYT Puzzle
+
 F and S - look in Community Puzzles as well...
 
 XA - clear all and revert to today
+    sure why not
 D MONONYM - give dictionary definition not the clue
 DA XY - give all dictionary definitions from all 3 dictionaries AND a clue if present
+DA F4 - same as DA XY
 
-with timestamp? and purge ones more than a month old
-another command to bring up the games your IP has saved? - L
-and one to open it - NP\d+
-    to distinguish it from N3 (3rd of this month)
-
-?create your own games that include S
-    and add them to the collection
+saved games - with timestamp? and purge ones more than a month old
 
 _will_ work on the phone but it's awkward.
 most everyone has a laptop or desktop
 so we won't try to have the 7 letters clickable/tappable
-
-ny times logo image at top?
-
-log?
 
 in hidden fields we store the minimum state we need:
     date, puzzle data from archive, found words
@@ -45,6 +43,7 @@ my %params = $q->Vars();
 
 use BeeUtil qw/
     trim
+    ip_id
 /;
 
 use DB_File;
@@ -53,17 +52,18 @@ tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
 my %ip_date;
 tie %ip_date, 'DB_File', 'ip_date.dbm';
 
+# for NYT puzzles:
+my %puzzle_has_clues;
+tie %puzzle_has_clues, 'DB_File', 'nyt_puzzles_has_clues.dbm';
+
 my $comm_dir = 'community_puzzles';
 my ($seven, $center, @pangrams);
 my @seven;
 my @ok_words;
 my %clue_for;
-
-# try to concoct a unique identifier for the person
-# and their browser
-my $ua = $ENV{HTTP_USER_AGENT};
-$ua =~ s{\D}{}xmsg;
-my $ip_id = "$ENV{REMOTE_ADDR} $ua";
+my %nyt_clues_for;
+my $ip_id = ip_id();
+my $log = 'http://logicalpoetry.com';
 
 my $message = '';
 
@@ -246,6 +246,7 @@ my $cp_href;
 # we have a valid date. either d8 format or CP#
 # if d8 get the puzzle data
 if ($date =~ m{\A\d}xms) {
+    # NYT Puzzles
     $show_date = date($date)->format("%B %e, %Y");
     my $puzzle = $puzzle{$date};
 
@@ -253,8 +254,13 @@ if ($date =~ m{\A\d}xms) {
     ($seven, $center, @pangrams) = split ' ', $s;
     @seven = split //, $seven;
     @ok_words = split ' ', $t;
+    if ($puzzle_has_clues{$date}) {
+        my $href = eval `curl -skL $log/cgi-bin/nytbee_get_clues/$date`;
+        %nyt_clues_for = %$href;
+    }
 }
 else {
+    # Community Puzzles
     # $date is CP\d+
     my ($n) = $date =~ m{(\d+)}xms;
     my $fname = "$comm_dir/$n.txt";
@@ -375,8 +381,24 @@ compute_score_and_rank();
 sub define {
     my ($word, $Dcmd, $dont_tally_hints, $dont_mask) = @_;
 
+    # a Community Puzzle clue
     if (exists $clue_for{$word}) {
+        if (! $dont_tally_hints) {
+            $nhints += 3;
+        }
         return "<li style='list-style-type: circle'>$clue_for{$word}</li>";
+    }
+    # community contributed NYT Bee Puzzle clues
+    if (exists $nyt_clues_for{$word}) {
+        my $s = '';
+        for my $cl (@{$nyt_clues_for{$word}}) {
+            $s .= "<li style='list-style-type: circle'>$cl</li>\n";
+        }
+        if (! $dont_tally_hints) {
+            # just one word, perhaps several hints for that word
+            $nhints += 3;
+        }
+        return $s;
     }
 
     my ($html, @defs);
@@ -885,6 +907,10 @@ for my $w (@words_found) {
     $found_words .= "$pre$w";
     $prev_length = $lw;
 }
+if (@found && @words_found == @found && ! $order) {
+    my $nwords = @found;
+    $found_words .= " <span class=gray>$nwords</span>";
+}
 
 my %sums;
 my %two_lets;
@@ -1055,7 +1081,6 @@ EOCSS
 }
 
 my $image = '';
-my $log = 'http://logicalpoetry.com';
 if (7 <= $rank && $rank <= 9) {
     my $name = lc $ranks[$rank]->{name};
     $name =~ s{\s.*}{}xms;  # for queen bee
@@ -1097,12 +1122,15 @@ print <<"EOH";
 <html>
 <head>
 <style>
+.gray {
+    color: lightgray;
+}
 .pointer {
     cursor: pointer;
 }
 .two_lets {
     margin-top: 0mm;
-    margin-left: 15mm;
+    margin-left: 5mm;
 }
 .help {
     margin-left: 1in;
@@ -1131,6 +1159,14 @@ a {
     float: left;
     margin-left: .2in;
     text-align: right;
+}
+.float-child4 {
+    float: left;
+    margin-left: .3in;
+}
+.float-child5 {
+    float: left;
+    margin-left: .1in;
 }
 .new_word {
     color: coral;
@@ -1226,7 +1262,7 @@ function define_ht(c, n) {
          <img width=50 src=/pics/bee-logo.jpg>
     </div>
     <div class=float-child3>
-        <span class=help><a target=_blank href='http://logicalpoetry.com/nytbee/help.html#words'>Help</a><br><a target=_blank href='http://logicalpoetry.com/$create'>Create</a></span>
+        <span class=help><a target=_blank href='$log/nytbee/help.html#words'>Help</a><br><a target=_blank href='$log/$create'>Create</a></span>
     </div>
 </div>
 <br><br>

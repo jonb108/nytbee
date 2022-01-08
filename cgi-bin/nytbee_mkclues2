@@ -27,9 +27,14 @@ print $q->header();
 
 use BeeUtil qw/
     trim
+    ip_id
+/;
+use Date::Simple qw/
+    date
 /;
 
 my $date = $q->param('date');       #  hidden field
+my $show_date = date($date)->format("%B %e, %Y");
 my $pname = $q->param('name');
 
 my %params = $q->Vars();
@@ -51,12 +56,19 @@ my %clue_for
 
 $puzzle_has_clues{$date} = 1;
 
-#for my $w (sort keys %clue_for) {
-#    print "$w => $clue_for{$w}<br>\n";
-#}
-my $ua = $ENV{HTTP_USER_AGENT};
-$ua =~ s{\D}{}xmsg;
-my $ip_id = "$ENV{REMOTE_ADDR} $ua";
+=comment
+
+insert into mysql database
+two tables - bee_person, bee_clue
+bee_person  (id, ip_id, name) ip_id is ip+browser - id is integer shorthand
+bee_clue    (person_id, date, word, clue)
+        primary key is (person_id, date, word)
+
+1 - update any existing person record for the person
+2 - clear all clues for this person and date
+3 - insert all word, clue
+
+=cut
 
 use Bee_DBH qw/
     $dbh
@@ -69,6 +81,7 @@ my $sth = $dbh->prepare(<<'EOH');
      WHERE ip_id = ?
 
 EOH
+my $ip_id = ip_id();
 $sth->execute($ip_id);
 my ($person_id, $name) = $sth->fetchrow_array();
 if ($person_id) {
@@ -118,24 +131,34 @@ my $ins_clue_sth = $dbh->prepare(<<'EOH');
     VALUES (?, ?, ?, ?)
 
 EOH
+
+# generate the pastable text for the forum
+print <<"EOH";
+<html>
+<head>
+<style>
+body {
+    margin: .5in;
+    font-family: Arial;
+    font-size: 18pt;
+}
+</style>
+<body>
+<h3>Hints for $show_date</h3>
+EOH
+my $prev_l2 = '';
 for my $w (sort keys %clue_for) {
-    $ins_clue_sth->execute($person_id, $date, $w, $clue_for{$w});
+    my $l2 = substr($w, 0, 2);
+    my $lw = length $w;
+    $ins_clue_sth->execute($person_id, $date, $w, "$clue_for{$w} - $lw");
+    if ($prev_l2 ne $l2) {
+        print "<p>\U$l2\E<br>\n";
+    }
+    print ucfirst($clue_for{$w}) . " - $lw<br>\n";
+    $prev_l2 = $l2;
 }
 
-print "done\n";
-# generate the pastable text for the forum
-
 =comment
-
-insert into mysql database
-two tables - bee_person, bee_clue
-bee_person  (id, ip_id, name) ip_id is ip+browser - id is integer shorthand
-bee_clue    (person_id, date, word, clue)
-        primary key is (person_id, date, word)
-
-1 - update any existing person record for the person
-2 - clear all clues for this person and date
-3 - insert all word, clue
 
 then make nytbee_get_clues
     with params date, words

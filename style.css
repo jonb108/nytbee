@@ -3,6 +3,13 @@ body {
     font-size: 18pt;
     font-family: Helvetica;
 }
+.rt {
+    text-align: right;
+}
+.toc {
+    margin-left: .4in;
+    line-height: 9mm;
+}
 .title {
     width: 600px;
     text-align: center;

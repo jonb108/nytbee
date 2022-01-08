@@ -39,7 +39,8 @@ while (my $line = <$in>) {
     chomp $line;
     if ($line !~ $regex) {
         if (index($line, $center) >= 0) {
-            print "<input type=checkbox name=ok value=$line checked>&nbsp;$line";
+            my $Line = ucfirst $line;
+            print "<input type=checkbox name=ok value=$line checked>&nbsp;$Line";
             my @uchars = uniq_chars($line);
             if (@uchars == 7) {
                 print " <span class=red>*</span>";
@@ -57,7 +58,8 @@ while (my $line = <$in2>) {
     chomp $line;
     if ($line !~ $regex) {
         if (index($line, $center) >= 0) {
-            print "<input type=checkbox name=ok value=$line>&nbsp;$line";
+            my $Line = ucfirst $line;
+            print "<input type=checkbox name=ok value=$line>&nbsp;$Line";
             my @uchars = uniq_chars($line);
             if (@uchars == 7) {
                 print " <span class=red>*</span>";

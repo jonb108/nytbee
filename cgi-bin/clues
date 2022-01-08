@@ -61,9 +61,10 @@ Optionally, provide clues for each word.
 <table cellpadding=5>
 EOH
 for my $w (@ok_words) {
+    my $uw = ucfirst $w;
     print <<"EOH";
 <tr>
-<td>$w</td>
+<td>$uw</td>
 <td><input type=text size=40 name=${w}_clue></td>
 </tr>
 EOH

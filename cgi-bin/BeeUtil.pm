@@ -7,7 +7,15 @@ our @EXPORT_OK = qw/
     error
     word_score
     trim
+    ip_id
 /;
+
+
+sub ip_id {
+    my $ua = $ENV{HTTP_USER_AGENT};
+    $ua =~ s{\D}{}xmsg;
+    return "$ENV{REMOTE_ADDR} $ua";
+}
 
 sub uniq_chars {
     my ($word) = @_;
