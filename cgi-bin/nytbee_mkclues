@@ -57,22 +57,36 @@ print <<"EOH";
 <html>
 <head>
 <link rel='stylesheet' type='text/css' href='/nytbee/cgi_style.css'/>
+<script>
+var newwin;
+function popup(url, height, width) {
+    newwin = window.open(
+        url, 'define',
+        'height=' + height + ',width=' + width +', scrollbars'
+    );
+    newwin.moveTo(800, 0);
+}
+</script>
 </head>
 <body>
 <h2>Clues for the NYT Puzzle<br>on $show_date</h2>
 <form name=form action=nytbee_mkclues2>
 <input type=hidden name=date value='$date'>
 <p>
-You don't need to give clues for all of the words.
+No need to give clues for all of the words.
+Clicking on the words will give a dictionary definition.
+You may wish to give clues that are more like crossword clues.
+
 <p>
 <table cellpadding=3>
 <tr><td>Your Name</td><td><input name=name size=30 value='$name'></td></tr>
 <tr><td colspan=2>&nbsp;</td></tr>
 EOH
+my $cgi = 'http://logicalpoetry.com/cgi-bin';
 for my $w (@words) {
     my $uw = ucfirst $w;
     print Tr(
-              td($uw),
+              td(qq!<a href='javascript:popup("$cgi/nytbee_define/$w",300,500)'>$uw</a>!),
               td("<input type=text size=30 name=${w}_clue"
                . qq! value="! . ($clue_for{$w}||'') . qq!">!)
           ), "\n";

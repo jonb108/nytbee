@@ -104,7 +104,10 @@ Pressing Return will clear any messages and permute the 6 outer letters.
 There are also several commands you can enter in the text field:
 <p>
 <table cellpadding=5>
-<tr><td><span class=cmd>I</span></td><td>Show details about the puzzle including numbers of words, points, and pangrams. If the puzzle was created by the hivemind community information from the creator is given.</td></tr>
+<tr><td><span class=cmd>I</span></td><td>Show <span class=cmd>I</span>nformation about the puzzle including numbers of words, points, and pangrams.
+<p>If the puzzle was <a href=#create>created</a> by the hivemind community details from the creator are given.
+<p>
+If <a href=#add>clues have been added</a> for an NYT Puzzle the authors are credited.  Color coded.</td></tr>
 <tr><td><span class=cmd>R</span></td><td>Show the rankings.  It also shows how many points are needed to get to the next rank.</td></tr>
 <tr><td><span class=cmd>W</span></td><td>Show the found words in the order they were found.</td></tr>
 <tr><td><span class=cmd>C&nbsp;&nbsp;Y</span></td><td>Clear the puzzle and start over.</td></tr>
@@ -121,7 +124,11 @@ Commands that give hints:
 <tr><td><span class=cmd>DTR</span></td><td>Define the words beginning with TR.</td></tr>
 <tr><td colspan=2><span class=cmd>D&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.  No hints tallied.</td></tr>
 <tr><td><span class=cmd>DA ...</span></td><td>The <span class=cmd>D</span> command gives at most 3 definitions. <span class=cmd>DA</span> will give them All.</td></tr>
-<tr><td colspan=2>Definitions come from 3 dictionaries: Merriam-Webster, Collins, and Oxford.  With Community Puzzles if there is a clue for a word it is shown instead of the dictionary definition.<p></td></tr>
+<tr><td colspan=2>
+If there is a "clue" for a word it is shown instead of a
+dictionary definition.  Definitions can come from 3 dictionaries:
+Merriam-Webster, Collins, and Oxford.
+<p></td></tr>
 <tr><td><span class=cmd>V2P</span></td><td>Reveal the first two letters of the pangrams.</td></tr>
 <tr><td><span class=cmd>V3M8</span></td><td>Reveal the first 3 letters of the words beginning with M of length 8.</td></tr>
 <tr><td><span class=cmd>V5GL</span></td><td>Reveal the first 5 letters of the words beginning with GL.  
@@ -133,7 +140,7 @@ Commands that give hints:
 </table>
 <p>
 <br>
-Commands to access the large NY Times <a href=#archive>Archive</a> of Spelling Bee puzzles <i>and</i> the puzzles <a href=#make>created by the Hivemind Community</a>:
+Commands to access the large NY Times <a href=#archive>Archive</a> of Spelling Bee puzzles <i>and</i> the puzzles <a href=#create>created by the Hivemind Community</a>:
 <p>
 <table cellpadding=5>
 <tr><td><span class=cmd>NR</span></td><td>New puzzle from a Random date.</td></tr>
@@ -198,6 +205,30 @@ of single (or two) letter command words.
 <h2>Create Your Own Puzzle to Share
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
+Why should only Sam Ezersky have all the fun (and responsibility) of puzzle creation?
+<b>You</b> can create your <i>own</i> puzzle to share with the
+hivemind community.  To do so just click on the 'Create Puzzle' link
+at the top of the main screen (right under 'Help').
+You can also click on it here:
+<a target=nytbee href='http://logicalpoetry.com/nytbee/mkpuz.html'>Create Puzzle</a>.
+<p>
+There are 5 steps to create a puzzle:
+<ol>
+<li>Choose a 'pangramic' word.  This ensures that there is at
+least one pangram.
+<li>View tallies of words, scores, 4 letter words, pangrams by center letter.
+And then choose a center letter.
+<li>Choose which words to include in your puzzle.  This is the most
+difficult part.  If you <i>don't</i> include a common word or <i>do</i>
+include a word that is very rare and esoteric you will be subject
+to questioning and possible derision. &#128521; &#128543; &#128522;
+<li>Give clues for the words, if you wish.
+<li>Lastly, you optionally give your name, location, and contact information.
+</ol>
+When these steps are complete your puzzle is assigned
+a number and is immediately available to the community.
+This number is used when giving the <span class=cmd>CP&lt;num&gt;</span> command.
+CP here stands for Community Puzzle - a puzzle created by you!
 <a name=add></a>
 <h2>Add Clues for NYT Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -216,9 +247,9 @@ many clever software engineers.
 <h4>Games You Can Play</h4>
 <a target=nytbee href='https://swilliams.io/fun/hex/'>swilliams.io.fun/hex</a>
 - A Javascript implementation.  Fast.  Clean code.
-Uses files of 1500 seven pangramic words and a 10,000 word file
-of common words.  A different puzzle each day.  No ranks.
-Not NYT Puzzles so not 'curated'.   No hint table.
+Uses a file of 1,500 pangramic words and a file of 10,000
+common words.  A different puzzle each day.  No ranks.
+No hint table.  Not NYT Puzzles so not 'curated'.  
 Github repo is <a href='https://github.com/s-williams/Hexgame'>here</a>.
 <p>
 <a target=nytbee href='https://freebee.fun'>freebee.fun</a>

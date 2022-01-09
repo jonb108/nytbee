@@ -13,25 +13,28 @@ to others its over the top impracticality
 
 somehow cache the results of getting nyt hints?
 
-ToDo:
-DA should give clues PLUS all definitions from all dictionaries
-D/DA word should not give clues - just definitions
+TODO:
+DA XY should give clues, first, PLUS all definitions from the first dictionary
+    that has the word
+DA F4 - same as DA XY
+'D/DA word' should not give clues - just definitions
+D* ... all clues, all definitions, all dictionaries
+
+LCP to list the community puzzles?
+    how to know what number is what?
+    perhaps have another web page for that?
+        referenced in help.html
 
 I - show who has given hints for the NYT Puzzle
 different colors for different clue providers
     up to 5 different - green, purple, ...
-returning to Collect Clues will show the clues from before
-    do you can update them
-
+    document this
 
 F and S - look in Community Puzzles as well...
 
 XA - clear all and revert to today
     sure why not
 D MONONYM - give dictionary definition not the clue
-DA XY - give all dictionary definitions from all 3 dictionaries
-    AND a clue if present
-DA F4 - same as DA XY
 
 saved games - with timestamp? and purge ones more than a month old
 

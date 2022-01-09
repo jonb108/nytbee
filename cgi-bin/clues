@@ -43,15 +43,28 @@ if (! @pangrams) {
 }
 my $seven = $q->param('seven');
 my $center = $q->param('center');
+my $cgi = 'http://logicalpoetry.com/cgi-bin';
 
 print <<"EOH";
 <html>
 <head>
 <link rel='stylesheet' type='text/css' href='http://logicalpoetry.com/nytbee/cgi_style.css'/>
+<script>
+var newwin;
+function popup(url, height, width) {
+    newwin = window.open(
+        url, 'define',
+        'height=' + height + ',width=' + width +', scrollbars'
+    );
+    newwin.moveTo(800, 0);
+}
+</script>
 </head>
 <body>
 <h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>4</span></h1>
 Optionally, provide clues for each word.
+You can click on the words to get a dictionary definition.
+You may, instead, wish to give a clue that is more like a crossword clue - ambiguous, clever, wordplay &#128522;.
 <p>
 <form name=form action=/cgi-bin/get_clues method=POST>
 <input type=hidden name=seven value='$seven'>
@@ -64,7 +77,7 @@ for my $w (@ok_words) {
     my $uw = ucfirst $w;
     print <<"EOH";
 <tr>
-<td>$uw</td>
+<td><a href='javascript:popup("$cgi/nytbee_define/$w",300,500)'>$uw</a></td>
 <td><input type=text size=40 name=${w}_clue></td>
 </tr>
 EOH
