@@ -4,6 +4,19 @@ use warnings;
 
 =comment
 
+hint strategy
+QBABM - ok, good for you
+others don't mind 
+myself ... if i get to Amazing by myself that's enough
+one CAN game the system, of course
+there are many answer sites shunn.net, nytbee.com, etc
+    even the new york times site - page source
+one can clear the puzzle and restart
+e15p, e14p,... until you get all but one letter
+    for only 2 hints
+G Y, copy, C Y, paste - QB!
+remember it is just a game!
+
 at some point it becomes Art
 practical use yields to beauty
 to others its over the top impracticality
@@ -430,40 +443,44 @@ sub compute_score_and_rank {
 # to be ready for the 'r' command
 compute_score_and_rank();
 
-# if no definition
-# drop a final d or a final ed
-# or ly?????
-# and mark it as such
 # the online dictionaries often give many different
 # definitions - let's just show 3 at the most.
 # that's enough.  or maybe just 1?
-# or all if Dcmd.
+# or all if Dcmd is d*.
+# Dcmd is d or d*
+#
+# fullword is true only if we have given the entire word
+# like 'd juice'
+# and not dp, dx1, or dxy
+#
+# if fullword we don't tally hints and we don't mask the word
 sub define {
-    my ($word, $Dcmd, $dont_tally_hints, $dont_mask) = @_;
+    my ($word, $Dcmd, $fullword) = @_;
 
+    my $def = '';
     # a Community Puzzle clue
-    if (exists $clue_for{$word}) {
-        if (! $dont_tally_hints) {
+    if (! $fullword && exists $clue_for{$word}) {
+        if (! $fullword) {
             $nhints += 3;
         }
-        return "<li style='list-style-type: circle'>$clue_for{$word}</li>";
+        $def .= "<li style='list-style-type: circle'>$clue_for{$word}</li>\n";
+        return $def if $Dcmd eq 'd'; 
     }
     # community contributed NYT Bee Puzzle clues
-    my $lw = length($word);
-    if (exists $nyt_clues_for{$word}) {
-        my $s = '';
+    elsif (! $fullword && exists $nyt_clues_for{$word}) {
+        my $lw = length($word);
         for my $href (@{$nyt_clues_for{$word}}) {
-            $s .= "<li style='list-style-type: circle'>"
-               .  "<span style='color: $nyt_cluer_color_for{$href->{person_id}}'>"
-               .  "$href->{clue} - $lw"
-               .  "</span>"
-               .  "</li>\n";
+            $def .= "<li style='list-style-type: circle'>"
+                 .  "<span style='color:"
+                 .  "$nyt_cluer_color_for{$href->{person_id}}'>"
+                 .  "$href->{clue} - $lw"
+                 .  "</span>"
+                 .  "</li>\n"
+                 ;
         }
-        if (! $dont_tally_hints) {
-            # just one word, perhaps several hints for that word
-            $nhints += 3;
-        }
-        return $s;
+        # just one word, perhaps several hints for that word
+        $nhints += 3;
+        return $def if $Dcmd eq 'd'; 
     }
 
     my ($html, @defs);
@@ -471,48 +488,53 @@ sub define {
     # merriam-webster
     $html = `curl -skL https://www.merriam-webster.com/dictionary/$word`;
     # to catch an adequate definition for 'bought':
-    @defs = $html =~  m{meaning\s+of\s+$word\s+is\s+(.*?)[.]\s+How\s+to}xmsi;
+    push @defs, 'MERRIAM-WEBSTER:' if $Dcmd eq 'd*'; 
+    push @defs, $html =~  m{meaning\s+of\s+$word\s+is\s+(.*?)[.]\s+How\s+to}xmsi;
     push @defs, $html =~ m{dtText(.*?)\n}xmsg;
-    if ($Dcmd || ! @defs) {
+    if (! @defs) {
         # some definitions (like 'from') use a different format
         # no clue why
-        push @defs, ($html =~ m{"unText">(.*?)</span>}xmsg);
+        push @defs, $html =~ m{"unText">(.*?)</span>}xmsg;
     }
-    for my $def (@defs) {
-        $def = trim($def);
-        $def =~ s{<[^>]*>}{}xmsg;   # strip tags
-        $def =~ s{.*:\s+}{}xms;
+    for my $d (@defs) {
+        $d = trim($d);
+        $d =~ s{<[^>]*>}{}xmsg;   # strip tags
+        $d =~ s{.*:\s+}{}xms;
     }
-    if (! @defs) {
-        # collins
+    if ($Dcmd eq 'd*' || ! @defs) {
+        # oxford/lexico
+        push @defs, 'OXFORD:' if $Dcmd eq 'd*';
         $html = `curl -skL https://www.lexico.com/en/definition/$word`;
-        @defs = $html =~ m{Lexical\s+data\s+-\s+en-us">(.*?)</span>}xmsg;
+        push @defs, $html =~ m{Lexical\s+data\s+-\s+en-us">(.*?)</span>}xmsg;
     }
     my $stars = '*' x length $word;
     # sometimes the definition is duplicated so ...
     my %seen;
     my @tidied_defs;
+
     DEF:
     for my $d (@defs) {
         $d =~ s{<[^>]*>}{}xmsg; # excise any tags
         $d =~ s{[^[:print:]]}{}xmsg; # excise any non-printing chars
-        $d =~ s{$word}{$stars}xmsgi unless $dont_mask;    # hide the word
+        $d =~ s{$word}{$stars}xmsgi unless $fullword;    # hide the word
+        $d =~ s{\A ">}{}xms;    # stray chars from somewhere
         if ($seen{$d}++) {
             next DEF;
         }
         push @tidied_defs, $d;
     }
-    if (! $Dcmd) {
+    if ($Dcmd eq 'd') {
         @tidied_defs = splice @tidied_defs, 0, 3;
     }
-    if (@tidied_defs && ! $dont_tally_hints) {
+    if (@tidied_defs && ! $fullword) {
         $nhints += 3;
     }
-    return join '',
-           map {
-               "<li>$_</li>\n";
-           }
-           @tidied_defs;
+    $def .= join '',
+            map {
+                "<li>$_</li>\n";
+            }
+            @tidied_defs;
+    return $def;
 }
 
 sub reveal {
@@ -636,12 +658,10 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     $message = ul(table({ cellpadding => 4}, $rows));
     $cmd = '';
 }
-elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d+|[a-z][a-z]) \z}xms
-       || $cmd =~ m{\A (da) \s+ (p|[a-z]\d+|[a-z][a-z]) \z}xms
-) {
-    load_nyt_clues;
-    my $Dcmd = $1 eq 'da';
+elsif ($cmd =~ m{\A (d|d[*]) \s*  (p|[a-z]\d+|[a-z][a-z]) \z}xms) {
+    my $Dcmd = $1;
     my $term = $2;
+    load_nyt_clues;
     my $line = "&mdash;" x 4;
     if ($term eq 'p') {
         for my $p (grep { !$is_found{$_} } @pangrams) {
@@ -659,7 +679,6 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d+|[a-z][a-z]) \z}xms
         $cmd = '';
     }
     elsif ($term =~ m{([a-z])(\d+)}xms) {
-        load_nyt_clues;
         my $let = $1;
         my $len = $2;
         $message = '';
@@ -678,7 +697,6 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d+|[a-z][a-z]) \z}xms
         $cmd = '';
     }
     elsif ($term =~ m{([a-z][a-z])}xms) {
-        load_nyt_clues;
         my $lets = $1;
         $message = '';
         for my $w (get_words($lets)) {
@@ -696,13 +714,16 @@ elsif (   $cmd =~ m{\A (d) \s*  (p|[a-z]\d+|[a-z][a-z]) \z}xms
         $cmd = '';
     }
 }
-elsif ($cmd =~ m{\A (d|da) \s+ ([a-z]+) \z}xms) {
-    # dictionary definitions not clues
-    my $Dcmd = $1 eq 'da';
+elsif ($cmd =~ m{\A (d[*]) \s* ([a-z]+) \z}xms
+       ||
+       $cmd =~ m{\A (d) \s+ ([a-z]+) \z}xms
+) {
+    # dictionary definitions of full words not clues
+    my $Dcmd = $1;
     my $word = $2;
     $message = "\U$word:"
              . "<ul>"
-             . define($word, $Dcmd, 1, 1)
+             . define($word, $Dcmd, 1)
              . "</ul><p>"
              ;
     $cmd = '';

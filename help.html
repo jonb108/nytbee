@@ -15,7 +15,7 @@ puzzle in the print version of the weekly New York Times Magazine since 2014.
 The daily <a target=nytbee href='https://nytimes.com/puzzles/spelling-bee'>
 web version</a> launched on May 9, 2018.
 Wikipedia has links to several <a target=nytbee href='https://en.wikipedia.org/wiki/The_New_York_Times_Spelling_Bee'>stories about the game</a>
-and the vibrant community of people who enjoy it.
+and the vibrant community of people who enjoy it (the "hivemind").
 Many people play the game on their phone with the New York Times app.
 <p>
 Here is the NY Times web version:
@@ -123,11 +123,11 @@ Commands that give hints:
 <tr><td><span class=cmd>DB4</span></td><td>Define the words beginning with B of length 4.</td></tr>
 <tr><td><span class=cmd>DTR</span></td><td>Define the words beginning with TR.</td></tr>
 <tr><td colspan=2><span class=cmd>D&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.  No hints tallied.</td></tr>
-<tr><td><span class=cmd>DA ...</span></td><td>The <span class=cmd>D</span> command gives at most 3 definitions. <span class=cmd>DA</span> will give them All.</td></tr>
+<tr><td><span class=cmd>D*&nbsp;&nbsp;...</span></td><td>The <span class=cmd>D</span> command gives at most 3 definitions. <span class=cmd>D*</span> will give them All.</td></tr>
 <tr><td colspan=2>
 If there is a "clue" for a word it is shown instead of a
-dictionary definition.  Definitions can come from 3 dictionaries:
-Merriam-Webster, Collins, and Oxford.
+dictionary definition.  Definitions come from
+Merriam-Webster (merriam-webster.com) and Oxford (lexico.com).
 <p></td></tr>
 <tr><td><span class=cmd>V2P</span></td><td>Reveal the first two letters of the pangrams.</td></tr>
 <tr><td><span class=cmd>V3M8</span></td><td>Reveal the first 3 letters of the words beginning with M of length 8.</td></tr>
@@ -144,7 +144,7 @@ Commands to access the large NY Times <a href=#archive>Archive</a> of Spelling B
 <p>
 <table cellpadding=5>
 <tr><td><span class=cmd>NR</span></td><td>New puzzle from a Random date.</td></tr>
-<tr><td><span class=cmd>N &lt;date&gt;</span></td><td>New puzzle from the given date.  You can enter dates in several ways: 10-20-19 or 9-23 (current year) or 15 (current month).  Dates must be on or after May 29, 2018.</td></tr>
+<tr><td><span class=cmd>N &lt;date&gt;</span></td><td>New puzzle from the given date.  You can enter dates in several ways: 10/20/19 or 9/23 (current year) or 15 (current month).  Dates must be on or after May 29, 2018.</td></tr>
 <tr><td><span class=cmd>T</span></td><td>Return to Today's puzzle.</td></tr>
 <tr><td><span class=cmd>CP&lt;num&gt;</span></td><td>New Community Puzzle #num.</td></tr>
 <tr><td><span class=cmd>L</span></td><td>List the current puzzles.  * marks the current puzzle.  p marks puzzles where all pangrams have been found.</td></tr>
@@ -168,7 +168,7 @@ The number of hints are tallied like so:
 <tr><th>Command</th><th align=left colspan=2>&nbsp;&nbsp;# hints</th></tr>
 <tr><td><span class=cmd>HT</span></td><td align=right>10</td></tr>
 <tr><td><span class=cmd>TL</span></td><td align=right>5</td></tr>
-<tr><td><span class=cmd>D,DA</span></td><td align=right>3</td><td>for each word</td></tr>
+<tr><td><span class=cmd>D,D*</span></td><td align=right>3</td><td>for each word</td></tr>
 <tr><td><span class=cmd>V,E</span></td><td align=right>2</td><td>for each word</td></tr>
 <tr><td><span class=cmd>1</span></td><td align=right>1</td></tr>
 <tr><td><span class=cmd>2</span></td><td align=right>1</td></tr>
@@ -220,10 +220,10 @@ least one pangram.
 And then choose a center letter.
 <li>Choose which words to include in your puzzle.  This is the most
 difficult part.  If you <i>don't</i> include a common word or <i>do</i>
-include a word that is very rare and esoteric you will be subject
-to questioning and possible derision. &#128521; &#128543; &#128522;
+include a very rare or esoteric word you will be subject
+to questioning and possible derision. &#128521;
 <li>Give clues for the words, if you wish.
-<li>Lastly, you optionally give your name, location, and contact information.
+<li>Optionally give your name, location, and contact information.
 </ol>
 When these steps are complete your puzzle is assigned
 a number and is immediately available to the community.
@@ -335,7 +335,7 @@ window.gameData = {
     "expiration": 1638345600,
     "displayWeekday": "Tuesday",
     "displayDate": "November 30, 2021",
-    "printDate": "2021-11-30",
+    "printDate": "2021/11/30",
     "centerLetter": "h",
     "outerLetters": ["d", "g", "i", "n", "o", "t"],
     "validLetters": ["h", "d", "g", "i", "n", "o", "t"],
@@ -362,9 +362,9 @@ For example, here are 3 that
 have occurred on 5 different dates:
 <ul>
 <table cellpadding=5 border=0>
-<tr><td class='green bold'>ADFLMPU</td><td>06-26-18</td><td>10-28-19</td><td>03-07-20</td><td>06-06-20</td><td>07-02-20</td></tr>
-<tr><td class='green bold'>BILMOTY</td><td>07-20-18</td><td>10-27-19</td><td>06-04-20</td><td>12-01-20</td><td>07-09-21</td></tr>
-<tr><td class='green bold'>GNORTUW</td><td>08-17-18</td><td>05-02-19</td><td>12-16-19</td><td>03-20-20</td><td>02-04-21</td></tr>
+<tr><td class='green bold'>ADFLMPU</td><td>06/26/18</td><td>10/28/19</td><td>03/07/20</td><td>06/06/20</td><td>07/02/20</td></tr>
+<tr><td class='green bold'>BILMOTY</td><td>07/20/18</td><td>10/27/19</td><td>06/04/20</td><td>12/01/20</td><td>07/09/21</td></tr>
+<tr><td class='green bold'>GNORTUW</td><td>08/17/18</td><td>05/02/19</td><td>12/16/19</td><td>03/20/20</td><td>02/04/21</td></tr>
 </table>
 <p>
 <table cellpadding=4>
@@ -397,18 +397,18 @@ Which puzzles from the large archive to play?
 You can get one at random with the <span class=cmd>NR</span> command or you could
 choose one with various attributes like ones with the most points or the
 fewest 4 letter words.
-Start the puzzle with the <span class=cmd>N</span> command like so: '<span class=cmd>N</span>12-16-21'.
+Start the puzzle with the <span class=cmd>N</span> command like so: '<span class=cmd>N</span>12/16/21'.
 <p>
 <table>
 <tr><th align=center colspan=2>Most Pangrams</th></tr>
-<tr><td class=dt>12-16-21</td><td>8</td></tr>
-<tr><td class=dt>04-06-19</td><td>7</td></tr>
-<tr><td class=dt>01-22-21</td><td>7</td></tr>
-<tr><td class=dt>05-05-21</td><td>6</td></tr>
-<tr><td class=dt>05-24-21</td><td>6</td></tr>
-<tr><td class=dt>06-08-19</td><td>5</td></tr>
-<tr><td class=dt>12-19-19</td><td>5</td></tr>
-<tr><td class=dt>02-11-21</td><td>5</td></tr>
+<tr><td class=dt>12/16/21</td><td>8</td></tr>
+<tr><td class=dt>04/06/19</td><td>7</td></tr>
+<tr><td class=dt>01/22/21</td><td>7</td></tr>
+<tr><td class=dt>05/05/21</td><td>6</td></tr>
+<tr><td class=dt>05/24/21</td><td>6</td></tr>
+<tr><td class=dt>06/08/19</td><td>5</td></tr>
+<tr><td class=dt>12/19/19</td><td>5</td></tr>
+<tr><td class=dt>02/11/21</td><td>5</td></tr>
 </table>
 
 <p>
@@ -417,14 +417,14 @@ Start the puzzle with the <span class=cmd>N</span> command like so: '<span class
 <tr><td>
     <table>
     <tr><th align=center colspan=2 width=230>Fewest Points</th></tr>
-    <tr><td class=dt>05-17-19</td><td>50</td></tr>
-    <tr><td class=dt>05-24-20</td><td>52</td></tr>
-    <tr><td class=dt>12-14-19</td><td>55</td></tr>
-    <tr><td class=dt>06-24-20</td><td>57</td></tr>
-    <tr><td class=dt>06-26-19</td><td>59</td></tr>
-    <tr><td class=dt>08-06-21</td><td>59</td></tr>
-    <tr><td class=dt>05-06-20</td><td>60</td></tr>
-    <tr><td class=dt>06-09-19</td><td>61</td></tr>
+    <tr><td class=dt>05/17/19</td><td>50</td></tr>
+    <tr><td class=dt>05/24/20</td><td>52</td></tr>
+    <tr><td class=dt>12/14/19</td><td>55</td></tr>
+    <tr><td class=dt>06/24/20</td><td>57</td></tr>
+    <tr><td class=dt>06/26/19</td><td>59</td></tr>
+    <tr><td class=dt>08/06/21</td><td>59</td></tr>
+    <tr><td class=dt>05/06/20</td><td>60</td></tr>
+    <tr><td class=dt>06/09/19</td><td>61</td></tr>
     </table>
 
 </td>
@@ -432,14 +432,14 @@ Start the puzzle with the <span class=cmd>N</span> command like so: '<span class
 <td>
     <table border=0>
     <tr><th align=center colspan=2 width=230>Most Points</th></tr>
-    <tr><td class=dt>01-22-21</td><td>537</td></tr>
-    <tr><td class=dt>04-06-19</td><td>444</td></tr>
-    <tr><td class=dt>08-28-21</td><td>431</td></tr>
-    <tr><td class=dt>07-19-21</td><td>424</td></tr>
-    <tr><td class=dt>05-24-21</td><td>406</td></tr>
-    <tr><td class=dt>03-23-19</td><td>404</td></tr>
-    <tr><td class=dt>02-11-21</td><td>392</td></tr>
-    <tr><td class=dt>05-05-21</td><td>390</td></tr>
+    <tr><td class=dt>01/22/21</td><td>537</td></tr>
+    <tr><td class=dt>04/06/19</td><td>444</td></tr>
+    <tr><td class=dt>08/28/21</td><td>431</td></tr>
+    <tr><td class=dt>07/19/21</td><td>424</td></tr>
+    <tr><td class=dt>05/24/21</td><td>406</td></tr>
+    <tr><td class=dt>03/23/19</td><td>404</td></tr>
+    <tr><td class=dt>02/11/21</td><td>392</td></tr>
+    <tr><td class=dt>05/05/21</td><td>390</td></tr>
     </table>
 </td></tr>
 
@@ -448,28 +448,28 @@ Start the puzzle with the <span class=cmd>N</span> command like so: '<span class
 <tr><td>
     <table>
     <tr><th align=center colspan=2 width=230>Fewest Words</th><tr>
-    <tr><td class=dt>10-03-21</td><td>19</td></tr>
-    <tr><td class=dt>10-16-21</td><td>19</td></tr>
-    <tr><td class=dt>09-26-21</td><td>20</td></tr>
-    <tr><td class=dt>12-21-18</td><td>21</td></tr>
-    <tr><td class=dt>12-14-19</td><td>21</td></tr>
-    <tr><td class=dt>12-20-20</td><td>21</td></tr>
-    <tr><td class=dt>12-21-20</td><td>21</td></tr>
-    <tr><td class=dt>12-27-20</td><td>21</td></tr>
+    <tr><td class=dt>10/03/21</td><td>19</td></tr>
+    <tr><td class=dt>10/16/21</td><td>19</td></tr>
+    <tr><td class=dt>09/26/21</td><td>20</td></tr>
+    <tr><td class=dt>12/21/18</td><td>21</td></tr>
+    <tr><td class=dt>12/14/19</td><td>21</td></tr>
+    <tr><td class=dt>12/20/20</td><td>21</td></tr>
+    <tr><td class=dt>12/21/20</td><td>21</td></tr>
+    <tr><td class=dt>12/27/20</td><td>21</td></tr>
     </table>
 </td>
 <td>&nbsp;&nbsp;</td>
 <td>
     <table>
     <tr><th align=center colspan=2 width=230>Most Words</th><tr>
-    <tr><td class=dt>06-08-19</td><td>81</td></tr>
-    <tr><td class=dt>07-28-19</td><td>76</td></tr>
-    <tr><td class=dt>01-22-21</td><td>75</td></tr>
-    <tr><td class=dt>06-10-21</td><td>75</td></tr>
-    <tr><td class=dt>12-15-19</td><td>74</td></tr>
-    <tr><td class=dt>09-23-20</td><td>74</td></tr>
-    <tr><td class=dt>05-24-21</td><td>74</td></tr>
-    <tr><td class=dt>10-15-18</td><td>73</td></tr>
+    <tr><td class=dt>06/08/19</td><td>81</td></tr>
+    <tr><td class=dt>07/28/19</td><td>76</td></tr>
+    <tr><td class=dt>01/22/21</td><td>75</td></tr>
+    <tr><td class=dt>06/10/21</td><td>75</td></tr>
+    <tr><td class=dt>12/15/19</td><td>74</td></tr>
+    <tr><td class=dt>09/23/20</td><td>74</td></tr>
+    <tr><td class=dt>05/24/21</td><td>74</td></tr>
+    <tr><td class=dt>10/15/18</td><td>73</td></tr>
     </table>
 </td></tr>
 
@@ -478,28 +478,28 @@ Start the puzzle with the <span class=cmd>N</span> command like so: '<span class
 <tr><td>
     <table>
     <tr><th colspan=2 width=230>Fewest 4 Letter<br>Words</th></tr>
-    <tr><td class=dt>10-18-21</td><td>0</td></tr>
-    <tr><td class=dt>03-12-20</td><td>2</td></tr>
-    <tr><td class=dt>09-14-18</td><td>3</td></tr>
-    <tr><td class=dt>11-16-18</td><td>3</td></tr>
-    <tr><td class=dt>04-15-21</td><td>3</td></tr>
-    <tr><td class=dt>05-01-21</td><td>3</td></tr>
-    <tr><td class=dt>12-27-18</td><td>4</td></tr>
-    <tr><td class=dt>12-27-20</td><td>4</td></tr>
+    <tr><td class=dt>10/18/21</td><td>0</td></tr>
+    <tr><td class=dt>03/12/20</td><td>2</td></tr>
+    <tr><td class=dt>09/14/18</td><td>3</td></tr>
+    <tr><td class=dt>11/16/18</td><td>3</td></tr>
+    <tr><td class=dt>04/15/21</td><td>3</td></tr>
+    <tr><td class=dt>05/01/21</td><td>3</td></tr>
+    <tr><td class=dt>12/27/18</td><td>4</td></tr>
+    <tr><td class=dt>12/27/20</td><td>4</td></tr>
     </table>
 </td>
 <td>&nbsp;&nbsp;</td>
 <td>
     <table>
     <tr><th colspan=2 width=230>Most 4 Letter<br>Words</th></tr>
-    <tr><td class=dt>11-14-18</td><td>36</td></tr>
-    <tr><td class=dt>06-08-19</td><td>36</td></tr>
-    <tr><td class=dt>08-12-20</td><td>36</td></tr>
-    <tr><td class=dt>11-20-20</td><td>36</td></tr>
-    <tr><td class=dt>12-26-18</td><td>34</td></tr>
-    <tr><td class=dt>01-09-21</td><td>34</td></tr>
-    <tr><td class=dt>12-05-19</td><td>33</td></tr>
-    <tr><td class=dt>11-25-20</td><td>32</td></tr>
+    <tr><td class=dt>11/14/18</td><td>36</td></tr>
+    <tr><td class=dt>06/08/19</td><td>36</td></tr>
+    <tr><td class=dt>08/12/20</td><td>36</td></tr>
+    <tr><td class=dt>11/20/20</td><td>36</td></tr>
+    <tr><td class=dt>12/26/18</td><td>34</td></tr>
+    <tr><td class=dt>01/09/21</td><td>34</td></tr>
+    <tr><td class=dt>12/05/19</td><td>33</td></tr>
+    <tr><td class=dt>11/25/20</td><td>32</td></tr>
     </table>
 </td></tr>
 
@@ -508,11 +508,11 @@ Start the puzzle with the <span class=cmd>N</span> command like so: '<span class
 <tr><td>
     <table>
     <tr><th colspan=2 width=230>Fewest with ED</th></tr>
-    <tr><td class=dt>06-27-2021</td><td>22</td></tr>
-    <tr><td class=dt>10-22-2021</td><td>23</td></tr>
-    <tr><td class=dt>10-05-2020</td><td>25</td></tr>
-    <tr><td class=dt>11-15-2020</td><td>27</td></tr>
-    <tr><td class=dt>09-19-2021</td><td>27</td></tr>
+    <tr><td class=dt>06/27/2021</td><td>22</td></tr>
+    <tr><td class=dt>10/22/2021</td><td>23</td></tr>
+    <tr><td class=dt>10/05/2020</td><td>25</td></tr>
+    <tr><td class=dt>11/15/2020</td><td>27</td></tr>
+    <tr><td class=dt>09/19/2021</td><td>27</td></tr>
     </table>
 
 </td>
@@ -520,11 +520,11 @@ Start the puzzle with the <span class=cmd>N</span> command like so: '<span class
 <td>
     <table>
     <tr><th colspan=2 width=230>Most with ED</th></tr>
-    <tr><td class=dt>01-02-2021</td><td>73</td></tr>
-    <tr><td class=dt>09-02-2020</td><td>72</td></tr>
-    <tr><td class=dt>08-28-2021</td><td>72</td></tr>
-    <tr><td class=dt>05-28-2021</td><td>68</td></tr>
-    <tr><td class=dt>06-12-2021</td><td>68</td></tr>
+    <tr><td class=dt>01/02/2021</td><td>73</td></tr>
+    <tr><td class=dt>09/02/2020</td><td>72</td></tr>
+    <tr><td class=dt>08/28/2021</td><td>72</td></tr>
+    <tr><td class=dt>05/28/2021</td><td>68</td></tr>
+    <tr><td class=dt>06/12/2021</td><td>68</td></tr>
     </table>
 </td></tr>
 
@@ -533,11 +533,11 @@ Start the puzzle with the <span class=cmd>N</span> command like so: '<span class
 <tr><td>
     <table>
     <tr><th colspan=2 width=230>Fewest with ING</th></tr>
-    <tr><td class=dt>12-08-2020</td><td>21</td></tr>
-    <tr><td class=dt>12-27-2020</td><td>21</td></tr>
-    <tr><td class=dt>10-27-2020</td><td>23</td></tr>
-    <tr><td class=dt>10-02-2021</td><td>23</td></tr>
-    <tr><td class=dt>09-24-2021</td><td>24</td></tr>
+    <tr><td class=dt>12/08/2020</td><td>21</td></tr>
+    <tr><td class=dt>12/27/2020</td><td>21</td></tr>
+    <tr><td class=dt>10/27/2020</td><td>23</td></tr>
+    <tr><td class=dt>10/02/2021</td><td>23</td></tr>
+    <tr><td class=dt>09/24/2021</td><td>24</td></tr>
     </table>
 
 </td>
@@ -545,11 +545,11 @@ Start the puzzle with the <span class=cmd>N</span> command like so: '<span class
 <td>
     <table>
     <tr><th colspan=2 width=230>Most with ING</th></tr>
-    <tr><td class=dt>02-01-2021</td><td>72</td></tr>
-    <tr><td class=dt>07-19-2021</td><td>69</td></tr>
-    <tr><td class=dt>05-09-2021</td><td>68</td></tr>
-    <tr><td class=dt>02-19-2021</td><td>67</td></tr>
-    <tr><td class=dt>06-02-2021</td><td>50</td></tr>
+    <tr><td class=dt>02/01/2021</td><td>72</td></tr>
+    <tr><td class=dt>07/19/2021</td><td>69</td></tr>
+    <tr><td class=dt>05/09/2021</td><td>68</td></tr>
+    <tr><td class=dt>02/19/2021</td><td>67</td></tr>
+    <tr><td class=dt>06/02/2021</td><td>50</td></tr>
     </table>
 </td></tr>
 
@@ -558,11 +558,11 @@ Start the puzzle with the <span class=cmd>N</span> command like so: '<span class
 <tr><td>
     <table>
     <tr><th colspan=2 width=230>Fewest with TION</th></tr>
-    <tr><td class=dt>09-21-2018</td><td>21</td></tr>
-    <tr><td class=dt>06-18-2019</td><td>21</td></tr>
-    <tr><td class=dt>09-21-2020</td><td>26</td></tr>
-    <tr><td class=dt>11-13-2020</td><td>27</td></tr>
-    <tr><td class=dt>08-23-2021</td><td>27</td></tr>
+    <tr><td class=dt>09/21/2018</td><td>21</td></tr>
+    <tr><td class=dt>06/18/2019</td><td>21</td></tr>
+    <tr><td class=dt>09/21/2020</td><td>26</td></tr>
+    <tr><td class=dt>11/13/2020</td><td>27</td></tr>
+    <tr><td class=dt>08/23/2021</td><td>27</td></tr>
     </table>
 
 </td>
@@ -570,43 +570,43 @@ Start the puzzle with the <span class=cmd>N</span> command like so: '<span class
 <td>
     <table>
     <tr><th colspan=2 width=230>Most with TION</th></tr>
-    <tr><td class=dt>01-22-2021</td><td>75</td></tr>
-    <tr><td class=dt>10-31-2019</td><td>69</td></tr>
-    <tr><td class=dt>05-05-2021</td><td>66</td></tr>
-    <tr><td class=dt>10-08-2021</td><td>66</td></tr>
-    <tr><td class=dt>12-31-2020</td><td>65</td></tr>
+    <tr><td class=dt>01/22/2021</td><td>75</td></tr>
+    <tr><td class=dt>10/31/2019</td><td>69</td></tr>
+    <tr><td class=dt>05/05/2021</td><td>66</td></tr>
+    <tr><td class=dt>10/08/2021</td><td>66</td></tr>
+    <tr><td class=dt>12/31/2020</td><td>65</td></tr>
     </table>
 </td></tr>
 </table>
 <p>
 <table border=0>
 <tr><th colspan=2>Center Letter - Most Words</th></tr>
-<tr><td class=let>A</td><td class=dt>12-15-19</td></tr>
-<tr><td class=let>B</td><td class=dt>09-02-20</td></tr>
-<tr><td class=let>C</td><td class=dt>10-12-18</td></tr>
-<tr><td class=let>D</td><td class=dt>07-23-21</td></tr>
-<tr><td class=let>E</td><td class=dt>01-02-21</td></tr>
-<tr><td class=let>F</td><td class=dt>10-19-21</td></tr>
-<tr><td class=let>G</td><td class=dt>04-19-20</td></tr>
-<tr><td class=let>H</td><td class=dt>12-11-19</td></tr>
-<tr><td class=let>I</td><td class=dt>01-22-20</td></tr>
+<tr><td class=let>A</td><td class=dt>12/15/19</td></tr>
+<tr><td class=let>B</td><td class=dt>09/02/20</td></tr>
+<tr><td class=let>C</td><td class=dt>10/12/18</td></tr>
+<tr><td class=let>D</td><td class=dt>07/23/21</td></tr>
+<tr><td class=let>E</td><td class=dt>01/02/21</td></tr>
+<tr><td class=let>F</td><td class=dt>10/19/21</td></tr>
+<tr><td class=let>G</td><td class=dt>04/19/20</td></tr>
+<tr><td class=let>H</td><td class=dt>12/11/19</td></tr>
+<tr><td class=let>I</td><td class=dt>01/22/20</td></tr>
 <tr><td class=let>J</td><td class=dt>none</td></tr>
-<tr><td class=let>K</td><td class=dt>09-20-20</td></tr>
-<tr><td class=let>L</td><td class=dt>01-09-21</td></tr>
-<tr><td class=let>M</td><td class=dt>03-31-19</td></tr>
-<tr><td class=let>N</td><td class=dt>06-25-19</td></tr>
-<tr><td class=let>O</td><td class=dt>06-08-19</td></tr>
-<tr><td class=let>P</td><td class=dt>02-02-20</td></tr>
+<tr><td class=let>K</td><td class=dt>09/20/20</td></tr>
+<tr><td class=let>L</td><td class=dt>01/09/21</td></tr>
+<tr><td class=let>M</td><td class=dt>03/31/19</td></tr>
+<tr><td class=let>N</td><td class=dt>06/25/19</td></tr>
+<tr><td class=let>O</td><td class=dt>06/08/19</td></tr>
+<tr><td class=let>P</td><td class=dt>02/02/20</td></tr>
 <tr><td class=let>Q</td><td class=dt>none</td></tr>
-<tr><td class=let>R</td><td class=dt>10-14-20</td></tr>
+<tr><td class=let>R</td><td class=dt>10/14/20</td></tr>
 <tr><td class=let>S</td><td class=dt>none</td></tr>
-<tr><td class=let>T</td><td class=dt>07-28-19</td></tr>
-<tr><td class=let>U</td><td class=dt>08-21-21</td></tr>
-<tr><td class=let>V</td><td class=dt>07-01-21</td></tr>
-<tr><td class=let>W</td><td class=dt>03-25-21</td></tr>
+<tr><td class=let>T</td><td class=dt>07/28/19</td></tr>
+<tr><td class=let>U</td><td class=dt>08/21/21</td></tr>
+<tr><td class=let>V</td><td class=dt>07/01/21</td></tr>
+<tr><td class=let>W</td><td class=dt>03/25/21</td></tr>
 <tr><td class=let>X</td><td class=dt>none</td></tr>
-<tr><td class=let>Y</td><td class=dt>07-30-21</td></tr>
-<tr><td class=let>Z</td><td class=dt>11-15-20</td></tr>
+<tr><td class=let>Y</td><td class=dt>07/30/21</td></tr>
+<tr><td class=let>Z</td><td class=dt>11/15/20</td></tr>
 </table>
 <a style="margin-left: 5in" href=#toc><img src=pics/top.gif height=25></a>
 </body>
