@@ -4,9 +4,25 @@ use warnings;
 
 =comment
 
+in the pangramic files - jump to A, B, etc and back
+    like in pangram haiku
+only shuffle when Return in empty text field and no message to clear
+    not when entering a word
+document making clues for NYT puzzles
+no PIN?
+LC command to list last n CP?
+    or what?
+
 click on Clue Giver's name to see all their clues
+    undocumented?  nah
     in a separate window
+    how many hints?
+        sort of silly.
+        cheating is a game you play with yourself
 format of clue list? - can change on the list
+    make sub with param to gen list
+more colors for cluers
+    choose them better?
 
 do we need to save the current sort of the 7 letters
 in @seven_let and @six? in hidden fields
@@ -1115,6 +1131,7 @@ for my $p (keys %is_pangram) {
 if ($nperfect) {
     $perfect = " ($nperfect Perfect)"
 }
+my $clue_form = '';
 if ($cmd eq 'i') {
     $message = "Words: $nwords, Points: $max_score, "
              . "Pangrams: $npangrams$perfect$bingo";
@@ -1144,12 +1161,23 @@ if ($cmd eq 'i') {
                 keys %nyt_cluer_name_of
             ) {
                 push @names,
-                    "<span style='color: $nyt_cluer_color_for{$person_id}'>"
+                  "<span"
+                  . " class=pointer"
+                  . " style='color: $nyt_cluer_color_for{$person_id}'"
+                  . " onclick='clues_by($person_id);'>"
                   . $nyt_cluer_name_of{$person_id}
-                  . "</span>";
+                  . "</span>"
+                  ;
             }
             $message .= "<br>Clues by " . join ', ', @names;
         }
+        $clue_form = <<"EOH";
+<form target=nytbee id=clues_by action=/cgi-bin/nytbee_clues_by>
+<input type=hidden id=person_id name=person_id>
+<input type=hidden id=date name=date value=$date>
+<input type=hidden id=found name=found value='@found'>
+</form>
+EOH
     }
     $cmd = '';
 }
@@ -1518,6 +1546,10 @@ function define_ht(c, n) {
     document.getElementById('new_words').value = 'D' + c + n;
     document.getElementById('main').submit();
 }
+function clues_by(person_id) {
+    document.getElementById('person_id').value = person_id;
+    document.getElementById('clues_by').submit();
+}
 </script>
 </head>
 <body>
@@ -1535,7 +1567,6 @@ function define_ht(c, n) {
 <br><br>
 <form id=main name=form method=POST>
 <input type=hidden name=date value='$date'>
-<!-- not needed?? <input type=hidden name=puzzle value='dollar puzzle'> -->
 <input type=hidden name=found_words value='@found'>
 <input type=hidden name=nhints value=$nhints>
 <input type=hidden name=ht_chosen value=$ht_chosen>
@@ -1564,6 +1595,7 @@ $disp_nhints
         </div>
     </div>
 </div>
+$clue_form
 </body>
 <script>document.form.new_words.focus();</script>
 </html>
