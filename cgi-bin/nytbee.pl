@@ -4,6 +4,16 @@ use warnings;
 
 =comment
 
+click on Clue Giver's name to see all their clues
+    in a separate window
+format of clue list? - can change on the list
+
+do we need to save the current sort of the 7 letters
+in @seven_let and @six? in hidden fields
+yes, so that we don't shuffle the letters
+unless we specifically ask by hitting Return in
+an empty text field
+
 hint strategy
 QBABM - ok, good for you
 others don't mind 
@@ -19,7 +29,7 @@ remember it is just a game!
 
 at some point it becomes Art
 practical use yields to beauty
-to others its over the top impracticality
+to others its over-the-top impracticality
     seems insane and a waste of time
     but to the artist
     it gives meaning to life and is therapeutic
@@ -72,7 +82,7 @@ use CGI qw/
     :standard
 /;
 my $q = CGI->new();
-print $q->header();
+my $hive = $q->cookie('hive') || 0;
 my %params = $q->Vars();
 
 use BeeUtil qw/
@@ -121,6 +131,13 @@ sub my_today {
     return $today;
 }
 
+sub shuffle {
+    my (@elems) = @_;
+    my @new;
+    push @new, splice @elems, rand @elems, 1 while @elems;
+    return @new;
+}
+
 sub dash_date {
     my ($d8) = @_;
     if ($d8 =~ m{\A CP}xms) {
@@ -157,7 +174,7 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
         elsif (my ($start, $end) = $t =~ m{(\d+)-(\d+)}xms) {
             if ($start > $end) {
                 $message = "Illegal range: $start-$end";
-                $cmd = '';
+                $cmd = 'noop';
             }
             else {
                 push @nums, $start .. $end;
@@ -165,7 +182,7 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
         }
         else {
             $message = "Illegal puzzle numbers: $nums";
-            $cmd = '';
+            $cmd = 'noop';
         }
     }
     if ($cmd) {
@@ -174,7 +191,7 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
         for my $n (@nums) {
             if ($n > $npuzzles) {
                 $message = "$n: There are only $npuzzles current puzzles";
-                $cmd = '';
+                $cmd = 'noop';
             }
         }
     }
@@ -200,7 +217,7 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
                 if ($p->[0] eq $params{date}) {
                     # we haven't deleted the current puzzle
                     # so leave it
-                    $cmd = '';
+                    $cmd = 'noop';
                     last PUZ;
                 }
             }
@@ -217,7 +234,7 @@ if (my ($puz_num) = $cmd =~ m{\A p \s* (\d+) \z}xms) {
     my @puzzles = my_puzzles();
     if ($puz_num > @puzzles) {
         $message = "Not that many puzzles";
-        $cmd = '';
+        $cmd = 'noop';
     }
     my $puz_id = $puzzles[$puz_num-1][0];
     if ($puz_id =~ m{\A \d}xms) {
@@ -226,7 +243,7 @@ if (my ($puz_num) = $cmd =~ m{\A p \s* (\d+) \z}xms) {
     else {
         # CP\d+
         # but we need lower case cp
-        # since we have
+        # since we have ... have what???
         $cmd = lc $puz_id;
     }
 }
@@ -243,7 +260,7 @@ elsif (my ($cp_num) = $cmd =~ m{\A c \s* p \s* (\d+) \z}xms) {
     my $fname = "$comm_dir/$cp_num.txt";
     if (! -f $fname) {
         $message = "$cp_num: No such Community Puzzle";
-        $cmd = '';
+        $cmd = 'noop';
     }
     else {
         $date = "CP$cp_num";
@@ -258,18 +275,24 @@ elsif ($cmd eq 't') {
     $cmd = '';
 }
 elsif ($cmd =~ m{\A n \s* (\d.*) \z}xms) {
-    $date = date($1);
-    if ($date) {
+    my $new_date = $1;
+    my $dt = date($new_date);
+    if ($dt) {
         # it is a valid date but is it in the range?
-        if ($first <= $date && $date <= today()) {
-            $date = $date->as_d8();
+        if ($first <= $dt && $dt <= today()) {
+            $date = $dt->as_d8();
             $params{found_words} = '';
             $new_puzzle = 1;
             $cmd = '';
         }
         else {
-            $date = '';
+            $message = "Illegal date: $new_date";
+            $cmd = 'noop';
         }
+    }
+    else {
+        $message = "Illegal date: $new_date";
+        $cmd = 'noop';
     }
 }
 if (! $date) {
@@ -312,17 +335,33 @@ else {
 my $nwords = @ok_words;
 my $npangrams = @pangrams;
 
+# get ready for hive == 3
+my @seven_let = shuffle(@seven);
+for my $c (@seven_let) {
+    if ($c eq $center) {
+        $c = "<span class=red2>\U$c\E</span>";
+    }
+    else {
+        $c = uc $c;
+    }
+}
+
 my %is_pangram = map { $_ => 1 } @pangrams;
 my %is_ok_word = map { $_ => 1 } @ok_words;
 my @six = map { uc }
           grep { $_ ne $center }
           @seven;
 
-if (! $cmd && ! $params{has_message}) {
-    # scramble
-    my @new;
-    push @new, splice @six, rand @six, 1 while @six;
-    @six = @new;
+if ((! $cmd || $cmd eq 'noop') && ! $params{has_message}) {
+    # We hit Return in an empy text field so
+    # there is no command
+    # and we didn't hit Return simply to clear a message
+    # shuffle the @six and @seven_let
+    @six = shuffle(@six);
+    @seven_let = shuffle(@seven_let);
+}
+if ($cmd eq 'noop') {
+    $cmd = '';
 }
 
 # this is done lazily 
@@ -837,6 +876,10 @@ elsif ($cmd =~ m{\A s \s+ ([/a-z]+) \s* \z}xms) {
     }
     $cmd = '';
 }
+elsif ($cmd eq 'h') {
+    $hive = ($hive+1) % 4;
+    $cmd = '';
+}
 
 # now to prepare the display the words we have found
 # some subset, some order
@@ -1027,7 +1070,7 @@ if ($cmd eq '1') {
     # find a random non-zero entry in the hint table
     my @entries;
     for my $l (4 .. $max_len) {
-        for my $c (sort @seven) {
+        for my $c (@seven) {
             if ($sums{$c}{$l}) {
                 push @entries, "\U$c$l-$sums{$c}{$l}";
             }
@@ -1231,10 +1274,115 @@ if ($date =~ m{\A \d}xms) {
 # now to display everything
 # cgi-bin/style.css?
 
+my $cookie = $q->cookie(
+    -name    => 'hive',
+    -value   => $hive,
+    -expires => '+20y'
+);
+print $q->header(-cookie => $cookie);
+my $letters = '';
+my @coords;
+my $let_size;
+my $img_left_margin;
+if ($hive == 0) {
+    $letters = <<"EOH";
+<pre>
+     $six[0]   $six[1]
+   $six[2]   <span class=red2>\U$center\E</span>   $six[3]
+     $six[4]   $six[5]
+</pre>
+EOH
+}
+elsif ($hive == 1) {        # bee hive honeycomb
+    $letters = "<p><img class=img src=/nytbee/pics/hive.jpg height=240><p>";
+    $letters .= "<span class='p0 ab'>\U$center\E</span>";
+    for my $i (1 .. 6) {
+        $letters .= "<span class='p$i ab'>$six[$i-1]</span>";
+    }
+    $let_size = 37;
+    $img_left_margin = 37;
+    #       1
+    #    2     3
+    #       0
+    #    4     5
+    #       6
+    @coords = (
+        { top => 208, left => 170, }, #0
+        { top => 125, left => 168, }, #1
+        { top => 167, left => 100, }, #2
+        { top => 167, left => 235, }, #3
+        { top => 247, left => 100, }, #4
+        { top => 247, left => 236, }, #5
+        { top => 285, left => 168, }, #6
+    );
+    # adjust an I
+    for my $i (1 .. 6) {
+        if ($six[$i-1] eq 'I') {
+            $coords[$i]{left} += 7;
+        }
+    }
+}
+elsif ($hive == 2) {        # flower
+    $letters = "<p><img class=img src=/nytbee/pics/flower.jpg height=250><p>";
+    $letters .= "<span class='p0 ab white'>\U$center\E</span>";
+    for my $i (1 .. 6) {
+        $letters .= "<span class='p$i ab'>$six[$i-1]</span>";
+    }
+    $let_size = 37;
+    $img_left_margin = 30;
+    #
+    #   2   3
+    # 4   0   5
+    #   6   1
+    #
+    @coords = (
+        { top => 216, left => 175, }, #0
+        { top => 277, left => 210, }, #1
+        { top => 160, left => 138, }, #2
+        { top => 160, left => 210, }, #3
+        { top => 216, left => 103, }, #4
+        { top => 216, left => 239, }, #5
+        { top => 277, left => 138, }, #6
+    );
+    # adjust an I
+    for my $i (1 .. 6) {
+        if ($six[$i-1] eq 'I') {
+            $coords[$i]{left} += 7;
+        }
+    }
+}
+elsif ($hive == 3) {
+    $letters = <<"EOH";
+<pre>
+  @seven_let
+</pre>
+EOH
+}
+my $letter_styles = '';
+if (@coords) {
+    for my $i (0 .. 6) {
+        $letter_styles .= <<"EOS";
+.p$i {
+    top: $coords[$i]{top}px;
+    left: $coords[$i]{left}px;
+}
+EOS
+    }
+}
 print <<"EOH";
 <html>
 <head>
 <style>
+.img {
+    margin-left: ${img_left_margin}px;
+}
+.ab {
+    position: absolute;
+    font-weight: bold;
+    font-family: Arial;
+    font-size: ${let_size}px;
+}
+$letter_styles
 .gray {
     color: lightgray;
 }
@@ -1321,6 +1469,9 @@ input, .submit {
 .over {
     margin-left: 1in;
 }
+.white {
+    color: white;
+}
 .red1, .red2 {
     color: red;
 }
@@ -1390,11 +1541,7 @@ function define_ht(c, n) {
 <input type=hidden name=ht_chosen value=$ht_chosen>
 <input type=hidden name=tl_chosen value=$tl_chosen>
 <input type=hidden name=has_message value=$has_message>
-<pre>
-     $six[0]   $six[1]
-   $six[2]   <span class=red2>\U$center\E</span>   $six[3]
-     $six[4]   $six[5]
-</pre>
+$letters
 $message
 <input class=new_words type=text size=40 id=new_words name=new_words><br>
 </form>
