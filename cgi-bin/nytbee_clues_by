@@ -1,0 +1,51 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+use CGI;
+my $q = CGI->new();
+print $q->header();
+my %param = $q->Vars();
+
+use BeeUtil qw/
+    display_clues
+/;
+
+use Date::Simple qw/
+    date
+/;
+
+my $date = $param{date};
+my $show_date = date($date)->format("%B %e, %Y");
+my $person_id = $param{person_id};
+my %was_found = map { $_ => 1 }
+                split ' ', $param{found};
+
+use Bee_DBH qw/
+    $dbh
+/;
+
+my $sth = $dbh->prepare(<<'EOS');
+
+    SELECT name
+      FROM bee_person
+     WHERE id = ?
+
+EOS
+$sth->execute($person_id);
+my ($name) = $sth->fetchrow_array();
+
+my $sth_clues = $dbh->prepare(<<'EOS');
+
+    SELECT word, clue
+      FROM bee_clue
+     WHERE date = ?
+       AND person_id = ?
+
+EOS
+$sth_clues->execute($date, $person_id);
+my %clue_for;
+while (my ($word, $clue) = $sth_clues->fetchrow_array()) {
+    $clue_for{$word} = $clue;
+}
+display_clues($show_date, $name, \%clue_for, \%was_found);

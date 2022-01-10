@@ -8,6 +8,7 @@ our @EXPORT_OK = qw/
     word_score
     trim
     ip_id
+    display_clues
 /;
 
 
@@ -59,5 +60,39 @@ sub trim {
     return $s;
 }
 
+sub display_clues {
+    my ($date, $name, $clue_for_href, $was_found_href) = @_;
+    print <<"EOH";
+<html>
+<head>
+<style>
+body {
+    margin: .5in;
+    font-family: Arial;
+    font-size: 18pt;
+}
+</style>
+<body>
+<h3>Hints for $date by $name</h3>
+EOH
+    my $prev_l2 = '';
+    for my $w (sort keys %$clue_for_href) {
+        my $lw = length($w);
+        my $l2 = substr($w, 0, 2);
+        if ($prev_l2 ne $l2) {
+            print "<p>\U$l2\E<br>\n";
+        }
+        print ucfirst($clue_for_href->{$w}) . " - $lw";
+        if ($was_found_href->{$w}) {
+            print " = \U$w";
+        }
+        print "<br>\n";
+        $prev_l2 = $l2;
+    }
+    print <<'EOH';
+</body>
+</html>
+EOH
+}
 
 1;

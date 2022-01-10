@@ -1172,7 +1172,11 @@ if ($cmd eq 'i') {
             $message .= "<br>Clues by " . join ', ', @names;
         }
         $clue_form = <<"EOH";
-<form target=nytbee id=clues_by action=/cgi-bin/nytbee_clues_by>
+<form target=nytbee
+      id=clues_by
+      action=/cgi-bin/nytbee_clues_by
+      method=POST
+>
 <input type=hidden id=person_id name=person_id>
 <input type=hidden id=date name=date value=$date>
 <input type=hidden id=found name=found value='@found'>
@@ -1295,6 +1299,7 @@ my $produce_collect
 if ($date =~ m{\A \d}xms) {
     $produce_collect
         .= "<br><a target=_blank"
+        .  " onclick='set_focus();'"
         .  " href='$log/cgi-bin/nytbee_mkclues?date=$date'>"
         .  "Add Clues</a>";
 }
@@ -1549,6 +1554,10 @@ function define_ht(c, n) {
 function clues_by(person_id) {
     document.getElementById('person_id').value = person_id;
     document.getElementById('clues_by').submit();
+    set_focus();
+}
+function set_focus() {
+    document.form.new_words.focus();
 }
 </script>
 </head>
@@ -1597,6 +1606,6 @@ $disp_nhints
 </div>
 $clue_form
 </body>
-<script>document.form.new_words.focus();</script>
+<script>set_focus();</script>
 </html>
 EOH

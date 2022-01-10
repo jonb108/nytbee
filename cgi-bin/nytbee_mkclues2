@@ -18,16 +18,17 @@ tie %puzzle_has_clues, 'DB_File', 'nyt_puzzles_has_clues.dbm';
 use CGI qw/
     :standard
 /;
-use CGI::Carp qw/
-    warningsToBrowser
-    fatalsToBrowser
-/;
+#use CGI::Carp qw/
+#    warningsToBrowser
+#    fatalsToBrowser
+#/;
 my $q = CGI->new();
 print $q->header();
 
 use BeeUtil qw/
     trim
     ip_id
+    display_clues
 /;
 use Date::Simple qw/
     date
@@ -132,28 +133,9 @@ my $ins_clue_sth = $dbh->prepare(<<'EOS');
 
 EOS
 
-# generate the pastable text for the forum
-print <<"EOH";
-<html>
-<head>
-<style>
-body {
-    margin: .5in;
-    font-family: Arial;
-    font-size: 18pt;
-}
-</style>
-<body>
-<h3>Hints for $show_date</h3>
-EOH
-my $prev_l2 = '';
-for my $w (sort keys %clue_for) {
-    my $lw = length($w);
-    my $l2 = substr($w, 0, 2);
+# insert clues into the database
+for my $w (keys %clue_for) {
     $ins_clue_sth->execute($person_id, $date, $w, $clue_for{$w});
-    if ($prev_l2 ne $l2) {
-        print "<p>\U$l2\E<br>\n";
-    }
-    print ucfirst($clue_for{$w}) . " - $lw<br>\n";
-    $prev_l2 = $l2;
 }
+
+display_clues($show_date, $name, \%clue_for, {});
