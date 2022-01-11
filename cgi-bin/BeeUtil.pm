@@ -61,7 +61,11 @@ sub trim {
 }
 
 sub display_clues {
-    my ($date, $name, $clue_for_href, $was_found_href) = @_;
+    my ($first, $format, $show_date, $date, $person_id,
+        $name, $clue_for_href, $was_found_href) = @_;
+
+    my @found = keys %$was_found_href;
+    my $gray_level = 170;
     print <<"EOH";
 <html>
 <head>
@@ -71,22 +75,101 @@ body {
     font-family: Arial;
     font-size: 18pt;
 }
+.clues {
+    margin-left: .4in;
+    margin-top: 0mm;
+    margin-bottom: 5mm;
+}
+.link {
+    color: blue;
+    cursor: pointer;
+}
+.gray {
+    color: rgb($gray_level, $gray_level, $gray_level);
+}
 </style>
+<script>
+function set_format(n) {
+    document.getElementById('format').value = n;
+    document.getElementById('main').submit();
+}
+</script>
+</head>
 <body>
-<h3>Hints for $date by $name</h3>
+<form id=main method=POST action=/cgi-bin/nytbee_clues_by>
+<input type=hidden name=date value=$date>
+<input type=hidden name=person_id value='$person_id'>
+<input type=hidden name=found value='@found'>
+<input type=hidden name=format id=format value=1>
+</form>
+
 EOH
+if ($first) {
+    print "You can copy/paste the text below into the HiveMind forum.<p>";
+}
+sub mklink {
+    my ($f, $n, $s) = @_;
+    return if $n == $f;
+    print "<span class=link onclick='set_format($n)'>$s&nbsp;&nbsp;&nbsp;</span>";
+}
+print "Alternate formats: ";
+mklink($format, 1, "AB-");
+mklink($format, 2, "AB()");
+mklink($format, 3, "ABx");
+mklink($format, 4, "A");
+print <<"EOH";
+<h3>Clues for $show_date by $name</h3>
+EOH
+    my $prev_l1 = '';
     my $prev_l2 = '';
     for my $w (sort keys %$clue_for_href) {
+        my $class = $was_found_href->{$w}? 'gray': 'black';
         my $lw = length($w);
-        my $l2 = substr($w, 0, 2);
-        if ($prev_l2 ne $l2) {
-            print "<p>\U$l2\E<br>\n";
+        my $l1 = uc substr($w, 0, 1);
+        my $l2 = uc substr($w, 0, 2);
+        if ($format == 3) {
+            print "<span class=$class>";
         }
-        print ucfirst($clue_for_href->{$w}) . " - $lw";
+        if ($format == 4 && $prev_l1 ne $l1) {
+            print "<p>$l1<br>\n";
+            $prev_l1 = $l1;
+        }
+        if ($format <= 3 && $prev_l2 ne $l2) {
+            if ($format == 3) {
+                if ($prev_l2) {
+                    print "<br>";
+                }
+            }
+            else {
+                if ($prev_l2) {
+                    print "</div>\n";
+                }
+                print "$l2<div class=clues>";
+            }
+        }
+        if ($format == 3) {
+            print "$l2$lw - ";
+        }
+        if ($format <= 2 || $format == 4) {
+            print "<span class=$class>";
+        }
+        if ($format == 4) {
+            print "- ";
+        }
+        print ucfirst($clue_for_href->{$w});
+        if ($format == 1) {
+            print " - $lw";
+        }
+        elsif ($format == 2) {
+            print " ($lw) ";
+        }
         if ($was_found_href->{$w}) {
-            print " = \U$w";
+            if ($format == 1 || $format == 3 || $format == 4) {
+                print " = ";
+            }
+            print uc $w;
         }
-        print "<br>\n";
+        print "</span><br>\n";
         $prev_l2 = $l2;
     }
     print <<'EOH';

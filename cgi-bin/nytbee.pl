@@ -1180,6 +1180,7 @@ if ($cmd eq 'i') {
 <input type=hidden id=person_id name=person_id>
 <input type=hidden id=date name=date value=$date>
 <input type=hidden id=found name=found value='@found'>
+<input type=hidden name=format value=1>
 </form>
 EOH
     }

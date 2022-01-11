@@ -18,10 +18,6 @@ tie %puzzle_has_clues, 'DB_File', 'nyt_puzzles_has_clues.dbm';
 use CGI qw/
     :standard
 /;
-#use CGI::Carp qw/
-#    warningsToBrowser
-#    fatalsToBrowser
-#/;
 my $q = CGI->new();
 print $q->header();
 
@@ -138,4 +134,5 @@ for my $w (keys %clue_for) {
     $ins_clue_sth->execute($person_id, $date, $w, $clue_for{$w});
 }
 
-display_clues($show_date, $name, \%clue_for, {});
+display_clues(1, 1, $show_date, $date, $person_id,
+              $name, \%clue_for, {});

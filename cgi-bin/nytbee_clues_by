@@ -16,6 +16,7 @@ use Date::Simple qw/
 /;
 
 my $date = $param{date};
+my $format = $param{format};
 my $show_date = date($date)->format("%B %e, %Y");
 my $person_id = $param{person_id};
 my %was_found = map { $_ => 1 }
@@ -48,4 +49,5 @@ my %clue_for;
 while (my ($word, $clue) = $sth_clues->fetchrow_array()) {
     $clue_for{$word} = $clue;
 }
-display_clues($show_date, $name, \%clue_for, \%was_found);
+display_clues(0, $format, $show_date, $date, $person_id, 
+              $name, \%clue_for, \%was_found);
