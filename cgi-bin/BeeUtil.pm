@@ -61,8 +61,29 @@ sub trim {
 }
 
 sub display_clues {
-    my ($first, $format, $show_date, $date, $person_id,
-        $name, $clue_for_href, $was_found_href) = @_;
+    my (%param) = @_;
+    for my $p (qw/
+        first
+        format
+        show_date
+        date
+        person_id
+        name
+        clue_for_href
+        was_found_href
+    /) {
+        if (! exists $param{$p}) {
+            print "need a $p parameter to display_clues!<br>\n";
+        }
+    }
+    my $first          = $param{first};
+    my $format         = $param{format};
+    my $show_date      = $param{show_date};
+    my $date           = $param{date};
+    my $person_id      = $param{person_id};
+    my $name           = $param{name};
+    my $clue_for_href  = $param{clue_for_href};
+    my $was_found_href = $param{was_found_href};
 
     my @found = keys %$was_found_href;
     my $gray_level = 170;

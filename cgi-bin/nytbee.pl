@@ -789,6 +789,7 @@ elsif ($cmd =~ m{\A g \s+ y \z}xms) {
                  $is_pangram{lc $_}? color_pg($_): $_
              }
              map { ucfirst }
+             sort
              grep { !$is_found{$_} }
              @ok_words;
     if (@words) {
@@ -894,6 +895,10 @@ elsif ($cmd =~ m{\A s \s+ ([/a-z]+) \s* \z}xms) {
 }
 elsif ($cmd eq 'h') {
     $hive = ($hive+1) % 4;
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A h \s* ([1-4]) \z}xms) {
+    $hive = $1-1;
     $cmd = '';
 }
 
@@ -1355,6 +1360,9 @@ elsif ($hive == 1) {        # bee hive honeycomb
             $coords[$i]{left} += 7;
         }
     }
+    if ($center eq 'i') {
+        $coords[0]{left} += 7;
+    }
 }
 elsif ($hive == 2) {        # flower
     $letters = "<p><img class=img src=/nytbee/pics/flower.jpg height=250><p>";
@@ -1383,6 +1391,9 @@ elsif ($hive == 2) {        # flower
         if ($six[$i-1] eq 'I') {
             $coords[$i]{left} += 7;
         }
+    }
+    if ($center eq 'i') {
+        $coords[0]{left} += 7;
     }
 }
 elsif ($hive == 3) {

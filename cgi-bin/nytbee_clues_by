@@ -49,5 +49,12 @@ my %clue_for;
 while (my ($word, $clue) = $sth_clues->fetchrow_array()) {
     $clue_for{$word} = $clue;
 }
-display_clues(0, $format, $show_date, $date, $person_id, 
-              $name, \%clue_for, \%was_found);
+display_clues(first          => 0,
+              format         => $format,
+              show_date      => $show_date,
+              date           => $date,
+              person_id      => $person_id, 
+              name           => $name,
+              clue_for_href  => \%clue_for,
+              was_found_href => \%was_found,
+);
