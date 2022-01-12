@@ -39,8 +39,7 @@ my $regex = qr{[^$lets]}xms;
 my (%tot, %btot);
 my (%score, %bscore);
 my (%four, %bfour);
-my ($npangrams, $bnpangrams) = (0, 0);
-my ($pl,        $bpl);
+my (@pangrams, @bpangrams);
 
 open my $in, '<', 'pwords.txt';
 while (my $word = <$in>) {
@@ -49,7 +48,7 @@ while (my $word = <$in>) {
         my @uchars = uniq_chars($word);
         my $pangram = @uchars == 7;
         if ($pangram) {
-            ++$npangrams;
+            push @pangrams, $word;
         }
         for my $c (@uchars) {
             ++$tot{$c};
@@ -61,6 +60,7 @@ while (my $word = <$in>) {
     }
 }
 close $in;
+my $npangrams = @pangrams;
 my $pl = $npangrams == 1? '': 's';
 
 # Now for the Big lexicon
@@ -72,7 +72,7 @@ while (my $bword = <$in2>) {
         my @uchars = uniq_chars($bword);
         my $pangram = @uchars == 7;
         if ($pangram) {
-            ++$bnpangrams;
+            push @bpangrams, $bword;
         }
         for my $c (@uchars) {
             ++$btot{$c};
@@ -84,6 +84,7 @@ while (my $bword = <$in2>) {
     }
 }
 close $in2;
+my $bnpangrams = @bpangrams;
 my $bpl = $bnpangrams == 1? '': 's';
 
 if ($npangrams + $bnpangrams == 0) {
@@ -107,7 +108,8 @@ Then click on one of the center letters in the table below.
 <p>
 <h2>Qualified words that have been used in the NYT Puzzle between 5/29/18 and 12/31/21:</h2>
 <p>
-$npangrams Pangram$pl
+$npangrams Pangram$pl: @pangrams
+<p>
 <table cellpadding=5
 <tr>
 <th valign=bottom>Center<br>Letter</th>
@@ -131,7 +133,8 @@ print "</table>\n";
 print <<"EOH";
 <p>
 <h2>Other qualified words (some rare and esoteric)</h2>
-$bnpangrams pangram$bpl
+$bnpangrams pangram$bpl: @bpangrams
+<p>
 <table cellpadding=5
 <tr>
 <th valign=bottom>Center<br>Letter</th>

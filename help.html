@@ -95,14 +95,14 @@ that are obscure, hyphenated, or proper nouns.
 </h2>
 The new mechanism initially looks like this:
 <p>
-<img src=pics/new_look.png>
+<img width=500 src=pics/new_look.png>
 <p>
 In the text field you enter words that satisfy the rules of the puzzle.
-You can enter more than one word in that field.
+You can enter more than one word.
 <p>
 Pressing Return will clear any messages and permute the 6 outer letters.
 <p>
-There are also several commands you can enter in the text field:
+There are also many commands you can enter in the text field:
 <p>
 <table cellpadding=5>
 <tr><td><span class=cmd>H</span></td><td>Cycle through different presentations of the 7 letters  - Hex Letters to Honeycomb to Flower to Inline Letters.<p>
@@ -126,13 +126,13 @@ Commands that give hints:
 <tr><td><span class=cmd>DP</span></td><td>Define the Pangrams.</td></tr>
 <tr><td><span class=cmd>DB4</span></td><td>Define the words beginning with B of length 4.</td></tr>
 <tr><td><span class=cmd>DTR</span></td><td>Define the words beginning with TR.</td></tr>
-<tr><td colspan=2><span class=cmd>D&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.  No hints tallied.</td></tr>
-<tr><td><span class=cmd>D*&nbsp;&nbsp;...</span></td><td>The <span class=cmd>D</span> command gives at most 3 definitions. <span class=cmd>D*</span> will give them All.</td></tr>
 <tr><td colspan=2>
 If there is a "clue" for a word it is shown instead of a
 dictionary definition.  Definitions come from
 Merriam-Webster (merriam-webster.com) and Oxford (lexico.com).
 <p></td></tr>
+<tr><td colspan=2><span class=cmd>D&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.  No hints tallied.</td></tr>
+<tr><td><span class=cmd>D*&nbsp;&nbsp;...</span></td><td>The above <span class=cmd>D</span> commands give at most 3 definitions. <span class=cmd>D*</span> will give them All plus any clues.<p></td></tr>
 <tr><td><span class=cmd>V2P</span></td><td>Reveal the first two letters of the pangrams.</td></tr>
 <tr><td><span class=cmd>V3M8</span></td><td>Reveal the first 3 letters of the words beginning with M of length 8.</td></tr>
 <tr><td><span class=cmd>V5GL</span></td><td>Reveal the first 5 letters of the words beginning with GL.  
@@ -154,6 +154,7 @@ Commands to access the large NY Times <a href=#archive>Archive</a> of Spelling B
 <tr><td><span class=cmd>L</span></td><td>List the current puzzles.  * marks the current puzzle.  p marks puzzles where all pangrams have been found.</td></tr>
 <tr><td><span class=cmd>P&lt;num&gt;</span></td><td>Return to puzzle #num in the list.</td></tr>
 <tr><td><span class=cmd>X&lt;nums&gt;</span></td><td>Remove the numbered puzzles from the list. You can give a range.  For example: X2&nbsp;4-6&nbsp;9&nbsp;&nbsp;&nbsp;This clears the words you found so if you choose the date again you will start afresh.</td></tr>
+<tr><td><span class=cmd>XA</span></td><td>Remove all puzzles except today's.</td></tr>
 </table>
 <a name=hint></a>
 <h2>Hint Strategy
@@ -193,6 +194,7 @@ of single (or two) letter command words.
 <ul>
 <table cellpadding=3>
 <tr><td><span class=cmd>H&lt;num&gt</span></td><td>Directly change the 7 letter presentation instead of cycling around. 1 = Hex Letters, 2 = Honeycomb, 3 = Flower, 4 = Inline Letters</td></tr>
+<tr><td><span class=cmd>CL</span></td><td>List the dates on which you have offered clues for the NYT Puzzle.</td></tr>
 <tr><td><span class=cmd>SC</span></td><td>Show how the score was tallied and how many words remain to be found.</td></tr>
 <tr><td><span class=cmd>F</span></td><td>Find other puzzles that use the same seven letters.</td></tr>
 <tr><td><span class=cmd>S&nbsp;&nbsp;&lt;word&gt;</span></td><td>Find other puzzles where the word is used.</td></tr>
@@ -227,6 +229,8 @@ And then choose a center letter.
 difficult part.  If you <i>don't</i> include a common word or <i>do</i>
 include a rare or esoteric word you may be subject
 to questioning and possible derision. &#128521; &#128543; &#128522;
+Surprisingly, there are many common ordinary words that have not yet been used
+in any of the NYT Puzzles.
 <li>Give clues for the words, if you wish.
 <li>Lastly, you optionally give your name, location, and contact information.
 </ol>
@@ -238,10 +242,23 @@ CP here stands for Community Puzzle - a puzzle created by you!
 <h2>Add Clues for NYT Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
+'Add Clues' link.
+Warning - all the words are shown.
+You give your name (it is remembered) and
+can get dictionary definitions of the words.
+You can choose again to update your clues.
+No need to give clues for EVERY word.
+CL command
+<p>
 Doing a DHA, for example when the HA words are Happen, Hath, Hate, and Hatha.
 The tradition in the hivemind forum is that clues come in
 the word alphabetical order and have the length appended as well.
-This gives more information beyond the text of the clue.
+If you know this you have more information beyond the clue itself.
+<p>
+See ALL clues by clicking on the person's name after an I (information) command.
+Note that if you've found a word with a clue that word is appended to the clue
+and the whole line is in gray rather than black.  This helps you
+focus on the words you haven't found yet.
 <a name=other></a>
 <h2>Other NYT Bee Projects
 <a class=top href=#toc><img src=pics/top.gif height=25></a>

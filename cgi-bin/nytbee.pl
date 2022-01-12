@@ -4,31 +4,53 @@ use warnings;
 
 =comment
 
+a different picture for the initial look - with words in the text field
+    and found words, too.   not initial...
+
+name and location - required and remembered
+
+somewhere explain the keying off of ip address
+    and browser signature
+F and S - look in Community Puzzles as well...
+XA - clear all and revert to today
+    sure why not - but don't actually delete today's words...
+
+add to hint total when looking at all clues?
+    clues are not as easy as dictionary definitions
+    it's all just fun, anyway ...
+
+after queen bee - no grayed clues?
+    all have = [A-Z]+
+
+LC - see 5 most recent community puzzles
+        and a link to see them all in a separate window
+LCP - see all of your own community puzzles
+XCP<num> - delete your own community puzzle
+
+see all clues from a community puzzle? - click on link after I
+
 in the pangramic files - jump to A, B, etc and back
     like in pangram haiku
+
 only shuffle when Return in empty text field and no message to clear
     not when entering a word
+        save $cur_six and $cur_seven in hidden fields
+        to set up the $letters
+        and deal with a blank command and blank message
+        early on in the script
 document making clues for NYT puzzles
-no PIN?
-LC command to list last n CP?
-    or what?
+no PIN? and and no Title - just name and location
 
-click on Clue Giver's name to see all their clues
-    undocumented?  nah
-    in a separate window
-    how many hints?
-        sort of silly.
-        cheating is a game you play with yourself
-format of clue list? - can change on the list
-    make sub with param to gen list
+disadvantages
+    - not easy to play on the phone
+    - my software has not been thoroughly vetted and tested
+          there are undoubtably other problems to be found
+    - if many people start to use it
+          the server may be overwhelmed and I'd need to
+          move it to its own server
+
 more colors for cluers
     choose them better?
-
-do we need to save the current sort of the 7 letters
-in @seven_let and @six? in hidden fields
-yes, so that we don't shuffle the letters
-unless we specifically ask by hitting Return in
-an empty text field
 
 hint strategy
 QBABM - ok, good for you
@@ -53,27 +75,7 @@ to others its over-the-top impracticality
 somehow cache the results of getting nyt hints?
 
 TODO:
-DA XY should give clues, first, PLUS all definitions from the first dictionary
-    that has the word
-DA F4 - same as DA XY
-'D/DA word' should not give clues - just definitions
-D* ... all clues, all definitions, all dictionaries
 
-LCP to list the community puzzles?
-    how to know what number is what?
-    perhaps have another web page for that?
-        referenced in help.html
-
-I - show who has given hints for the NYT Puzzle
-different colors for different clue providers
-    up to 5 different - green, purple, ...
-    document this
-
-F and S - look in Community Puzzles as well...
-
-XA - clear all and revert to today
-    sure why not
-D MONONYM - give dictionary definition not the clue
 
 saved games - with timestamp? and purge ones more than a month old
 
@@ -246,7 +248,17 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
         }
     }
 }
-if (my ($puz_num) = $cmd =~ m{\A p \s* (\d+) \z}xms) {
+if ($cmd eq 'xa') {
+    my $today_d8 = $today->as_d8();
+    for my $p (my_puzzles()) {
+        if ($p->[0] ne $today_d8) {
+            delete $ip_date{"$ip_id $p->[0]"};
+        }
+    }
+    $date = $today_d8;
+    $cmd = '';
+}
+elsif (my ($puz_num) = $cmd =~ m{\A p \s* (\d+) \z}xms) {
     my @puzzles = my_puzzles();
     if ($puz_num > @puzzles) {
         $message = "Not that many puzzles";
@@ -843,6 +855,12 @@ elsif ($cmd eq 'l') {
     $message = table({ cellpadding => 4}, $message);
     $cmd = '';
 }
+elsif ($cmd eq 'cl') {
+    my $s = $ip_id;
+    $s =~ s{\s}{_}xmsg;
+    $message = `curl -skL $log/cgi-bin/nytbee_clue_dates/$s`;
+    $cmd = '';
+}
 elsif ($cmd eq 'f') {
     # look for same 7
     my @dates;
@@ -856,7 +874,7 @@ elsif ($cmd eq 'f') {
                   my ($dt, $y, $m, $d, $c) =  m{
                       \A (.. (..)(..)(..))(.) \z
                   }xms;
-                  "$m-$d-$y $c"
+                  "$m/$d/$y $c"
                   . ($dt eq $date? ' *': '')
                   . "<br>\n";
               }
@@ -883,7 +901,7 @@ elsif ($cmd =~ m{\A s \s+ ([/a-z]+) \s* \z}xms) {
     $message = join '',
                map {
                    m{\A ..(..)(..)(..)}xms;
-                   "$2-$3-$1<br>";
+                   "$2/$3/$1<br>";
                }
                sort
                @dates
@@ -1144,7 +1162,7 @@ if ($cmd eq 'i') {
         my ($n) = $date =~ m{(\d+)}xms;
         my $created = date($cp_href->{created})->format("%B %e, %Y");
         my $s = "";
-        for my $w (qw/ title name location contact /) {
+        for my $w (qw/ name location /) {
             if (my $t = $cp_href->{$w}) {
                 if ($w eq 'contact' && index($t, '@') >= 0) {
                     $t = "<a href='mailto:$t?"
@@ -1346,22 +1364,22 @@ elsif ($hive == 1) {        # bee hive honeycomb
     #    4     5
     #       6
     @coords = (
-        { top => 208, left => 170, }, #0
+        { top => 208, left => 168, }, #0
         { top => 125, left => 168, }, #1
         { top => 167, left => 100, }, #2
-        { top => 167, left => 235, }, #3
+        { top => 167, left => 238, }, #3
         { top => 247, left => 100, }, #4
-        { top => 247, left => 236, }, #5
+        { top => 247, left => 238, }, #5
         { top => 285, left => 168, }, #6
     );
     # adjust an I
     for my $i (1 .. 6) {
         if ($six[$i-1] eq 'I') {
-            $coords[$i]{left} += 7;
+            $coords[$i]{left} += 9;
         }
     }
     if ($center eq 'i') {
-        $coords[0]{left} += 7;
+        $coords[0]{left} += 9;
     }
 }
 elsif ($hive == 2) {        # flower
