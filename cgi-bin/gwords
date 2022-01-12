@@ -23,7 +23,7 @@ print <<"EOH";
 <h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>3</a></h1>
 For the pangramic word <span class=word>$word</span> and center letter <span class=center>\U$center\E</span> we have identified the qualified words.
 <p>
-Check the words you want to include in the puzzle and press Submit at the bottom.  Make sure you include at least one pangram. They are marked with a red asterisk <span class='red star'>*</span>).
+Check the words you want to include in the puzzle and press Submit at the bottom.  Make sure you include at least one pangram. They are colored <span class=red>red</span>.
 
 <p>
 <form action=/cgi-bin/clues method=POST>
@@ -40,10 +40,13 @@ while (my $line = <$in>) {
     if ($line !~ $regex) {
         if (index($line, $center) >= 0) {
             my $Line = ucfirst $line;
-            print "<input type=checkbox name=ok value=$line checked>&nbsp;$Line";
+            print "<input type=checkbox name=ok value=$line checked>&nbsp; ";
             my @uchars = uniq_chars($line);
             if (@uchars == 7) {
-                print " <span class=red>*</span>";
+                print "<span class=red>$Line</span>";
+            }
+            else {
+                print $Line;
             }
             print "<br>\n";
         }
@@ -59,10 +62,13 @@ while (my $line = <$in2>) {
     if ($line !~ $regex) {
         if (index($line, $center) >= 0) {
             my $Line = ucfirst $line;
-            print "<input type=checkbox name=ok value=$line>&nbsp;$Line";
+            print "<input type=checkbox name=ok value=$line>&nbsp; ";
             my @uchars = uniq_chars($line);
             if (@uchars == 7) {
-                print " <span class=red>*</span>";
+                print "<span class=red>$Line</span>";
+            }
+            else {
+                print $Line;
             }
             print "<br>\n";
         }

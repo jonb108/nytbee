@@ -36,9 +36,6 @@ input, button {
 button {
     background: lightgreen;
 }
-.star {
-    font-size: 24pt;
-}
 .cmd {
     color: darkred;
 }
