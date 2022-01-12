@@ -32,7 +32,8 @@ use Date::Simple qw/
 
 my $date = $q->param('date');       #  hidden field
 my $show_date = date($date)->format("%B %e, %Y");
-my $pname = $q->param('name');
+my $name = $q->param('name');
+my $location = $q->param('location');
 
 my %params = $q->Vars();
 
@@ -69,45 +70,10 @@ bee_clue    (person_id, date, word, clue)
 
 use Bee_DBH qw/
     $dbh
+    add_update_person
 /;
 
-my $sth = $dbh->prepare(<<'EOS');
-
-    SELECT id, name
-      FROM bee_person
-     WHERE ip_id = ?
-
-EOS
-my $ip_id = ip_id();
-$sth->execute($ip_id);
-my ($person_id, $name) = $sth->fetchrow_array();
-if ($person_id) {
-    if ($name ne $pname) {
-        # exising location but name changed
-        my $up_sth = $dbh->prepare(<<'EOS');
-
-        UPDATE bee_person
-           SET name = ?
-         WHERE ip_id = ?
-
-EOS
-        $up_sth->execute($pname, $ip_id);
-    }
-    # else name did not change
-}
-else {
-    # new name from new location
-    my $ins_sth = $dbh->prepare(<<'EOS');
-
-    INSERT 
-      INTO bee_person
-           (ip_id, name)
-    VALUES (?, ?)
-
-EOS
-    $ins_sth->execute($ip_id, $pname);
-    $person_id = $dbh->last_insert_id(undef, undef, 'bee_person', 'id');
-}
+my ($person_id) = add_update_person($name, $location);
 
 # clear old clues from this person for this date
 my $sth_clear = $dbh->prepare(<<'EOS');
@@ -120,6 +86,7 @@ my $sth_clear = $dbh->prepare(<<'EOS');
 EOS
 $sth_clear->execute($person_id, $date);
 
+# insert clues into the database
 my $ins_clue_sth = $dbh->prepare(<<'EOS');
 
     INSERT
@@ -128,8 +95,6 @@ my $ins_clue_sth = $dbh->prepare(<<'EOS');
     VALUES (?, ?, ?, ?)
 
 EOS
-
-# insert clues into the database
 for my $w (keys %clue_for) {
     $ins_clue_sth->execute($person_id, $date, $w, $clue_for{$w});
 }

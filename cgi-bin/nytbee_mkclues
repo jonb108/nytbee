@@ -14,45 +14,75 @@ my $q = CGI->new();
 print $q->header();
 my $date = $q->param('date');
 
+my $puzzle = $puzzle{$date};
+$puzzle =~ s{\A [^|]* [|]\ s* }{}xms;
+my @words = $puzzle =~ m{([a-z]+)}xmsg;
+my $show_date = date($date)->format("%B %e, %Y");
+
 use Date::Simple qw/
     date
 /;
 use Bee_DBH qw/
     $dbh
-/;
-use BeeUtil qw/
-    ip_id
+    get_person
 /;
 
-my $ip_id = ip_id();
-my $sth = $dbh->prepare(<<'EOS');
-    
-    SELECT id, name
-      FROM bee_person
-     WHERE ip_id = ?
-
-EOS
-$sth->execute($ip_id);
-my ($person_id, $name) = $sth->fetchrow_array();
-
-my $sth_clue = $dbh->prepare(<<'EOS');
-
-    SELECT word, clue
-      FROM bee_clue
-     WHERE person_id = ?
-       AND date = ?
-
-EOS
-$sth_clue->execute($person_id, $date);
+my ($ip_id, $person_id, $name, $location) = get_person();
 my %clue_for;
-while (my ($word, $clue) = $sth_clue->fetchrow_array()) {
-    $clue_for{$word} = $clue;
+my $got_clues = 0;
+
+if ($person_id) {
+    # we've seen this person before
+    # they have either made a puzzle or added clues
+    # for some date (maybe not the current one).
+    #
+    # see there are existing clues for this date
+    # from this person
+    #
+    my $sth_clue = $dbh->prepare(<<'EOS');
+
+        SELECT word, clue
+          FROM bee_clue
+         WHERE person_id = ?
+           AND date = ?
+
+EOS
+    $sth_clue->execute($person_id, $date);
+    while (my ($word, $clue) = $sth_clue->fetchrow_array()) {
+        $clue_for{$word} = $clue;
+        $got_clues = 1;
+    }
 }
 
-my $puzzle = $puzzle{$date};
-$puzzle =~ s{\A [^|]* [|]\ s* }{}xms;
-my @words = $puzzle =~ m{([a-z]+)}xmsg;
-my $show_date = date($date)->format("%B %e, %Y");
+if (! $got_clues) {
+    # first time adding clues for this date
+    # see if we have any clues from this person
+    # for another date that has the same words.
+    #
+    my $quoted_words = join ', ',
+                       map {
+                           "'$_'"
+                       }
+                       @words;
+    my $sth_clue = $dbh->prepare(<<"EOS");
+
+        SELECT word, clue
+          FROM bee_clue
+         WHERE person_id = ?
+           AND word in ($quoted_words)
+
+EOS
+    $sth_clue->execute($person_id);
+    while (my ($word, $clue) = $sth_clue->fetchrow_array()) {
+        $clue_for{$word} = $clue;
+    }
+}
+# otherwise ... when someone is updating their clues
+# for a given date we don't look for clues from another date.
+# we DID when they first added clues for the given date.
+# at that point in time they may have decided not to use
+# a clue from another date.
+
 print <<"EOH";
 <html>
 <head>
@@ -80,6 +110,7 @@ You may wish to give clues that are more like crossword clues.
 <p>
 <table cellpadding=3>
 <tr><td>Your Name</td><td><input name=name size=30 value='$name'></td></tr>
+<tr><td>Your Location</td><td><input name=location size=30 value='$location'></td></tr>
 <tr><td colspan=2>&nbsp;</td></tr>
 EOH
 my $cgi = 'http://logicalpoetry.com/cgi-bin';
@@ -96,6 +127,5 @@ print <<"EOH";
 </table>
 </body>
 </html>
-<!-- <script>document.form.$words[0]_clue.focus()</script> -->
 <script>document.form.name.focus()</script>
 EOH

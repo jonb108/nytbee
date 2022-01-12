@@ -7,7 +7,8 @@ use warnings;
 a different picture for the initial look - with words in the text field
     and found words, too.   not initial...
 
-name and location - required and remembered
+name and location - *required and *remembered
+    focus on name
 
 somewhere explain the keying off of ip address
     and browser signature

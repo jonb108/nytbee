@@ -125,19 +125,25 @@ function set_format(n) {
 </form>
 
 EOH
-if ($first) {
-    print "You can copy/paste the text below into the HiveMind forum.<p>";
-}
 sub mklink {
     my ($f, $n, $s) = @_;
-    return if $n == $f;
-    print "<span class=link onclick='set_format($n)'>$s&nbsp;&nbsp;&nbsp;</span>";
+
+    my $space = '&nbsp;' x 3;
+    if ($n == $f) {
+        print "<span style='color: gray;'>$s</span>$space";
+    }
+    else {
+        print "<span class=link onclick='set_format($n)'>$s</span>$space";
+    }
 }
 print "Alternate formats: ";
 mklink($format, 1, "AB-");
 mklink($format, 2, "AB()");
 mklink($format, 3, "ABx");
 mklink($format, 4, "A");
+if ($first) {
+    print "<p>You can copy/paste the text below into the HiveMind forum.<p>";
+}
 print <<"EOH";
 <h3>Clues for $show_date by $name</h3>
 EOH

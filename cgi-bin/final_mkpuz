@@ -6,9 +6,16 @@ use CGI;
 my $q = CGI->new();
 print $q->header();
 
+# we will save the name, location, and word => clues
+use Bee_DBH qw/
+    add_update_person
+/;
+
 use Data::Dumper;
 
 my %params = $q->Vars();
+
+add_update_person($params{name}, $params{location});
 
 my $dir = 'community_puzzles';
 open my $in, '<', "$dir/last_num.txt";
@@ -40,4 +47,3 @@ You will use the <span class=cmd>CP$n</span> command to open it.
 </body>
 </html>
 EOH
-
