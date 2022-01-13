@@ -4,7 +4,7 @@ use warnings;
 
 =comment
 
-require Name, Location when making a puzzle and when adding clues.
+toDO: require Name, Location when making a puzzle and when adding clues.
 
 somewhere explain the keying off of ip address
     and browser signature
