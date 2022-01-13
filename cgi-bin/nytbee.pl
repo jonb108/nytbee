@@ -4,6 +4,8 @@ use warnings;
 
 =comment
 
+require Name, Location when making a puzzle and when adding clues.
+
 somewhere explain the keying off of ip address
     and browser signature
 
@@ -262,6 +264,28 @@ if ($cmd eq 'xa') {
     }
     $date = $today_d8;
     $cmd = '';
+}
+elsif (my ($ncp) = $cmd =~ m{\A xcp \s* (\d+) \z}xms) {
+    # did the current user create CP$ncp?
+    my $fname = "community_puzzles/$ncp.txt";
+    if (! -f $fname) {
+        $message = "CP$ncp: No such Community Puzzle";
+        $cmd = '';
+    }
+    else {
+        my $href = do $fname;
+        if ($href->{ip_id} ne $ip_id) {
+            $message = "You did not create CP$ncp";
+            $cmd = '';
+        }
+        else {
+            # in case it is in the current list...
+            unlink $fname;
+            delete $ip_date{"$ip_id CP$ncp"};
+            $message = "Deleted CP$ncp";
+            $cmd = 't';
+        }
+    }
 }
 elsif (my ($puz_num) = $cmd =~ m{\A p \s* (\d+) \z}xms) {
     my @puzzles = my_puzzles();
@@ -847,7 +871,7 @@ elsif ($cmd eq 'cp?') {
     my $rows = '';
     for my $n (sort { $b <=> $a } $s =~ m{(\d+)}xmsg) {
         my $href = do "community_puzzles/$n.txt";
-        $rows .= Tr(td($n),
+        $rows .= Tr(td("CP$n"),
                     td(slash_date($href->{created})),
                     td($href->{name}),
                     td($href->{location}),
@@ -863,7 +887,7 @@ elsif ($cmd eq 'lcp') {
     my $rows = '';
     for my $n (@nums) {
         my $href = do "community_puzzles/$n.txt";
-        $rows .= Tr(td($n), td(slash_date($href->{created})));
+        $rows .= Tr(td("CP$n"), td(slash_date($href->{created})));
     }
     $message = "Your Community Puzzles:<p>"
              . table({ cellpadding => 5 }, $rows);
