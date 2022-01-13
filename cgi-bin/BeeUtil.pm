@@ -74,6 +74,7 @@ sub display_clues {
     /) {
         if (! exists $param{$p}) {
             print "need a $p parameter to display_clues!<br>\n";
+            return;
         }
     }
     my $first          = $param{first};
@@ -85,7 +86,15 @@ sub display_clues {
     my $clue_for_href  = $param{clue_for_href};
     my $was_found_href = $param{was_found_href};
 
-    my @found = keys %$was_found_href;
+    my @found      = keys %$was_found_href;
+    my @clue_words = keys %$clue_for_href;
+    my $all_found = 1;
+    for my $w (@clue_words) {
+        if (! exists $was_found_href->{$w}) {
+            $all_found = 0;
+        }
+    }
+
     my $gray_level = 170;
     print <<"EOH";
 <html>
@@ -149,8 +158,8 @@ print <<"EOH";
 EOH
     my $prev_l1 = '';
     my $prev_l2 = '';
-    for my $w (sort keys %$clue_for_href) {
-        my $class = $was_found_href->{$w}? 'gray': 'black';
+    for my $w (sort @clue_words) {
+        my $class = !$all_found && $was_found_href->{$w}? 'gray': 'black';
         my $lw = length($w);
         my $l1 = uc substr($w, 0, 1);
         my $l2 = uc substr($w, 0, 2);

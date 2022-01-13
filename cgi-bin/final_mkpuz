@@ -14,8 +14,9 @@ use Bee_DBH qw/
 use Data::Dumper;
 
 my %params = $q->Vars();
-
-add_update_person($params{name}, $params{location});
+my ($person_id, $ip_id) = add_update_person($params{name}, $params{location});
+$params{person_id} = $person_id;
+$params{ip_id} = $ip_id;
 
 my $dir = 'community_puzzles';
 open my $in, '<', "$dir/last_num.txt";

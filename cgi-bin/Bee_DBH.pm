@@ -76,7 +76,7 @@ EOS
         $ins_sth->execute($ip_id, $pname, $plocation);
         $person_id = $dbh->last_insert_id(undef, undef, 'bee_person', 'id');
     }
-    return $person_id;
+    return $person_id, $ip_id;
 }
 
 1;

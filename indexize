@@ -1,0 +1,83 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+my $fname = shift;
+my $out_fname = $fname;
+$out_fname =~ s{txt}{html}xms;
+open my $in, '<', $fname or die "no open $fname: $!\n";
+my $heading = <$in>;
+my %lets = map { $_ => 0 } ('A' .. 'Z');
+while (my $line = <$in>) {
+    $lets{uc substr($line, 0, 1)}++;
+}
+my @links;
+for my $c (sort keys %lets) {
+    push @links, $lets{$c} > 0? "<a href=#$c>$c</a>"
+                :               "<span class=no_p>$c</span>"
+                ;
+}
+my $links = join '&nbsp;' x 2, @links;
+seek $in, 0, 0;
+$heading = <$in>;
+open my $out, '>', $out_fname or die "no open $out_fname: $!\n";
+print {$out} <<"EOH";
+<html>
+<head>
+<title>$heading</title>
+<style>
+body {
+    margin: .5in;
+    font-size: 15pt;
+}
+body, a, .let, .no_p, .to_top, pre {
+    font-family: Arial;
+}
+a {
+    font-size: 18pt;
+    text-decoration: none;
+    color: blue;
+}
+.no_p {
+    font-size: 18pt;
+    color: gray;
+}
+.let {
+    font-size: 22pt;
+    margin-top: 5mm;
+    font-weight: bold;
+}
+.to_top {
+    margin-left: 1in;
+}
+.section {
+    margin-top: 5mm;
+    margin-bottom: 0mm;
+}
+</style>
+</head>
+<body>
+<h2>$heading</h2>
+<a name=top></a>
+$links
+<pre>
+EOH
+my $prev_c = '';
+while (my $line = <$in>) {
+    my $c = uc substr($line, 0, 1);
+    if ($c ne $prev_c) {
+        print {$out} "<div class=section>";
+        print {$out} "<a name=$c></a><span class=let>$c</span>";
+        if ($c ne 'A') {
+            print {$out} "<span class=to_top><a href=#top>to top</a></span>";
+        }
+        print {$out} "</div>";
+    }
+    print {$out} $line;
+    $prev_c = $c;
+}
+print {$out} <<"EOH";
+</pre>
+</body>
+</html>
+EOH
+close $out;

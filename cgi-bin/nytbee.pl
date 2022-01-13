@@ -4,24 +4,12 @@ use warnings;
 
 =comment
 
-a different picture for the initial look - with words in the text field
-    and found words, too.   not initial...
-
-name and location - *required and *remembered
-    focus on name
-
 somewhere explain the keying off of ip address
     and browser signature
-F and S - look in Community Puzzles as well...
-XA - clear all and revert to today
-    sure why not - but don't actually delete today's words...
 
 add to hint total when looking at all clues?
     clues are not as easy as dictionary definitions
     it's all just fun, anyway ...
-
-after queen bee - no grayed clues?
-    all have = [A-Z]+
 
 LC - see 5 most recent community puzzles
         and a link to see them all in a separate window
@@ -30,9 +18,6 @@ XCP<num> - delete your own community puzzle
 
 see all clues from a community puzzle? - click on link after I
 
-in the pangramic files - jump to A, B, etc and back
-    like in pangram haiku
-
 only shuffle when Return in empty text field and no message to clear
     not when entering a word
         save $cur_six and $cur_seven in hidden fields
@@ -40,7 +25,6 @@ only shuffle when Return in empty text field and no message to clear
         and deal with a blank command and blank message
         early on in the script
 document making clues for NYT puzzles
-no PIN? and and no Title - just name and location
 
 disadvantages
     - not easy to play on the phone
@@ -97,9 +81,7 @@ I want to avoid a registration step
 
 =cut
 
-use CGI qw/
-    :standard
-/;
+use CGI;
 my $q = CGI->new();
 my $hive = $q->cookie('hive') || 0;
 my %params = $q->Vars();
@@ -141,6 +123,28 @@ use Date::Simple qw/
     date
 /;
 
+sub attrs {
+    my $href = shift;
+    return join ',',
+           map { "$_=$href->{$_}" }
+           keys %$href;
+}
+sub Tr {
+    my $attrs = ref $_[0] eq 'HASH'? attrs(shift): '';
+    return "<tr $attrs>@_</tr>";
+}
+sub td {
+    my $attrs = ref $_[0] eq 'HASH'? attrs(shift): '';
+    return "<td $attrs>@_</td>";
+}
+sub ul {
+    return "<ul>@_</ul>";
+}
+sub table {
+    my $attrs = ref $_[0] eq 'HASH'? attrs(shift): '';
+    return "<table $attrs>@_</table>";
+}
+
 sub my_today {
     my ($hour) = (localtime)[2];
     my $today = today();
@@ -157,13 +161,13 @@ sub shuffle {
     return @new;
 }
 
-sub dash_date {
+sub slash_date {
     my ($d8) = @_;
     if ($d8 =~ m{\A CP}xms) {
         return $d8;
     }
     my ($y, $m, $d) = $d8 =~ m{\A ..(..)(..)(..) \z}xms;
-    return "$m-$d-$y";
+    return "$m/$d/$y";
 }
 # puzzle from which date?
 # date from new_words/command field (nr, n11 n12/23/18)
@@ -838,6 +842,33 @@ elsif ($cmd eq 'sc') {
     $message .= "<p> $more more word$pl to find";
     $cmd = '';
 }
+elsif ($cmd eq 'cp?') {
+    my $s = `cd community_puzzles; ls -tr1 [0-9]*.txt|tail -5`;
+    my $rows = '';
+    for my $n (sort { $b <=> $a } $s =~ m{(\d+)}xmsg) {
+        my $href = do "community_puzzles/$n.txt";
+        $rows .= Tr(td($n),
+                    td(slash_date($href->{created})),
+                    td($href->{name}),
+                    td($href->{location}),
+                 );
+    }
+    $message = "<table cellpadding=5>$rows</table>";
+    $cmd = '';
+}
+elsif ($cmd eq 'lcp') {
+    my $s = `cd community_puzzles; grep -l '$ip_id' *.txt`;
+    my @nums = sort { $a <=> $b }
+               $s =~ m{(\d+)}xmsg;
+    my $rows = '';
+    for my $n (@nums) {
+        my $href = do "community_puzzles/$n.txt";
+        $rows .= Tr(td($n), td(slash_date($href->{created})));
+    }
+    $message = "Your Community Puzzles:<p>"
+             . table({ cellpadding => 5 }, $rows);
+    $cmd = '';
+}
 elsif ($cmd eq 'l') {
     my @puzzles = my_puzzles();
     my $n = 1;
@@ -846,8 +877,8 @@ elsif ($cmd eq 'l') {
         my $pg  = $p->[1]? '&nbsp;&nbsp;p': '';
         $message .= Tr(
                         td($n) . td($cur)
-                      . td({ style => 'text-align: left' }, dash_date($p->[0]))
-                      . td({ -style => 'text-align: left'},
+                      . td({ style => 'text-align: left' }, slash_date($p->[0]))
+                      . td({ style => 'text-align: left'},
                            $ranks[$p->[2]]->{name})
                       . td($pg)
                     );
@@ -882,6 +913,12 @@ elsif ($cmd eq 'f') {
               sort
               @dates
               ;
+    # also search the community puzzles
+    my $s = `cd community_puzzles; grep -l 'seven.*=>.*$seven' *.txt`;
+    $message .= join "<br>\n",
+                map { "CP$_" }
+                sort { $a <=> $b } 
+                $s =~ m{(\d+)}xmsg;
     $cmd = '';
 }
 elsif ($cmd =~ m{\A s \s+ ([/a-z]+) \s* \z}xms) {
@@ -907,6 +944,12 @@ elsif ($cmd =~ m{\A s \s+ ([/a-z]+) \s* \z}xms) {
                sort
                @dates
                ;
+    # also search the community puzzles
+    my $s = `cd community_puzzles; grep -l 'words.*=>.*\\b$regex\\b' *.txt`;
+    $message .= join '<br>',
+                map { "CP$_" }
+                sort { $a <=> $b }
+                $s =~ m{(\d+)}xmsg;
     if ($message) {
         $message = "\U$word\E:<br>$message";
     }
