@@ -151,7 +151,12 @@ mklink($format, 2, "AB()");
 mklink($format, 3, "ABx");
 mklink($format, 4, "A");
 if ($first) {
-    print "<p>You can copy/paste the text below into the HiveMind forum.<p>";
+    print <<'EOH';
+<p>
+You can copy/paste the text below into the HiveMind forum.<br>
+Then you can close this window.
+<p>
+EOH
 }
 print <<"EOH";
 <h3>Clues for $show_date by $name</h3>

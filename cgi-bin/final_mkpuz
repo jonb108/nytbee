@@ -41,10 +41,10 @@ print <<"EOH";
 Finished. &#128077;<br>
 You have created an NYT Type Puzzle for the Hivemind Community.
 <p>
-Your puzzle is #$n.
-<p>
-Click <a target=_blank href=http://logicalpoetry.com/cgi-bin/nytbee.pl>here</a> to solve it.<br>
+Your puzzle is #$n.<br>
 You will use the <span class=cmd>CP$n</span> command to open it.
+<p>
+You can now close this window.
 </body>
 </html>
 EOH

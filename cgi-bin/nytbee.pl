@@ -4,7 +4,16 @@ use warnings;
 
 =comment
 
-toDO: require Name, Location when making a puzzle and when adding clues.
+'f' - need center letter for CP puzzles
+
+some way to preserve your accomplishments?
+print it
+
+TODO: *require* Name, Location when making a puzzle and when adding clues.
+
+expand advantages, making clues
+what else?
+the scramble thing
 
 somewhere explain the keying off of ip address
     and browser signature
@@ -128,7 +137,7 @@ use Date::Simple qw/
 sub attrs {
     my $href = shift;
     return join ',',
-           map { "$_=$href->{$_}" }
+           map { "$_='$href->{$_}'" }
            keys %$href;
 }
 sub Tr {
@@ -331,7 +340,9 @@ elsif ($cmd eq 't') {
     $new_puzzle = 1;
     $cmd = '';
 }
-elsif ($cmd =~ m{\A n \s* (\d.*) \z}xms) {
+elsif ($cmd ne '1' && $cmd ne '2'
+       && $cmd =~ m{\A ([\d/-]+) \z}xms
+) {
     my $new_date = $1;
     my $dt = date($new_date);
     if ($dt) {
@@ -869,7 +880,9 @@ elsif ($cmd eq 'sc') {
 elsif ($cmd eq 'cp?') {
     my $s = `cd community_puzzles; ls -tr1 [0-9]*.txt|tail -5`;
     my $rows = '';
-    for my $n (sort { $b <=> $a } $s =~ m{(\d+)}xmsg) {
+    for my $n (sort { $b <=> $a }
+               $s =~ m{(\d+)}xmsg
+    ) {
         my $href = do "community_puzzles/$n.txt";
         $rows .= Tr(td("CP$n"),
                     td(slash_date($href->{created})),
@@ -882,7 +895,7 @@ elsif ($cmd eq 'cp?') {
 }
 elsif ($cmd eq 'lcp') {
     my $s = `cd community_puzzles; grep -l '$ip_id' *.txt`;
-    my @nums = sort { $a <=> $b }
+    my @nums = sort { $b <=> $a }
                $s =~ m{(\d+)}xmsg;
     my $rows = '';
     for my $n (@nums) {
@@ -919,30 +932,26 @@ elsif ($cmd eq 'cl') {
 }
 elsif ($cmd eq 'f') {
     # look for same 7
-    my @dates;
+    # sort the dates? TODO
+    my @puz;
     while (my ($dt, $puz) = each %puzzle) {
         if (substr($puz, 0, 7) eq $seven) {
-            push @dates, $dt . uc substr($puz, 8, 1);
+            push @puz, [ $dt, uc substr($puz, 8, 1)
+                              . ($dt eq $date? ' *': '') ];
         }
     }
-    $message = join '',
-               map {
-                  my ($dt, $y, $m, $d, $c) =  m{
-                      \A (.. (..)(..)(..))(.) \z
-                  }xms;
-                  "$m/$d/$y $c"
-                  . ($dt eq $date? ' *': '')
-                  . "<br>\n";
-              }
-              sort
-              @dates
-              ;
+    my $rows = '';
+    for my $p (sort { $a->[0] cmp $b->[0] } @puz) {
+        $rows .= Tr(td(slash_date($p->[0])),
+                    td({ style => 'text-align: left' }, $p->[1]));
+    }
     # also search the community puzzles
     my $s = `cd community_puzzles; grep -l 'seven.*=>.*$seven' *.txt`;
-    $message .= join "<br>\n",
-                map { "CP$_" }
-                sort { $a <=> $b } 
-                $s =~ m{(\d+)}xmsg;
+    for my $n ($s =~ m{(\d+)}xmsg) {
+        my $href = do "community_puzzles/$n.txt";
+        $rows .= Tr(td("CP$n"), td(uc $href->{center}));
+    }
+    $message = table({ cellpadding => 5}, $rows);
     $cmd = '';
 }
 elsif ($cmd =~ m{\A s \s+ ([/a-z]+) \s* \z}xms) {
