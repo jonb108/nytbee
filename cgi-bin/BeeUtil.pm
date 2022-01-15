@@ -106,9 +106,7 @@ body {
     font-size: 18pt;
 }
 .clues {
-    margin-left: .4in;
     margin-top: 0mm;
-    margin-bottom: 5mm;
 }
 .link {
     color: blue;
@@ -117,11 +115,17 @@ body {
 .gray {
     color: rgb($gray_level, $gray_level, $gray_level);
 }
+.info {
+    display: normal;
+}
 </style>
 <script>
 function set_format(n) {
     document.getElementById('format').value = n;
     document.getElementById('main').submit();
+}
+function clear_text() {
+    document.getElementById('info').style.display = 'none';
 }
 </script>
 </head>
@@ -145,11 +149,15 @@ sub mklink {
         print "<span class=link onclick='set_format($n)'>$s</span>$space";
     }
 }
-print "Alternate formats: ";
+print <<'EOH';
+<div id=info>
+Alternate formats:
+EOH
 mklink($format, 1, "AB-");
 mklink($format, 2, "AB()");
 mklink($format, 3, "ABx");
 mklink($format, 4, "A");
+print "&nbsp;&nbsp;<span class=link onclick='clear_text();'>Ok</span>";
 if ($first) {
     print <<'EOH';
 <p>
@@ -159,6 +167,7 @@ Then you can close this window.
 EOH
 }
 print <<"EOH";
+</div>
 <h3>Clues for $show_date by $name</h3>
 EOH
     my $prev_l1 = '';
@@ -183,7 +192,7 @@ EOH
             }
             else {
                 if ($prev_l2) {
-                    print "</div>\n";
+                    print "</div><br>\n";
                 }
                 print "$l2<div class=clues>";
             }
@@ -196,6 +205,9 @@ EOH
         }
         if ($format == 4) {
             print "- ";
+        }
+        if ($format == 1 || $format == 2) {
+            print '&nbsp;' x 3;
         }
         print ucfirst($clue_for_href->{$w});
         if ($format == 1) {

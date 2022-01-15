@@ -16,10 +16,21 @@ use BeeUtil qw/
 /;
 
 use Bee_DBH qw/
+    $dbh
     get_person
 /;
 
 my %params = $q->Vars();
+
+my ($ip_id, $person_id, $name, $location) = get_person();
+my $sth_ins_clue = $dbh->prepare(<<'EOS');
+
+    INSERT
+      INTO bee_clue
+           (person_id, date, word, clue)
+    VALUES (?, ?, ?, ?)
+
+EOS
 
 # we choose ~ and ^ as characters
 # that are very unlikely to be used
@@ -30,6 +41,7 @@ my $clues = join '',
                 my $w = $k; $w =~ s{_clue\z}{}xms;
                 my $clue = $params{$k};
                 $clue = trim($clue);
+                $sth_ins_clue->execute($person_id, 'CP', $w, $clue);
                 $clue =~ s{"}{'}xmsg;        # double quote => single quote
                 "$w^$clue~"
             }
@@ -50,8 +62,6 @@ my $points = 0;
 for my $w (@words) {
     $points += word_score($w, $is_pangram{$w});
 }
-
-my ($ip_id, $person_id, $name, $location) = get_person();
 
 print <<"EOH";
 <html>

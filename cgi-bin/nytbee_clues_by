@@ -17,26 +17,37 @@ use Date::Simple qw/
 
 my $date = $param{date};
 my $format = $param{format};
-my $show_date = date($date)->format("%B %e, %Y");
 my $person_id = $param{person_id};
 my %was_found = map { $_ => 1 }
                 split ' ', $param{found};
+# to be set:
+my $show_date;
+my $name;
+my %clue_for;
 
 use Bee_DBH qw/
     $dbh
 /;
 
-my $sth = $dbh->prepare(<<'EOS');
+if (my ($ncp) = $date =~ m{\A CP(\d+) \z}xms) {
+    $show_date = $date;
+    my $href = do "community_puzzles/$ncp.txt";
+    $name = $href->{name};
+    %clue_for = $href->{clues} =~ m{ ([a-z]+) [\^] ([^~]*) [~] }xmsg;
+}
+else {
+    $show_date = date($date)->format("%B %e, %Y");
+    my $sth = $dbh->prepare(<<'EOS');
 
     SELECT name
       FROM bee_person
      WHERE id = ?
 
 EOS
-$sth->execute($person_id);
-my ($name) = $sth->fetchrow_array();
+    $sth->execute($person_id);
+    my ($name) = $sth->fetchrow_array();
 
-my $sth_clues = $dbh->prepare(<<'EOS');
+    my $sth_clues = $dbh->prepare(<<'EOS');
 
     SELECT word, clue
       FROM bee_clue
@@ -44,10 +55,10 @@ my $sth_clues = $dbh->prepare(<<'EOS');
        AND person_id = ?
 
 EOS
-$sth_clues->execute($date, $person_id);
-my %clue_for;
-while (my ($word, $clue) = $sth_clues->fetchrow_array()) {
-    $clue_for{$word} = $clue;
+    $sth_clues->execute($date, $person_id);
+    while (my ($word, $clue) = $sth_clues->fetchrow_array()) {
+        $clue_for{$word} = $clue;
+    }
 }
 display_clues(first          => 0,
               format         => $format,

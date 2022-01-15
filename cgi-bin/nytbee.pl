@@ -4,12 +4,23 @@ use warnings;
 
 =comment
 
-'f' - need center letter for CP puzzles
+LCP - date created, name, location, center letter, npangrams, nwords, npoints
+YCP - date created, center letter, npangrams, nwords, npoints
 
 some way to preserve your accomplishments?
 print it
 
 TODO: *require* Name, Location when making a puzzle and when adding clues.
+
+when making a puzzle put the clues in the community_puzzles file
+but also in the database - person_id and date = 'CPx'.
+then easier to find prior clues
+
+when making a puzzle see if clues have already been provided for
+words in the puzzle by this person - in NYT puzzles and in community puzzles
+not easy!
+this has already been done when adding NYT Puzzle clues
+    but not clues from community puzzles
 
 expand advantages, making clues
 what else?
@@ -877,8 +888,9 @@ elsif ($cmd eq 'sc') {
     $message .= "<p> $more more word$pl to find";
     $cmd = '';
 }
-elsif ($cmd eq 'cp?') {
-    my $s = `cd community_puzzles; ls -tr1 [0-9]*.txt|tail -5`;
+elsif (my ($ncp) = $cmd =~ m{\A lcp \s*(\d*) \z}xms) {
+    $ncp ||= 5;
+    my $s = `cd community_puzzles; ls -tr1 [0-9]*.txt|tail -$ncp`;
     my $rows = '';
     for my $n (sort { $b <=> $a }
                $s =~ m{(\d+)}xmsg
@@ -893,7 +905,7 @@ elsif ($cmd eq 'cp?') {
     $message = "<table cellpadding=5>$rows</table>";
     $cmd = '';
 }
-elsif ($cmd eq 'lcp') {
+elsif ($cmd eq 'ycp') {
     my $s = `cd community_puzzles; grep -l '$ip_id' *.txt`;
     my @nums = sort { $b <=> $a }
                $s =~ m{(\d+)}xmsg;
@@ -932,7 +944,6 @@ elsif ($cmd eq 'cl') {
 }
 elsif ($cmd eq 'f') {
     # look for same 7
-    # sort the dates? TODO
     my @puz;
     while (my ($dt, $puz) = each %puzzle) {
         if (substr($puz, 0, 7) eq $seven) {
@@ -1098,13 +1109,16 @@ for my $w (@new_words) {
                         .  "</span>: $mess<br>";
     }
     else {
+        $is_new_word{$w} = 1;
         if (! $is_found{$w}) {
             push @found, $w;
             $is_found{$w} = 1;
         }
-        # words that were found before will
-        # be highlighted in the list.  no error.
-        $is_new_word{$w} = 1;
+        else {
+            $not_okay_words .= "<span class=not_okay>"
+                            .  uc($w)
+                            .  "</span>: already found<br>";
+        }
     }
 }
 
@@ -1238,17 +1252,23 @@ if ($cmd eq 'i') {
     if ($date =~ m{\A CP}xms) {
         my ($n) = $date =~ m{(\d+)}xms;
         my $created = date($cp_href->{created})->format("%B %e, %Y");
-        my $s = "";
-        for my $w (qw/ name location /) {
-            if (my $t = $cp_href->{$w}) {
-                if ($w eq 'contact' && index($t, '@') >= 0) {
-                    $t = "<a href='mailto:$t?"
-                       . "subject=Community Puzzle #$n'>$t</a>";
-                }
-                $s .= "$t<br>";
-            }
-        }
+        my $s = <<"EOH";
+<span class=pointer style='color: blue' onclick='clues_by(0)'>$cp_href->{name}</span><br>
+$cp_href->{location}<br>
+EOH
         $message .= "<br>Community Puzzle #$n - $created<ul>$s</ul>";
+        $clue_form = <<"EOH";
+<form target=nytbee
+      id=clues_by
+      action=/cgi-bin/nytbee_clues_by
+      method=POST
+>
+<input type=hidden id=person_id name=person_id>
+<input type=hidden id=date name=date value=$date>
+<input type=hidden id=found name=found value='@found'>
+<input type=hidden name=format value=1>
+</form>
+EOH
     }
     else {
         load_nyt_clues;
