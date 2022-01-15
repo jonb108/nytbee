@@ -4,6 +4,57 @@ use warnings;
 
 =comment
 
+Add Clues
+    another format: A-x - first letter with length
+        have separate elsif clauses to generate the formats
+        too confusing and tricky to do it the current way
+        AB-x   AB(x)   ABx   A-x   A    Ok
+
+    don't reveal words you haven't found yet
+        so people won't have to wait until QueenBee to Add Clues
+            otherwise it will spoil their game?
+        regardless - it's fun for me!
+    send a JSON structure - hash key=unfound_word value=0
+    instead of displaying the word show a blank light green area
+    with an onclick callback.  this callback has a parameter
+    of the word.  the callback will check the hash, increment
+    the value, and based on the value will replace the green area
+    with increasing hints for the word:
+        0 - blank lightgreen
+        1 - first letter
+        2 - second letter
+        3 - length - with dashes for letters
+        4 - the word - a link that pops up a definition - as usual
+
+        0-3 all have a light green background
+
+    for the clues (even if the word has not yet been found!):
+        if there are no prior clues the value in the input field (type=text)
+            is empty
+        if one fill it in value='...'
+        if more than one prior clue
+            send along another JSON hash
+                key=word and value = ARRAY of hints
+        fill in the first (in date order)
+        and have a small lightgreen area (additional <td>)
+        to click at the end of the clue.
+        the onclick callback will cycle through the various hints
+        that have been given in the past by this person
+
+    for testing - make puzzles (with accompanying clues)
+        with TION pangrams (adoption, antagonizing, annihilation)
+        (also add clues for NYT puzzles that have
+        those words as pangrams and either N or O as center letter
+        - like conduction on 8/26/21)
+        and give these various clues for NOON:
+        - the opposite of midnight
+        - a palindromic time of day
+        - John Wayne movie - High ____
+        and these clues for TOOT:
+        - honk
+        - a palindromic sound
+        - snort of a drug
+
 LCP - date created, name, location, center letter, npangrams, nwords, npoints
 YCP - date created, center letter, npangrams, nwords, npoints
 
@@ -1245,7 +1296,7 @@ for my $p (keys %is_pangram) {
 if ($nperfect) {
     $perfect = " ($nperfect Perfect)"
 }
-my $clue_form = '';
+my $show_clue_form = '';
 if ($cmd eq 'i') {
     $message = "Words: $nwords, Points: $max_score, "
              . "Pangrams: $npangrams$perfect$bingo";
@@ -1257,7 +1308,7 @@ if ($cmd eq 'i') {
 $cp_href->{location}<br>
 EOH
         $message .= "<br>Community Puzzle #$n - $created<ul>$s</ul>";
-        $clue_form = <<"EOH";
+        $show_clue_form = <<"EOH";
 <form target=nytbee
       id=clues_by
       action=/cgi-bin/nytbee_clues_by
@@ -1291,7 +1342,7 @@ EOH
             }
             $message .= "<br>Clues by " . join ', ', @names;
         }
-        $clue_form = <<"EOH";
+        $show_clue_form = <<"EOH";
 <form target=nytbee
       id=clues_by
       action=/cgi-bin/nytbee_clues_by
@@ -1414,15 +1465,12 @@ if ($message) {
     $message .= '<p>';
     $has_message = 1;
 }
-my $produce_collect
+my $create_add
     = "<a target=_blank href='$log/nytbee/mkpuz.html'>"
     . "Create Puzzle</a>";
 if ($date =~ m{\A \d}xms) {
-    $produce_collect
-        .= "<br><a target=_blank"
-        .  " onclick='set_focus();'"
-        .  " href='$log/cgi-bin/nytbee_mkclues?date=$date'>"
-        .  "Add Clues</a>";
+    $create_add
+        .= "<br><span class=add_clues onclick='add_clues();'>Add Clues</span>";
 }
 
 # now to display everything
@@ -1556,7 +1604,7 @@ $letter_styles
 .help {
     margin-left: 1in;
 }
-.produce_collect, .help {
+.create_add, .help {
     font-size: 13pt;
 }
 .mess {
@@ -1668,8 +1716,16 @@ $rank_colors_fonts
 .image_queen {
     width: 175px;
 }
+.add_clues {
+    cursor: pointer;
+    color: blue;
+}
 </style>
 <script>
+function add_clues() {
+    set_focus();
+    document.getElementById('add_clues').submit();
+}
 function define_tl(two_let) {
     document.getElementById('new_words').value = 'D' + two_let;
     document.getElementById('main').submit();
@@ -1697,7 +1753,7 @@ function set_focus() {
          <img width=50 src=/pics/bee-logo.jpg>
     </div>
     <div class=float-child3>
-        <span class=help><a target=_blank href='$log/nytbee/help.html#words'>Help</a></span><br><span class=produce_collect>$produce_collect</span>
+        <span class=help><a target=_blank href='$log/nytbee/help.html#words'>Help</a></span><br><span class=create_add>$create_add</span>
     </div>
 </div>
 <br><br>
@@ -1731,7 +1787,15 @@ $disp_nhints
         </div>
     </div>
 </div>
-$clue_form
+$show_clue_form
+<form target=_blank
+      id=add_clues
+      action=$log/cgi-bin/nytbee_mkclues
+      method=POST
+>
+<input type=hidden id=date name=date value=$date>
+<input type=hidden id=found name=found value='@found'>
+</form>
 </body>
 <script>set_focus();</script>
 </html>

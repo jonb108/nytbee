@@ -12,7 +12,11 @@ use CGI qw/
 /;
 my $q = CGI->new();
 print $q->header();
+my $cgi = 'http://logicalpoetry.com/cgi-bin';
+
 my $date = $q->param('date');
+my %is_found = map { $_ => 1 }
+               split ' ', $q->param('found');
 
 my $puzzle = $puzzle{$date};
 $puzzle =~ s{\A [^|]* [|]\ s* }{}xms;
@@ -89,12 +93,13 @@ print <<"EOH";
 <link rel='stylesheet' type='text/css' href='/nytbee/cgi_style.css'/>
 <script>
 var newwin;
-function popup(url, height, width) {
+function popup_define(word, height, width) {
     newwin = window.open(
-        url, 'define',
+        "$cgi/nytbee_define/" + word, 'define',
         'height=' + height + ',width=' + width +', scrollbars'
     );
     newwin.moveTo(800, 0);
+    var el = document.getElementById(word + '_clue').focus();
 }
 </script>
 </head>
@@ -113,13 +118,18 @@ You may wish to give clues that are more like crossword clues.
 <tr><td>Your Location</td><td><input name=location size=30 value='$location'></td></tr>
 <tr><td colspan=2>&nbsp;</td></tr>
 EOH
-my $cgi = 'http://logicalpoetry.com/cgi-bin';
 for my $w (@words) {
     my $uw = ucfirst $w;
-    print Tr(
-              td(qq!<a href='javascript:popup("$cgi/nytbee_define/$w",300,500)'>$uw</a>!),
-              td("<input type=text size=30 name=${w}_clue"
-               . qq! value="! . ($clue_for{$w}||'') . qq!">!)
+    my $word_td; 
+    if ($is_found{$w}) {
+        $word_td =td(qq!<a href="javascript:popup_define('$w',300,500)">$uw</a>!),
+    }
+    else {
+        $word_td = td({ class => 'word_td'}, '&nbsp;');
+    }
+    print Tr($word_td,
+             td("<input type=text size=30 name=${w}_clue id=${w}_clue"
+              . qq! value="! . ($clue_for{$w}||'') . qq!">!)
           ), "\n";
 }
 print Tr(td('&nbsp'), td({ style => 'text-align: left;' }, "<button type=submit>Submit</button>")), "\n";

@@ -33,7 +33,7 @@ input, button {
 .red {
     color: red;
 }
-button {
+button, .word_td {
     background: lightgreen;
 }
 .cmd {

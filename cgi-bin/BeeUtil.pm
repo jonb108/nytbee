@@ -153,10 +153,11 @@ print <<'EOH';
 <div id=info>
 Alternate formats:
 EOH
-mklink($format, 1, "AB-");
-mklink($format, 2, "AB()");
+mklink($format, 1, "AB-x");
+mklink($format, 2, "AB(x)");
 mklink($format, 3, "ABx");
-mklink($format, 4, "A");
+mklink($format, 4, "A-x");
+mklink($format, 5, "A");
 print "&nbsp;&nbsp;<span class=link onclick='clear_text();'>Ok</span>";
 if ($first) {
     print <<'EOH';
