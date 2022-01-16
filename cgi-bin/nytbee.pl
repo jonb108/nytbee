@@ -1304,10 +1304,9 @@ if ($cmd eq 'i') {
         my ($n) = $date =~ m{(\d+)}xms;
         my $created = date($cp_href->{created})->format("%B %e, %Y");
         my $s = <<"EOH";
-<span class=pointer style='color: blue' onclick='clues_by(0)'>$cp_href->{name}</span><br>
-$cp_href->{location}<br>
+<span class=pointer style='color: blue' onclick='clues_by(0)'>$cp_href->{name}</span>, $cp_href->{location}<br>
 EOH
-        $message .= "<br>Community Puzzle #$n - $created<ul>$s</ul>";
+        $message .= "<br>Community Puzzle #$n - $created<br>Created by $s";
         $show_clue_form = <<"EOH";
 <form target=nytbee
       id=clues_by

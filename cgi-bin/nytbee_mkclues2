@@ -24,6 +24,8 @@ print $q->header();
 use BeeUtil qw/
     trim
     ip_id
+/;
+use BeeClues qw/
     display_clues
 /;
 use Date::Simple qw/

@@ -15,13 +15,24 @@ print $q->header();
 my $cgi = 'http://logicalpoetry.com/cgi-bin';
 
 my $date = $q->param('date');
-my %is_found = map { $_ => 1 }
-               split ' ', $q->param('found');
-
 my $puzzle = $puzzle{$date};
 $puzzle =~ s{\A [^|]* [|]\ s* }{}xms;
 my @words = $puzzle =~ m{([a-z]+)}xmsg;
 my $show_date = date($date)->format("%B %e, %Y");
+
+my @found = split ' ', $q->param('found');
+my %is_found = map { $_ => 1 } @found;
+
+my $nnf = @words - @found;
+my $nnf_disp = '';
+if ($nnf) {
+    if ($nnf == 1) {
+        $nnf_disp = "As you know, there is 1 word that has not yet been found.  This word will be hidden.";
+    }
+    else {
+        $nnf_disp = "As you know, there are $nnf words that have not yet been found.  These words will be hidden.";
+    }
+}
 
 use Date::Simple qw/
     date
@@ -108,9 +119,10 @@ function popup_define(word, height, width) {
 <form name=form action=nytbee_mkclues2>
 <input type=hidden name=date value='$date'>
 <p>
+$nnf_disp
 No need to give clues for all of the words.
 Clicking on the words will give a dictionary definition.
-You may wish to give clues that are more like crossword clues.
+You may wish to give clues that are more ambiguous and clever - like clues for a crossword puzzle.
 
 <p>
 <table cellpadding=3>
@@ -120,17 +132,17 @@ You may wish to give clues that are more like crossword clues.
 EOH
 for my $w (@words) {
     my $uw = ucfirst $w;
-    my $word_td; 
+    my ($word_td, $clue_td); 
     if ($is_found{$w}) {
         $word_td =td(qq!<a href="javascript:popup_define('$w',300,500)">$uw</a>!),
+        $clue_td = td("<input type=text size=30 name=${w}_clue id=${w}_clue"
+                 . qq! value="! . ($clue_for{$w}||'') . qq!">!)
     }
     else {
         $word_td = td({ class => 'word_td'}, '&nbsp;');
+        $clue_td = td('&nbsp;');
     }
-    print Tr($word_td,
-             td("<input type=text size=30 name=${w}_clue id=${w}_clue"
-              . qq! value="! . ($clue_for{$w}||'') . qq!">!)
-          ), "\n";
+    print Tr($word_td, $clue_td), "\n";
 }
 print Tr(td('&nbsp'), td({ style => 'text-align: left;' }, "<button type=submit>Submit</button>")), "\n";
 print <<"EOH";

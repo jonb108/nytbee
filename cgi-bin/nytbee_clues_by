@@ -7,7 +7,7 @@ my $q = CGI->new();
 print $q->header();
 my %param = $q->Vars();
 
-use BeeUtil qw/
+use BeeClues qw/
     display_clues
 /;
 
@@ -15,6 +15,7 @@ use Date::Simple qw/
     date
 /;
 
+my $first = $param{first};
 my $date = $param{date};
 my $format = $param{format};
 my $person_id = $param{person_id};
@@ -45,7 +46,10 @@ else {
 
 EOS
     $sth->execute($person_id);
-    my ($name) = $sth->fetchrow_array();
+    ($name) = $sth->fetchrow_array();
+open JON, '>/tmp/jon';
+print JON "name = $name, person_id = $person_id\n";
+close JON;
 
     my $sth_clues = $dbh->prepare(<<'EOS');
 
@@ -60,7 +64,7 @@ EOS
         $clue_for{$word} = $clue;
     }
 }
-display_clues(first          => 0,
+display_clues(first          => $first,
               format         => $format,
               show_date      => $show_date,
               date           => $date,

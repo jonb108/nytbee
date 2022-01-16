@@ -2,6 +2,7 @@
 rm /tmp/cgi.tar
 tar cvf /tmp/cgi.tar  \
 BeeUtil.pm \
+BeeClues.pm \
 clues \
 cron_jon \
 Date \
