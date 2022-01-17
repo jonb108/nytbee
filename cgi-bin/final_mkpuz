@@ -12,11 +12,16 @@ use Bee_DBH qw/
 /;
 
 use Data::Dumper;
+$Data::Dumper::Terse  = 1;
+$Data::Dumper::Indent = 0;
 
 my %params = $q->Vars();
 my ($person_id, $ip_id) = add_update_person($params{name}, $params{location});
 $params{person_id} = $person_id;
 $params{ip_id} = $ip_id;
+$params{clues} = eval $params{clues};
+$params{words} = [ split ' ', $params{words} ];
+$params{pangrams} = [ split ' ', $params{pangrams} ];
 
 my $dir = 'community_puzzles';
 open my $in, '<', "$dir/last_num.txt";

@@ -31,10 +31,12 @@ use Bee_DBH qw/
 /;
 
 if (my ($ncp) = $date =~ m{\A CP(\d+) \z}xms) {
+    # community puzzles don't need a database connection
+    # some way to avoid the $dbh initialization?
     $show_date = $date;
     my $href = do "community_puzzles/$ncp.txt";
     $name = $href->{name};
-    %clue_for = $href->{clues} =~ m{ ([a-z]+) [\^] ([^~]*) [~] }xmsg;
+    %clue_for = %{$href->{clues}};
 }
 else {
     $show_date = date($date)->format("%B %e, %Y");
@@ -47,9 +49,6 @@ else {
 EOS
     $sth->execute($person_id);
     ($name) = $sth->fetchrow_array();
-open JON, '>/tmp/jon';
-print JON "name = $name, person_id = $person_id\n";
-close JON;
 
     my $sth_clues = $dbh->prepare(<<'EOS');
 

@@ -4,11 +4,15 @@ use warnings;
 
 =comment
 
+divide styles into two - static and dynamic
+    static can be cached the browser
+    cgi_style.css is a start
+scripts, too
 Fantasy and Future ideas:
 
 when a person creates a set of clues
     they set the format - one or two letters, length or not
-        or whether the viewer can change it...
+        and whether the viewer can change it...
 
 a way to restrict what hints/clues you can get.
     like no V, E, no HT, no TL, no 1/2, no definitions, only clues
@@ -47,6 +51,7 @@ How about a first letter tally?
 
 another advantage - the clues from several people
     are shown all together - and can be compared.
+and another - the ok words are not visible in the page source!
 
 ?ECP to edit a puzzle that you created
     can add/remove words, update clues
@@ -459,12 +464,13 @@ else {
     $seven = $cp_href->{seven};
     @seven = split //, $seven;
     $center = $cp_href->{center};
-    @pangrams = split ' ', $cp_href->{pangrams};
-    @ok_words = split ' ', $cp_href->{words};
-    %clue_for = $cp_href->{clues} =~ m{([a-z]+)\^([^~]+)~}xmsg;
+    @pangrams = @{$cp_href->{pangrams}};
+    @ok_words = @{$cp_href->{words}};
+    %clue_for = %{$cp_href->{clues}};
     $show_date = $date;
 }
 my $nwords = @ok_words;
+my $letter_regex = qr{([^$seven])}xms;  # see sub check_word
 my $npangrams = @pangrams;
 
 # get ready for hive == 3
@@ -662,7 +668,7 @@ sub define {
     push @defs, 'MERRIAM-WEBSTER:' if $Dcmd eq 'd*'; 
     push @defs, $html =~  m{meaning\s+of\s+$word\s+is\s+(.*?)[.]\s+How\s+to}xmsi;
     push @defs, $html =~ m{dtText(.*?)\n}xmsg;
-    if (! @defs) {
+    if ($Dcmd eq 'd*' || ! @defs || @defs < 3) {
         # some definitions (like 'from') use a different format
         # no clue why
         push @defs, $html =~ m{"unText">(.*?)</span>}xmsg;
@@ -1145,10 +1151,8 @@ sub check_word {
     if (index($w, $center) < 0) {
         return "does not contain: <span class=red1>\U$center</span>";
     }
-    for my $c (split //, $w) {
-        if (index($seven, $c) < 0) {
-            return "\U$c\E is not in \U$seven";
-        }
+    if (my ($c) = $w =~ $letter_regex) {
+        return "\U$c\E is not in \U$seven";
     }
     if (! exists $is_ok_word{$w}) {
         return "not in word list";

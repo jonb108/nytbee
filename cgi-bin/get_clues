@@ -20,6 +20,10 @@ use Bee_DBH qw/
     get_person
 /;
 
+use Data::Dumper;
+$Data::Dumper::Terse  = 1;
+$Data::Dumper::Indent = 0;
+
 my %params = $q->Vars();
 
 # let us assume that the creator of this community puzzle
@@ -42,27 +46,43 @@ my $sth_ins_clue = $dbh->prepare(<<'EOS');
 
 EOS
 
-# we choose ~ and ^ as characters
+my %clues;
+CLUE:
+for my $k (grep { m! _clue \z!xms } keys %params) {
+    my $w = $k;
+    $w =~ s{_clue\z}{}xms;
+    my $clue = $params{$k};
+    $clue =~ s{"}{'}xmsg;       # double quote is troublesome
+                                # so just convert to single
+                                # use HTML::Entities?
+    if ($clue !~ m{\S}xms) {
+        # no clue
+        next CLUE;
+    }
+    $sth_ins_clue->execute($person_id, $CPn, $w, $clue);
+    $clues{$w} = $clue;
+}
+my $clues = Dumper(\%clues);
 # that are very unlikely to be used
 # in the clue - what if they are?
 # we silently change them to -.
-my $clues = join '',
-            map {
-                my $k = $_;
-                my $w = $k; $w =~ s{_clue\z}{}xms;
-                my $clue = $params{$k};
-                $clue = ucfirst trim($clue);
-                $clue =~ s{[~^]}{-}xmsg;
-                $sth_ins_clue->execute($person_id, $CPn, $w, $clue);
-                $clue =~ s{"}{'}xmsg;        # double quote => single quote
-                "$w^$clue~"
-            }
-            grep { 
-                m/_clue\z/xms 
-                &&
-                $params{$_} =~ m{\S}   # why not just $params{$_}?
-            }
-            keys %params;
+#my $clues = join '',
+#            map {
+#                my $k = $_;
+#                my $w = $k; $w =~ s{_clue\z}{}xms;
+#                my $clue = $params{$k};
+#                $clue = ucfirst trim($clue);
+#                $clue =~ s{[~^]}{-}xmsg;
+#                $sth_ins_clue->execute($person_id, $CPn, $w, $clue);
+#                $clue =~ s{"}{'}xmsg;        # double quote => single quote
+#                "$w^$clue~"
+#            }
+#            grep { 
+#                m/_clue\z/xms 
+#                &&
+#                $params{$_} =~ m{\S}   # why not just $params{$_}?
+#            }
+#            keys %params;
 my $seven = $params{seven};
 my $center = $params{center};
 my $words = $params{words};
