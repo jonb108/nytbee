@@ -22,6 +22,16 @@ use Bee_DBH qw/
 
 my %params = $q->Vars();
 
+# let us assume that the creator of this community puzzle
+# will not abandon the creation at this point.
+# let's get the next number...
+open my $in, '<', 'community_puzzles/last_num.txt';
+my $n = <$in>;
+close $in;
+chomp $n;
+++$n;
+my $CPn = "CP$n";
+
 my ($ip_id, $person_id, $name, $location) = get_person();
 my $sth_ins_clue = $dbh->prepare(<<'EOS');
 
@@ -35,13 +45,15 @@ EOS
 # we choose ~ and ^ as characters
 # that are very unlikely to be used
 # in the clue - what if they are?
+# we silently change them to -.
 my $clues = join '',
             map {
                 my $k = $_;
                 my $w = $k; $w =~ s{_clue\z}{}xms;
                 my $clue = $params{$k};
-                $clue = trim($clue);
-                $sth_ins_clue->execute($person_id, 'CP', $w, $clue);
+                $clue = ucfirst trim($clue);
+                $clue =~ s{[~^]}{-}xmsg;
+                $sth_ins_clue->execute($person_id, $CPn, $w, $clue);
                 $clue =~ s{"}{'}xmsg;        # double quote => single quote
                 "$w^$clue~"
             }

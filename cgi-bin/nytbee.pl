@@ -4,6 +4,53 @@ use warnings;
 
 =comment
 
+Fantasy and Future ideas:
+
+when a person creates a set of clues
+    they set the format - one or two letters, length or not
+        or whether the viewer can change it...
+
+a way to restrict what hints/clues you can get.
+    like no V, E, no HT, no TL, no 1/2, no definitions, only clues
+    no G Y of course
+perhaps on a per puzzle basis or for a competition(?)
+or as a way to personally restrain yourself.
+    like a NOH command to say No Hints  NOH 1-9 for different levels
+        until you say OKH or some such.
+        This is preserved in a cookie - like your preferred 'hive' display.
+        so you can quit the browser and start again.
+for a competition - announce a certain puzzle as the one for the day.
+    this would work only with CP puzzles as the NYT puzzle
+    answers are all available in various places - nytbee.com, shunn.net, etc
+    You enter the competition with a certain command
+    where you give your name, the puzzle name. The time is noted.
+    When you achieve Queen Bee for the puzzle the timer is stopped
+    and the time is noted.
+    For competition the hint restrictions are enforced regardless
+        of what NOH/OKH the person has in place...
+        it's on a per puzzle basis from person to person, browser to browser.
+    Results are tallied.
+    A nice dream, anyway :).
+How about a first letter tally?
+    the number of words starting with a letter - regardless of word length.
+    OL - :) One Letter
+    another level of hint...
+        basically just the rightmost (sigma) column of HT
+    we would need DE - to get clues for all words beginning with E?
+        the E would be restricted to one of the seven
+        DP would have two meanings in case P was one of the seven
+        DXY - both X and Y need to be one of the seven
+            and the word needs to begin with XY
+        DPG for pangrams? no word begins with PG, right?
+    OLL - one letter with length - same as HT!
+    these are dynamic as well just like HT and TL
+
+another advantage - the clues from several people
+    are shown all together - and can be compared.
+
+?ECP to edit a puzzle that you created
+    can add/remove words, update clues
+
 when getting today's puzzle words (and pangrams)
 update the lists used when creating puzzles
 - the pangram lists and the list of words used in NYT puzzles
@@ -29,10 +76,6 @@ print it
 
 TODO: *require* Name, Location when making a puzzle and when adding clues.
 
-when making a puzzle put the clues in the community_puzzles file
-but also in the database - person_id and date = 'CPx'.
-then easier to find prior clues
-
 when making a puzzle see if clues have already been provided for
 words in the puzzle by this person - in NYT puzzles and in community puzzles
 not easy!
@@ -41,7 +84,7 @@ this has already been done when adding NYT Puzzle clues
 
 expand advantages, making clues
 what else?
-the scramble thing
+the scramble thing - only when no message and no cmd
 
 somewhere explain the keying off of ip address
     and browser signature
@@ -50,9 +93,9 @@ add to hint total when looking at all clues?
     clues are not as easy as dictionary definitions
     it's all just fun, anyway ...
 
-LC - see 5 most recent community puzzles
-        and a link to see them all in a separate window
-LCP - see all of your own community puzzles
+LCP - see 5 most recent community puzzles
+       and a link to see them all in a separate window?
+YCP - see all of your own community puzzles
 XCP<num> - delete your own community puzzle
 
 see all clues from a community puzzle? - click on link after I
@@ -70,8 +113,8 @@ disadvantages
     - my software has not been thoroughly vetted and tested
           there are undoubtably other problems to be found
     - if many people start to use it
-          the server may be overwhelmed and I'd need to
-          move it to its own server
+          the server may be overwhelmed, response time would be slow,
+          and I'd need to optimize it and move it to its own server
 
 more colors for cluers
     choose them better?
@@ -128,6 +171,7 @@ my %params = $q->Vars();
 use BeeUtil qw/
     trim
     ip_id
+    slash_date
 /;
 
 use DB_File;
@@ -200,14 +244,6 @@ sub shuffle {
     return @new;
 }
 
-sub slash_date {
-    my ($d8) = @_;
-    if ($d8 =~ m{\A CP}xms) {
-        return $d8;
-    }
-    my ($y, $m, $d) = $d8 =~ m{\A ..(..)(..)(..) \z}xms;
-    return "$m/$d/$y";
-}
 # puzzle from which date?
 # date from new_words/command field (nr, n11 n12/23/18)
 # date from hidden field (date)
@@ -316,11 +352,11 @@ elsif (my ($ncp) = $cmd =~ m{\A xcp \s* (\d+) \z}xms) {
             $cmd = '';
         }
         else {
-            # in case it is in the current list...
             unlink $fname;
+            # and just in case it is in the current list...
             delete $ip_date{"$ip_id CP$ncp"};
             $message = "Deleted CP$ncp";
-            $cmd = 't';
+            $cmd = 't';     # back to today
         }
     }
 }

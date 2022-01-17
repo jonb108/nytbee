@@ -142,7 +142,7 @@ use JSON::PP qw/
 /;
 my $json = encode_json(\%clues_for);
 
-my $prior_clues = "<p>You have given clues for some of the words before.";
+my $prior_clues = $got_clues? "<p>You have given clues for some of the words before.": '';
 if (%clues_for) {
     $prior_clues .= "If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=/nytbee/cycle.jpg> icon.";
 }

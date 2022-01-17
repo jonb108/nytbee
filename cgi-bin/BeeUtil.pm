@@ -12,8 +12,17 @@ our @EXPORT_OK = qw/
     Tr
     td
     ul
+    slash_date
 /;
 
+sub slash_date {
+    my ($d8) = @_;
+    if ($d8 =~ m{\A CP}xms) {
+        return $d8;
+    }
+    my ($y, $m, $d) = $d8 =~ m{\A ..(..)(..)(..) \z}xms;
+    return "$m/$d/$y";
+}
 
 sub ip_id {
     my $ua = $ENV{HTTP_USER_AGENT};

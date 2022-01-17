@@ -2,15 +2,16 @@
 use strict;
 use warnings;
 
+use BeeUtil qw/
+    slash_date
+/;
+
 # no need to use CGI
 print "Content-Type: text/html; charset=ISO-8859-1\n\n";
 
 my $ip_id = $ENV{PATH_INFO};
 $ip_id =~ s{\A /}{}xms;
 $ip_id =~ s{_}{ }xmsg;
-
-open JON, '>/tmp/jon';
-print JON "ip_id = $ip_id\n"; close JON;
 
 use Bee_DBH qw/
     $dbh
@@ -39,8 +40,9 @@ my @dates;
 while (my ($date) = $sth_dates->fetchrow_array()) {
     push @dates, $date;
 }
-print map {
-          m{\A ..(..)(..)(..)}xms;
-          "$2/$3/$1<br>\n";
+# may be some are community puzzles ...
+print join '<br>',
+      map {
+          /^\d/? slash_date($_): $_;
       }
       @dates;
