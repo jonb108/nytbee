@@ -4,10 +4,16 @@ use warnings;
 
 =comment
 
+<script>
+several functions that
+may not be used - make them conditional
+</script>
+
 divide styles into two - static and dynamic
     static can be cached the browser
     cgi_style.css is a start
 scripts, too
+
 Fantasy and Future ideas:
 
 when a person creates a set of clues
@@ -628,7 +634,7 @@ compute_score_and_rank();
 #
 # fullword is true only if we have given the entire word
 # like 'd juice'
-# and not dp, dx1, or dxy
+# and not dpg, dx1, or dxy
 #
 # if fullword we don't tally hints and we don't mask the word
 sub define {
@@ -835,12 +841,12 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     $message = ul(table({ cellpadding => 4}, $rows));
     $cmd = '';
 }
-elsif ($cmd =~ m{\A (d|d[*]) \s*  (p|[a-z]\d+|[a-z][a-z]) \z}xms) {
+elsif ($cmd =~ m{\A (d|d[*]) \s*  (pg|[a-z]\d+|[a-z][a-z]) \z}xms) {
     my $Dcmd = $1;
     my $term = $2;
     load_nyt_clues;
     my $line = "&mdash;" x 4;
-    if ($term eq 'p') {
+    if ($term eq 'pg') {
         for my $p (grep { !$is_found{$_} } @pangrams) {
             $message .= "<ul>"
                      .  define($p, $Dcmd, 0)
@@ -1468,9 +1474,20 @@ if ($message) {
 my $create_add
     = "<a target=_blank href='$log/nytbee/mkpuz.html'>"
     . "Create Puzzle</a>";
+my $add_clues_form = '';
 if ($date =~ m{\A \d}xms) {
     $create_add
         .= "<br><span class=add_clues onclick='add_clues();'>Add Clues</span>";
+    $add_clues_form = <<"EOH";
+<form target=_blank
+      id=add_clues
+      action=$log/cgi-bin/nytbee_mkclues
+      method=POST
+>
+<input type=hidden id=date name=date value=$date>
+<input type=hidden id=found name=found value='@found'>
+</form>
+EOH
 }
 
 # now to display everything
@@ -1787,15 +1804,7 @@ $disp_nhints
         </div>
     </div>
 </div>
-$show_clue_form
-<form target=_blank
-      id=add_clues
-      action=$log/cgi-bin/nytbee_mkclues
-      method=POST
->
-<input type=hidden id=date name=date value=$date>
-<input type=hidden id=found name=found value='@found'>
-</form>
+$show_clue_form$add_clues_form
 </body>
 <script>set_focus();</script>
 </html>
