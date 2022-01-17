@@ -88,38 +88,41 @@ EOS
     }
 }
 
-# see if we have any clues from this person
-# for ANOTHER date that has the same words.
+# See if we have clues for the current set of words
+# *from this person* for *other* dates.
+# Eliminate duplicate clues.
 #
-my $quoted_words = join ', ',
-                   map {
-                       "'$_'"
-                   }
-                   @words;
-my $sth_clue = $dbh->prepare(<<"EOS");
+if (@found) {
+    my $quoted_words = join ', ',
+                       map {
+                           "'$_'"
+                       }
+                       @found;
+    my $sth_clue = $dbh->prepare(<<"EOS");
 
-    SELECT word, clue
-      FROM bee_clue
-     WHERE person_id = ?
-       AND word in ($quoted_words)
-       AND date != ?
-  ORDER BY date asc
+        SELECT distinct word, clue
+          FROM bee_clue
+         WHERE person_id = ?
+           AND word in ($quoted_words)
+           AND date != ?
+      ORDER BY date asc
 
 EOS
-$sth_clue->execute($person_id, $date);
-while (my ($word, $clue) = $sth_clue->fetchrow_array()) {
-    if (exists $clue_for{$word}) {
-        # if needed, convert the value into an array ref
-        if (ref $clue_for{$word} eq 'ARRAY') {
-            push @{$clue_for{$word}}, $clue;
+    $sth_clue->execute($person_id, $date);
+    while (my ($word, $clue) = $sth_clue->fetchrow_array()) {
+        if (exists $clue_for{$word}) {
+            # if needed, convert the value into an array ref
+            if (ref $clue_for{$word} eq 'ARRAY') {
+                push @{$clue_for{$word}}, $clue;
+            }
+            else {
+                my $clue1 = $clue_for{$word};
+                $clue_for{$word} = [ $clue1, $clue ];
+            }
         }
         else {
-            my $clue1 = $clue_for{$word};
-            $clue_for{$word} = [ $clue1, $clue ];
+            $clue_for{$word} = $clue;
         }
-    }
-    else {
-        $clue_for{$word} = $clue;
     }
 }
 
@@ -139,7 +142,10 @@ use JSON::PP qw/
 /;
 my $json = encode_json(\%clues_for);
 
-my $prior_clues = %clues_for? '<p>You have given clues for some words before.  You can cycle through these clues by clicking on this icon: <img src=/nytbee/cycle.jpg>': '';
+my $prior_clues = "<p>You have given clues for some of the words before.";
+if (%clues_for) {
+    $prior_clues .= "If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=/nytbee/cycle.jpg> icon.";
+}
 
 print <<"EOH";
 <html>

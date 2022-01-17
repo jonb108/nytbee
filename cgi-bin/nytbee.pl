@@ -332,7 +332,7 @@ elsif (my ($puz_num) = $cmd =~ m{\A p \s* (\d+) \z}xms) {
     }
     my $puz_id = $puzzles[$puz_num-1][0];
     if ($puz_id =~ m{\A \d}xms) {
-        $cmd = "n$puz_id";
+        $cmd = $puz_id;
     }
     else {
         # CP\d+
@@ -1195,21 +1195,24 @@ if (@found && @words_found == @found && ! $order) {
 my %sums;
 my %two_lets;
 my $max_len = 0;
+my %first_char;
 WORD:
 for my $w (@ok_words) {
     my $l = length($w);
     if ($max_len < $l) {
         $max_len = $l;
     }
+    my $c1 = substr($w, 0, 1);
+    ++$first_char{$c1};
     if ($is_found{$w}) {
         # skip it
         next WORD;
     }
-    my $c1 = substr($w, 0, 1);
     my $c2 = substr($w, 0, 2);
     ++$sums{$c1}{$l};
     ++$two_lets{$c2};
 }
+my $bingo = keys %first_char == 7? ', Bingo': '';
 
 # now that #we have computed %sums and %two_lets
 # perhaps $cmd was not words to add after all...
@@ -1244,14 +1247,6 @@ elsif ($cmd eq '2') {
     }
 }
 
-my $bingo = ", Bingo";
-CHAR:
-for my $c (@seven) {
-    if (! exists $sums{$c}) {
-        $bingo = '';
-        last CHAR;
-    }
-}
 my $perfect = '';
 my $nperfect = 0;
 for my $p (keys %is_pangram) {

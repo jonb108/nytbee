@@ -119,8 +119,8 @@ EOH
     if ($first) {
         print <<"EOH";
 <p>
-You can copy/paste the text below into the HiveMind forum.<br>
-Then you can close this window.
+The text below can be copy/pasted into the HiveMind forum.<br>
+This window can then be closed.
 <p>
 EOH
     }
