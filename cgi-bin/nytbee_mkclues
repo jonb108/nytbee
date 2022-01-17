@@ -105,7 +105,7 @@ if (@found) {
          WHERE person_id = ?
            AND word in ($quoted_words)
            AND date != ?
-      ORDER BY date asc
+      ORDER BY date desc
 
 EOS
     $sth_clue->execute($person_id, $date);
@@ -128,10 +128,10 @@ EOS
 
 # for the words that have multiple prior clues
 # we craft a JSON string.
-my %clues_for;
+my %clues_for_json;
 for my $w (@words) {
     if (ref $clue_for{$w} eq 'ARRAY') {
-        $clues_for{$w} = {
+        $clues_for_json{$w} = {
             clues => $clue_for{$w},
             cur   => 0,
         };
@@ -140,10 +140,10 @@ for my $w (@words) {
 use JSON::PP qw/
     encode_json
 /;
-my $json = encode_json(\%clues_for);
+my $json = encode_json(\%clues_for_json);
 
 my $prior_clues = $got_clues? "<p>You have given clues for some of the words before.": '';
-if (%clues_for) {
+if (%clues_for_json) {
     $prior_clues .= "If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=/nytbee/cycle.jpg> icon.";
 }
 
@@ -176,8 +176,9 @@ function cycle(w) {
 <p>
 $nnf_disp
 You do not have to give clues for all of the words.
-Clicking on the words will give a dictionary definition.
-You may wish to give clues that are more ambiguous and clever - like clues for a crossword puzzle.
+You can click on the words to get a dictionary definition.
+You may, instead, wish to give clues that are more
+ambiguous, clever, wordplay &#128522; - like clues for a crossword puzzle.
 $prior_clues
 <p>
 <table cellpadding=3>
