@@ -55,6 +55,11 @@ if (! @pangrams) {
 }
 
 # did the person give a clue for any of the @ok_words before?
+# offer them..
+# there may be more than one - in this case have a way
+# cycle through the clues - in date order.
+# with community puzzles coming first.
+#
 my %prior_clue;
 if ($person_id) {
     my $words = join ', ',

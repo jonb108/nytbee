@@ -39,3 +39,7 @@ button, .word_td {
 .cmd {
     color: darkred;
 }
+.cursor {
+    cursor: pointer;
+    color: blue;
+}

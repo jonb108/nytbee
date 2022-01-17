@@ -1,6 +1,7 @@
 #!/bin/bash
 rm /tmp/cgi.tar
 tar cvf /tmp/cgi.tar  \
+JSON/PP.pm \
 BeeUtil.pm \
 BeeClues.pm \
 clues \

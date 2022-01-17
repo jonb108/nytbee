@@ -2,13 +2,32 @@
 use strict;
 use warnings;
 
+=comment
+
+there may be multiple prior clues for a word
+if so, offer a way to see them - cycle around them.
+if this is REedit and there is a clue for the
+current date offer that first.
+otherwise offer them in date order - with community
+puzzles coming first.
+
+=cut
+
 # a poor man's database
 use DB_File;
 my %puzzle;
 tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
 
-use CGI qw/
-    :standard
+use BeeUtil qw/
+    table
+    Tr
+    td
+/;
+
+use CGI;
+use CGI::Carp qw/
+    fatalsToBrowser
+    warningsToBrowser
 /;
 my $q = CGI->new();
 print $q->header();
@@ -27,10 +46,10 @@ my $nnf = @words - @found;
 my $nnf_disp = '';
 if ($nnf) {
     if ($nnf == 1) {
-        $nnf_disp = "As you know, there is 1 word that has not yet been found.  This word will be hidden.";
+        $nnf_disp = "As you know, there is 1 word that has not yet been found.  This word will be hidden.<p>";
     }
     else {
-        $nnf_disp = "As you know, there are $nnf words that have not yet been found.  These words will be hidden.";
+        $nnf_disp = "As you know, there are $nnf words that have not yet been found.  These words will be hidden.<p>";
     }
 }
 
@@ -51,7 +70,7 @@ if ($person_id) {
     # they have either made a puzzle or added clues
     # for some date (maybe not the current one).
     #
-    # see there are existing clues for this date
+    # first, see if there are EXISTING clues for this date
     # from this person
     #
     my $sth_clue = $dbh->prepare(<<'EOS');
@@ -69,34 +88,58 @@ EOS
     }
 }
 
-if (! $got_clues) {
-    # first time adding clues for this date
-    # see if we have any clues from this person
-    # for another date that has the same words.
-    #
-    my $quoted_words = join ', ',
-                       map {
-                           "'$_'"
-                       }
-                       @words;
-    my $sth_clue = $dbh->prepare(<<"EOS");
+# see if we have any clues from this person
+# for ANOTHER date that has the same words.
+#
+my $quoted_words = join ', ',
+                   map {
+                       "'$_'"
+                   }
+                   @words;
+my $sth_clue = $dbh->prepare(<<"EOS");
 
-        SELECT word, clue
-          FROM bee_clue
-         WHERE person_id = ?
-           AND word in ($quoted_words)
+    SELECT word, clue
+      FROM bee_clue
+     WHERE person_id = ?
+       AND word in ($quoted_words)
+       AND date != ?
+  ORDER BY date asc
 
 EOS
-    $sth_clue->execute($person_id);
-    while (my ($word, $clue) = $sth_clue->fetchrow_array()) {
+$sth_clue->execute($person_id, $date);
+while (my ($word, $clue) = $sth_clue->fetchrow_array()) {
+    if (exists $clue_for{$word}) {
+        # if needed, convert the value into an array ref
+        if (ref $clue_for{$word} eq 'ARRAY') {
+            push @{$clue_for{$word}}, $clue;
+        }
+        else {
+            my $clue1 = $clue_for{$word};
+            $clue_for{$word} = [ $clue1, $clue ];
+        }
+    }
+    else {
         $clue_for{$word} = $clue;
     }
 }
-# otherwise ... when someone is updating their clues
-# for a given date we don't look for clues from another date.
-# we DID when they first added clues for the given date.
-# at that point in time they may have decided not to use
-# a clue from another date.
+
+# for the words that have multiple prior clues
+# we craft a JSON string.
+my %clues_for;
+for my $w (@words) {
+    if (ref $clue_for{$w} eq 'ARRAY') {
+        $clues_for{$w} = {
+            clues => $clue_for{$w},
+            cur   => 0,
+        };
+    }
+}
+use JSON::PP qw/
+    encode_json
+/;
+my $json = encode_json(\%clues_for);
+
+my $prior_clues = %clues_for? '<p>You have given clues for some words before.  You can cycle through these clues by clicking on this icon: <img src=/nytbee/cycle.jpg>': '';
 
 print <<"EOH";
 <html>
@@ -112,6 +155,12 @@ function popup_define(word, height, width) {
     newwin.moveTo(800, 0);
     var el = document.getElementById(word + '_clue').focus();
 }
+var clues_for = $json;
+function cycle(w) {
+    clues_for[w].cur = (clues_for[w].cur + 1) % clues_for[w].clues.length;
+    document.getElementById(w + '_clue').value
+        = clues_for[w].clues[ clues_for[w].cur ];
+}
 </script>
 </head>
 <body>
@@ -120,10 +169,10 @@ function popup_define(word, height, width) {
 <input type=hidden name=date value='$date'>
 <p>
 $nnf_disp
-No need to give clues for all of the words.
+You do not have to give clues for all of the words.
 Clicking on the words will give a dictionary definition.
 You may wish to give clues that are more ambiguous and clever - like clues for a crossword puzzle.
-
+$prior_clues
 <p>
 <table cellpadding=3>
 <tr><td>Your Name</td><td><input name=name size=30 value='$name'></td></tr>
@@ -132,17 +181,31 @@ You may wish to give clues that are more ambiguous and clever - like clues for a
 EOH
 for my $w (@words) {
     my $uw = ucfirst $w;
-    my ($word_td, $clue_td); 
+    my ($word_td, $clue_td, $cycle_td);
     if ($is_found{$w}) {
-        $word_td =td(qq!<a href="javascript:popup_define('$w',300,500)">$uw</a>!),
+        my $clue;
+        if (exists $clue_for{$w}) {
+            if (ref $clue_for{$w}) {
+                # there is more than one prior clue
+                $clue = $clue_for{$w}->[0];
+                $cycle_td = td(qq!<img class=cursor onclick='cycle("$w");' src='/nytbee/cycle.jpg'>!);
+            }
+            else {
+                $clue = $clue_for{$w};
+            }
+        }
+        else {
+            $clue = '';
+        }
+        $word_td = td(qq!<a href="javascript:popup_define('$w',300,500)">$uw</a>!);
         $clue_td = td("<input type=text size=30 name=${w}_clue id=${w}_clue"
-                 . qq! value="! . ($clue_for{$w}||'') . qq!">!)
+                 . qq! value="$clue">!)
     }
     else {
         $word_td = td({ class => 'word_td'}, '&nbsp;');
         $clue_td = td('&nbsp;');
     }
-    print Tr($word_td, $clue_td), "\n";
+    print Tr($word_td, $clue_td, $cycle_td), "\n";
 }
 print Tr(td('&nbsp'), td({ style => 'text-align: left;' }, "<button type=submit>Submit</button>")), "\n";
 print <<"EOH";

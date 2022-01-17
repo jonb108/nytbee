@@ -4,44 +4,13 @@ use warnings;
 
 =comment
 
-Add Clues
-    another format: A-x - first letter with length
-        have separate elsif clauses to generate the formats
-        too confusing and tricky to do it the current way
-        AB-x   AB(x)   ABx   A-x   A    Ok
+when getting today's puzzle words (and pangrams)
+update the lists used when creating puzzles
+- the pangram lists and the list of words used in NYT puzzles
+and the list of words from the big lexicon
+easiest way is to simply regenerate and reindexize
 
-    don't reveal words you haven't found yet
-        so people won't have to wait until QueenBee to Add Clues
-            otherwise it will spoil their game?
-        regardless - it's fun for me!
-    send a JSON structure - hash key=unfound_word value=0
-    instead of displaying the word show a blank light green area
-    with an onclick callback.  this callback has a parameter
-    of the word.  the callback will check the hash, increment
-    the value, and based on the value will replace the green area
-    with increasing hints for the word:
-        0 - blank lightgreen
-        1 - first letter
-        2 - second letter
-        3 - length - with dashes for letters
-        4 - the word - a link that pops up a definition - as usual
-
-        0-3 all have a light green background
-
-    for the clues (even if the word has not yet been found!):
-        if there are no prior clues the value in the input field (type=text)
-            is empty
-        if one fill it in value='...'
-        if more than one prior clue
-            send along another JSON hash
-                key=word and value = ARRAY of hints
-        fill in the first (in date order)
-        and have a small lightgreen area (additional <td>)
-        to click at the end of the clue.
-        the onclick callback will cycle through the various hints
-        that have been given in the past by this person
-
-    for testing - make puzzles (with accompanying clues)
+    for testing of clues - make puzzles (with accompanying clues)
         with TION pangrams (adoption, antagonizing, annihilation)
         (also add clues for NYT puzzles that have
         those words as pangrams and either N or O as center letter
@@ -54,9 +23,6 @@ Add Clues
         - honk
         - a palindromic sound
         - snort of a drug
-
-LCP - date created, name, location, center letter, npangrams, nwords, npoints
-YCP - date created, center letter, npangrams, nwords, npoints
 
 some way to preserve your accomplishments?
 print it
