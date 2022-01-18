@@ -9,6 +9,8 @@ several functions that
 may not be used - make them conditional
 </script>
 
+make more additions to js/
+
 divide styles into two - static and dynamic
     static can be cached the browser
     cgi_style.css is a start
@@ -84,14 +86,6 @@ easiest way is to simply regenerate and reindexize
 
 some way to preserve your accomplishments?
 print it
-
-TODO: *require* Name, Location when making a puzzle and when adding clues.
-
-when making a puzzle see if clues have already been provided for
-words in the puzzle by this person - in NYT puzzles and in community puzzles
-not easy!
-this has already been done when adding NYT Puzzle clues
-    but not clues from community puzzles
 
 expand advantages, making clues
 what else?

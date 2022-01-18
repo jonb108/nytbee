@@ -1,12 +1,10 @@
 #!/bin/bash
 rm /tmp/cgi.tar
 tar cvf /tmp/cgi.tar  \
-JSON/PP.pm \
 BeeUtil.pm \
 BeeClues.pm \
 clues \
 cron_jon \
-Date \
 final_mkpuz \
 get_clues \
 get_nytbee \
@@ -33,3 +31,7 @@ nytbee_clues_by \
 nytbee_define \
 mktar \
 go
+
+# these will not change
+#JSON/PP.pm
+#Date

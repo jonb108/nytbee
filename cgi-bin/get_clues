@@ -99,10 +99,11 @@ print <<"EOH";
 <html>
 <head>
 <link rel='stylesheet' type='text/css' href='http://logicalpoetry.com/nytbee/cgi_style.css'/>
+<script src="http://logicalpoetry.com/nytbee/js/name_location.js"></script>
 </head>
 <body>
 <h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>5</span></h1>
-<form name=form action=final_mkpuz method=POST>
+<form name=form action=final_mkpuz method=POST onsubmit="return check_name_location();">
 <input type=hidden name=seven value='$seven'>
 <input type=hidden name=center value='$center'>
 <input type=hidden name=words value='$words'>
@@ -117,12 +118,12 @@ Finally, provide some information about yourself.
 
 <tr>
 <th>Name</th>
-<td><input type=text name=name value="$name" size=40></td>
+<td><input type=text name=name id=name value="$name" size=40></td>
 </tr>
 
 <tr>
 <th>Location</th>
-<td><input type=text name=location value="$location" size=40></td>
+<td><input type=text name=location id=location value="$location" size=40></td>
 </tr>
 
 <tr>

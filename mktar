@@ -6,10 +6,13 @@ cgi_style.css \
 help.html \
 index.html \
 mkpuz.html \
-nytbee_cmd.html \
-nytbee_cmd.pl \
 style_cmd.css \
 style.css \
 windows.html \
 cycle.jpg \
+js \
 mktar
+
+# these will not change
+#nytbee_cmd.html
+#nytbee_cmd.pl
