@@ -4,6 +4,15 @@ use warnings;
 
 =comment
 
+find beta testers - friends and the hivemind
+should it be labeled NYT Bee, ToBee, or what?
+
+need new images for help.html since I 
+resized the letters for hive 2, 3.
+not Indent=1 for Dumper for the CP
+DRY for cycle clues
+expand advantages, add clues in .html
+
 <script>
 several functions that
 may not be used - make them conditional
@@ -44,18 +53,25 @@ for a competition - announce a certain puzzle as the one for the day.
     Results are tallied.
     A nice dream, anyway :).
 How about a first letter tally?
-    the number of words starting with a letter - regardless of word length.
+    number of words starting one of the 7 letters
+    not really helpful - large groups ...
+    but why not!  this is Art.
     OL - :) One Letter
-    another level of hint...
+    it's another level of hint...
         basically just the rightmost (sigma) column of HT
-    we would need DE - to get clues for all words beginning with E?
-        the E would be restricted to one of the seven
+    if HT is chosen then OL is not displayed
+    we would need DX - to get clues for all words beginning with X?
+        the X would be restricted to one of the seven
         DP would have two meanings in case P was one of the seven
+            so DPG - check
         DXY - both X and Y need to be one of the seven
             and the word needs to begin with XY
-        DPG for pangrams? no word begins with PG, right?
-    OLL - one letter with length - same as HT!
-    these are dynamic as well just like HT and TL
+            need error message if not one of seven
+    and V3X with X = one of the seven letters
+        or  E3X
+        and ignore V1X as before
+    note that no need for OLL - one letter with length - same as HT!
+    these are dynamically updated as well just like HT and TL
 
 another advantage - the clues from several people
     are shown all together - and can be compared.
@@ -177,6 +193,16 @@ use BeeUtil qw/
     trim
     ip_id
     slash_date
+    shuffle
+    ul
+    table
+    Tr
+    td
+/;
+
+use Date::Simple qw/
+    today
+    date
 /;
 
 use DB_File;
@@ -206,33 +232,6 @@ my $log = 'http://logicalpoetry.com';
 
 my $message = '';
 
-use Date::Simple qw/
-    today
-    date
-/;
-
-sub attrs {
-    my $href = shift;
-    return join ',',
-           map { "$_='$href->{$_}'" }
-           keys %$href;
-}
-sub Tr {
-    my $attrs = ref $_[0] eq 'HASH'? attrs(shift): '';
-    return "<tr $attrs>@_</tr>";
-}
-sub td {
-    my $attrs = ref $_[0] eq 'HASH'? attrs(shift): '';
-    return "<td $attrs>@_</td>";
-}
-sub ul {
-    return "<ul>@_</ul>";
-}
-sub table {
-    my $attrs = ref $_[0] eq 'HASH'? attrs(shift): '';
-    return "<table $attrs>@_</table>";
-}
-
 sub my_today {
     my ($hour) = (localtime)[2];
     my $today = today();
@@ -242,17 +241,22 @@ sub my_today {
     return $today;
 }
 
-sub shuffle {
-    my (@elems) = @_;
-    my @new;
-    push @new, splice @elems, rand @elems, 1 while @elems;
-    return @new;
-}
-
-# puzzle from which date?
-# date from new_words/command field (nr, n11 n12/23/18)
-# date from hidden field (date)
+# Puzzle from which date are we dealing with?
+# This is Very confusing, hacky, kludgy, and messy.
+# Thorough testing is critical!
+#
+# NR random puzzle
+# 2/23/19
+# date from hidden field (date) - i.e. the "current" puzzle
 # today
+# CPx community puzzle
+# Px puzzle from the current list
+#
+# Note: We preserve the current sort of the six/seven letters
+# unless:
+#    we switch puzzles
+# or
+#    hit Return in an empty field when there are no messages to clear
 #
 my $cmd = lc $params{new_words};
     # $cmd is all in lower case
@@ -416,7 +420,7 @@ elsif ($cmd ne '1' && $cmd ne '2'
     my $dt = date($new_date);
     if ($dt) {
         # it is a valid date but is it in the range?
-        if ($first <= $dt && $dt <= today()) {
+        if ($first <= $dt && $dt <= $today) {
             $date = $dt->as_d8();
             $params{found_words} = '';
             $new_puzzle = 1;
@@ -437,7 +441,7 @@ if (! $date) {
 }
 if (! $date) {
     # today
-    $date = my_today()->as_d8();
+    $date = $today->as_d8();
     $new_puzzle = 1;
 }
 my $show_date;
@@ -474,21 +478,26 @@ my $letter_regex = qr{([^$seven])}xms;  # see sub check_word
 my $npangrams = @pangrams;
 
 # get ready for hive == 3
-my @seven_let = shuffle(@seven);
-for my $c (@seven_let) {
-    if ($c eq $center) {
-        $c = "<span class=red2>\U$c\E</span>";
-    }
-    else {
-        $c = uc $c;
-    }
+my @seven_let;
+if ($params{seven_let} && $date eq $params{date}) {
+    @seven_let = split ' ', $params{seven_let};
+}
+else {
+    @seven_let = map { uc } shuffle @seven;
 }
 
 my %is_pangram = map { $_ => 1 } @pangrams;
 my %is_ok_word = map { $_ => 1 } @ok_words;
-my @six = map { uc }
-          grep { $_ ne $center }
-          @seven;
+my @six;
+if ($params{six} && $date eq $params{date}) {
+    @six = split ' ', $params{six};
+}
+else {
+    @six = map { uc }
+           grep { $_ ne $center }
+           shuffle
+           @seven;
+}
 
 if ((! $cmd || $cmd eq 'noop') && ! $params{has_message}) {
     # We hit Return in an empy text field so
@@ -1512,7 +1521,7 @@ elsif ($hive == 1) {        # bee hive honeycomb
     for my $i (1 .. 6) {
         $letters .= "<span class='p$i ab'>$six[$i-1]</span>";
     }
-    $let_size = 37;
+    $let_size = 24;
     $img_left_margin = 37;
     #       1
     #    2     3
@@ -1520,18 +1529,18 @@ elsif ($hive == 1) {        # bee hive honeycomb
     #    4     5
     #       6
     @coords = (
-        { top => 208, left => 168, }, #0
-        { top => 125, left => 168, }, #1
-        { top => 167, left => 100, }, #2
-        { top => 167, left => 238, }, #3
-        { top => 247, left => 100, }, #4
-        { top => 247, left => 238, }, #5
-        { top => 285, left => 168, }, #6
+        { top => 214, left => 173, }, #0    208 168
+        { top => 134, left => 173, }, #1
+        { top => 175, left => 104, }, #2
+        { top => 175, left => 241, }, #3
+        { top => 253, left => 104, }, #4
+        { top => 253, left => 239, }, #5
+        { top => 295, left => 173, }, #6
     );
     # adjust an I
     for my $i (1 .. 6) {
         if ($six[$i-1] eq 'I') {
-            $coords[$i]{left} += 9;
+            $coords[$i]{left} += 6;
         }
     }
     if ($center eq 'i') {
@@ -1544,7 +1553,7 @@ elsif ($hive == 2) {        # flower
     for my $i (1 .. 6) {
         $letters .= "<span class='p$i ab'>$six[$i-1]</span>";
     }
-    $let_size = 37;
+    $let_size = 24;
     $img_left_margin = 30;
     #
     #   2   3
@@ -1552,12 +1561,12 @@ elsif ($hive == 2) {        # flower
     #   6   1
     #
     @coords = (
-        { top => 216, left => 175, }, #0
-        { top => 277, left => 210, }, #1
-        { top => 160, left => 138, }, #2
-        { top => 160, left => 210, }, #3
-        { top => 216, left => 103, }, #4
-        { top => 216, left => 239, }, #5
+        { top => 220, left => 179, }, #0
+        { top => 277, left => 213, }, #1
+        { top => 160, left => 143, }, #2
+        { top => 160, left => 213, }, #3
+        { top => 220, left => 105, }, #4
+        { top => 220, left => 243, }, #5
         { top => 277, left => 138, }, #6
     );
     # adjust an I
@@ -1571,11 +1580,16 @@ elsif ($hive == 2) {        # flower
     }
 }
 elsif ($hive == 3) {
-    $letters = <<"EOH";
-<pre>
-  @seven_let
-</pre>
-EOH
+    $letters = "<pre>\n  ";
+    for my $c (@seven_let) {
+        if ($c eq uc $center) {
+            $letters .= "<span class=red2>$c</span> ";
+        }
+        else {
+            $letters .="$c ";
+        }
+    }
+    $letters .= "</pre>";
 }
 my $letter_styles = '';
 if (@coords) {
@@ -1775,6 +1789,8 @@ function set_focus() {
 <input type=hidden name=ht_chosen value=$ht_chosen>
 <input type=hidden name=tl_chosen value=$tl_chosen>
 <input type=hidden name=has_message value=$has_message>
+<input type=hidden name=six value='@six'>
+<input type=hidden name=seven_let value='@seven_let'>
 $letters
 $message
 <input class=new_words type=text size=40 id=new_words name=new_words><br>

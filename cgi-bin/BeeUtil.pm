@@ -13,6 +13,7 @@ our @EXPORT_OK = qw/
     td
     ul
     slash_date
+    shuffle
 /;
 
 sub slash_date {
@@ -93,5 +94,13 @@ sub table {
     my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
     return "<table $attrs>@_</table>";
 }
+
+sub shuffle {
+    my (@elems) = @_;
+    my @new;
+    push @new, splice @elems, rand @elems, 1 while @elems;
+    return @new;
+}
+
 
 1;
