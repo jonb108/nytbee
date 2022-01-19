@@ -29,6 +29,9 @@ a {
     color: blue;
     text-decoration: none;
 }
+.blue {
+    color: blue;
+}
 h1 {
     font-size: 35pt;
     text-align: center;

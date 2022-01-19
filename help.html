@@ -38,14 +38,17 @@ There is a <a target=nytbee href='https://youtu.be/PsWUQJXFb1s'>short film</a> t
 <a href=#how>How to Play</a><br>
 <a href=#advantages>Advantages of the New Mechanism</a><br>
 <a href=#words>Words and Commands</a><br>
+<a href=#hint_commands>Hint Commands</a><br>
+<a href=#table_lists>The Hint Table and the Letter Lists</a><br>
 <a href=#hint>Hint Strategy</a><br>
+<a href=#archival_and_community>Archival and Community Puzzles</a><br>
 <a href=#power>Power User Commands</a><br>
 <a href=#create>Create Your Own Puzzle to Share</a><br>
-<a href=#clues>Add Clues for Puzzles - NYT and Community</a><br>
+<a href=#clues>Clues for Puzzles</a><br>
 <a href=#other>Other NYT Bee Projects</a><br>
 <a href=#without>Without a Subscription?</a><br>
 <a href=#same>Same 7 Letters</a><br>
-<a href=#archive>Archive</a>
+<a href=#nyt_archive>NYT Archival Puzzles</a>
 </div>
 <a name=how></a>
 <h2>
@@ -98,9 +101,11 @@ The new mechanism looks like this:
 <img width=500 src=pics/new_look.png>
 <p>
 In the text field you enter words that satisfy the rules of the puzzle.
-You can enter more than one word.
+You can enter more than one word.  Press Return to check that the words are
+acceptable.  Any error messages will appear above the text field.
 <p>
-Pressing Return will clear any messages and permute the 6 outer letters.
+Pressing Return when the text field is empty will clear any messages.
+If there are no messages to clear the 6 outer letters will be permuted.
 <p>
 There are also many commands you can enter in the text field:
 <p>
@@ -113,17 +118,23 @@ of the 7 letters  - Hex Letters to Honeycomb to Flower to Inline Letters.<p>
 <p>If the puzzle was <a href=#create>created</a> by the HiveMind community details from the creator are given.
 <p>
 If <a href=#clues>clues have been added</a> for a puzzle the authors are listed.  Click on an author name to see all of their clues.</td></tr>
-<tr><td><span class=cmd>R</span></td><td>Show the rankings.  It also shows how many points are needed to get to the next rank.</td></tr>
+<tr><td><span class=cmd>R</span></td><td>Show the rankings - from Beginner to ... Amazing to Genius to Queen Bee.  It also shows how many points are needed to get to the next rank.</td></tr>
 <tr><td><span class=cmd>W</span></td><td>Show the found words in the order they were found.</td></tr>
 <tr><td><span class=cmd>C&nbsp;&nbsp;Y</span></td><td>Clear the puzzle and start over.</td></tr>
 </table>
-<p>
-<br>
-Commands that give hints:
+<a name=hint_commands></a>
+<h2>Hint Commands
+<a class=top href=#toc><img src=pics/top.gif height=25></a>
+</h2>
+It is <i>not</i> easy to find <i>all</i> the words in a puzzle
+and reach the stratospheric heights of the Queen Bee rank.
+Most of us mere mortals need some help to get to Amazing or Genius!
 <p>
 <table cellpadding=5>
 <tr><td><span class=cmd>HT</span></td><td>Show the Hint Table.</td></tr>
-<tr><td><span class=cmd>TL</span></td><td>Show the Two Letter List.<p></td></tr>
+<tr><td><span class=cmd>TL</span></td><td>Show the Two Letter List.</td></tr>
+<tr><td><span class=cmd>OL</span></td><td>Show the One Letter List.</td></tr>
+<tr><td colspan=2>The Hint Table and the two Lists are explained <a href=#table_lists>below</a>.<p></td></tr>
 <tr><td><span class=cmd>DPG</span></td><td>Define the Pangrams.</td></tr>
 <tr><td><span class=cmd>DB8</span></td><td>Define the words beginning with B of length 8.</td></tr>
 <tr><td><span class=cmd>DTR</span></td><td>Define the words beginning with TR.</td></tr>
@@ -133,7 +144,7 @@ If there is a <a href=#clue>"clue"</a> for a word it is shown instead of a
 dictionary definition.  Definitions come from
 Merriam-Webster (merriam-webster.com) and Oxford (lexico.com).
 <p></td></tr>
-<tr><td colspan=2><span class=cmd>D&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.  No hints tallied.</td></tr>
+<tr><td colspan=2><span class=cmd>D&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.  No hints tallied.  This form of the <span class=cmd>D</span> command serves as a quick and fun way to browse the dictionary!  You can ask for definitions of <i>any</i> word - not just the ones in the puzzle.</td></tr>
 <tr><td><span class=cmd>D*&nbsp;&nbsp;...</span></td><td>The above <span class=cmd>D</span> commands give at most 3 definitions. <span class=cmd>D*</span> will give them All plus any <a href=#clues>clues</a>.<p></td></tr>
 <tr><td><span class=cmd>V2PG</span></td><td>Reveal the first two letters of the pangrams.</td></tr>
 <tr><td><span class=cmd>V3B8</span></td><td>Reveal the first 3 letters of the words beginning with B of length 8.</td></tr>
@@ -145,23 +156,55 @@ Merriam-Webster (merriam-webster.com) and Oxford (lexico.com).
 <tr><td><span class=cmd>2</span></td><td>Show a random entry from the Two Letter List.
 <tr><td colspan=2>These will work even if the Table and List are not shown.<p></td></tr>
 </table>
+<a name=table_lists></a>
+<h2>The Hint Table and the Letter Lists
+<a class=top href=#toc><img src=pics/top.gif height=25></a>
+</h2>
 <p>
-<br>
-Commands to access the large NY Times <a href=#archive>Archive</a> of Spelling Bee puzzles <i>and</i> the puzzles <a href=#create>created by the Hivemind Community</a>:
+The <span class=green>Hint Table</span> (invoked with the <span class=cmd>HT</span> command) looks like this:
+<ul>
+<img src=pics/hint_table.png>
+</ul>
+The <span class=blue>5</span> in the <b>M</b> row and the <b>6</b> column means that the the puzzle has <span class=blue>5</span> words beginning with <b>M</b> of length <b>6</b>.
 <p>
-<table cellpadding=5>
-<tr><td><span class=cmd>NR</span></td><td>New NYT puzzle from a Random date.</td></tr>
-<tr><td><span class=cmd>&lt;date&gt;</span></td><td>New NYT puzzle from the given date.  You can enter dates in several ways: 10/20/19 or 9/23 (current year) or 15 (current month).  Dates must be on or after May 29, 2018.</td></tr>
-<tr><td><span class=cmd>T</span></td><td>Return to today's NYT puzzle.</td></tr>
-<tr><td><span class=cmd>L</span></td><td>List the current puzzles.  * marks the current puzzle.  p marks puzzles where all pangrams have been found.</td></tr>
-<tr><td><span class=cmd>P&lt;num&gt;</span></td><td>Return to puzzle #num in the list.</td></tr>
-<tr><td><span class=cmd>X&lt;nums&gt;</span></td><td>Remove the numbered puzzles from the list. You can give a range.  For example: <span class=cmd>X 2 4-6 9</span>&nbsp;&nbsp;&nbsp;This clears the words you found so if you choose the date again you will start afresh.</td></tr>
-<tr><td><span class=cmd>XA</span></td><td>Remove all puzzles from the list and revert to today's NYT puzzle.<p></td></tr>
-<tr><td><span class=cmd>LCP</span></td><td>List the 5 most recent Community Puzzles.  List 10 with <span class=cmd>LCP 10</span></td></tr>
-<tr><td><span class=cmd>CP&lt;num&gt;</span></td><td>New Community Puzzle #num.  This <i>plays</i> the puzzle.  To <i>create</i> a puzzle click <a target=nytbee href='http://logicalpoetry.com/nytbee/mkpuz.html'>here</a>.</td></tr>
-<tr><td><span class=cmd>YCP</span></td><td>List the Community Puzzles that you created.</td></tr>
-<tr><td><span class=cmd>XCP&lt;num&gt;</span></td><td>Delete Community Puzzle #num and revert to today's NYT puzzle. You can only delete puzzles that you created.  You would only do this if you deem the puzzle to be flawed in some way.</td></tr>
-</table>
+The <span class=green>Two Letter List</span> (invoked with the <span class=cmd>TL</span> command) looks like this:
+<ul>
+<img src=pics/two_letter_list.png>
+</ul>
+The <span class=blue>GE-4</span> means that the puzzle has <b>4</b> words beginning with <b>GE</b>.
+<p>
+The <span class=green>One Letter List</span> (invoked with the <span class=cmd>OL</span> command) looks like this:
+<ul>
+<img src=pics/one_letter_list.png>
+</ul>
+The <span class=blue>22</span> in the <b>M</b> row means that
+the puzzle has 22 words beginning with <b>M</b>.
+<p>
+There are <span class=red>two important things</span> 
+about the table and lists.
+<ol>
+<li>They are <b><i>DYNAMIC</i></b>.  As you discover and enter words,
+the numbers in the table and lists will <i>change</i>.
+The numbers represent the number of words that <i>remain</i> to be found.
+<li>You can <b>click</b> on the entries in the table and lists to
+get definitions <i>and clues</i> for the words.
+</ol>
+<p>
+Note that the <span class=green>One Letter List</span>
+gives no more information than what is in 
+the <span class=green>Hint Table</span>
+or the <span class=green>Two Letter List</span>. 
+It is only shown when the other two are not present.
+<p>
+The numbers in the <span class=green>One Letter List</span>
+are identical to the <b>&Sigma;</b> column in the <span class=green>Hint Table</span>.
+<b>&Sigma;</b> is a Greek letter which signifies "sum".  If you sum up
+the numbers in a row of the <span class=green>Hint Table</span>
+you will get the value of the <b>&Sigma;</b> column.
+For example, for the <b>M</b> words in the <span class=green>Hint Table</span>
+10 + 3 + 5 + 1 + 2 + 1 = 22.
+And in the <b>M</b> row of the <span class=green>Two Letter List</span>
+7 + 10 + 5 = 22.  
 <a name=hint></a>
 <h2>Hint Strategy
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -192,6 +235,25 @@ It <i>is</i> just a game and they feel that games should be fun. &#128521;
 Personally, I am not so good at this Spelling Bee game.   Often if I make
 it to Amazing I call it a good day.  And some days I consider it a success
 if the Hints total is less than the Score. &#128522;
+<a name=archival_and_community></a>
+<h2>Archival and Community Puzzles
+<a class=top href=#toc><img src=pics/top.gif height=25></a>
+</h2>
+Commands to access the large NY Times <a href=#archive>Archive</a> of Spelling Bee puzzles <i>and</i> the puzzles <a href=#create>created by the Hivemind Community</a>:
+<p>
+<table cellpadding=5>
+<tr><td><span class=cmd>NR</span></td><td>New NYT puzzle from a Random date.</td></tr>
+<tr><td><span class=cmd>&lt;date&gt;</span></td><td>New NYT puzzle from the given date.  You can enter dates in several ways: 10/20/19 or 9/23 (current year) or 15 (current month).  Dates must be on or after May 29, 2018.</td></tr>
+<tr><td><span class=cmd>T</span></td><td>Return to today's NYT puzzle.</td></tr>
+<tr><td><span class=cmd>L</span></td><td>List the current puzzles.  * marks the current puzzle.  p marks puzzles where all pangrams have been found.</td></tr>
+<tr><td><span class=cmd>P&lt;num&gt;</span></td><td>Return to puzzle #num in the list.</td></tr>
+<tr><td><span class=cmd>X&lt;nums&gt;</span></td><td>Remove the numbered puzzles from the list. You can give a range.  For example: <span class=cmd>X 2 4-6 9</span>&nbsp;&nbsp;&nbsp;This clears the words you found in the puzzle so if you choose the puzzle again you will start afresh.</td></tr>
+<tr><td><span class=cmd>XA</span></td><td>Remove all puzzles from the list and revert to today's NYT puzzle.  The words you found in today's puzzle are preserved.<p></td></tr>
+<tr><td><span class=cmd>LCP</span></td><td>List the 5 most recent Community Puzzles.  List 10 with <span class=cmd>LCP 10</span></td></tr>
+<tr><td><span class=cmd>CP&lt;num&gt;</span></td><td>New Community Puzzle #num.  This <i>plays</i> the puzzle.  To <i>create</i> a puzzle click <a target=nytbee href='http://logicalpoetry.com/nytbee/mkpuz.html'>here</a>.</td></tr>
+<tr><td><span class=cmd>YCP</span></td><td>List the Community Puzzles that you created.</td></tr>
+<tr><td><span class=cmd>XCP&lt;num&gt;</span></td><td>Delete Community Puzzle #num and revert to today's NYT puzzle. You can only delete puzzles that you created.  You would only do this if you deem the puzzle to be flawed in some way.</td></tr>
+</table>
 <a name=power></a>
 <h2>Power User Commands
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -202,7 +264,7 @@ joy of programming!
 With a text command oriented interface one doesn't have to
 fiddle endlessly with the graphic interface
 and fret about "user friendliness".  Users <i>can</i> adapt to the idea
-of single (or two) letter command words.
+of single (or two or three) letter command words.
 <ul>
 <table cellpadding=3>
 <tr><td><span class=cmd>H&lt;num&gt</span></td><td>Directly change the 7 letter presentation instead of cycling around. 1 = Hex Letters, 2 = Honeycomb, 3 = Flower, 4 = Inline Letters</td></tr>
@@ -240,7 +302,7 @@ to have an S in your word!
 And then choose a center letter.
 <li>Choose which words to include in your puzzle.  This is the most
 difficult part.  If you <i>don't</i> include a common word or <i>do</i>
-include a rare or esoteric word you may be subject
+include a very rare or esoteric word you may be subject
 to questioning and possible derision. &#128521;
 Surprisingly, there are many common ordinary words that have not yet been used
 in any of the NYT Puzzles.
@@ -252,7 +314,7 @@ a number and is immediately available to the community.
 This number is used when giving the <span class=cmd>CP&lt;num&gt;</span> command.
 CP here stands for Community Puzzle - a puzzle created by you!
 <a name=clues></a>
-<h2>Add Clues for Puzzles - NYT and Community
+<h2>Clues for Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
 'Add Clues' link.
@@ -264,15 +326,16 @@ You can choose again to update your clues.
 No need to give clues for EVERY word.
 CL command
 <p>
-Doing a DHA, for example when the HA words are Happen, Hath, Hate, and Hatha.
+Doing a DHA, for example when the HA words are Happen, Hate, Hath, and Hatha.
 The tradition in the HiveMind forum is that clues come in
 the word alphabetical order and have the length appended as well.
 If you know this you have more information beyond the clue itself.
 <p>
 See ALL clues by clicking on the person's name after an I (information) command.
-Note that if you've found a word with a clue that word is appended to the clue
+Note that in this display,
+if you've already found a word, that word is appended to the clue
 and the whole line is in gray rather than black.  This helps you
-focus on the words you haven't found yet.
+focus on the clues for the words you have not yet found.
 <a name=other></a>
 <h2>Other NYT Bee Projects
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -420,8 +483,8 @@ same 7 letters as in the current puzzle.
 These other puzzles usually (but not always)
 have a different center letter.
 Note these identical puzzles: 08/03/19 and 08/24/20.
-<a name=archive></a>
-<h2>Archive
+<a name=nyt_archive></a>
+<h2>NYT Archival Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
 The archive was gathered mostly from
@@ -434,7 +497,9 @@ Which puzzles from the large archive to play?
 You can get one at random with the <span class=cmd>NR</span> command or you could
 choose one with various attributes like ones with the most points or the
 fewest 4 letter words.
-Start the puzzle with the <span class=cmd>N</span> command like so: '<span class=cmd>N</span>12/16/21'.
+<p>
+Starting the puzzle is simple.  Just enter the puzzle date (like 12/16/21)
+in the text field where you would enter a word.
 <p>
 <table>
 <tr><th align=center colspan=2>Most Pangrams</th></tr>

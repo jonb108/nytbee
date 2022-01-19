@@ -781,7 +781,9 @@ elsif ($cmd eq 'tl') {
 elsif ($cmd eq 'ol') {
     if (! $ol_chosen) {
         $ol_chosen = 1;
-        $nhints += 3;
+        if (! ($ht_chosen || $tl_chosen)) {
+            $nhints += 3;
+        }
     }
     $cmd = '';
 }
