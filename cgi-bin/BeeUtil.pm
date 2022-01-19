@@ -10,6 +10,7 @@ our @EXPORT_OK = qw/
     ip_id
     table
     Tr
+    th
     td
     ul
     bold
@@ -87,6 +88,10 @@ sub table {
 sub Tr {
     my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
     return "<tr $attrs>@_</tr>";
+}
+sub th {
+    my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
+    return "<th $attrs>@_</th>";
 }
 sub td {
     my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';

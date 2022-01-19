@@ -4,12 +4,20 @@ use warnings;
 
 =comment
 
+Art is about "drawing the line".
+    we're getting very close to the end.
+    so perhaps put your new ideas in a
+    section called "Future Plans?"
+
+given a word find pangramic words that can
+    create a puzzle with that word as
+    part of the okay words.
+
 find beta testers - friends and the hivemind
 should it be labeled NYT Bee, ToBee, or what?
 
 need new images for help.html since I 
 resized the letters for hive 2, 3.
-not Indent=1 for Dumper for the CP
 DRY for cycle clues
 expand advantages, add clues in .html
 
@@ -32,8 +40,8 @@ when a person creates a set of clues
         and whether the viewer can change it...
 
 a way to restrict what hints/clues you can get.
-    like no V, E, no HT, no TL, no 1/2, no definitions, only clues
-    no G Y of course
+    like no V, E, no HT, no TL, no 1 or 2, no definitions,
+    only clues, no D, no G Y of course
 perhaps on a per puzzle basis or for a competition(?)
 or as a way to personally restrain yourself.
     like a NOH command to say No Hints  NOH 1-9 for different levels
@@ -41,37 +49,29 @@ or as a way to personally restrain yourself.
         This is preserved in a cookie - like your preferred 'hive' display.
         so you can quit the browser and start again.
 for a competition - announce a certain puzzle as the one for the day.
-    this would work only with CP puzzles as the NYT puzzle
-    answers are all available in various places - nytbee.com, shunn.net, etc
+    this would work *only* with CP puzzles as all of the NYT puzzle
+    answer words are available in various places - nytbee.com, shunn.net, etc
+        add the page source!
+    the competition puzzle has certain hint restrictions in place
+        and these are announced.   as well as prizes :)
+        and time limits - when is the last time?
+    cheater programs?  yeah... :(  lexicon plus search, analysis
+        participants would have to promise to not use them.
+    command HR - what hint restrictions are in force for this puzzle?
     You enter the competition with a certain command
-    where you give your name, the puzzle name. The time is noted.
+        then you give your name, the puzzle name.
+    perhaps like 'ENTER CP5'
+        you are prompted for mixed case Name, Location, and Contact Email
+        and you are asked to promise to not use any other resource
+    The time is noted along with your ip_id.
     When you achieve Queen Bee for the puzzle the timer is stopped
-    and the time is noted.
-    For competition the hint restrictions are enforced regardless
+        and the time is noted.
+    For competition, the hint restrictions are enforced regardless
         of what NOH/OKH the person has in place...
-        it's on a per puzzle basis from person to person, browser to browser.
-    Results are tallied.
+        It's on a per *puzzle* basis from person to person, browser to browser.
+    Results are tallied.  and made available somehow
+    prizes?
     A nice dream, anyway :).
-How about a first letter tally?
-    number of words starting one of the 7 letters
-    not really helpful - large groups ...
-    but why not!  this is Art.
-    OL - :) One Letter
-    it's another level of hint...
-        basically just the rightmost (sigma) column of HT
-    if HT is chosen then OL is not displayed
-    we would need DX - to get clues for all words beginning with X?
-        the X would be restricted to one of the seven
-        DP would have two meanings in case P was one of the seven
-            so DPG - check
-        DXY - both X and Y need to be one of the seven
-            and the word needs to begin with XY
-            need error message if not one of seven
-    and V3X with X = one of the seven letters
-        or  E3X
-        and ignore V1X as before
-    note that no need for OLL - one letter with length - same as HT!
-    these are dynamically updated as well just like HT and TL
 
 another advantage - the clues from several people
     are shown all together - and can be compared.
@@ -197,6 +197,7 @@ use BeeUtil qw/
     ul
     table
     Tr
+    th
     td
     bold
 /;
@@ -1154,8 +1155,14 @@ my $order = 0;
 my $prefix = '';
 my $limit = 0;
 my @words_found;
+my $word_col = 0;
 if ($cmd eq 'w') {
     @words_found = @found;
+    $cmd = '';
+}
+elsif ($cmd eq '1w') {
+    $word_col = 1;
+    @words_found = sort @found;
     $cmd = '';
 }
 elsif ($cmd =~ m{\A w \s* ([<>]) \s* (\d*)\z}xms) {
@@ -1240,7 +1247,9 @@ sub check_word {
     }
     return '';
 }
+WORD:
 for my $w (@new_words) {
+    next WORD if $w eq '1w';        # hack!
     if (my $mess = check_word($w)) {
         $not_okay_words .= "<span class=not_okay>"
                         .  uc($w)
@@ -1293,29 +1302,38 @@ sub color_pg {
 # perhaps have a break between words of diff lengths
 # in case we had w < or w >.
 my $found_words = '';
-my $prev_length = 0;
-for my $w (@words_found) {
-    my $lw = length($w);
-    my $uw = ucfirst $w;
-    if ($is_pangram{$w}) {
-        $w = color_pg($uw);
-    }
-    elsif ($is_new_word{$w}) {
-        $w = "<span class=new_word>$uw</span>";
-    }
-    else {
-        $w = $uw;
-    }
-    my $pre = ! $prev_length               ? ($order? "$lw: ": '')
-             :$order && $lw != $prev_length? "<br>$lw: "
-             :                               ' '
-             ;
-    $found_words .= "$pre$w";
-    $prev_length = $lw;
+if ($word_col == 1) {
+    $found_words = join '<br>',
+                   map {
+                       ucfirst
+                   }
+                   @words_found;
 }
-if (@found && @words_found == @found && ! $order) {
-    my $nwords = @found;
-    $found_words .= " <span class=gray>$nwords</span>";
+else {
+    my $prev_length = 0;
+    for my $w (@words_found) {
+        my $lw = length($w);
+        my $uw = ucfirst $w;
+        if ($is_pangram{$w}) {
+            $w = color_pg($uw);
+        }
+        elsif ($is_new_word{$w}) {
+            $w = "<span class=new_word>$uw</span>";
+        }
+        else {
+            $w = $uw;
+        }
+        my $pre = ! $prev_length               ? ($order? "$lw: ": '')
+                 :$order && $lw != $prev_length? "<br>$lw: "
+                 :                               ' '
+                 ;
+        $found_words .= "$pre$w";
+        $prev_length = $lw;
+    }
+    if (@found && @words_found == @found && ! $order) {
+        my $nwords = @found;
+        $found_words .= " <span class=gray>$nwords</span>";
+    }
 }
 
 # get the HT and TL tables ready
@@ -1470,7 +1488,7 @@ if ($ht_chosen) {
                           : '&nbsp;-&nbsp;')
                         . "</td>";
         }
-        $hint_table .= "<th>$sums{$c}{1}</th></tr>\n";  # sigma
+        $hint_table .= th($sums{$c}{1} || 0) . "</tr>\n";  # sigma
         $tot += $sums{$c}{1};
     }
     $hint_table .= "<tr><th style='text-align: right'>&Sigma;</th>";
