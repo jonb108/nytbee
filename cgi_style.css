@@ -43,3 +43,6 @@ button, .word_td {
     cursor: pointer;
     color: blue;
 }
+.step_name {
+    color: green;
+}

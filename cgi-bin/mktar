@@ -29,6 +29,7 @@ nytbee_get_clues \
 nytbee_get_cluers \
 nytbee_clues_by \
 nytbee_define \
+get_allowed_hints \
 mktar \
 go
 
