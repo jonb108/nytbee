@@ -26,9 +26,10 @@ use BeeUtil qw/
     uniq_chars
     error
     word_score
+    trim
 /;
 
-my $word = $q->param('word');
+my $word = lc trim $q->param('word');
 
 my @lets = uniq_chars($word);
 if (@lets != 7) {

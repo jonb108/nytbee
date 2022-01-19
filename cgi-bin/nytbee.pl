@@ -4,6 +4,14 @@ use warnings;
 
 =comment
 
+for an NYT Puzzle with clues
+    authors are listed, click to see.
+    if multiple authors add an All to see them all together
+    test with different browsers, on cell.
+    same idea as definitions - just grouped
+    differently - and for all words
+    enter multiple people's clues
+
 Art is about "drawing the line".
     we're getting very close to the end.
     so perhaps put your new ideas in a
@@ -188,6 +196,9 @@ use CGI;
 my $q = CGI->new();
 my $hive = $q->cookie('hive') || 0;
 my %params = $q->Vars();
+use CGI::Carp qw/
+    fatalsToBrowser
+/;
 
 use BeeUtil qw/
     trim
@@ -200,6 +211,9 @@ use BeeUtil qw/
     th
     td
     bold
+    div
+    word_score
+    JON
 /;
 
 use Date::Simple qw/
@@ -359,14 +373,14 @@ elsif (my ($ncp) = $cmd =~ m{\A xcp \s* (\d+) \z}xms) {
     else {
         my $href = do $fname;
         if ($href->{ip_id} ne $ip_id) {
-            $message = "You did not create CP$ncp";
+            $message = ul "<span class=red1>You did not create CP$ncp.</span>";
             $cmd = '';
         }
         else {
             unlink $fname;
             # and just in case it is in the current list...
             delete $ip_date{"$ip_id CP$ncp"};
-            $message = "Deleted CP$ncp";
+            $message = ul "Deleted CP$ncp";
             $cmd = 't';     # back to today
         }
     }
@@ -550,14 +564,9 @@ sub load_nyt_clues {
     }
 }
 
-sub word_score {
-    my ($w) = @_;
-    my $l = length $w;
-    return ($l == 4? 1: $l) + ($is_pangram{$w}? 7: 0);
-}
 my $max_score = 0;
 for my $w (@ok_words) {
-    $max_score += word_score($w);
+    $max_score += word_score($w, $is_pangram{$w});
 }
 my @ranks = (
     { name => 'Beginner',   pct =>   0, value => 0 },
@@ -609,7 +618,7 @@ my $rank;
 sub compute_score_and_rank {
     $score = 0;
     for my $w (@found) {
-        $score += word_score($w);
+        $score += word_score($w, $is_pangram{$w});
     }
     RANK:
     for my $r (0 .. $#ranks-1) {
@@ -1015,7 +1024,7 @@ elsif ($cmd eq 'sc') {
     my $tot = 0;
     my $space = '&nbsp;' x 1;
     for my $w (@found) {
-        my $sc = word_score($w);
+        my $sc = word_score($w, $is_pangram{$w});
         $tot += $sc;
         my $s = ucfirst $w;
         if ($is_pangram{$w}) {
@@ -1032,18 +1041,42 @@ elsif ($cmd eq 'sc') {
 elsif (my ($ncp) = $cmd =~ m{\A lcp \s*(\d*) \z}xms) {
     $ncp ||= 5;
     my $s = `cd community_puzzles; ls -tr1 [0-9]*.txt|tail -$ncp`;
-    my $rows = '';
+    my @rows;
+    my $title_row = Tr(th('&nbsp;'),
+                       th('Name'),
+                       th('Seven'),
+                       th('Center'),
+                       th('#words'),
+                       th('#points'),
+                       th('#pangrams'),
+                    );
+
     for my $n (sort { $b <=> $a }
                $s =~ m{(\d+)}xmsg
     ) {
         my $href = do "community_puzzles/$n.txt";
-        $rows .= Tr(td("CP$n"),
-                    td(slash_date($href->{created})),
-                    td($href->{name}),
-                    td($href->{location}),
-                 );
+        my @words = @{$href->{words}};
+        my $nwords = @words;
+        my @pangrams = @{$href->{pangrams}};
+        my $npangrams = @pangrams;
+        my %is_pangram = map { $_ => 1 } @pangrams;
+        my $points = 0;
+        for my $w (@words) {
+            $points += word_score($w, $is_pangram{$w});
+        }
+        push @rows, Tr(td("CP$n"),
+                       td($href->{name}),
+                       td(uc $href->{seven}),
+                       td({ style => 'text-align: center' },
+                          uc $href->{center}),
+                       td($nwords),
+                       td($points),
+                       td($npangrams),
+                    );
     }
-    $message = "<table cellpadding=5>$rows</table>";
+    if (@rows) {
+        $message = table({ cellpadding => 3 }, $title_row, @rows);
+    }
     $cmd = '';
 }
 elsif ($cmd eq 'ycp') {
@@ -1303,11 +1336,11 @@ sub color_pg {
 # in case we had w < or w >.
 my $found_words = '';
 if ($word_col == 1) {
-    $found_words = join '<br>',
-                   map {
-                       ucfirst
-                   }
-                   @words_found;
+    my @rows = map {
+                   Tr(td({ style => 'text-align: left' }, ucfirst))
+               }
+               @words_found;
+    $found_words = ul(table(@rows));
 }
 else {
     my $prev_length = 0;
@@ -1583,7 +1616,7 @@ if ($message) {
     $has_message = 1;
 }
 my $create_add
-    = "<a target=_blank href='$log/nytbee/mkpuz.html'>"
+    = "<a  onclick='set_focus();' target=_blank href='$log/nytbee/mkpuz.html'>"
     . "Create Puzzle</a>";
 my $add_clues_form = '';
 if ($date =~ m{\A \d}xms) {
