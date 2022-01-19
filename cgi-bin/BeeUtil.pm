@@ -12,6 +12,7 @@ our @EXPORT_OK = qw/
     Tr
     td
     ul
+    bold
     slash_date
     shuffle
 /;
@@ -79,6 +80,10 @@ sub _attrs {
            map { "$_='$href->{$_}'" }
            keys %$href;
 }
+sub table {
+    my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
+    return "<table $attrs>@_</table>";
+}
 sub Tr {
     my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
     return "<tr $attrs>@_</tr>";
@@ -90,9 +95,8 @@ sub td {
 sub ul {
     return "<ul>@_</ul>";
 }
-sub table {
-    my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
-    return "<table $attrs>@_</table>";
+sub bold {
+    return "<b>@_</b>";
 }
 
 sub shuffle {

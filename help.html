@@ -125,8 +125,9 @@ Commands that give hints:
 <tr><td><span class=cmd>HT</span></td><td>Show the Hint Table.</td></tr>
 <tr><td><span class=cmd>TL</span></td><td>Show the Two Letter List.<p></td></tr>
 <tr><td><span class=cmd>DPG</span></td><td>Define the Pangrams.</td></tr>
-<tr><td><span class=cmd>DB4</span></td><td>Define the words beginning with B of length 4.</td></tr>
+<tr><td><span class=cmd>DB8</span></td><td>Define the words beginning with B of length 8.</td></tr>
 <tr><td><span class=cmd>DTR</span></td><td>Define the words beginning with TR.</td></tr>
+<tr><td><span class=cmd>DT</span></td><td>Define the words beginning with T.</td></tr>
 <tr><td colspan=2>
 If there is a <a href=#clue>"clue"</a> for a word it is shown instead of a
 dictionary definition.  Definitions come from
@@ -134,10 +135,11 @@ Merriam-Webster (merriam-webster.com) and Oxford (lexico.com).
 <p></td></tr>
 <tr><td colspan=2><span class=cmd>D&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.  No hints tallied.</td></tr>
 <tr><td><span class=cmd>D*&nbsp;&nbsp;...</span></td><td>The above <span class=cmd>D</span> commands give at most 3 definitions. <span class=cmd>D*</span> will give them All plus any <a href=#clues>clues</a>.<p></td></tr>
-<tr><td><span class=cmd>V2P</span></td><td>Reveal the first two letters of the pangrams.</td></tr>
-<tr><td><span class=cmd>V3M8</span></td><td>Reveal the first 3 letters of the words beginning with M of length 8.</td></tr>
-<tr><td><span class=cmd>V5GL</span></td><td>Reveal the first 5 letters of the words beginning with GL.  
-<tr><td colspan=2>Using <span class=cmd>E</span> instead of <span class=cmd>V</span> reveals letters at the front and at the End of the word.  Commands that reveal the entire word are silently ignored (as are commands like V1M8 or V2GL).</td></tr>
+<tr><td><span class=cmd>V2PG</span></td><td>Reveal the first two letters of the pangrams.</td></tr>
+<tr><td><span class=cmd>V3B8</span></td><td>Reveal the first 3 letters of the words beginning with B of length 8.</td></tr>
+<tr><td><span class=cmd>V3TR</span></td><td>Reveal the first 3 letters of the words beginning with TR.</td></tr>
+<tr><td><span class=cmd>V3T</span></td><td>Reveal the first 3 letters of the words beginning with T.</td></tr>
+<tr><td colspan=2>Using <span class=cmd>E</span> instead of <span class=cmd>V</span> reveals letters at the front and at the End of the word.  Commands that reveal the entire word are silently ignored (as are commands like V1B8 or V2TR).</td></tr>
 <tr><td colspan=2>Both define and reveal commands skip words that have already been found.<p></td></tr>
 <tr><td><span class=cmd>1</span></td><td>Show a random entry from the Hint Table.</td></tr>
 <tr><td><span class=cmd>2</span></td><td>Show a random entry from the Two Letter List.
@@ -177,6 +179,7 @@ The number of hints are tallied like so:
 <tr><th>Command</th><th align=left colspan=2>&nbsp;&nbsp;# hints</th></tr>
 <tr><td><span class=cmd>HT</span></td><td align=right>10</td></tr>
 <tr><td><span class=cmd>TL</span></td><td align=right>5</td></tr>
+<tr><td><span class=cmd>OL</span></td><td align=right>3</td></tr>
 <tr><td><span class=cmd>D,D*</span></td><td align=right>3</td><td>for each word</td></tr>
 <tr><td><span class=cmd>V,E</span></td><td align=right>2</td><td>for each word</td></tr>
 <tr><td><span class=cmd>1</span></td><td align=right>1</td></tr>

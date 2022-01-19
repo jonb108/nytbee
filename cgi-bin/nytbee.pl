@@ -198,6 +198,7 @@ use BeeUtil qw/
     table
     Tr
     td
+    bold
 /;
 
 use Date::Simple qw/
@@ -570,17 +571,18 @@ my @ranks = (
     { name => 'Queen Bee',  pct => 100, value => $max_score },
 );
 
-my (@found, $nhints, $ht_chosen, $tl_chosen);
+my (@found, $nhints, $ht_chosen, $tl_chosen, $ol_chosen);
 my $key = "$ip_id $date";
 if (exists $ip_date{$key}) {
     my ($d8, $ap, $rnk);
-    ($d8, $nhints, $ap, $ht_chosen, $tl_chosen, $rnk, @found)
+    ($d8, $nhints, $ap, $ht_chosen, $tl_chosen, $ol_chosen, $rnk, @found)
         = split ' ', $ip_date{$key};
 }
 else {
     $nhints    = $new_puzzle? 0: $params{nhints} || 0;    # from before
     $ht_chosen = $new_puzzle? 0: $params{ht_chosen};
     $tl_chosen = $new_puzzle? 0: $params{tl_chosen};
+    $ol_chosen = $new_puzzle? 0: $params{ol_chosen};
     @found     = $new_puzzle? (): split ' ', $params{found_words};
 }
 
@@ -754,15 +756,14 @@ sub get_words {
     return grep {
                ! $is_found{$_}
                &&
-               ($l? substr($_, 0, 1) eq $s
+               ( $l? substr($_, 0, 1) eq $s
                    && length == $l
-              :    substr($_, 0, 2) eq $s)
+                :    m{\A $s}xms)
            }
            @ok_words;
 }
 
 # do we have a reveal command?
-my $reveal = "";
 if ($cmd eq 'ht') {
     if (! $ht_chosen) {
         $ht_chosen = 1;
@@ -777,40 +778,78 @@ elsif ($cmd eq 'tl') {
     }
     $cmd = '';
 }
+elsif ($cmd eq 'ol') {
+    if (! $ol_chosen) {
+        $ol_chosen = 1;
+        $nhints += 3;
+    }
+    $cmd = '';
+}
 elsif (my ($ev, $nlets, $term)
     = $cmd =~ m{
-        \A ([ev])\s*(\d+)\s*(p|[a-z]\s*\d+|[a-z]\s*[a-z]) \z
+        \A ([ev])\s*(\d+)\s*(pg|[a-z]|[a-z]\s*\d+|[a-z]\s*[a-z]) \z
       }xms
 ) {
+    my $err = 0;
     my $end = $ev eq 'e';
-    if ($term eq 'p') {
+    if ($term eq 'pg') {
         for my $p (grep { ! $is_found{$_} } @pangrams) {
             $message .= reveal($p, $nlets, $end);
         }
     }
     elsif (my ($first, $len) = $term =~ m{\A ([a-z])\s*(\d+)}xms) {
-        if ($nlets == 1) {
-            # silently gnore
+        if ($first =~ $letter_regex) {
+            $message = ul(ured($cmd) . ": \U$first\E is not in \U$seven");
+            $err = 1;
         }
         else {
-            for my $w (get_words($first, $len)) {
-                $message .= reveal($w, $nlets, $end);
+            if ($nlets == 1) {
+                # silently gnore
+            }
+            else {
+                for my $w (get_words($first, $len)) {
+                    $message .= reveal($w, $nlets, $end);
+                }
+            }
+        }
+    }
+    elsif (length($term) == 2) {
+        # $term is two letters
+        if ($term =~ $letter_regex) {
+            $message = ul(ured($cmd) . ": \U$1\E is not in \U$seven");
+            $err = 1;
+        }
+        else {
+            if ($nlets == 1 || (! $end && $nlets == 2)) {
+                # silently ignore
+            }
+            else {
+                $term =~ s{\s}{}xmsg;       # if v2 a b instead of v2ab
+                for my $w (get_words($term)) {
+                    $message .= reveal($w, $nlets, $end);
+                }
             }
         }
     }
     else {
-        # $term is two letters
-        if ($nlets == 1 || (! $end && $nlets == 2)) {
-            # silently ignore
+        # $term is one letter
+        if ($term =~ $letter_regex) {
+            $message = ul(ured($cmd) . ": \U$1\E is not in \U$seven");
+            $err = 1;
         }
         else {
-            $term =~ s{\s}{}xmsg;       # if v2 a b instead of v2ab
-            for my $w (get_words($term)) {
-                $message .= reveal($w, $nlets, $end);
+            if ($nlets == 1) {
+                # silently ignore
+            }
+            else {
+                $term =~ s{\s}{}xmsg;       # if v2 a b instead of v2ab
+                for my $w (get_words($term)) {
+                    $message .= reveal($w, $nlets, $end);
+                }
             }
         }
     }
-    if ($message) {
+    if (!$err && $message) {
         $message = "\U$cmd\E:<ul>$message</ul>";
     }
     $cmd = '';
@@ -844,7 +883,7 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     $message = ul(table({ cellpadding => 4}, $rows));
     $cmd = '';
 }
-elsif ($cmd =~ m{\A (d|d[*]) \s*  (pg|[a-z]\d+|[a-z][a-z]) \z}xms) {
+elsif ($cmd =~ m{\A (d|d[*]) \s*  (pg|[a-z]|[a-z]\d+|[a-z][a-z]) \z}xms) {
     my $Dcmd = $1;
     my $term = $2;
     load_nyt_clues;
@@ -864,38 +903,68 @@ elsif ($cmd =~ m{\A (d|d[*]) \s*  (pg|[a-z]\d+|[a-z][a-z]) \z}xms) {
         }
         $cmd = '';
     }
-    elsif ($term =~ m{([a-z])(\d+)}xms) {
+    elsif ($term =~ m{\A ([a-z])(\d+) \z}xms) {
         my $let = $1;
         my $len = $2;
-        $message = '';
-        for my $w (get_words($let, $len)) {
-            $message .= "<ul>"
-                     .  define($w, $Dcmd, 0)
-                     .  "</ul>"
-                     .  "--";
-                     ;
+        if (index($seven, $let) < 0) {
+            $message = ul(ured($cmd) . ": \U$let\E is not in \U$seven");
         }
-        $message =~ s{--\z}{}xms;
-        $message =~ s{--}{$line<br>}xmsg;
-        if ($message) {
-            $message = "\U$term\E:<br>$message";
+        else {
+            $message = '';
+            for my $w (get_words($let, $len)) {
+                $message .= ul(define($w, $Dcmd, 0))
+                         .  "--";
+                         ;
+            }
+            $message =~ s{--\z}{}xms;
+            $message =~ s{--}{$line<br>}xmsg;
+            if ($message) {
+                $message = "\U$term\E:<br>$message";
+            }
         }
         $cmd = '';
     }
-    elsif ($term =~ m{([a-z][a-z])}xms) {
+    elsif ($term =~ m{\A ([a-z][a-z]) \z}xms) {
         my $lets = $1;
-        $message = '';
-        for my $w (get_words($lets)) {
-            $message .= "<ul>"
-                     .  define($w, $Dcmd, 0)
-                     .  "</ul>"
-                     .  "--";
-                     ;
+        if ($lets =~ $letter_regex) {
+            $message = ul(ured($cmd) . " : $1\E is not in \U$seven");
         }
-        $message =~ s{--\z}{}xms;
-        $message =~ s{--}{$line<br>}xmsg;
-        if ($message) {
-            $message = "\U$term\E:<br>$message";
+        else {
+            $message = '';
+            for my $w (get_words($lets)) {
+                $message .= "<ul>"
+                         .  define($w, $Dcmd, 0)
+                         .  "</ul>"
+                         .  "--";
+                         ;
+            }
+            $message =~ s{--\z}{}xms;
+            $message =~ s{--}{$line<br>}xmsg;
+            if ($message) {
+                $message = "\U$term\E:<br>$message";
+            }
+        }
+        $cmd = '';
+    }
+    elsif ($term =~ m{\A ([a-z]) \z}xms) {
+        my $let = $1;
+        if ($let =~ $letter_regex) {
+            $message = ul(ured($cmd) . ": \U$1\E is not in \U$seven");
+        }
+        else {
+            $message = '';
+            for my $w (get_words($let)) {
+                $message .= "<ul>"
+                         .  define($w, $Dcmd, 0)
+                         .  "</ul>"
+                         .  "--";
+                         ;
+            }
+            $message =~ s{--\z}{}xms;
+            $message =~ s{--}{$line<br>}xmsg;
+            if ($message) {
+                $message = "\U$term\E:<br>$message";
+            }
         }
         $cmd = '';
     }
@@ -935,6 +1004,7 @@ elsif ($cmd =~ m{\A c \s+ y \z}xms) {
     $nhints = 0;
     $ht_chosen = 0;
     $tl_chosen = 0;
+    $ol_chosen = 0;
     $cmd = '';
 }
 elsif ($cmd eq 'sc') {
@@ -1204,6 +1274,11 @@ $not_okay_words
 EOH
 }
 
+sub ured {
+    my ($s) = @_;
+    return "<span class=red1>\U$s\E</span>";
+}
+
 sub color_pg {
     my ($pg) = @_;
     my $class = length($pg) == 7? 'purple': 'green';
@@ -1241,6 +1316,9 @@ if (@found && @words_found == @found && ! $order) {
     $found_words .= " <span class=gray>$nwords</span>";
 }
 
+# get the HT and TL tables ready
+# $sums{$c}{1} is the rightmost column (sigma)
+#
 my %sums;
 my %two_lets;
 my $max_len = 0;
@@ -1259,6 +1337,7 @@ for my $w (@ok_words) {
     }
     my $c2 = substr($w, 0, 2);
     ++$sums{$c1}{$l};
+    ++$sums{$c1}{1};
     ++$two_lets{$c2};
 }
 my $bingo = keys %first_char == 7? ', Bingo': '';
@@ -1367,8 +1446,8 @@ EOH
     $cmd = '';
 }
 
-# the hint table
-my $hint_table = "";
+# the hint tables
+my $hint_table = '';
 if ($ht_chosen) {
     $hint_table = "<table cellpadding=2 border=0>\n";
     my $space = '&nbsp;' x 4;
@@ -1380,7 +1459,6 @@ if ($ht_chosen) {
     my $tot = 0;
     for my $c (@seven) {
         $hint_table .= "<tr><th style='text-align: center'>\U$c\E</th>";
-        my $sum = 0;
         for my $l (4 .. $max_len) {
             $hint_table .= "<td>"
                         .  ($sums{$c}{$l}?
@@ -1389,10 +1467,9 @@ if ($ht_chosen) {
                              . "$sums{$c}{$l}</span>"
                           : '&nbsp;-&nbsp;')
                         . "</td>";
-            $sum += $sums{$c}{$l};
         }
-        $hint_table .= "<th>$sum</th></tr>\n";
-        $tot += $sum;
+        $hint_table .= "<th>$sums{$c}{1}</th></tr>\n";  # sigma
+        $tot += $sums{$c}{1};
     }
     $hint_table .= "<tr><th style='text-align: right'>&Sigma;</th>";
     for my $l (4 .. $max_len) {
@@ -1429,6 +1506,17 @@ if ($tl_chosen) {
             $two_lets .= '&nbsp;&nbsp;';
         }
     }
+}
+if (!$ht_chosen && ! $tl_chosen && $ol_chosen) {
+    # note that OL is the rightmost column (sigma) of HT
+    # so no need to show OL if we are showing HT
+    # and OL is simply the sum of TL
+    my @rows = map {
+                   Tr(td(bold(uc $_)), td(qq!<span class=pointer onclick="define_ol('$_');">&nbsp;&nbsp;$sums{$_}{1}</span>!)) 
+               }
+               grep { $sums{$_}{1} > 0 }
+               @seven;
+    $hint_table = table(@rows);
 }
 
 # generate the rank colors and font sizes
@@ -1467,7 +1555,7 @@ for my $p (@pangrams) {
 
 # save IP address and state of the solve
 $ip_date{$key} = $today->as_d8()
-               . " $nhints $all_pangrams $ht_chosen $tl_chosen $rank @found";
+               . " $nhints $all_pangrams $ht_chosen $tl_chosen $ol_chosen $rank @found";
 
 my $has_message = 0;
 if ($message) {
@@ -1687,8 +1775,7 @@ pre {
     font-size: 26pt;
 }
 body {
-    margin-top: .3in;
-    margin-left: .3in;
+    margin: .3in;
     font-size: 18pt;
     font-family: Arial;
 }
@@ -1759,6 +1846,10 @@ function define_ht(c, n) {
     document.getElementById('new_words').value = 'D' + c + n;
     document.getElementById('main').submit();
 }
+function define_ol(c) {
+    document.getElementById('new_words').value = 'D' + c;
+    document.getElementById('main').submit();
+}
 function clues_by(person_id) {
     document.getElementById('person_id').value = person_id;
     document.getElementById('clues_by').submit();
@@ -1770,16 +1861,14 @@ function set_focus() {
 </script>
 </head>
 <body>
-<div class=float-container>
-    <div class=float-child1>
-        <a target=_blank href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date
-    </div>
-    <div class=float-child2>
-         <img width=50 src=/pics/bee-logo.jpg>
-    </div>
-    <div class=float-child3>
-        <span class=help><a target=_blank href='$log/nytbee/help.html#words'>Help</a></span><br><span class=create_add>$create_add</span>
-    </div>
+<div class=float-child1>
+    <a target=_blank href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date
+</div>
+<div class=float-child2>
+     <img width=50 src=/pics/bee-logo.jpg>
+</div>
+<div class=float-child3>
+    <span class=help><a target=_blank href='$log/nytbee/help.html#words'>Help</a></span><br><span class=create_add>$create_add</span>
 </div>
 <br><br>
 <form id=main name=form method=POST>
@@ -1788,6 +1877,7 @@ function set_focus() {
 <input type=hidden name=nhints value=$nhints>
 <input type=hidden name=ht_chosen value=$ht_chosen>
 <input type=hidden name=tl_chosen value=$tl_chosen>
+<input type=hidden name=ol_chosen value=$ol_chosen>
 <input type=hidden name=has_message value=$has_message>
 <input type=hidden name=six value='@six'>
 <input type=hidden name=seven_let value='@seven_let'>
@@ -1802,16 +1892,14 @@ $found_words
 Score: $score<span class='rank_name rank$rank'>$rank_name</span>
 $image
 $disp_nhints
-<div class=float-container>
-    <div class=float-child4>
-        <div id=hint_table class=hint_table>
-        $hint_table
-        </div>
+<div class=float-child4>
+    <div id=hint_table class=hint_table>
+    $hint_table
     </div>
-    <div class=float-child5>
-        <div id=two_lets class=two_lets>
-        $two_lets
-        </div>
+</div>
+<div class=float-child5>
+    <div id=two_lets class=two_lets>
+    $two_lets
     </div>
 </div>
 $show_clue_form$add_clues_form
