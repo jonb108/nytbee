@@ -79,10 +79,11 @@ print <<"EOH";
 <html>
 <head>
 <link rel='stylesheet' type='text/css' href='http://logicalpoetry.com/nytbee/cgi_style.css'/>
+<script src="http://logicalpoetry.com/nytbee/js/name_location.js"></script>
 </head>
 <body>
-<h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>5</span> <span class=step_name>Allowed Hints</span></h1>
-<form name=form action=get_allowed_hints method=POST">
+<h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>5</span> <span class=step_name>Name and Location</span></h1>
+<form name=form action=final_mkpuz method=POST onsubmit="return check_name_location();">
 <input type=hidden name=seven value='$seven'>
 <input type=hidden name=center value='$center'>
 <input type=hidden name=words value='$words'>
@@ -91,23 +92,29 @@ print <<"EOH";
 <input type=hidden name=created value='$d8'>
 Words: $nwords, Points: $points<br>
 Pangrams: <span class=green>$pangrams</span><p>
+Finally, provide some information about yourself.
 <p>
-What kinds of hints will be allowed for this puzzle?
-<ul style='line-height: 10mm'>
-<input type=checkbox name=hint_h value=h checked> Hint Table <span class=gray>(HT)</span><br>
-<input type=checkbox name=hint_t value=t checked> Two Letter List <span class=gray>(TL)</span><br>
-<input type=checkbox name=hint_o value=o checked> One Letter List <span class=gray>(OL)</span><br>
-<input type=checkbox name=hint_d value=d checked> Dictionary Definitions <span class=gray>(D)</span><br>
-<input type=checkbox name=hint_c value=c checked> Clues <span class=gray>(with the D command)</span><br>
-<input type=checkbox name=hint_v value=v checked> Reveal Commands <span class=gray>(V and E)</span><br>
-&nbsp;&nbsp;&nbsp;<input type=checkbox name=hint_pct value='%'> Limit Reveals to about half of the letters<br>
-<input type=checkbox name=hint_1 value=1 checked> Random Hint Table Entry <span class=gray>(1)</span><br>
-<input type=checkbox name=hint_2 value=2 checked> Random Two Letter List Entry <span class=gray>(2)</span><br>
-<input type=checkbox name=hint_g value=g> Give Up and show all words <span class=gray>(G Y)</span><br>
-<!-- htodcv%12g -->
-<button type=submit class=submit>Submit</button>
-</ul>
+<table cellpadding=5>
+
+<tr>
+<th>Name</th>
+<td><input type=text name=name id=name value="$name" size=40></td>
+</tr>
+
+<tr>
+<th>Location</th>
+<td><input type=text name=location id=location value="$location" size=40></td>
+</tr>
+
+<tr>
+<th>&nbsp;</th>
+<td style="text-align: left"><button class=submit type=submit>Submit</button></td>
+</tr>
+
+</table>
 </form>
 </body>
 </html>
+<script>document.form.name.focus();</script>
+</form>
 EOH

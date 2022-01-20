@@ -16,8 +16,12 @@ td, th {
     font-weight: bold;
     font-size: 24pt;
 }
+.center {
+    color: green;
+    font-size: 24pt;
+}
 .word {
-    font-size: 30pt;
+    font-size: 24pt;
     color: green;
 }
 .green {

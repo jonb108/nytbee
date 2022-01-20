@@ -39,7 +39,7 @@ There is a <a target=nytbee href='https://youtu.be/PsWUQJXFb1s'>short film</a> t
 <a href=#advantages>Advantages of the New Mechanism</a><br>
 <a href=#words>Words and Commands</a><br>
 <a href=#hint_commands>Hint Commands</a><br>
-<a href=#table_lists>The Hint Table and the Letter Lists</a><br>
+<a href=#table_list>The Hint Table and the Two Letter List</a><br>
 <a href=#hint>Hint Strategy</a><br>
 <a href=#archival_and_community>Archival and Community Puzzles</a><br>
 <a href=#power>Power User Commands</a><br>
@@ -79,7 +79,7 @@ that are obscure, hyphenated, or proper nouns.
 </h2>
 The many advantages of this new way include:
 <ul>
-<li>clerical assistance in creating clues (for NYT Puzzles and Community Puzzles) to share in the forum or on FaceBook.  The clues are preserved - not cleared each day.  Also easy to see them all in one place to compare.  with the D commandd and color coded.  make another list with all found words plus all hints color coded. for fun.
+<li>clerical assistance in creating clues (for NYT Puzzles and Community Puzzles) to share in the forum or on FaceBook.  The clues are preserved - not cleared each day.  Also easy to see them all in one place to compare.  with the D command and color coded.  make another list with all found words plus all hints color coded. for fun.
 Can look at all of one author's clues along with the word.
 <li>No need to register or login.
 <li>4 different presentations of the 7 letters
@@ -130,15 +130,14 @@ If <a href=#clues>clues have been added</a> for a puzzle the authors are listed.
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
 It is <i>not</i> easy to find <i>all</i> the words in a puzzle
-and reach the stratospheric heights of the Queen Bee rank.
+and reach the stratospheric height of the Queen Bee rank.
 Most of us mere mortals need some help to get to Amazing or Genius!
 <p>
 <table cellpadding=5>
 <tr><td><span class=cmd>HT</span></td><td>Show the Hint Table.</td></tr>
 <tr><td><span class=cmd>TL</span></td><td>Show the Two Letter List.</td></tr>
-<tr><td><span class=cmd>OL</span></td><td>Show the One Letter List.</td></tr>
-<tr><td colspan=2>The Hint Table and the two Lists are explained <a href=#table_lists>below</a>.<p></td></tr>
-<tr><td><span class=cmd>DPG</span></td><td>Define the Pangrams.</td></tr>
+<tr><td colspan=2>The Hint Table and the Two Letter List are explained <a href=#table_list>below</a>.<p></td></tr>
+<tr><td><span class=cmd>DP</span></td><td>Define the Pangrams.</td></tr>
 <tr><td><span class=cmd>DB8</span></td><td>Define the words beginning with B of length 8.</td></tr>
 <tr><td><span class=cmd>DTR</span></td><td>Define the words beginning with TR.</td></tr>
 <tr><td><span class=cmd>DT</span></td><td>Define the words beginning with T.</td></tr>
@@ -149,18 +148,18 @@ Merriam-Webster (merriam-webster.com) and Oxford (lexico.com).
 <p></td></tr>
 <tr><td colspan=2><span class=cmd>D&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.  No hints tallied.  This form of the <span class=cmd>D</span> command serves as a quick and fun way to browse the dictionary!  You can ask for definitions of <i>any</i> word - not just the ones in the puzzle.</td></tr>
 <tr><td><span class=cmd>D*&nbsp;&nbsp;...</span></td><td>The above <span class=cmd>D</span> commands give at most 3 definitions. <span class=cmd>D*</span> will give them All plus any <a href=#clues>clues</a>.<p></td></tr>
-<tr><td><span class=cmd>V2PG</span></td><td>Reveal the first two letters of the pangrams.</td></tr>
+<tr><td><span class=cmd>V2P</span></td><td>Reveal the first two letters of the pangrams.</td></tr>
 <tr><td><span class=cmd>V3B8</span></td><td>Reveal the first 3 letters of the words beginning with B of length 8.</td></tr>
 <tr><td><span class=cmd>V3TR</span></td><td>Reveal the first 3 letters of the words beginning with TR.</td></tr>
 <tr><td><span class=cmd>V3T</span></td><td>Reveal the first 3 letters of the words beginning with T.</td></tr>
-<tr><td colspan=2>Using <span class=cmd>E</span> instead of <span class=cmd>V</span> reveals letters at the front and at the End of the word.  Commands that reveal the entire word are silently ignored (as are commands like V1B8 or V2TR).</td></tr>
+<tr><td colspan=2>Using <span class=cmd>E</span> instead of <span class=cmd>V</span> reveals letters at the front and at the End of the word.  Commands that would reveal the entire word (like V4B4) are silently ignored (as are commands like V1B8 or V2TR).</td></tr>
 <tr><td colspan=2>Both define and reveal commands skip words that have already been found.<p></td></tr>
 <tr><td><span class=cmd>1</span></td><td>Show a random entry from the Hint Table.</td></tr>
 <tr><td><span class=cmd>2</span></td><td>Show a random entry from the Two Letter List.
 <tr><td colspan=2>These will work even if the Table and List are not shown.<p></td></tr>
 </table>
-<a name=table_lists></a>
-<h2>The Hint Table and the Letter Lists
+<a name=table_list></a>
+<h2>The Hint Table and the Two Letter List
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
 <p>
@@ -176,15 +175,8 @@ The <span class=green>Two Letter List</span> (invoked with the <span class=cmd>T
 </ul>
 The <span class=blue>GE-4</span> means that the puzzle has <b>4</b> words beginning with <b>GE</b>.
 <p>
-The <span class=green>One Letter List</span> (invoked with the <span class=cmd>OL</span> command) looks like this:
-<ul>
-<img src=pics/one_letter_list.png>
-</ul>
-The <span class=blue>22</span> in the <b>M</b> row means that
-the puzzle has 22 words beginning with <b>M</b>.
-<p>
 There are <span class=red>two important things</span> 
-about the table and lists.
+about the table and list.
 <ol>
 <li>They are <b><i>DYNAMIC</i></b>.  As you discover and enter words,
 the numbers in the table and lists will <i>change</i>.
@@ -192,28 +184,11 @@ The numbers represent the number of words that <i>remain</i> to be found.
 <li>You can <b>click</b> on the entries in the table and lists to
 get definitions <i>and clues</i> for the words.
 </ol>
-<p>
-Note that the <span class=green>One Letter List</span>
-gives no more information than what is in 
-the <span class=green>Hint Table</span>
-or the <span class=green>Two Letter List</span>. 
-It is only shown when the other two are not present.
-<p>
-The numbers in the <span class=green>One Letter List</span>
-are identical to the <b>&Sigma;</b> column in the <span class=green>Hint Table</span>.
-<b>&Sigma;</b> is a Greek letter which signifies "sum".  If you sum up
-the numbers in a row of the <span class=green>Hint Table</span>
-you will get the value of the <b>&Sigma;</b> column.
-For example, for the <b>M</b> words in the <span class=green>Hint Table</span>
-10 + 3 + 5 + 1 + 2 + 1 = 22.
-And in the <b>M</b> row of the <span class=green>Two Letter List</span>
-7 + 10 + 5 = 22.  
 <a name=hint></a>
 <h2>Hint Strategy
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
-Many people who solve the puzzle try to use as few hints
-as possible.
+Many people who solve the puzzle try to use as few hints as possible.
 The ultimate is to achieve QBABM = Queen Bee <i>all by myself</i>.
 This is possible but rather difficult.
 There are many ways to get hints and
@@ -225,7 +200,6 @@ The number of hints are tallied like so:
 <tr><th>Command</th><th align=left colspan=2>&nbsp;&nbsp;# hints</th></tr>
 <tr><td><span class=cmd>HT</span></td><td align=right>10</td></tr>
 <tr><td><span class=cmd>TL</span></td><td align=right>5</td></tr>
-<tr><td><span class=cmd>OL</span></td><td align=right>3</td></tr>
 <tr><td><span class=cmd>D,D*</span></td><td align=right>3</td><td>for each word</td></tr>
 <tr><td><span class=cmd>V,E</span></td><td align=right>2</td><td>for each word</td></tr>
 <tr><td><span class=cmd>1</span></td><td align=right>1</td></tr>
@@ -233,9 +207,9 @@ The number of hints are tallied like so:
 <tr><td><span class=cmd>G&nbsp;Y</span></td><td align=right>5</td><td>for each word</td></tr>
 </table>
 </ul>
-Many people do not mind how many hints they need to achieve Queen Bee.
+Some people do not mind how many hints they need to achieve Queen Bee.
 It <i>is</i> just a game and they feel that games should be fun. &#128521;
-If I make it to Amazing by myself I call it a very good day.
+If I make it to Amazing all by myself I call it a very good day.
 And some days I consider it a success
 if the Hints total is less than the Score. &#128522;
 <a name=archival_and_community></a>
@@ -290,14 +264,15 @@ of single (or two or three) letter command words.
 <h2>Create Your Own Puzzle to Share
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
-Why should only Sam Ezersky have all the fun (and responsibility) of puzzle creation?
+Why should Sam Ezersky be the only one to have the fun
+(and responsibility) of puzzle creation?
 <b>You</b> can create your <i>own</i> puzzle to share with the
 HiveMind community.  To do so just click on the 'Create Puzzle' link
 at the top of the main screen (right under 'Help').
 You can also click on it here:
 <a target=nytbee href='http://logicalpoetry.com/nytbee/mkpuz.html'>Create Puzzle</a>.
 <p>
-There are 6 steps to create a puzzle:
+There are 5 steps to create a puzzle:
 <style>
 li {
     margin-bottom: 3mm;
@@ -306,7 +281,8 @@ li {
 <ol>
 <li>Choose a 'pangramic' word.  This ensures that there is at
 least one pangram.  Unlike in the NYT puzzles here you are allowed
-to have an S in your word!
+to have an S in your word!  
+You can also use E and R in the same puzzle, if you wish!
 <li>View tallies of words, scores, 4 letter words, and pangrams by center letter.
 And then choose a center letter.
 <li>Choose which words to include in your puzzle.  This is the most
@@ -317,27 +293,6 @@ Surprisingly, there are many common ordinary words that have not yet been used
 in any of the NYT Puzzles.
 <li>Give clues for the words, if you wish.  See the <a href=#clues>next section</a> for
 more details on entering the clues.
-<li>Choose which kind of Hints are allowed for this puzzle.
-This step needs a little explanation.
-<ul>
-<li>If you <i>don't</i> allow Dictionary
-Definitions but <i>do</i> allow Clues then the <span class=cmd>D</span> command 
-<i>can</i> be used but it will only show the Clues that
-you gave in the previous step.
-<li>You can choose to allow or not allow the reveal commands
-<span class=cmd>V</span> and <span class=cmd>E</span>.
-If they are allowed you can also choose to reveal only
-about half of the letters.  For example, if the words are
-HAPPENING, HATH, and HATHA and your command is <span class=cmd>V4HA</span>
-then you will see this:
-<p>
-<ul>
-HAPP _ _ _ _ _<br>
-HAT _ _<br>
-HA _ _
-<p>
-</ul>
-</ul>
 <li>Lastly, give your Name and Location.
 </ol>
 When these steps are complete your puzzle is assigned

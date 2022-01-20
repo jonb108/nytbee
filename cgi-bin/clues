@@ -130,9 +130,10 @@ print <<"EOH";
 <link rel='stylesheet' type='text/css' href='http://logicalpoetry.com/nytbee/cgi_style.css'/>
 <script>
 var newwin;
-function popup(url, height, width) {
+function popup_define(word, height, width) {
+    document.getElementById(word + '_clue').focus();
     newwin = window.open(
-        url, 'define',
+        'http://logicalpoetry.com/cgi-bin/nytbee_define/' + word, 'define',
         'height=' + height + ',width=' + width +', scrollbars'
     );
     newwin.moveTo(800, 0);
@@ -182,7 +183,7 @@ for my $w (@ok_words) {
     push @rows, Tr($word_td, $clue_td, $cycle_td);
 }
 print table(@rows);
-print <<'EOH';
+print <<"EOH";
 <p>
 <button class=submit type=submit>Submit</button>
 </body>

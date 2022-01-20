@@ -4,6 +4,10 @@ use warnings;
 
 =comment
 
+ECP
+what if i want a specific word to appear in a puzzle?
+what pangramic word would make that possible?
+
 for an NYT Puzzle with clues
     authors are listed, click to see.
     if multiple authors add an All to see them all together
@@ -16,6 +20,11 @@ Art is about "drawing the line".
     we're getting very close to the end.
     so perhaps put your new ideas in a
     section called "Future Plans?"
+    when are we done?  when adding anything else
+    spoils what is already there.
+    or when explaining the new thing is simply
+    too complicated and would put off people
+    from trying it in the first place!
 
 given a word find pangramic words that can
     create a puzzle with that word as
@@ -224,7 +233,6 @@ my ($seven, $center, @pangrams);
 my @seven;
 my @ok_words;
 my %clue_for;
-my %allowed_hint;
 
 # see sub load_nyt_clues
 my %nyt_clues_for;        # key is word,
@@ -464,7 +472,6 @@ if ($date =~ m{\A\d}xms) {
     @ok_words = split ' ', $t;
     # %clue_for is initialized from the database
     # but only if needed.  see sub load_nyt_clues
-    %allowed_hint = map { $_ => 1 } split //, 'htodv12g';
 }
 else {
     # Community Puzzles
@@ -479,7 +486,6 @@ else {
     @pangrams = @{$cp_href->{pangrams}};
     @ok_words = @{$cp_href->{words}};
     %clue_for = %{$cp_href->{clues}};
-    %allowed_hint = map { $_ => 1 } split //, $cp_href->{allowed_hints};
 }
 my $nwords = @ok_words;
 my $letter_regex = qr{([^$seven])}xms;  # see sub check_word
@@ -573,18 +579,17 @@ my @ranks = (
     { name => 'Queen Bee',  pct => 100, value => $max_score },
 );
 
-my (@found, $nhints, $ht_chosen, $tl_chosen, $ol_chosen);
+my (@found, $nhints, $ht_chosen, $tl_chosen);
 my $key = "$ip_id $date";
 if (exists $ip_date{$key}) {
     my ($d8, $ap, $rnk);
-    ($d8, $nhints, $ap, $ht_chosen, $tl_chosen, $ol_chosen, $rnk, @found)
+    ($d8, $nhints, $ap, $ht_chosen, $tl_chosen, $rnk, @found)
         = split ' ', $ip_date{$key};
 }
 else {
     $nhints    = $new_puzzle? 0: $params{nhints} || 0;    # from before
     $ht_chosen = $new_puzzle? 0: $params{ht_chosen};
     $tl_chosen = $new_puzzle? 0: $params{tl_chosen};
-    $ol_chosen = $new_puzzle? 0: $params{ol_chosen};
     @found     = $new_puzzle? (): split ' ', $params{found_words};
 }
 
@@ -641,7 +646,7 @@ compute_score_and_rank();
 #
 # fullword is true only if we have given the entire word
 # like 'd juice'
-# and not dpg, dx1, dx, or dxy
+# and not dp, dx1, dx, or dxy
 #
 # if fullword we don't tally hints and we don't mask the word
 sub define {
@@ -649,7 +654,7 @@ sub define {
 
     my $def = '';
     # a Community Puzzle clue
-    if ($allowed_hint{c} && ! $fullword && exists $clue_for{$word}) {
+    if (! $fullword && exists $clue_for{$word}) {
         if (! $fullword) {
             $nhints += 3;
         }
@@ -657,7 +662,7 @@ sub define {
         return $def if $Dcmd eq 'd'; 
     }
     # community contributed NYT Bee Puzzle clues
-    elsif ($allowed_hint{c} && ! $fullword && exists $nyt_clues_for{$word}) {
+    elsif (! $fullword && exists $nyt_clues_for{$word}) {
         my $lw = length($word);
         for my $href (@{$nyt_clues_for{$word}}) {
             $def .= "<li style='list-style-type: circle'>"
@@ -671,13 +676,6 @@ sub define {
         # just one word, perhaps several hints for that word
         $nhints += 3;
         return $def if $Dcmd eq 'd'; 
-    }
-
-    if (! $fullword && ! $allowed_hint{d}) {
-        # dictionary definitions are not allowed
-        # so we return whatever clues we were able to get
-        # or nothing...
-        return $def;
     }
 
     my ($html, @defs);
@@ -739,7 +737,7 @@ sub do_define {
 
     load_nyt_clues;
     my $line = "&mdash;" x 4;
-    if ($term eq 'pg') {
+    if ($term eq 'p') {
         for my $p (grep { !$is_found{$_} } @pangrams) {
             my $def = define($p, $Dcmd, 0);
             if ($def) {
@@ -826,11 +824,8 @@ sub reveal {
     my $lw = length $word;
     if ($nlets >= $lw) {
         # silently ignore
+        # can't see the whole word!
         return;
-    }
-    my $max_lets = int(($lw+1)/2);
-    if ($allowed_hint{'%'} && $nlets > $max_lets) {
-        $nlets = $max_lets;
     }
     $nhints += 2;
     if (! $beg_end) {
@@ -865,7 +860,7 @@ sub do_reveal {
     my ($ev, $nlets, $term) = @_;
     my $err = 0;
     my $end = $ev eq 'e';
-    if ($term eq 'pg') {
+    if ($term eq 'p') {
         for my $p (grep { ! $is_found{$_} } @pangrams) {
             $message .= reveal($p, $nlets, $end);
         }
@@ -928,49 +923,26 @@ sub do_reveal {
 }
 
 if ($cmd eq 'ht') {
-    if (! $allowed_hint{h}) {
-        $message = "HT is not allowed for this puzzle.";
-    }
-    elsif (! $ht_chosen) {
+    if (! $ht_chosen) {
         $ht_chosen = 1;
         $nhints += 10;
     }
     $cmd = '';
 }
 elsif ($cmd eq 'tl') {
-    if (! $allowed_hint{t}) {
-        $message = "TL is not allowed for this puzzle.";
-    }
-    elsif (! $tl_chosen) {
+    if (! $tl_chosen) {
         $tl_chosen = 1;
         $nhints += 5;
-    }
-    $cmd = '';
-}
-elsif ($cmd eq 'ol') {
-    if (! $allowed_hint{o}) {
-        $message = "OL is not allowed for this puzzle.";
-    }
-    elsif (! $ol_chosen) {
-        $ol_chosen = 1;
-        if (! ($ht_chosen || $tl_chosen)) {
-            $nhints += 3;
-        }
     }
     $cmd = '';
 }
 # do we have a reveal command?
 elsif (my ($ev, $nlets, $term)
     = $cmd =~ m{
-        \A ([ev])\s*(\d+)\s*(pg|[a-z]|[a-z]\s*\d+|[a-z]\s*[a-z]) \z
+        \A ([ev])\s*(\d+)\s*(p|[a-z]|[a-z]\s*\d+|[a-z]\s*[a-z]) \z
       }xms
 ) {
-    if (! $allowed_hint{v}) {
-        $message = "\U$ev\E is not allowed for this puzzle.";
-    }
-    else {
-        do_reveal($ev, $nlets, $term);
-    }
+    do_reveal($ev, $nlets, $term);
     $cmd = '';
 }
 elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
@@ -1002,15 +974,10 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     $message = ul(table({ cellpadding => 4}, $rows));
     $cmd = '';
 }
-elsif ($cmd =~ m{\A (d|d[*]) \s*  (pg|[a-z]|[a-z]\d+|[a-z][a-z]) \z}xms) {
+elsif ($cmd =~ m{\A (d|d[*]) \s*  (p|[a-z]|[a-z]\d+|[a-z][a-z]) \z}xms) {
     my $Dcmd = $1;
     my $term = $2;
-    if (! $allowed_hint{d} && ! $allowed_hint{c}) {
-        $message = "D is not allowed for this puzzle";
-    }
-    else {
-        do_define($Dcmd, $term);
-    }
+    do_define($Dcmd, $term);
     $cmd = '';
 }
 elsif ($cmd =~ m{\A (d[*]) \s* ([a-z]+) \z}xms
@@ -1028,22 +995,17 @@ elsif ($cmd =~ m{\A (d[*]) \s* ([a-z]+) \z}xms
     $cmd = '';
 }
 elsif ($cmd =~ m{\A g \s+ y \z}xms) {
-    if (! $allowed_hint{g}) {
-        $message = "G Y is not allowed for this puzzle.";
-    }
-    else {
-        my @words =
-                 map {
-                     $is_pangram{lc $_}? color_pg($_): $_
-                 }
-                 map { ucfirst }
-                 sort
-                 grep { !$is_found{$_} }
-                 @ok_words;
-        if (@words) {
-            $nhints += @words * 5;
-            $message = "<p class=mess>@words";
-        }
+    my @words =
+             map {
+                 $is_pangram{lc $_}? color_pg($_): $_
+             }
+             map { ucfirst }
+             sort
+             grep { !$is_found{$_} }
+             @ok_words;
+    if (@words) {
+        $nhints += @words * 5;
+        $message = "<p class=mess>@words";
     }
     $cmd = '';
 }
@@ -1053,7 +1015,6 @@ elsif ($cmd =~ m{\A c \s+ y \z}xms) {
     $nhints = 0;
     $ht_chosen = 0;
     $tl_chosen = 0;
-    $ol_chosen = 0;
     $cmd = '';
 }
 elsif ($cmd eq 'sc') {
@@ -1430,43 +1391,33 @@ my $bingo = keys %first_char == 7? ', Bingo': '';
 # now that #we have computed %sums and %two_lets
 # perhaps $cmd was not words to add after all...
 if ($cmd eq '1') {
-    if (! $allowed_hint{1}) {
-        $message = '1 is not allowed for this puzzle.';
-    }
-    else {
-        # find a random non-zero entry in the hint table
-        my @entries;
-        for my $l (4 .. $max_len) {
-            for my $c (@seven) {
-                if ($sums{$c}{$l}) {
-                    push @entries, "\U$c$l-$sums{$c}{$l}";
-                }
+    # find a random non-zero entry in the hint table
+    my @entries;
+    for my $l (4 .. $max_len) {
+        for my $c (@seven) {
+            if ($sums{$c}{$l}) {
+                push @entries, "\U$c$l-$sums{$c}{$l}";
             }
         }
-        if (@entries) {
-            # not Queen Bee yet
-            ++$nhints;
-            $message = $entries[ rand @entries ];
-        }
+    }
+    if (@entries) {
+        # not Queen Bee yet
+        ++$nhints;
+        $message = $entries[ rand @entries ];
     }
 }
 elsif ($cmd eq '2') {
-    if (! $allowed_hint{2}) {
-        $message = '2 is not allowed for this puzzle.';
+    # random non-zero entry in %two_lets
+    my @entries;
+    for my $k (sort keys %two_lets) {
+        if ($two_lets{$k}) {
+            push @entries, "\U$k-$two_lets{$k}";
+        }
     }
-    else {
-        # random non-zero entry in %two_lets
-        my @entries;
-        for my $k (sort keys %two_lets) {
-            if ($two_lets{$k}) {
-                push @entries, "\U$k-$two_lets{$k}";
-            }
-        }
-        if (@entries) {
-            # not Queen Bee yet
-            ++$nhints;
-            $message = $entries[ rand @entries ];
-        }
+    if (@entries) {
+        # not Queen Bee yet
+        ++$nhints;
+        $message = $entries[ rand @entries ];
     }
 }
 
@@ -1602,17 +1553,6 @@ if ($tl_chosen) {
         }
     }
 }
-if (!$ht_chosen && ! $tl_chosen && $ol_chosen) {
-    # note that OL is the rightmost column (sigma) of HT
-    # so no need to show OL if we are showing HT
-    # and OL is simply the sum of TL
-    my @rows = map {
-                   Tr(td(bold(uc $_)), td(qq!<span class=pointer onclick="define_ol('$_');">&nbsp;&nbsp;$sums{$_}{1}</span>!)) 
-               }
-               grep { $sums{$_}{1} > 0 }
-               @seven;
-    $hint_table = table(@rows);
-}
 
 # generate the rank colors and font sizes
 my $rank_colors_fonts = "";
@@ -1650,7 +1590,7 @@ for my $p (@pangrams) {
 
 # save IP address and state of the solve
 $ip_date{$key} = $today->as_d8()
-               . " $nhints $all_pangrams $ht_chosen $tl_chosen $ol_chosen $rank @found";
+               . " $nhints $all_pangrams $ht_chosen $tl_chosen rank @found";
 
 my $has_message = 0;
 if ($message) {
@@ -1963,7 +1903,7 @@ function set_focus() {
      <img width=50 src=/pics/bee-logo.jpg>
 </div>
 <div class=float-child3>
-    <span class=help><a target=_blank href='$log/nytbee/help.html#words'>Help</a></span><br><span class=create_add>$create_add</span>
+    <span class=help><a target=_blank onclick="set_focus();" href='$log/nytbee/help.html#words'>Help</a></span><br><span class=create_add>$create_add</span>
 </div>
 <br><br>
 <form id=main name=form method=POST>
@@ -1972,7 +1912,6 @@ function set_focus() {
 <input type=hidden name=nhints value=$nhints>
 <input type=hidden name=ht_chosen value=$ht_chosen>
 <input type=hidden name=tl_chosen value=$tl_chosen>
-<input type=hidden name=ol_chosen value=$ol_chosen>
 <input type=hidden name=has_message value=$has_message>
 <input type=hidden name=six value='@six'>
 <input type=hidden name=seven_let value='@seven_let'>
