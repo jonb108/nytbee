@@ -93,16 +93,18 @@ Words: $nwords, Points: $points<br>
 Pangrams: <span class=green>$pangrams</span><p>
 <p>
 What kinds of hints will be allowed for this puzzle?
-<ul>
-<input type=checkbox name=hint_h value=h checked> Hint Table<p>
-<input type=checkbox name=hint_t value=t checked> Two Letter List<p>
-<input type=checkbox name=hint_o value=o checked> One Letter List<p>
-<input type=checkbox name=hint_d value=d checked> Dictionary Definitions<p>
-<input type=checkbox name=hint_v value=v checked> All Reveal Commands (V and E)<p>
-<input type=checkbox name=hint_pct value='%'> Limited Reveal Commands (half of the letters)<p>
-<input type=checkbox name=hint_1 value=1 checked> Random Hint Table Entry<p>
-<input type=checkbox name=hint_2 value=2 checked> Random Two Letter List Entry<p>
-<input type=checkbox name=hint_g value=g> Give Up and show all words (G Y)<p>
+<ul style='line-height: 10mm'>
+<input type=checkbox name=hint_h value=h checked> Hint Table <span class=gray>(HT)</span><br>
+<input type=checkbox name=hint_t value=t checked> Two Letter List <span class=gray>(TL)</span><br>
+<input type=checkbox name=hint_o value=o checked> One Letter List <span class=gray>(OL)</span><br>
+<input type=checkbox name=hint_d value=d checked> Dictionary Definitions <span class=gray>(D)</span><br>
+<input type=checkbox name=hint_c value=c checked> Clues <span class=gray>(with the D command)</span><br>
+<input type=checkbox name=hint_v value=v checked> Reveal Commands <span class=gray>(V and E)</span><br>
+&nbsp;&nbsp;&nbsp;<input type=checkbox name=hint_pct value='%'> Limit Reveals to about half of the letters<br>
+<input type=checkbox name=hint_1 value=1 checked> Random Hint Table Entry <span class=gray>(1)</span><br>
+<input type=checkbox name=hint_2 value=2 checked> Random Two Letter List Entry <span class=gray>(2)</span><br>
+<input type=checkbox name=hint_g value=g> Give Up and show all words <span class=gray>(G Y)</span><br>
+<!-- htodcv%12g -->
 <button type=submit class=submit>Submit</button>
 </ul>
 </form>

@@ -82,7 +82,7 @@ for a competition - announce a certain puzzle as the one for the day.
     A nice dream, anyway :).
 
 another advantage - the clues from several people
-    are shown all together - and can be compared.
+    are shown all together (when using D) - and can be compared.
 and another - the ok words are not visible in the page source!
 
 ?ECP to edit a puzzle that you created
@@ -122,19 +122,6 @@ add to hint total when looking at all clues?
     clues are not as easy as dictionary definitions
     it's all just fun, anyway ...
 
-LCP - see 5 most recent community puzzles
-       and a link to see them all in a separate window?
-YCP - see all of your own community puzzles
-XCP<num> - delete your own community puzzle
-
-see all clues from a community puzzle? - click on link after I
-
-only shuffle when Return in empty text field and no message to clear
-    not when entering a word
-        save $cur_six and $cur_seven in hidden fields
-        to set up the $letters
-        and deal with a blank command and blank message
-        early on in the script
 document making clues for NYT puzzles
 
 disadvantages
@@ -201,6 +188,7 @@ use CGI::Carp qw/
 /;
 
 use BeeUtil qw/
+    red
     trim
     ip_id
     slash_date
@@ -236,6 +224,7 @@ my ($seven, $center, @pangrams);
 my @seven;
 my @ok_words;
 my %clue_for;
+my %allowed_hint;
 
 # see sub load_nyt_clues
 my %nyt_clues_for;        # key is word,
@@ -373,7 +362,7 @@ elsif (my ($ncp) = $cmd =~ m{\A xcp \s* (\d+) \z}xms) {
     else {
         my $href = do $fname;
         if ($href->{ip_id} ne $ip_id) {
-            $message = ul "<span class=red1>You did not create CP$ncp.</span>";
+            $message = ul(red("You did not create CP$ncp."));
             $cmd = '';
         }
         else {
@@ -464,9 +453,8 @@ my $show_date;
 my $cp_href;
 
 # we have a valid date. either d8 format or CP#
-# if d8 get the puzzle data
 if ($date =~ m{\A\d}xms) {
-    # NYT Puzzles
+    # d8 get the puzzle data from NYT Puzzles
     $show_date = date($date)->format("%B %e, %Y");
     my $puzzle = $puzzle{$date};
 
@@ -474,10 +462,14 @@ if ($date =~ m{\A\d}xms) {
     ($seven, $center, @pangrams) = split ' ', $s;
     @seven = split //, $seven;
     @ok_words = split ' ', $t;
+    # %clue_for is initialized from the database
+    # but only if needed.  see sub load_nyt_clues
+    %allowed_hint = map { $_ => 1 } split //, 'htodv12g';
 }
 else {
     # Community Puzzles
     # $date is CP\d+
+    $show_date = $date;
     my ($n) = $date =~ m{(\d+)}xms;
     my $fname = "$comm_dir/$n.txt";
     $cp_href = do $fname;
@@ -487,7 +479,7 @@ else {
     @pangrams = @{$cp_href->{pangrams}};
     @ok_words = @{$cp_href->{words}};
     %clue_for = %{$cp_href->{clues}};
-    $show_date = $date;
+    %allowed_hint = map { $_ => 1 } split //, $cp_href->{allowed_hints};
 }
 my $nwords = @ok_words;
 my $letter_regex = qr{([^$seven])}xms;  # see sub check_word
@@ -649,7 +641,7 @@ compute_score_and_rank();
 #
 # fullword is true only if we have given the entire word
 # like 'd juice'
-# and not dpg, dx1, or dxy
+# and not dpg, dx1, dx, or dxy
 #
 # if fullword we don't tally hints and we don't mask the word
 sub define {
@@ -657,7 +649,7 @@ sub define {
 
     my $def = '';
     # a Community Puzzle clue
-    if (! $fullword && exists $clue_for{$word}) {
+    if ($allowed_hint{c} && ! $fullword && exists $clue_for{$word}) {
         if (! $fullword) {
             $nhints += 3;
         }
@@ -665,7 +657,7 @@ sub define {
         return $def if $Dcmd eq 'd'; 
     }
     # community contributed NYT Bee Puzzle clues
-    elsif (! $fullword && exists $nyt_clues_for{$word}) {
+    elsif ($allowed_hint{c} && ! $fullword && exists $nyt_clues_for{$word}) {
         my $lw = length($word);
         for my $href (@{$nyt_clues_for{$word}}) {
             $def .= "<li style='list-style-type: circle'>"
@@ -679,6 +671,13 @@ sub define {
         # just one word, perhaps several hints for that word
         $nhints += 3;
         return $def if $Dcmd eq 'd'; 
+    }
+
+    if (! $fullword && ! $allowed_hint{d}) {
+        # dictionary definitions are not allowed
+        # so we return whatever clues we were able to get
+        # or nothing...
+        return $def;
     }
 
     my ($html, @defs);
@@ -735,6 +734,91 @@ sub define {
     return $def;
 }
 
+sub do_define {
+    my ($Dcmd, $term) = @_;
+
+    load_nyt_clues;
+    my $line = "&mdash;" x 4;
+    if ($term eq 'pg') {
+        for my $p (grep { !$is_found{$_} } @pangrams) {
+            my $def = define($p, $Dcmd, 0);
+            if ($def) {
+                $message .= ul($def) . '--';
+            }
+        }
+        $message =~ s{--\z}{}xms;
+        $message =~ s{--}{$line<br>}xmsg;
+        if ($message) {
+            $message = "Pangrams:$message";
+        }
+        $cmd = '';
+    }
+    elsif ($term =~ m{\A ([a-z])(\d+) \z}xms) {
+        my $let = $1;
+        my $len = $2;
+        if (index($seven, $let) < 0) {
+            $message = ul(red($cmd) . ": \U$let\E is not in \U$seven");
+        }
+        else {
+            $message = '';
+            for my $w (get_words($let, $len)) {
+                my $def = define($w, $Dcmd, 0);
+                if ($def) {
+                    $message .= ul($def) .  '--';
+                }
+            }
+            $message =~ s{--\z}{}xms;
+            $message =~ s{--}{$line<br>}xmsg;
+            if ($message) {
+                $message = "\U$term\E:<br>$message";
+            }
+        }
+        $cmd = '';
+    }
+    elsif ($term =~ m{\A ([a-z][a-z]) \z}xms) {
+        my $lets = $1;
+        if ($lets =~ $letter_regex) {
+            $message = ul(red($cmd) . " : $1\E is not in \U$seven");
+        }
+        else {
+            $message = '';
+            for my $w (get_words($lets)) {
+                my $def = define($w, $Dcmd, 0);
+                if ($def) {
+                    $message .= ul($def) . '--';
+                }
+            }
+            $message =~ s{--\z}{}xms;
+            $message =~ s{--}{$line<br>}xmsg;
+            if ($message) {
+                $message = "\U$term\E:<br>$message";
+            }
+        }
+        $cmd = '';
+    }
+    elsif ($term =~ m{\A ([a-z]) \z}xms) {
+        my $let = $1;
+        if ($let =~ $letter_regex) {
+            $message = ul(red($cmd) . ": \U$1\E is not in \U$seven");
+        }
+        else {
+            $message = '';
+            for my $w (get_words($let)) {
+                my $def = define($w, $Dcmd, 0);
+                if ($def) {
+                    $message .= ul($def) . '--';
+                }
+            }
+            $message =~ s{--\z}{}xms;
+            $message =~ s{--}{$line<br>}xmsg;
+            if ($message) {
+                $message = "\U$term\E:<br>$message";
+            }
+        }
+        $cmd = '';
+    }
+}
+
 sub reveal {
     my ($word, $nlets, $beg_end) = @_;
 
@@ -743,6 +827,10 @@ sub reveal {
     if ($nlets >= $lw) {
         # silently ignore
         return;
+    }
+    my $max_lets = int(($lw+1)/2);
+    if ($allowed_hint{'%'} && $nlets > $max_lets) {
+        $nlets = $max_lets;
     }
     $nhints += 2;
     if (! $beg_end) {
@@ -773,35 +861,8 @@ sub get_words {
            @ok_words;
 }
 
-# do we have a reveal command?
-if ($cmd eq 'ht') {
-    if (! $ht_chosen) {
-        $ht_chosen = 1;
-        $nhints += 10;
-    }
-    $cmd = '';
-}
-elsif ($cmd eq 'tl') {
-    if (! $tl_chosen) {
-        $tl_chosen = 1;
-        $nhints += 5;
-    }
-    $cmd = '';
-}
-elsif ($cmd eq 'ol') {
-    if (! $ol_chosen) {
-        $ol_chosen = 1;
-        if (! ($ht_chosen || $tl_chosen)) {
-            $nhints += 3;
-        }
-    }
-    $cmd = '';
-}
-elsif (my ($ev, $nlets, $term)
-    = $cmd =~ m{
-        \A ([ev])\s*(\d+)\s*(pg|[a-z]|[a-z]\s*\d+|[a-z]\s*[a-z]) \z
-      }xms
-) {
+sub do_reveal {
+    my ($ev, $nlets, $term) = @_;
     my $err = 0;
     my $end = $ev eq 'e';
     if ($term eq 'pg') {
@@ -811,7 +872,7 @@ elsif (my ($ev, $nlets, $term)
     }
     elsif (my ($first, $len) = $term =~ m{\A ([a-z])\s*(\d+)}xms) {
         if ($first =~ $letter_regex) {
-            $message = ul(ured($cmd) . ": \U$first\E is not in \U$seven");
+            $message = ul(red($cmd) . ": \U$first\E is not in \U$seven");
             $err = 1;
         }
         else {
@@ -828,7 +889,7 @@ elsif (my ($ev, $nlets, $term)
     elsif (length($term) == 2) {
         # $term is two letters
         if ($term =~ $letter_regex) {
-            $message = ul(ured($cmd) . ": \U$1\E is not in \U$seven");
+            $message = ul(red($cmd) . ": \U$1\E is not in \U$seven");
             $err = 1;
         }
         else {
@@ -846,7 +907,7 @@ elsif (my ($ev, $nlets, $term)
     else {
         # $term is one letter
         if ($term =~ $letter_regex) {
-            $message = ul(ured($cmd) . ": \U$1\E is not in \U$seven");
+            $message = ul(red($cmd) . ": \U$1\E is not in \U$seven");
             $err = 1;
         }
         else {
@@ -863,6 +924,52 @@ elsif (my ($ev, $nlets, $term)
     }
     if (!$err && $message) {
         $message = "\U$cmd\E:<ul>$message</ul>";
+    }
+}
+
+if ($cmd eq 'ht') {
+    if (! $allowed_hint{h}) {
+        $message = "HT is not allowed for this puzzle.";
+    }
+    elsif (! $ht_chosen) {
+        $ht_chosen = 1;
+        $nhints += 10;
+    }
+    $cmd = '';
+}
+elsif ($cmd eq 'tl') {
+    if (! $allowed_hint{t}) {
+        $message = "TL is not allowed for this puzzle.";
+    }
+    elsif (! $tl_chosen) {
+        $tl_chosen = 1;
+        $nhints += 5;
+    }
+    $cmd = '';
+}
+elsif ($cmd eq 'ol') {
+    if (! $allowed_hint{o}) {
+        $message = "OL is not allowed for this puzzle.";
+    }
+    elsif (! $ol_chosen) {
+        $ol_chosen = 1;
+        if (! ($ht_chosen || $tl_chosen)) {
+            $nhints += 3;
+        }
+    }
+    $cmd = '';
+}
+# do we have a reveal command?
+elsif (my ($ev, $nlets, $term)
+    = $cmd =~ m{
+        \A ([ev])\s*(\d+)\s*(pg|[a-z]|[a-z]\s*\d+|[a-z]\s*[a-z]) \z
+      }xms
+) {
+    if (! $allowed_hint{v}) {
+        $message = "\U$ev\E is not allowed for this puzzle.";
+    }
+    else {
+        do_reveal($ev, $nlets, $term);
     }
     $cmd = '';
 }
@@ -898,88 +1005,13 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
 elsif ($cmd =~ m{\A (d|d[*]) \s*  (pg|[a-z]|[a-z]\d+|[a-z][a-z]) \z}xms) {
     my $Dcmd = $1;
     my $term = $2;
-    load_nyt_clues;
-    my $line = "&mdash;" x 4;
-    if ($term eq 'pg') {
-        for my $p (grep { !$is_found{$_} } @pangrams) {
-            $message .= "<ul>"
-                     .  define($p, $Dcmd, 0)
-                     .  "</ul>"
-                     .  "--";
-                     ;
-        }
-        $message =~ s{--\z}{}xms;
-        $message =~ s{--}{$line<br>}xmsg;
-        if ($message) {
-            $message = "Pangrams:$message";
-        }
-        $cmd = '';
+    if (! $allowed_hint{d} && ! $allowed_hint{c}) {
+        $message = "D is not allowed for this puzzle";
     }
-    elsif ($term =~ m{\A ([a-z])(\d+) \z}xms) {
-        my $let = $1;
-        my $len = $2;
-        if (index($seven, $let) < 0) {
-            $message = ul(ured($cmd) . ": \U$let\E is not in \U$seven");
-        }
-        else {
-            $message = '';
-            for my $w (get_words($let, $len)) {
-                $message .= ul(define($w, $Dcmd, 0))
-                         .  "--";
-                         ;
-            }
-            $message =~ s{--\z}{}xms;
-            $message =~ s{--}{$line<br>}xmsg;
-            if ($message) {
-                $message = "\U$term\E:<br>$message";
-            }
-        }
-        $cmd = '';
+    else {
+        do_define($Dcmd, $term);
     }
-    elsif ($term =~ m{\A ([a-z][a-z]) \z}xms) {
-        my $lets = $1;
-        if ($lets =~ $letter_regex) {
-            $message = ul(ured($cmd) . " : $1\E is not in \U$seven");
-        }
-        else {
-            $message = '';
-            for my $w (get_words($lets)) {
-                $message .= "<ul>"
-                         .  define($w, $Dcmd, 0)
-                         .  "</ul>"
-                         .  "--";
-                         ;
-            }
-            $message =~ s{--\z}{}xms;
-            $message =~ s{--}{$line<br>}xmsg;
-            if ($message) {
-                $message = "\U$term\E:<br>$message";
-            }
-        }
-        $cmd = '';
-    }
-    elsif ($term =~ m{\A ([a-z]) \z}xms) {
-        my $let = $1;
-        if ($let =~ $letter_regex) {
-            $message = ul(ured($cmd) . ": \U$1\E is not in \U$seven");
-        }
-        else {
-            $message = '';
-            for my $w (get_words($let)) {
-                $message .= "<ul>"
-                         .  define($w, $Dcmd, 0)
-                         .  "</ul>"
-                         .  "--";
-                         ;
-            }
-            $message =~ s{--\z}{}xms;
-            $message =~ s{--}{$line<br>}xmsg;
-            if ($message) {
-                $message = "\U$term\E:<br>$message";
-            }
-        }
-        $cmd = '';
-    }
+    $cmd = '';
 }
 elsif ($cmd =~ m{\A (d[*]) \s* ([a-z]+) \z}xms
        ||
@@ -996,17 +1028,22 @@ elsif ($cmd =~ m{\A (d[*]) \s* ([a-z]+) \z}xms
     $cmd = '';
 }
 elsif ($cmd =~ m{\A g \s+ y \z}xms) {
-    my @words =
-             map {
-                 $is_pangram{lc $_}? color_pg($_): $_
-             }
-             map { ucfirst }
-             sort
-             grep { !$is_found{$_} }
-             @ok_words;
-    if (@words) {
-        $nhints += @words * 5;
-        $message = "<p class=mess>@words";
+    if (! $allowed_hint{g}) {
+        $message = "G Y is not allowed for this puzzle.";
+    }
+    else {
+        my @words =
+                 map {
+                     $is_pangram{lc $_}? color_pg($_): $_
+                 }
+                 map { ucfirst }
+                 sort
+                 grep { !$is_found{$_} }
+                 @ok_words;
+        if (@words) {
+            $nhints += @words * 5;
+            $message = "<p class=mess>@words";
+        }
     }
     $cmd = '';
 }
@@ -1270,7 +1307,7 @@ sub check_word {
         return 'too short';
     }
     if (index($w, $center) < 0) {
-        return "does not contain: <span class=red1>\U$center</span>";
+        return "does not contain: " . red(uc($center));
     }
     if (my ($c) = $w =~ $letter_regex) {
         return "\U$c\E is not in \U$seven";
@@ -1316,11 +1353,6 @@ if ($not_okay_words) {
 $not_okay_words
 </ul>
 EOH
-}
-
-sub ured {
-    my ($s) = @_;
-    return "<span class=red1>\U$s\E</span>";
 }
 
 sub color_pg {
@@ -1398,33 +1430,43 @@ my $bingo = keys %first_char == 7? ', Bingo': '';
 # now that #we have computed %sums and %two_lets
 # perhaps $cmd was not words to add after all...
 if ($cmd eq '1') {
-    # find a random non-zero entry in the hint table
-    my @entries;
-    for my $l (4 .. $max_len) {
-        for my $c (@seven) {
-            if ($sums{$c}{$l}) {
-                push @entries, "\U$c$l-$sums{$c}{$l}";
+    if (! $allowed_hint{1}) {
+        $message = '1 is not allowed for this puzzle.';
+    }
+    else {
+        # find a random non-zero entry in the hint table
+        my @entries;
+        for my $l (4 .. $max_len) {
+            for my $c (@seven) {
+                if ($sums{$c}{$l}) {
+                    push @entries, "\U$c$l-$sums{$c}{$l}";
+                }
             }
         }
-    }
-    if (@entries) {
-        # not Queen Bee yet
-        ++$nhints;
-        $message = $entries[ rand @entries ];
+        if (@entries) {
+            # not Queen Bee yet
+            ++$nhints;
+            $message = $entries[ rand @entries ];
+        }
     }
 }
 elsif ($cmd eq '2') {
-    # random non-zero entry in %two_lets
-    my @entries;
-    for my $k (sort keys %two_lets) {
-        if ($two_lets{$k}) {
-            push @entries, "\U$k-$two_lets{$k}";
-        }
+    if (! $allowed_hint{2}) {
+        $message = '2 is not allowed for this puzzle.';
     }
-    if (@entries) {
-        # not Queen Bee yet
-        ++$nhints;
-        $message = $entries[ rand @entries ];
+    else {
+        # random non-zero entry in %two_lets
+        my @entries;
+        for my $k (sort keys %two_lets) {
+            if ($two_lets{$k}) {
+                push @entries, "\U$k-$two_lets{$k}";
+            }
+        }
+        if (@entries) {
+            # not Queen Bee yet
+            ++$nhints;
+            $message = $entries[ rand @entries ];
+        }
     }
 }
 

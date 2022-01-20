@@ -23,6 +23,9 @@ td, th {
 .green {
     color: green;
 }
+.gray {
+    color: gray;
+}
 a {
     text-decoration: none;
     color: blue;

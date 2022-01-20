@@ -297,7 +297,12 @@ at the top of the main screen (right under 'Help').
 You can also click on it here:
 <a target=nytbee href='http://logicalpoetry.com/nytbee/mkpuz.html'>Create Puzzle</a>.
 <p>
-There are 5 steps to create a puzzle:
+There are 6 steps to create a puzzle:
+<style>
+li {
+    margin-bottom: 3mm;
+}
+</style>
 <ol>
 <li>Choose a 'pangramic' word.  This ensures that there is at
 least one pangram.  Unlike in the NYT puzzles here you are allowed
@@ -310,13 +315,35 @@ include a very rare or esoteric word you may be subject
 to questioning and possible derision. &#128521;
 Surprisingly, there are many common ordinary words that have not yet been used
 in any of the NYT Puzzles.
-<li>Give clues for the words, if you wish.
-<li>Lastly, you give your name and location.
+<li>Give clues for the words, if you wish.  See the <a href=#clues>next section</a> for
+more details on entering the clues.
+<li>Choose which kind of Hints are allowed for this puzzle.
+This step needs a little explanation.
+<ul>
+<li>If you <i>don't</i> allow Dictionary
+Definitions but <i>do</i> allow Clues then the <span class=cmd>D</span> command 
+<i>can</i> be used but it will only show the Clues that
+you gave in the previous step.
+<li>You can choose to allow or not allow the reveal commands
+<span class=cmd>V</span> and <span class=cmd>E</span>.
+If they are allowed you can also choose to reveal only
+about half of the letters.  For example, if the words are
+HAPPENING, HATH, and HATHA and your command is <span class=cmd>V4HA</span>
+then you will see this:
+<p>
+<ul>
+HAPP _ _ _ _ _<br>
+HAT _ _<br>
+HA _ _
+<p>
+</ul>
+</ul>
+<li>Lastly, give your Name and Location.
 </ol>
 When these steps are complete your puzzle is assigned
 a number and is immediately available to the community.
 This number is used when giving the <span class=cmd>CP&lt;num&gt;</span> command.
-CP here stands for Community Puzzle - a puzzle created by you!
+CP here stands for Community Puzzle - a puzzle created by you for the HiveMind community!
 <a name=clues></a>
 <h2>Clues for Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>

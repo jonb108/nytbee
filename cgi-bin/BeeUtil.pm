@@ -18,6 +18,7 @@ our @EXPORT_OK = qw/
     slash_date
     shuffle
     JON
+    red
 /;
 
 sub slash_date {
@@ -115,6 +116,10 @@ sub shuffle {
     my @new;
     push @new, splice @elems, rand @elems, 1 while @elems;
     return @new;
+}
+
+sub red {
+    return "<span class=red1>@_</span>";
 }
 
 sub JON {
