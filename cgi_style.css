@@ -3,6 +3,9 @@ body {
     margin: .5in;
     font-size: 18pt;
 }
+li {
+    margin-bottom: 4mm;
+}
 td, th {
     font-family: Arial;
     font-size: 18pt;

@@ -1,0 +1,10 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use DB_File;
+die "dump_dbm file.dbm" unless @ARGV && $ARGV[0] =~ m{\S+[.]dbm \z}xms;
+my %hash;
+tie %hash, 'DB_File', $ARGV[0];
+for my $k (sort keys %hash) {
+    print "$k => $hash{$k}\n";
+}

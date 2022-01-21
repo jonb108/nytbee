@@ -30,6 +30,9 @@ use BeeUtil qw/
 /;
 
 my $word = lc trim $q->param('word');
+if (length $word == 0) {
+    error "Missing pangramic word";
+}
 
 my @lets = uniq_chars($word);
 if (@lets != 7) {

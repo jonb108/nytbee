@@ -10,14 +10,19 @@ use Date::Simple qw/
 /;
 my $d8 = today->as_d8();
 
+use Bee_DBH qw/
+    get_person
+/;
+my ($ip_id, $person_id, $name, $location) = get_person();
+# All may be null in case this is the first time
+# the person is creating a puzzle or adding clues.
+# we do this to get the $name and $location
+# in case they _have_ been here before.
+# 
+
 use BeeUtil qw/
     word_score
     trim
-/;
-
-use Bee_DBH qw/
-    $dbh
-    get_person
 /;
 
 use Data::Dumper;
@@ -25,26 +30,6 @@ $Data::Dumper::Terse  = 1;
 $Data::Dumper::Indent = 0;
 
 my %params = $q->Vars();
-
-# let us assume that the creator of this community puzzle
-# will not abandon the creation at this point.
-# let's get the next number...
-open my $in, '<', 'community_puzzles/last_num.txt';
-my $n = <$in>;
-close $in;
-chomp $n;
-++$n;
-my $CPn = "CP$n";
-
-my ($ip_id, $person_id, $name, $location) = get_person();
-my $sth_ins_clue = $dbh->prepare(<<'EOS');
-
-    INSERT
-      INTO bee_clue
-           (person_id, date, word, clue)
-    VALUES (?, ?, ?, ?)
-
-EOS
 
 my %clues;
 CLUE:
@@ -59,7 +44,6 @@ for my $k (grep { m! _clue \z!xms } keys %params) {
         # no clue
         next CLUE;
     }
-    $sth_ins_clue->execute($person_id, $CPn, $w, $clue);
     $clues{$w} = $clue;
 }
 my $clues = Dumper(\%clues);

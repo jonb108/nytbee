@@ -4,9 +4,26 @@ use warnings;
 
 =comment
 
-ECP
+edit_cp/num
+    verify creator, get ip_id, name, location
+    present words in two categories allow uncheck, check
+        then call edit_cp_clues
+        with hidden fields, etc.
+edit_cp_clues
+    hidden fields with num, words, pangrams, seven, center, person_id, etc
+    present clues
+        3rd time to use the cycle thing so make sub in BeeUtil or elsewhere?
+    call edit_cp_final
+edit_cp_final
+    to get clues and write back to num.txt
+        update date as well
+        
 what if i want a specific word to appear in a puzzle?
 what pangramic word would make that possible?
+
+pwords.txt
+fourminus.txt - eliminate words with > 7 unique letters
+    minus pwords.txt - which (along with other files) is updated nightly...
 
 for an NYT Puzzle with clues
     authors are listed, click to see.
@@ -219,14 +236,41 @@ use Date::Simple qw/
 /;
 
 use DB_File;
+
+##############
 my %puzzle;
 tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
+# the NYT archive
+# key is d8
+# value is seven center pangrams... | words
+#-------------
+
+
+###############
 my %ip_date;
 tie %ip_date, 'DB_File', 'ip_date.dbm';
+# the current puzzles for each "person" = ip_address/browser_signature
+# and their current state
+#
+# a complex hash key/value
+# key is 'ip_address browser_signature puzzle_date'
+#            0              1             2
+# value is #hints all_pangrams_found ht_chosen tl_chosen rank words_found...
+#            0         1                 2         3      4
+#-------------
 
-# for NYT puzzles:
+################
+# clues for NYT puzzles are stored in the mysql database
+# we want to avoid getting a connection each time just to
+# see if there are any clues so ...
 my %puzzle_has_clues;
-tie %puzzle_has_clues, 'DB_File', 'nyt_puzzles_has_clues.dbm';
+tie %puzzle_has_clues, 'DB_File', 'nyt_puzzle_has_clues.dbm';
+
+# key is puzzle_date
+# value is does the puzzle have any clues? - always 1
+# i.e. if the puzzle key is there then the puzzle has clues
+# you can ask 'exists' if you'd like
+#--------------
 
 my $comm_dir = 'community_puzzles';
 my ($seven, $center, @pangrams);
@@ -580,11 +624,12 @@ my @ranks = (
 );
 
 my (@found, $nhints, $ht_chosen, $tl_chosen);
-my $key = "$ip_id $date";
-if (exists $ip_date{$key}) {
-    my ($d8, $ap, $rnk);
-    ($d8, $nhints, $ap, $ht_chosen, $tl_chosen, $rnk, @found)
-        = split ' ', $ip_date{$key};
+my $ip_date_key = "$ip_id $date";
+if (exists $ip_date{$ip_date_key}) {
+    my ($ap, $rank);    # all pangrams is not needed here...
+                        # rank is recomputed
+    ($nhints, $ap, $ht_chosen, $tl_chosen, $rank, @found)
+        = split ' ', $ip_date{$ip_date_key};
 }
 else {
     $nhints    = $new_puzzle? 0: $params{nhints} || 0;    # from before
@@ -597,8 +642,8 @@ sub my_puzzles {
     return
     map {
         [
-            (split ' ', $_)[2],
-            (split ' ', $ip_date{$_})[2, 5]
+            (split ' ', $_)[2],     # date/CPn
+            (split ' ', $ip_date{$_})[1, 4] # all_pangrams, rank#
         ]
     }
     sort
@@ -1041,12 +1086,12 @@ elsif (my ($ncp) = $cmd =~ m{\A lcp \s*(\d*) \z}xms) {
     my $s = `cd community_puzzles; ls -tr1 [0-9]*.txt|tail -$ncp`;
     my @rows;
     my $title_row = Tr(th('&nbsp;'),
-                       th('Name'),
-                       th('Seven'),
+                       th({ style => 'text-align: left' }, 'Name'),
+                       th({ style => 'text-align: left' }, 'Seven'),
                        th('Center'),
-                       th('#words'),
-                       th('#points'),
-                       th('#pangrams'),
+                       th('Words'),
+                       th('Points'),
+                       th('Pangrams'),
                     );
 
     for my $n (sort { $b <=> $a }
@@ -1081,13 +1126,18 @@ elsif ($cmd eq 'ycp') {
     my $s = `cd community_puzzles; grep -l '$ip_id' *.txt`;
     my @nums = sort { $b <=> $a }
                $s =~ m{(\d+)}xmsg;
-    my $rows = '';
+    my @rows;
     for my $n (@nums) {
         my $href = do "community_puzzles/$n.txt";
-        $rows .= Tr(td("CP$n"), td(slash_date($href->{created})));
+        my @pangrams = map { ucfirst } @{$href->{pangrams}};
+        push @rows, Tr(td("<a target=nytbee onclick='set_focus();'"
+                        . " href='$log/cgi-bin/edit_cp/$n'>CP$n</a>"),
+                       td(slash_date($href->{created})),
+                       td(@pangrams),
+                    );
     }
     $message = "Your Community Puzzles:<p>"
-             . table({ cellpadding => 5 }, $rows);
+             . table({ cellpadding => 5 }, @rows);
     $cmd = '';
 }
 elsif ($cmd eq 'l') {
@@ -1589,8 +1639,8 @@ for my $p (@pangrams) {
 }
 
 # save IP address and state of the solve
-$ip_date{$key} = $today->as_d8()
-               . " $nhints $all_pangrams $ht_chosen $tl_chosen rank @found";
+$ip_date{$ip_date_key}
+    = "$nhints $all_pangrams $ht_chosen $tl_chosen $rank @found";
 
 my $has_message = 0;
 if ($message) {

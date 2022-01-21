@@ -13,7 +13,7 @@ depending on the ip and browser nums
 # a poor man's database
 use DB_File;
 my %puzzle_has_clues;
-tie %puzzle_has_clues, 'DB_File', 'nyt_puzzles_has_clues.dbm';
+tie %puzzle_has_clues, 'DB_File', 'nyt_puzzle_has_clues.dbm';
 
 use CGI qw/
     :standard

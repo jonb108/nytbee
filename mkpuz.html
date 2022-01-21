@@ -2,27 +2,31 @@
 <head>
 <title>The Spelling Bee Puzzle of New York Times</title>
 <link rel='stylesheet' type='text/css' href='cgi_style.css'/>
+<script>
+function set_focus() {
+    document.getElementById('word').focus();
+}
+</script>
 </head>
 <body>
 <h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>1</span> <span class=step_name>Pangramic Word</span></h1>
 <form name=form action=/cgi-bin/mkpuz_tally method=POST>
 Enter a pangramic word:<p>
-<input type=text name=word size=15>
+<input type=text name=word id=word size=15>
 <p>
 <button type=submit>Submit</button>
 <p>
 In this context a pangramic word is one that has exactly 7 unique letters.
 <p>
-Here are some lists of pangramic words:
+Here are three lists of pangramic words:
 <p>
-1. <a target=pangramic href='pangrams.html'>From the NYT Puzzles</a>
-<p>
-2. <a target=pangramic href='comm_not_puz.html'>From a list of 10,000 commonly used words</a> (from <a href='https://englishgrammarhere.com/vocabulary/10000-most-common-words-in-english/'>englishgrammarhere.com</a>)
-<p>
-3. <a target=pangramic href='lbig.html'>From a large lexicon</a> (some rare and esoteric - from /usr/share/dict/words on OSX)
-<p>
-Note that words in list 1 do not appear in list 2.  The lists are disjoint.  You can also just enter 7 different letters and see if there are any words in a dictionary that use them all.  Try, for example, <span class=green>abclrne</span>
+<ol>
+<li><a target=pangramic onclick="set_focus();" href='pangrams.html'>From the NYT Puzzles</a>
+<li><a target=pangramic onclick="set_focus();" href='comm_not_puz.html'>From a list of 10,000 commonly used words</a> (from <a onclick="set_focus();" href='https://englishgrammarhere.com/vocabulary/10000-most-common-words-in-english/'>englishgrammarhere.com</a>)
+<li><a target=pangramic onclick="set_focus();" href='lbig.html'>From a large lexicon</a> (some rare and esoteric - from /usr/share/dict/words on OSX)
+</ol>
+Note that words in list 1 do not appear in list 2.  The lists are disjoint.  You can also just enter 7 different letters and see if there are any words in the lists that use those 7.  Try, for example, <span class=green>abclrne</span>
 </form>
 </body>
-<script>document.form.word.focus();</script>
+<script>set_focus();</script>
 </html>
