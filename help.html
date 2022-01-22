@@ -30,6 +30,15 @@ Give both of them a try.
 The new mechanism has several <a href=#advantages>advantages</a>.
 There is a <a target=nytbee href='https://youtu.be/PsWUQJXFb1s'>short film</a> that shows how it works.
 <a href='mailto:Jon Bjornstad <jon.bjornstad@gmail.com>?subject=NYT Bee'>Let me know</a> what you think.
+<p>
+My name is Jon Bjornstad.  I live in Davis, CA.  I am 72 years old.
+I retired from the corporate software world a few years ago
+but I still very much enjoy the art of programming.
+In short, I am an old Perl hacker.
+When I saw the <a href=#table_list>Hint Table</a> of the NYT Spelling Bee
+and realized that it was <i>static</i>, that it did not change as
+you found words, I immediately thought, "That's not right.  I can do better."
+And I have.
 <a name=toc></a>
 <h2>Table of Contents</h2>
 <p>
@@ -79,21 +88,22 @@ that are obscure, hyphenated, or proper nouns.
 </h2>
 The many advantages of this new way include:
 <ul>
-<li>clerical assistance in creating clues (for NYT Puzzles and Community Puzzles) to share in the forum or on FaceBook.  The clues are preserved - not cleared each day.  Also easy to see them all in one place to compare.  with the D command and color coded.  make another list with all found words plus all hints color coded. for fun.
-Can look at all of one author's clues along with the word.
+<li>The Hint Table and Two Letter List are <i>dynamic</i>.
+<li>4 different presentations of the 7 letters.
+<li>You can play the large archive of NYT puzzles (random or specific dates).
+<li>Multiple puzzles at once - multi-tasking.
+<li>Dictionary definitions - to enlarge and challenge your vocabulary.
+<li>Incremental revealing of letters.
+<li>Clerical assistance in <a href=#clues>creating clues for NYT Puzzles</a> to share in the HiveMind Forum or on FaceBook.
+Clues are shown with D commands.
+<li>Create your <i>own</i> puzzle with clues to share.
+<li>REplaying puzzles.
+<li>Search the NYT archive and community puzzles for words.
+<li>Find puzzles with the same 7 letters
+(usually with a different center letter).
+<li>An easy and clean 'dictionary browser'.
 <li>No need to register or login.
-<li>4 different presentations of the 7 letters
-<li>dynamic hint table and two letter list
-<li>can play the large archive of NYT puzzles (random or specific dates)
-<li>multiple puzzles at once - multi-tasking!
-<li>incremental revealing of letters
-<li>dictionary definitions - to enlarge and challenge your vocabulary
-<li>create your own puzzle with clues to share
-<li>no subscription needed to play the full puzzle
-<li>an easy and clean 'dictionary browser'
-<li>replaying puzzles
-<li>search the archive for words
-<li>find same 7 letter puzzles (usually with a different center letter)
+<li>No subscription needed to play the full puzzle.
 </ul>
 <a name=words></a>
 <h2>Words and Commands
@@ -143,13 +153,16 @@ Most of us mere mortals need some help to get to Amazing or Genius!
 <tr><td colspan=2>
 If there is a <a href=#clue>"clue"</a> for a word it is shown instead of a
 dictionary definition.  Definitions come from
-Merriam-Webster (merriam-webster.com) and Oxford (lexico.com).
-<p></td></tr>
-<tr><td colspan=2><span class=cmd>D&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.  No hints tallied.  This form of the <span class=cmd>D</span> command serves as a quick and fun way to browse the dictionary!  You can ask for definitions of <i>any</i> word - not just the ones in the puzzle.</td></tr>
-<tr><td><span class=cmd>D*&nbsp;&nbsp;...</span></td><td>The above <span class=cmd>D</span> commands give at most 3 definitions. <span class=cmd>D*</span> will give them All plus any <a href=#clues>clues</a>.<p></td></tr>
+Merriam-Webster (<a target=_blank href='https://merriam-webster.com'>merriam-webster.com</a>) and Oxford (<a target=_blank href='https://lexico.com'>lexico.com</a>).  <p></td></tr>
+<tr><td colspan=2><span class=cmd>D&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.
+You can ask for definitions of <i>any</i> word - not just the ones in the puzzle.
+No hints are tallied.
+This form of the <span class=cmd>D</span> command serves as a quick and fun way to browse a dictionary.  More pleasant somehow than the full merriam-webster.com site.
+</td></tr>
+<tr><td><span class=cmd>D*&nbsp;&nbsp;...</span></td><td>The above <span class=cmd>D</span> commands give at most 3 definitions. <span class=cmd>D*</span> will give them <i>all</i> plus any <a href=#clues>clues</a>.<p></td></tr>
 <tr><td><span class=cmd>V2P</span></td><td>Reveal the first two letters of the pangrams.</td></tr>
 <tr><td><span class=cmd>V3B8</span></td><td>Reveal the first 3 letters of the words beginning with B of length 8.</td></tr>
-<tr><td><span class=cmd>V3TR</span></td><td>Reveal the first 3 letters of the words beginning with TR.</td></tr>
+<tr><td><span class=cmd>V4TR</span></td><td>Reveal the first 4 letters of the words beginning with TR.</td></tr>
 <tr><td colspan=2>Using <span class=cmd>E</span> instead of <span class=cmd>V</span> reveals letters at the front and at the End of the word.  Commands that would reveal the entire word (like V4B4) are silently ignored (as are commands like V1B8 or V2TR).</td></tr>
 <tr><td colspan=2>Both define and reveal commands skip words that have already been found.<p></td></tr>
 <tr><td><span class=cmd>1</span></td><td>Show a random entry from the Hint Table.</td></tr>
@@ -161,7 +174,7 @@ Merriam-Webster (merriam-webster.com) and Oxford (lexico.com).
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
 <p>
-The <span class=green>Hint Table</span> (invoked with the <span class=cmd>HT</span> command) looks like this:
+The <span class=green>Hint Table</span> (aka The Grid) (invoked with the <span class=cmd>HT</span> command) looks like this:
 <ul>
 <img src=pics/hint_table.png>
 </ul>
@@ -220,30 +233,27 @@ Commands to access the large NY Times <a href=#archive>Archive</a> of Spelling B
 <tr><td><span class=cmd>NR</span></td><td>New NYT puzzle from a Random date.</td></tr>
 <tr><td><span class=cmd>&lt;date&gt;</span></td><td>New NYT puzzle from the given date.  You can enter dates in several ways: 10/20/19 or 9/23 (current year) or 15 (current month).  Dates must be on or after May 29, 2018.</td></tr>
 <tr><td><span class=cmd>T</span></td><td>Return to today's NYT puzzle.</td></tr>
-<tr><td><span class=cmd>L</span></td><td>List the current puzzles.  * marks the current puzzle.  p marks puzzles where all pangrams have been found.</td></tr>
-<tr><td><span class=cmd>P&lt;num&gt;</span></td><td>Return to puzzle #num in the list.</td></tr>
-<tr><td><span class=cmd>X&lt;nums&gt;</span></td><td>Remove the numbered puzzles from the list. You can give a range.  For example: <span class=cmd>X 2 4-6 9</span>&nbsp;&nbsp;&nbsp;This clears the words you found in the puzzle so if you choose the puzzle again you will start afresh.</td></tr>
-<tr><td><span class=cmd>XA</span></td><td>Remove all puzzles from the list and revert to today's NYT puzzle.  The words you found in today's puzzle are preserved.<p></td></tr>
+<tr><td><span class=cmd>L</span></td><td>List the current puzzles.  <span class=red>*</span> marks the current puzzle.  p marks puzzles where all pangrams have been found.</td></tr>
+<tr><td><span class=cmd>N</span></td><td>Move to the next puzzle in the list - wrapping from last to first.</td></tr>
+<tr><td><span class=cmd>P</span></td><td>Move to the previous puzzle in the list - wrapping from first to last.</td></tr>
+<tr><td><span class=cmd>P&lt;num&gt;</span></td><td>Move to puzzle #num in the list.</td></tr>
+<tr><td><span class=cmd>X</span></td><td>Remove the current puzzle from the list and move to the first in the list - or today. This clears the words you found in the removed puzzle so if you choose the puzzle again you will start afresh.</td></tr>
+<tr><td><span class=cmd>X&lt;nums&gt;</span></td><td>Remove the numbered puzzles from the list. You can give a range.  For example: <span class=cmd>X 2 4-6 9</span></td></tr>
+<tr><td><span class=cmd>XA</span></td><td>Remove all puzzles from the list and return to today's NYT puzzle.  The words you found in today's puzzle are preserved.<p></td></tr>
 <tr><td><span class=cmd>LCP</span></td><td>List the 5 most recent Community Puzzles.  List 10 with <span class=cmd>LCP 10</span></td></tr>
 <tr><td><span class=cmd>CP&lt;num&gt;</span></td><td>New Community Puzzle #num.  This <i>plays</i> the puzzle.  To <i>create</i> a puzzle click <a target=nytbee href='http://logicalpoetry.com/nytbee/mkpuz.html'>here</a>.</td></tr>
-<tr><td><span class=cmd>YCP</span></td><td>List the Community Puzzles that you created.  Clicking on the CP# will edit the puzzle. You can change the words and the clues.</td></tr>
+<tr><td><span class=cmd>YCP</span></td><td>List the Community Puzzles that you created.  Clicking on the <span style="color: blue">CP#</span> link will edit the puzzle. You can change the words and the clues.</td></tr>
 <tr><td><span class=cmd>XCP&lt;num&gt;</span></td><td>Delete Community Puzzle #num and revert to today's NYT puzzle. You can only delete puzzles that you created.  You would only do this if you deem the puzzle to be flawed in some way.</td></tr>
 </table>
 <a name=power></a>
 <h2>Power User Commands
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
-???<p>
-Limited use ..., it's fun to add functionality for the simple
-joy of programming!
-With a text command oriented interface one doesn't have to
-fiddle endlessly with the graphic interface
-and fret about "user friendliness".  Users <i>can</i> adapt to the idea
-of single (or two or three) letter command words.
+These commands are of more limited use.  Some of them were added just for fun.
 <ul>
 <table cellpadding=3>
 <tr><td><span class=cmd>H&lt;num&gt</span></td><td>Directly change the 7 letter presentation instead of cycling around. 1 = Hex Letters, 2 = Honeycomb, 3 = Flower, 4 = Inline Letters</td></tr>
-<tr><td><span class=cmd>CL</span></td><td>List the dates on which you have offered clues for the NYT Puzzle.</td></tr>
+<tr><td><span class=cmd>CL</span></td><td>List the dates on which you have offered clues.  This includes the Community Puzzles you created.</td></tr>
 <tr><td><span class=cmd>SC</span></td><td>Show how the score was tallied and how many words remain to be found.</td></tr>
 <tr><td><span class=cmd>F</span></td><td>Find other puzzles that use the same seven letters.</td></tr>
 <tr><td><span class=cmd>S&nbsp;&nbsp;&lt;word&gt;</span></td><td>Find other puzzles where the word is used.</td></tr>
@@ -254,6 +264,7 @@ of single (or two or three) letter command words.
 <tr><td><span class=cmd>W&lt;n</span></td><td>Show the found words of length less than n.</td></tr>
 <tr><td><span class=cmd>Wn</span></td><td>Show the found words of length n.</td></tr>
 <tr><td><span class=cmd>W&nbsp;&nbsp;&lt;prefix&gt;</span></td><td>Show the found words that start with &lt;prefix&gt;.</td></tr>
+<tr><td><span class=cmd>W/&lt;pattern&gt;</span></td><td>Show the found words that match the pattern.<br>For example, W/OO will show the found words that contain OO - like OOZE, LOOT, or TATTOO. For <i>Super</i> Power Users: The pattern is a <a target=nytbee href='https://perldoc.perl.org/perlrequick'>Perl Regular Expression</a> with the /x flag.</td></tr>
 <tr><td><span class=cmd>1W</span></td><td>Show the found words in a single column.  This may be more convenient if you wish to copy/paste the word list.</td></tr>
 <tr><td><span class=cmd>G&nbsp;&nbsp;Y</span></td><td>Give up and show the words you have not yet found.</td></tr>
 </table>
@@ -297,29 +308,57 @@ When these steps are complete your puzzle is assigned
 a number and is immediately available to the community.
 This number is used when giving the <span class=cmd>CP&lt;num&gt;</span> command.
 CP here stands for Community Puzzle - a puzzle created by you for the HiveMind community!
+<p>
+The command <span class=cmd>YCP</span> will list the community puzzles
+that you have created.  You can click on the <span class=blue>CP#</span> link
+to re-edit your puzzle.  You can update/change/delete the words and clues - but not the 7 letters or center letter.
+<p>
+The command <span class=cmd>XCP</span> can be used to <i>delete</i> puzzles
+that <i>you</i> have created.
 <a name=clues></a>
 <h2>Clues for Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
-'Add Clues' link.
-Warning - all the words are shown. Not any more.
-Emojis on OSX - control-command-space
-You give your name (it is remembered) and
-can get dictionary definitions of the words.
-You can choose again to update your clues.
-No need to give clues for EVERY word.
-CL command
+Getting hints for words with dictionary definitions is okay (even though some
+people would consider it 'cheating').
+Even more fun is to look at <b>clues</b> generously provided by the
+members of the HiveMind.  These clues are often humorous and clever
+wordplay - as in crossword puzzle clues.
 <p>
-Doing a DHA, for example when the HA words are Happen, Hate, Hath, and Hatha.
-The tradition in the HiveMind forum is that clues come in
-the word alphabetical order and have the length appended as well.
-If you know this you have more information beyond the clue itself.
-<p>
-See ALL clues by clicking on the person's name after an I (information) command.
+You can write clues when you create a Community Puzzle as seen <a href=#create>above</a>.
+You can <i>also</i> create clues for NYT Puzzles!
+Others can view them with the <span class=cmd>D</span> command.
+When the current puzzle is an NYT Puzzle choose the
+<span class=blue>Add Clues</span> link
+at the top.  There are several things to note:
+<ul>
+<li>Only the words you have found are shown.
+<li>No need to give clues for EVERY word.
+<li>You can choose Add Clues again to re-edit your clues.
+<li>You can get dictionary definitions of the words to give
+you some ideas.
+<li>If you have given clues for a word before (such as for
+frequently occuring words
+like LOLL, NOON or TOOT) your clues will be offered and you can
+cycle through them.
+<li>The <span class=cmd>CL</span> command will list the dates
+of the NYT puzzles for which you have created clues. 
+<li>When playing an NYT Puzzle if clues have been provided
+there will be an asterisk <span class=red>*</span> after the date at the top.
+<li>Emojis on OSX can be inserted into clues with control-command-space.
+</ul>
+See ALL clues by first choosing the <span class=cmd>I</span> (information)
+command.  It will show the names of people who submitted clues.
+Clicking on the author names will show the complete list of their clues.
 Note that in this display,
 if you've already found a word, that word is appended to the clue
 and the whole line is in gray rather than black.  This helps you
 focus on the clues for the words you have not yet found.
+<p>
+The tradition in the HiveMind forum is that clues come in
+the word alphabetical order and <i>can</i> have the length shown as well.
+If you know this you have more information beyond the clue itself.
+<p>
 <a name=other></a>
 <h2>Other NYT Bee Projects
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -698,26 +737,40 @@ in the text field where you would enter a word.
 <h2>Known Issues
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
-no NYT forum - facebook page can server,
-ip address + browser id,
-not high volume - if overwhelmed would need to move
-not easy to play on the phone,
+This software is made by one person, not a team of NYT engineers.
+It has limitations and weaknesses.  Here are the known issues:
+<ul>
+<li>It is not easy to play this verson on a mobile phone - it is possible but not easy.  It's best with an actual keyboard as on a laptop or desktop computer.
+<li>No forum for discussion. The NYT HiveMind Forum or a FaceBook group page could serve this purpose.
+<li>Since you do not need to register and login, your identity
+is represented by your network IP address and your browser version.
+This is not good if you travel because your address would keep changing.
+It may not matter if all you want to do is play the game.
+If you wish to create puzzles and add clues or want to preserve the
+state of solve then it will be awkward.
+<li>If two people in the same house want to play separate games they
+can use two different browsers (Safari, Chrome, Firefox, etc) or
+simply reset the game with the <span class=cmd>C Y</span> command.
+<li>The software and server is not designed for high volume.
+If the usage becomes high it would likely be overwhelmed and the response time
+would suffer.  It  would need to be moved and possibly rewritten.
+One solution to this is a version that runs on your own machine
+in a terminal window.  This simpler command line version was the prototype
+of this web-based version.  <a href='mailto:jon.bjornstad@gmail.com?subject=Commnd Line Version of the NYT Bee'>Contact me</a> if you are interested.
+</ul>
 <a name=articles></a>
-<h2>Articles about the NYT Bee
+<h2>Articles about the NYT Spelling Bee
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
-<!--
-https://www.nytimes.com/spotlight/spelling-bee-forum
+<a target=nytbee href='https://www.nytimes.com/spotlight/spelling-bee-forum'>The archive of the Forum - the central communication hub of the HiveMind.</a><p>
 
-https://www.nytimes.com/2021/12/09/crosswords/spellingbee-tips.html
+<a target=nytbee href='https://www.nytimes.com/2021/12/09/crosswords/spellingbee-tips.html'>Tips on how to Solve the Bee</a><p>
 
-https://www.nytimes.com/2020/10/16/crosswords/spellingbee-puzzles.html?action=click&module=RelatedLinks&pgtype=Article
+<a target=_blank href='https://www.nytimes.com/2020/10/16/crosswords/spellingbee-puzzles.html'>The Genius of Spelling Bee</a><p>
 
-https://www.nytimes.com/2021/08/25/crosswords/an-insomniac-plays-spelling-bee.html?action=click&module=RelatedLinks&pgtype=Article
+<a target=_blank href='https://www.nytimes.com/2021/08/25/crosswords/an-insomniac-plays-spelling-bee.html'>An Insomniac Plays Spelling Bee</a><p>
 
-https://www.nytimes.com/2021/06/25/crosswords/spellingbee-puzzles-essay.html?action=click&module=RelatedLinks&pgtype=Article
-
--->
+<a target=_blank href='https://www.nytimes.com/2021/06/25/crosswords/spellingbee-puzzles-essay.html'>Flight of the Spelling Bee Player</a><p>
 
 <a style="margin-left: 5in" href=#toc><img src=pics/top.gif height=25></a>
 </body>

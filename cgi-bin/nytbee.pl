@@ -4,20 +4,6 @@ use warnings;
 
 =comment
 
-edit_cp/num
-    verify creator, get ip_id, name, location
-    present words in two categories allow uncheck, check
-        then call edit_cp_clues
-        with hidden fields, etc.
-edit_cp_clues
-    hidden fields with num, words, pangrams, seven, center, person_id, etc
-    present clues
-        3rd time to use the cycle thing so make sub in BeeUtil or elsewhere?
-    call edit_cp_final
-edit_cp_final
-    to get clues and write back to num.txt
-        update date as well
-        
 what if i want a specific word to appear in a puzzle?
 what pangramic word would make that possible?
 
@@ -272,6 +258,22 @@ tie %puzzle_has_clues, 'DB_File', 'nyt_puzzle_has_clues.dbm';
 # you can ask 'exists' if you'd like
 #--------------
 
+my $ip_id = ip_id();
+
+sub my_puzzles {
+    return
+    map {
+        [
+            (split ' ', $_)[2],     # date/CPn
+            (split ' ', $ip_date{$_})[1, 4] # all_pangrams, rank#
+        ]
+    }
+    sort
+    grep { index($_, $ip_id) == 0 }
+    keys %ip_date;
+}
+
+
 my $comm_dir = 'community_puzzles';
 my ($seven, $center, @pangrams);
 my @seven;
@@ -284,7 +286,6 @@ my %nyt_clues_for;        # key is word,
 my %nyt_cluer_name_of;    # key is person_id
 my %nyt_cluer_color_for;  # key is person_id
 
-my $ip_id = ip_id();
 my $log = 'http://logicalpoetry.com';
 
 my $message = '';
@@ -392,6 +393,17 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
                 $cmd = 'p' . scalar(@puzzles);
             }
         }
+    }
+}
+elsif ($cmd eq 'x') {
+    delete $ip_date{"$ip_id $params{date}"};
+    my @puzzles = my_puzzles();
+    if (@puzzles) {
+        $date = $puzzles[0][0];
+        $cmd = '';
+    }
+    else {
+        $cmd = 't';
     }
 }
 if ($cmd eq 'xa') {
@@ -502,12 +514,30 @@ if (! $date) {
     $new_puzzle = 1;
 }
 my $show_date;
+my $clues_are_present = '';
 my $cp_href;
+
+if ($cmd eq 'n' || $cmd eq 'p') {
+    my @puzzles = my_puzzles();
+    PUZ:
+    for my $n (0 .. $#puzzles) {
+        if ($puzzles[$n][0] eq $date) {
+            my $x = $cmd eq 'n'? ($n == $#puzzles? 0: $n+1) 
+                   :             ($n == 0        ? $#puzzles: $n-1);
+            $date = $puzzles[$x][0];
+            $cmd = '';
+            last PUZ;
+        }
+    }
+}
 
 # we have a valid date. either d8 format or CP#
 if ($date =~ m{\A\d}xms) {
     # d8 get the puzzle data from NYT Puzzles
     $show_date = date($date)->format("%B %e, %Y");
+    if ($puzzle_has_clues{$date}) {
+        $clues_are_present = " <span class=red2>*</span>";
+    }
     my $puzzle = $puzzle{$date};
 
     my ($s, $t) = split /[|]/, $puzzle;
@@ -585,11 +615,12 @@ sub load_nyt_clues {
         %nyt_cluer_name_of
             = %{ eval `curl -skL $log/cgi-bin/nytbee_get_cluers/$date` };
         my @cluer_colors = qw /
-            darkred
+            tomato
+            springgreen
             skyblue
-            seagreen
-            gray
-            purple 
+            mediumorchid
+            orange
+            brown
         /;
         my $n = 0;
         for my $person_id (
@@ -637,20 +668,6 @@ else {
     $tl_chosen = $new_puzzle? 0: $params{tl_chosen};
     @found     = $new_puzzle? (): split ' ', $params{found_words};
 }
-
-sub my_puzzles {
-    return
-    map {
-        [
-            (split ' ', $_)[2],     # date/CPn
-            (split ' ', $ip_date{$_})[1, 4] # all_pangrams, rank#
-        ]
-    }
-    sort
-    grep { index($_, $ip_id) == 0 }
-    keys %ip_date;
-}
-
 my %is_found = map { $_ => 1 } @found;
 
 my $score;
@@ -800,7 +817,7 @@ sub do_define {
         my $let = $1;
         my $len = $2;
         if (index($seven, $let) < 0) {
-            $message = ul(red($cmd) . ": \U$let\E is not in \U$seven");
+            $message = ul(red(uc $cmd) . ": \U$let\E is not in \U$seven");
         }
         else {
             $message = '';
@@ -821,7 +838,7 @@ sub do_define {
     elsif ($term =~ m{\A ([a-z][a-z]) \z}xms) {
         my $lets = $1;
         if ($lets =~ $letter_regex) {
-            $message = ul(red($cmd) . " : $1\E is not in \U$seven");
+            $message = ul(red(uc $cmd) . ": \U$1\E is not in \U$seven");
         }
         else {
             $message = '';
@@ -1012,7 +1029,7 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
                     $more .= ", $m more word$pl";
                 }
             }
-            $cols .= td("*$more");
+            $cols .= td(red('*') . $more);
         }
         $rows .= Tr($cols);
     }
@@ -1144,7 +1161,7 @@ elsif ($cmd eq 'l') {
     my @puzzles = my_puzzles();
     my $n = 1;
     for my $p (@puzzles) {
-        my $cur = $p->[0] eq $date? '*': '';
+        my $cur = $p->[0] eq $date? red('*'): '';
         my $pg  = $p->[1]? '&nbsp;&nbsp;p': '';
         $message .= Tr(
                         td($n) . td($cur)
@@ -1182,36 +1199,31 @@ elsif ($cmd eq 'f') {
     my $s = `cd community_puzzles; grep -l 'seven.*=>.*$seven' *.txt`;
     for my $n ($s =~ m{(\d+)}xmsg) {
         my $href = do "community_puzzles/$n.txt";
-        $rows .= Tr(td("CP$n"), td(uc $href->{center}));
+        $rows .= Tr(td("CP$n"), td({ style => 'text-align: left' }, uc $href->{center}));
     }
     $message = table({ cellpadding => 5}, $rows);
     $cmd = '';
 }
-elsif ($cmd =~ m{\A s \s+ ([/a-z]+) \s* \z}xms) {
-    # search the archive for the word (or a regex - undocumented).
+elsif ($cmd =~ m{\A s \s+ ([a-z]+) \s* \z}xms) {
+    # search the archive for the word
     # we're searching everything after the |
     my $word = $1;
-    my $regex = $word;
-    if ($regex !~ s{\A /}{}xms) {
-        $regex = "\\b$regex\\b";
-    }
     my @dates;
     while (my ($dt, $puz) = each %puzzle) {
         $puz =~ s{\A [^|]* [|]}{}xms;
-        if ($puz =~ m{$regex}xms) {
+        if ($puz =~ m{\b$word\b}xms) {
             push @dates, $dt;
         }
     }
     $message = join '',
                map {
-                   m{\A ..(..)(..)(..)}xms;
-                   "$2/$3/$1<br>";
+                   slash_date($_) . '<br>'
                }
                sort
                @dates
                ;
     # also search the community puzzles
-    my $s = `cd community_puzzles; grep -l 'words.*=>.*\\b$regex\\b' *.txt`;
+    my $s = qx!cd community_puzzles; grep -l "words.*=>.*'$word'" [0-9]*.txt!;
     $message .= join '<br>',
                 map { "CP$_" }
                 sort { $a <=> $b }
@@ -1234,6 +1246,7 @@ elsif ($cmd =~ m{\A h \s* ([1-4]) \z}xms) {
 # some subset, some order
 my $order = 0;
 my $prefix = '';
+my $pattern = '';
 my $limit = 0;
 my @words_found;
 my $word_col = 0;
@@ -1244,6 +1257,10 @@ if ($cmd eq 'w') {
 elsif ($cmd eq '1w') {
     $word_col = 1;
     @words_found = sort @found;
+    $cmd = '';
+}
+elsif (($pattern) = $cmd =~ m{\A w \s* / \s* (.*) \z}xms) {
+    @words_found = grep { /$pattern/xms } sort @found;
     $cmd = '';
 }
 elsif ($cmd =~ m{\A w \s* ([<>]) \s* (\d*)\z}xms) {
@@ -1353,7 +1370,7 @@ for my $w (@new_words) {
 # now that we have added the new words...
 compute_score_and_rank();
 
-if (! $prefix && ! $limit && ! @words_found) {
+if (! $prefix && ! $pattern && ! $limit && ! @words_found) {
     # the default when there are no restrictions
     @words_found = sort @found;
 }
@@ -1948,7 +1965,7 @@ function set_focus() {
 </head>
 <body>
 <div class=float-child1>
-    <a target=_blank href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date
+    <a target=_blank href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date$clues_are_present
 </div>
 <div class=float-child2>
      <img width=50 src=/pics/bee-logo.jpg>

@@ -70,8 +70,17 @@ if (! @pangrams) {
 my ($href_prior_clues_for, $json) = get_clues($person_id, \@ok_words);
 my $prior_clues = %$href_prior_clues_for?
     "<p>You have given clues for some of the words before.": '';
-if ($json) {
+my $cycle_function = '';
+if ($json ne '{}') {
     $prior_clues .= " If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=/nytbee/cycle.jpg> icon.<p>";
+    $cycle_function = <<"EOJ";
+var clues_for = $json;
+function cycle(w) {
+    clues_for[w].cur = (clues_for[w].cur + 1) % clues_for[w].clues.length;
+    document.getElementById(w + '_clue').value
+        = clues_for[w].clues[ clues_for[w].cur ];
+}
+EOJ
 }
 
 my $cgi = 'http://logicalpoetry.com/cgi-bin';
@@ -90,12 +99,7 @@ function popup_define(word, height, width) {
     );
     newwin.moveTo(800, 0);
 }
-var clues_for = $json;
-function cycle(w) {
-    clues_for[w].cur = (clues_for[w].cur + 1) % clues_for[w].clues.length;
-    document.getElementById(w + '_clue').value
-        = clues_for[w].clues[ clues_for[w].cur ];
-}
+$cycle_function
 </script>
 </head>
 <body>
@@ -117,7 +121,7 @@ for my $w (@ok_words) {
     my ($word_td, $clue_td, $cycle_td);
     my $clue;
     if (exists $href_prior_clues_for->{$w}) {
-        if (ref $href_prior_clues_for->{$w}) {
+        if (ref $href_prior_clues_for->{$w} eq 'ARRAY') {
             # there is more than one prior clue
             $clue = $href_prior_clues_for->{$w}->[0];
             $cycle_td = td(qq!<img class=cursor onclick='cycle("$w");' src='/nytbee/cycle.jpg'>!);
