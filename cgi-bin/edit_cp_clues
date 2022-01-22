@@ -63,84 +63,9 @@ if (! @pangrams) {
 my ($href_prior_clues_for, $json)
     = get_clues($person_id, \@ok_words, $cp_href->{clues});
 
-=comment
-
-# did the person give a clue for any of the @ok_words before?
-# offer them..
-# there may be more than one - in this case have a way
-# to cycle through the clues - in date order.
-# with community puzzles coming first.
-# dup code with nytbee_clues???
-# can we reuse?
-#
-my %prior_clues_for;
-my $got_clues = 0;
-if ($person_id) {
-    my $words = join ', ',
-                map {
-                    "'$_'"
-                }
-                @ok_words;
-    my $sth_clue = $dbh->prepare(<<"EOS");
-
-        SELECT distinct word, clue
-          FROM bee_clue
-         WHERE person_id = $person_id
-           AND word IN ($words)
-      ORDER BY date desc;
-
-EOS
-    # we are editing an existing community puzzle 
-    # the clues from before will very likely be the first
-    # to come back from the database.  is it assured?
-    # we did sort by date desc.   if a later puzzle (CP or NYT)
-    # word and clue matched this puzzle ... hmmm.
-    #
-    # TODO
-    # we should initialize %prior_clues_for
-    # with the clues in $href->{clues} but only
-    # for the words that remain ...
-    # and then do not duplicate when getting clues from the DB...
-    #
-    $sth_clue->execute();
-    while (my ($word, $clue) = $sth_clue->fetchrow_array()) {
-        $got_clues = 1;
-        if (exists $prior_clues_for{$word}) {
-            if (ref $prior_clues_for{$word} eq 'ARRAY') {
-                push @{$prior_clues_for{$word}}, $clue;
-            }
-            else {
-                my $clue1 = $prior_clues_for{$word};
-                $prior_clues_for{$word} = [ $clue1, $clue ];
-            }
-        }
-        else {
-            $prior_clues_for{$word} = $clue;
-        }
-    }
-}
-
-# for the words that have multiple prior clues
-# we craft a JSON string.
-my %clues_for_json;
-for my $w (@ok_words) {
-    if (ref $prior_clues_for{$w} eq 'ARRAY') {
-        $clues_for_json{$w} = {
-            clues => $prior_clues_for{$w},
-            cur   => 0,
-        };
-    }
-}
-use JSON::PP qw/
-    encode_json
-/;
-my $json = encode_json(\%clues_for_json);
-
-=cut
-
-my $prior_clues = '';
+my $cycle = '';
 if ($json) {
-    $prior_clues .= " If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=/nytbee/cycle.jpg> icon.<p>";
+    $cycle .= " If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=/nytbee/cycle.jpg> icon.<p>";
 }
 
 my $cgi = 'http://logicalpoetry.com/cgi-bin';
@@ -170,7 +95,7 @@ function cycle(w) {
 <body>
 <h1>Editing CP$n<br> <span class=step_name>Clues</span></h1>
 Optionally, provide clues for each word.
-$prior_clues
+$cycle
 You can click on the words to get a dictionary definition.
 You may, instead, wish to give clues that are ambiguous, clever, wordplay &#128522; - like clues for a crossword.
 <p>
