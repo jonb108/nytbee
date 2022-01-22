@@ -2,17 +2,6 @@
 use strict;
 use warnings;
 
-=comment
-
-there may be multiple prior clues for a word
-if so, offer a way to see them - cycle around them.
-if this is REedit and there is a clue for the
-current date offer that first.
-otherwise offer them in date order - with community
-puzzles coming first.
-
-=cut
-
 # a poor man's database
 use DB_File;
 my %puzzle;
@@ -59,9 +48,11 @@ use Date::Simple qw/
 use Bee_DBH qw/
     $dbh
     get_person
+    get_clues
 /;
 
 my ($ip_id, $person_id, $name, $location) = get_person();
+
 my %clue_for;
 my $got_clues = 0;
 
@@ -88,63 +79,13 @@ EOS
     }
 }
 
-# See if we have clues for the current set of words
-# *from this person* for *other* dates.
-# Eliminate duplicate clues.
-#
-if (@found) {
-    my $quoted_words = join ', ',
-                       map {
-                           "'$_'"
-                       }
-                       @found;
-    my $sth_clue = $dbh->prepare(<<"EOS");
+my ($href_prior_clues_for, $json)
+    = get_clues($person_id, \@found, \%clue_for);
 
-        SELECT distinct word, clue
-          FROM bee_clue
-         WHERE person_id = ?
-           AND word in ($quoted_words)
-           AND date != ?
-      ORDER BY date desc
-
-EOS
-    $sth_clue->execute($person_id, $date);
-    while (my ($word, $clue) = $sth_clue->fetchrow_array()) {
-        if (exists $clue_for{$word}) {
-            # if needed, convert the value into an array ref
-            if (ref $clue_for{$word} eq 'ARRAY') {
-                push @{$clue_for{$word}}, $clue;
-            }
-            else {
-                my $clue1 = $clue_for{$word};
-                $clue_for{$word} = [ $clue1, $clue ];
-            }
-        }
-        else {
-            $clue_for{$word} = $clue;
-        }
-    }
-}
-
-# for the words that have multiple prior clues
-# we craft a JSON string.
-my %clues_for_json;
-for my $w (@words) {
-    if (ref $clue_for{$w} eq 'ARRAY') {
-        $clues_for_json{$w} = {
-            clues => $clue_for{$w},
-            cur   => 0,
-        };
-    }
-}
-use JSON::PP qw/
-    encode_json
-/;
-my $json = encode_json(\%clues_for_json);
-
-my $prior_clues = $got_clues? "<p>You have given clues for some of the words before.": '';
-if (%clues_for_json) {
-    $prior_clues .= "If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=/nytbee/cycle.jpg> icon.";
+my $prior_clues = %$href_prior_clues_for?
+    "<p>You have given clues for some of the words before.": '';
+if ($json ne '{}') {
+    $prior_clues .= " If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=/nytbee/cycle.jpg> icon.";
 }
 
 print <<"EOH";
@@ -192,14 +133,14 @@ for my $w (@words) {
     my ($word_td, $clue_td, $cycle_td);
     if ($is_found{$w}) {
         my $clue;
-        if (exists $clue_for{$w}) {
-            if (ref $clue_for{$w}) {
+        if (exists $href_prior_clues_for->{$w}) {
+            if (ref $href_prior_clues_for->{$w}) {
                 # there is more than one prior clue
-                $clue = $clue_for{$w}->[0];
+                $clue = $href_prior_clues_for->{$w}->[0];
                 $cycle_td = td(qq!<img class=cursor onclick='cycle("$w");' src='/nytbee/cycle.jpg'>!);
             }
             else {
-                $clue = $clue_for{$w};
+                $clue = $href_prior_clues_for->{$w};
             }
         }
         else {

@@ -1942,6 +1942,7 @@ function clues_by(person_id) {
 }
 function set_focus() {
     document.form.new_words.focus();
+    return true;
 }
 </script>
 </head>

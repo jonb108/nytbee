@@ -2,14 +2,6 @@
 use strict;
 use warnings;
 
-=comment
-
-later we can optimize things
-like filling in _prior_ clues and people's names
-depending on the ip and browser nums
-
-=cut
-
 # a poor man's database
 use DB_File;
 my %puzzle_has_clues;

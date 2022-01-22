@@ -20,6 +20,7 @@ use BeeUtil qw/
 use Bee_DBH qw/
     $dbh
     get_person
+    get_clues
 /;
 
 my ($ip_id, $person_id, $name, $location) = get_person();
@@ -61,64 +62,15 @@ if (! @pangrams) {
 # did the person give a clue for any of the @ok_words before?
 # offer them..
 # there may be more than one - in this case have a way
-# to cycle through the clues - in date order.
+# to cycle through the clues - (in date order?).
 # with community puzzles coming first.
 # dup code with nytbee_clues???
 # can we reuse?
 #
-my %prior_clues_for;
-my $got_clues = 0;
-if ($person_id) {
-    my $words = join ', ',
-                map {
-                    "'$_'"
-                }
-                @ok_words;
-    my $sth_clue = $dbh->prepare(<<"EOS");
-
-        SELECT distinct word, clue
-          FROM bee_clue
-         WHERE person_id = $person_id
-           AND word IN ($words)
-      ORDER BY date desc;
-
-EOS
-    $sth_clue->execute();
-    while (my ($word, $clue) = $sth_clue->fetchrow_array()) {
-        $got_clues = 1;
-        if (exists $prior_clues_for{$word}) {
-            if (ref $prior_clues_for{$word} eq 'ARRAY') {
-                push @{$prior_clues_for{$word}}, $clue;
-            }
-            else {
-                my $clue1 = $prior_clues_for{$word};
-                $prior_clues_for{$word} = [ $clue1, $clue ];
-            }
-        }
-        else {
-            $prior_clues_for{$word} = $clue;
-        }
-    }
-}
-
-# for the words that have multiple prior clues
-# we craft a JSON string.
-my %clues_for_json;
-for my $w (@ok_words) {
-    if (ref $prior_clues_for{$w} eq 'ARRAY') {
-        $clues_for_json{$w} = {
-            clues => $prior_clues_for{$w},
-            cur   => 0,
-        };
-    }
-}
-use JSON::PP qw/
-    encode_json
-/;
-my $json = encode_json(\%clues_for_json);
-
-my $prior_clues = $got_clues? "<p>You have given clues for some of the words before.": '';
-if (%clues_for_json) {
+my ($href_prior_clues_for, $json) = get_clues($person_id, \@ok_words);
+my $prior_clues = %$href_prior_clues_for?
+    "<p>You have given clues for some of the words before.": '';
+if ($json) {
     $prior_clues .= " If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=/nytbee/cycle.jpg> icon.<p>";
 }
 
@@ -164,14 +116,14 @@ for my $w (@ok_words) {
     my $uw = ucfirst $w;
     my ($word_td, $clue_td, $cycle_td);
     my $clue;
-    if (exists $prior_clues_for{$w}) {
-        if (ref $prior_clues_for{$w}) {
+    if (exists $href_prior_clues_for->{$w}) {
+        if (ref $href_prior_clues_for->{$w}) {
             # there is more than one prior clue
-            $clue = $prior_clues_for{$w}->[0];
+            $clue = $href_prior_clues_for->{$w}->[0];
             $cycle_td = td(qq!<img class=cursor onclick='cycle("$w");' src='/nytbee/cycle.jpg'>!);
         }
         else {
-            $clue = $prior_clues_for{$w};
+            $clue = $href_prior_clues_for->{$w};
         }
     }
     else {

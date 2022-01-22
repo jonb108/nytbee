@@ -167,6 +167,7 @@ You can click on the words to get a dictionary definition.
 You may, instead, wish to give clues that are ambiguous, clever, wordplay &#128522; - like clues for a crossword.
 <p>
 <form name=form action=/cgi-bin/edit_cp_final method=POST>
+<input type=hidden name=CPn value='$n'>
 <input type=hidden name=seven value='$seven'>
 <input type=hidden name=center value='$center'>
 <input type=hidden name=words value='@ok_words'>
