@@ -12,7 +12,6 @@ our @EXPORT_OK = qw/
 
 use BeeUtil qw/
     ip_id
-    JON
 /;
 use JSON::PP qw/
     encode_json
@@ -117,7 +116,6 @@ sub get_clues {
                     "'$_'"
                 }
                 @{$words_aref};
-JON "words = $words";
     my $sth_clue = $dbh->prepare(<<"EOS");
 
         SELECT distinct word, clue

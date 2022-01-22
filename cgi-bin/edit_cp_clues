@@ -20,15 +20,16 @@ use BeeUtil qw/
 use Bee_DBH qw/
     $dbh
     get_person
+    get_clues
 /;
 
 my $n = $q->param('CPn');
-my $href = do "community_puzzles/$n.txt";
-my $ip_id = $href->{ip_id};
-my $person_id = $href->{person_id};
+my $cp_href = do "community_puzzles/$n.txt";
+my $ip_id = $cp_href->{ip_id};
+my $person_id = $cp_href->{person_id};
 
-my $seven = $href->{seven};
-my $center = $href->{center};
+my $seven = $cp_href->{seven};
+my $center = $cp_href->{center};
 my @other_words = split ' ', $q->param('other_words');
 my $regex = qr{[^$seven]}xms;
 
@@ -58,6 +59,11 @@ for my $w (@ok_words) {
 if (! @pangrams) {
     error "In the many words there is no pangram! :(";
 }
+
+my ($href_prior_clues_for, $json)
+    = get_clues($person_id, \@ok_words, $cp_href->{clues});
+
+=comment
 
 # did the person give a clue for any of the @ok_words before?
 # offer them..
@@ -130,8 +136,10 @@ use JSON::PP qw/
 /;
 my $json = encode_json(\%clues_for_json);
 
+=cut
+
 my $prior_clues = '';
-if (%clues_for_json) {
+if ($json) {
     $prior_clues .= " If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=/nytbee/cycle.jpg> icon.<p>";
 }
 
@@ -178,14 +186,14 @@ for my $w (@ok_words) {
     my $uw = ucfirst $w;
     my ($word_td, $clue_td, $cycle_td);
     my $clue;
-    if (exists $prior_clues_for{$w}) {
-        if (ref $prior_clues_for{$w}) {
+    if (exists $href_prior_clues_for->{$w}) {
+        if (ref $href_prior_clues_for->{$w}) {
             # there is more than one prior clue
-            $clue = $prior_clues_for{$w}->[0];
+            $clue = $href_prior_clues_for->{$w}[0];
             $cycle_td = td(qq!<img class=cursor onclick='cycle("$w");' src='/nytbee/cycle.jpg'>!);
         }
         else {
-            $clue = $prior_clues_for{$w};
+            $clue = $href_prior_clues_for->{$w};
         }
     }
     else {
