@@ -55,7 +55,11 @@ while (my $line = <$in>) {
     if ($line !~ $regex) {
         if (index($line, $center) >= 0) {
             my $Line = ucfirst $line;
-            my $checked = $was_checked{$line}? ' checked': '';
+            my $checked = '';
+            if ($was_checked{$line}) {
+                $checked = ' checked';
+                delete $was_checked{$line};
+            }
             print "<input type=checkbox name=ok value=$line$checked>&nbsp; ";
             my @uchars = uniq_chars($line);
             if (@uchars == 7) {
@@ -78,7 +82,11 @@ while (my $line = <$in2>) {
     if ($line !~ $regex) {
         if (index($line, $center) >= 0) {
             my $Line = ucfirst $line;
-            my $checked = $was_checked{$line}? ' checked': '';
+            my $checked = '';
+            if ($was_checked{$line}) {
+                $checked = ' checked';
+                delete $was_checked{$line};
+            }
             print "<input type=checkbox name=ok value=$line$checked>&nbsp; ";
             my @uchars = uniq_chars($line);
             if (@uchars == 7) {
@@ -92,9 +100,14 @@ while (my $line = <$in2>) {
     }
 }
 close $in2;
-print <<'EOH';
+
+# the words in @words that were not
+# checked must be the 'other' words.
+#
+my @other_words = keys %was_checked;
+print <<"EOH";
 <p>
-Other qualified words to include:<br><input type=text size=40 name=other_words>
+Other qualified words to include:<br><input type=text size=40 name=other_words value='@other_words'>
 <p>
 <button type=submit>Submit</button>
 </form>

@@ -9,7 +9,10 @@ use BeeUtil qw/
     uniq_chars
 /;
 
-my $word = $q->param('word');
+my $word = lc $q->param('word');
+my $Word = ucfirst $word;
+my $used_word = 0;
+
 my @lets = uniq_chars($word);
 my $center = $q->param('center');
 my $seven = join '', @lets;
@@ -21,7 +24,7 @@ print <<"EOH";
 </head>
 <body>
 <h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>3</span> <span class=step_name>Words</span></h1>
-For the pangramic word <span class=word>$word</span> and center letter <span class=center>\U$center\E</span> we have identified the qualified words.
+For the pangramic word <span class=word>$Word</span> and center letter <span class=center>\U$center\E</span> we have identified the qualified words.
 <p>
 Check the words you want to include in the puzzle and press Submit at the bottom.  Make sure you include at least one pangram. They are colored <span class=red>red</span>.
 
@@ -39,6 +42,9 @@ while (my $line = <$in>) {
     chomp $line;
     if ($line !~ $regex) {
         if (index($line, $center) >= 0) {
+            if ($line eq $word) {
+                $used_word = 1;
+            }
             my $Line = ucfirst $line;
             print "<input type=checkbox name=ok value=$line checked>&nbsp; ";
             my @uchars = uniq_chars($line);
@@ -61,6 +67,9 @@ while (my $line = <$in2>) {
     chomp $line;
     if ($line !~ $regex) {
         if (index($line, $center) >= 0) {
+            if ($line eq $word) {
+                $used_word = 1;
+            }
             my $Line = ucfirst $line;
             print "<input type=checkbox name=ok value=$line>&nbsp; ";
             my @uchars = uniq_chars($line);
@@ -75,9 +84,10 @@ while (my $line = <$in2>) {
     }
 }
 close $in2;
-print <<'EOH';
+my $other = $used_word? '': ucfirst $word;
+print <<"EOH";
 <p>
-Other qualified words to include:<br><input type=text size=40 name=other_words>
+Other qualified words to include:<br><input type=text size=40 name=other_words value='$other'>
 <p>
 <button type=submit>Submit</button>
 </form>

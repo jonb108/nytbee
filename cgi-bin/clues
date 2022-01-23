@@ -29,7 +29,7 @@ my ($ip_id, $person_id, $name, $location) = get_person();
 
 my $seven = $q->param('seven');
 my $center = $q->param('center');
-my @other_words = split ' ', $q->param('other_words');
+my @other_words = split ' ', lc $q->param('other_words');
 my $regex = qr{[^$seven]}xms;
 
 # do these extra words 'qualify'?

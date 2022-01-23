@@ -64,7 +64,7 @@ my ($href_prior_clues_for, $json)
     = get_clues($person_id, \@ok_words, $cp_href->{clues});
 
 my $cycle = '';
-if ($json) {
+if ($json ne '{}') {
     $cycle .= " If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=/nytbee/cycle.jpg> icon.<p>";
 }
 

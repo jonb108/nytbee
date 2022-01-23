@@ -1150,7 +1150,7 @@ elsif ($cmd eq 'ycp') {
         push @rows, Tr(td("<a target=nytbee onclick='set_focus();'"
                         . " href='$log/cgi-bin/edit_cp/$n'>CP$n</a>"),
                        td(slash_date($href->{created})),
-                       td(@pangrams),
+                       td({ style => 'text-align: left' }, @pangrams),
                     );
     }
     $message = "Your Community Puzzles:<p>"

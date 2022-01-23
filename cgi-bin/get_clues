@@ -36,7 +36,7 @@ CLUE:
 for my $k (grep { m! _clue \z!xms } keys %params) {
     my $w = $k;
     $w =~ s{_clue\z}{}xms;
-    my $clue = $params{$k};
+    my $clue = ucfirst $params{$k};
     $clue =~ s{"}{'}xmsg;       # double quote is troublesome
                                 # so just convert to single
                                 # use HTML::Entities?
@@ -51,6 +51,7 @@ my $seven = $params{seven};
 my $center = $params{center};
 my $words = $params{words};
 my $pangrams = $params{pangrams};
+my @pangrams = map { ucfirst } split ' ', $pangrams;
 my %is_pangram = map { $_ => 1 } split ' ', $pangrams;
 my @words = split ' ', $words;
 my $nwords = @words;
@@ -75,7 +76,7 @@ print <<"EOH";
 <input type=hidden name=clues value="$clues">
 <input type=hidden name=created value='$d8'>
 Words: $nwords, Points: $points<br>
-Pangrams: <span class=green>$pangrams</span><p>
+Pangrams: <span class=green>@pangrams</span><p>
 Finally, provide some information about yourself.
 <p>
 <table cellpadding=5>

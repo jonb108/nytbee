@@ -91,14 +91,16 @@ close $in2;
 my $bnpangrams = @bpangrams;
 my $bpl = $bnpangrams == 1? '': 's';
 
+my $msg = '';
 if ($npangrams + $bnpangrams == 0) {
-    error "No pangrams at all!";
+    $msg = "No pangrams at all!  We'll put " . ucfirst($word) . " in Other qualified words.<p>";
 }
 
 print <<"EOH";
 <h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>2</span> <span class=step_name>Center Letter</span></h1>
 The pangramic word is: <span class=word>$word</span>
 <p>
+$msg
 For each of the 7 unique letters in the word we have done tallies of 'qualified' words.
 A qualified word is one that:
 <ul>
