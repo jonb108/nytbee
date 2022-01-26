@@ -2,10 +2,10 @@
 use strict;
 use warnings;
 my $fname = shift;
+my $heading = join ' ', @ARGV;
 my $out_fname = $fname;
 $out_fname =~ s{txt}{html}xms;
 open my $in, '<', $fname or die "no open $fname: $!\n";
-my $heading = <$in>;
 my %lets = map { $_ => 0 } ('A' .. 'Z');
 while (my $line = <$in>) {
     $lets{uc substr($line, 0, 1)}++;
@@ -18,7 +18,6 @@ for my $c (sort keys %lets) {
 }
 my $links = join '&nbsp;' x 2, @links;
 seek $in, 0, 0;
-$heading = <$in>;
 open my $out, '>', $out_fname or die "no open $out_fname: $!\n";
 print {$out} <<"EOH";
 <html>
@@ -56,8 +55,8 @@ a {
 </style>
 </head>
 <body>
-<h2>$heading</h2>
 <a name=top></a>
+<h2>$heading</h2>
 $links
 <pre>
 EOH
