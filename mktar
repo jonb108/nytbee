@@ -11,7 +11,9 @@ style.css \
 windows.html \
 cycle.jpg \
 js \
-mktar
+mktar \
+goo10k-7.txt \
+osx_usd_words-7.txt
 
 # these will not change
 #nytbee_cmd.html

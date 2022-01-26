@@ -229,6 +229,7 @@ use Date::Simple qw/
 /;
 
 use DB_File;
+use DB_File::Lock;
 
 ##############
 my %puzzle;
@@ -241,9 +242,12 @@ tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
 
 ###############
 my %ip_date;
-tie %ip_date, 'DB_File', 'ip_date.dbm';
+tie %ip_date, 'DB_File::Lock', 'ip_date.dbm',
+              O_CREAT|O_RDWR, 0666, $DB_HASH, 'write';
 # the current puzzles for each "person" = ip_address/browser_signature
 # and their current state
+#
+# We lock & unlock this DBM file.
 #
 # a complex hash key/value
 # key is 'ip_address browser_signature puzzle_date'
@@ -1668,6 +1672,7 @@ for my $p (@pangrams) {
 # save IP address and state of the solve
 $ip_date{$ip_date_key}
     = "$nhints $all_pangrams $ht_chosen $tl_chosen $rank @found";
+untie %ip_date;
 
 my $has_message = 0;
 if ($message) {
@@ -1975,7 +1980,7 @@ function set_focus() {
 </head>
 <body>
 <div class=float-child1>
-    <a target=_blank href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date$clues_are_present
+    <a target=_blank onclick="set_focus();" href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date$clues_are_present
 </div>
 <div class=float-child2>
      <img width=50 src=/pics/bee-logo.jpg>

@@ -1,0 +1,34 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+my $html = shift or die "usage: de_indexize fname.html\n";
+if ($html !~ m{[.]html \z}xms) {
+    die "usage: de_indexize fname.html\n";
+}
+open my $in, '<', $html or die "cannot open '$html': $!\n";
+
+my $txt = $html;
+$txt =~ s{html}{txt}xms;
+open my $out, '>', $txt or die "cannot open '$txt: $!\n";
+
+my $line;
+LINE:
+while ($line = <$in>) {
+    chomp $line;
+    if ($line eq '<pre>') {
+        last LINE;
+    }
+}
+LINE:
+while ($line = <$in>) {
+    if ($line =~ m{\A <div}xms) {
+        $line =~ s{.*>}{}xms;
+    }
+    elsif ($line =~ m{\A <}xms) {
+        next LINE;
+    }
+    print {$out} $line;
+}
+close $in;
+close $out;

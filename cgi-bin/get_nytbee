@@ -2,10 +2,14 @@
 use strict;
 use warnings;
 
-use DB_File;
+my $bin = '/var/www/vhosts/85/241411/webspace/cgi-bin';
+my $bee = '/var/www/vhosts/85/241411/webspace/httpdocs/logicalpoetry.com/nytbee';
+
+use DB_File::Lock;
 my %puzzle;
-tie %puzzle, 'DB_File',
-             '/var/www/vhosts/85/241411/webspace/cgi-bin/nyt_puzzles.dbm';
+tie %puzzle, 'DB_File::Lock',
+             "$bin/nyt_puzzles.dbm",
+              O_CREAT|O_RDWR, 0666, $DB_HASH, 'write';
 
 # It is now 3:00 a.m. EST.
 # Try to get the Spelling Bee words for today.
@@ -50,3 +54,30 @@ for my $w (@words) {
 
 my $dt = sprintf "%04d%02d%02d", $year, $month, $day;
 $puzzle{$dt} = "$seven $center @pangrams | @words";
+untie %puzzle;
+
+# add the pangrams to nyt_pangrams.html
+# they may be there already
+#
+system "$bin/de_indexize $bee/nyt_pangrams.html";
+open my $out, '>>', "$bee/nyt_pangrams.txt";
+for my $p (@pangrams) {
+    print {$out} "$p\n";
+}
+close $out;
+system "/bin/sort -u $bee/nyt_pangrams.txt >/tmp/t";
+rename '/tmp/t', "$bee/nyt_pangrams.txt";
+system "$bin/indexize $bee/nyt_pangrams.txt Pangramic Words from the NYT Puzzles";
+
+# now REmake the $bee/goo10k-7-nyt.html file
+# thereby ensuring the new pangrams are not there.
+#
+system "/usr/bin/comm -23 $bee/goo10k-7.txt $bee/nyt_pangrams.txt > $bee/goo10k-7-nyt.txt";
+system "$bin/indexize $bee/goo10k-7-nyt.txt Pangramic Words from a list of 10,000 commonly used words";
+
+# and REmake the osx_usd_words-7-nyt-goo.html file
+# thereby ensuring the new pangrams are not there either.
+#
+system "/bin/cat $bee/nyt_pangrams.txt $bee/goo10k-7-nyt.txt >/tmp/t";
+system "/usr/bin/comm -23 $bee/osx_usd_words-7.txt /tmp/t > $bee/osx_usd_words-7-nyt-goo.txt";
+system "$bin/indexize $bee/osx_usd_words-7-nyt-goo.txt";

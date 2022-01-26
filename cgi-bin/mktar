@@ -34,7 +34,9 @@ go \
 dump_dbm \
 edit_cp \
 edit_cp_clues \
-edit_cp_final
+edit_cp_final \
+goo10k-47.txt \
+osx_usd_words-47.txt 
 
 # these will not change
 #JSON/PP.pm
