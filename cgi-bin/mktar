@@ -36,7 +36,8 @@ edit_cp \
 edit_cp_clues \
 edit_cp_final \
 goo10k-47.txt \
-osx_usd_words-47.txt 
+osx_usd_words-47.txt \
+word_pangram
 
 # these will not change
 #JSON/PP.pm
