@@ -85,7 +85,7 @@ my ($href_prior_clues_for, $json)
 my $prior_clues = %$href_prior_clues_for?
     "<p>You have given clues for some of the words before.": '';
 if ($json ne '{}') {
-    $prior_clues .= " If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=/nytbee/cycle.jpg> icon.";
+    $prior_clues .= " If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=/nytbee/pics/cycle.jpg> icon.";
 }
 
 print <<"EOH";
