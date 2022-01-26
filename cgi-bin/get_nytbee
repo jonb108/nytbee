@@ -65,8 +65,7 @@ for my $p (@pangrams) {
     print {$out} "$p\n";
 }
 close $out;
-system "/bin/sort -u $bee/nyt_pangrams.txt >/tmp/t";
-rename '/tmp/t', "$bee/nyt_pangrams.txt";
+system "/bin/sort -u -o $bee/nyt_pangrams.txt $bee/nyt_pangrams.txt";
 system "$bin/indexize $bee/nyt_pangrams.txt Pangramic Words from the NYT Puzzles";
 
 # now REmake the $bee/goo10k-7-nyt.html file
@@ -78,13 +77,23 @@ system "$bin/indexize $bee/goo10k-7-nyt.txt Pangramic Words from a list of 10,00
 # and REmake the osx_usd_words-7-nyt-goo.html file
 # thereby ensuring the new pangrams are not there either.
 #
-system "/bin/cat $bee/nyt_pangrams.txt $bee/goo10k-7-nyt.txt >/tmp/t; sort -u /tmp/t >/tmp/s";
-system "/usr/bin/comm -23 $bee/osx_usd_words-7.txt /tmp/s > $bee/osx_usd_words-7-nyt-goo.txt";
+system "/bin/cat $bee/nyt_pangrams.txt $bee/goo10k-7-nyt.txt >/tmp/t;";
+system "sort -u -o /tmp/t /tmp/t";
+system "/usr/bin/comm -23 $bee/osx_usd_words-7.txt /tmp/t > $bee/osx_usd_words-7-nyt-goo.txt";
 system "$bin/indexize $bee/osx_usd_words-7-nyt-goo.txt Pangramic Words from a Large Lexicon";
-
-unlink "$bee/nyt_pangrams.txt",
-       "$bee/goo10k-7-nyt.txt",
+unlink "$bee/goo10k-7-nyt.txt",
+       "$bee/nyt_pangrams.txt",
        "$bee/osx_usd_words-7-nyt-goo.txt",
-       "/tmp/t",
-       "/tmp/s"
-       ;
+       "/tmp/t";
+
+# add any new words to nyt-words.txt
+# and remove them from other_words.txt
+# by doing a comm with osx_usd_words-47.txt
+#
+open my $out2, '>>', "$bin/nyt-words.txt";
+for my $w (@words) {
+    print {$out2} "$w\n";
+}
+close $out2;
+system "sort -u -o $bin/nyt-words.txt $bin/nyt-words.txt";
+system "/usr/bin/comm -23 $bin/osx_usd_words-47.txt $bin/nyt-words.txt >$bin/other-words.txt";
