@@ -7,6 +7,13 @@ use warnings;
 what if i want a specific word to appear in a puzzle?
 what pangramic word would make that possible?
 
+film(s)
+
+generate the pangramic and word lists at 3:05 am
+from the whole list and the newly inserted puzzle.
+don't try to optimize.
+then reindexize.
+
 pwords.txt
 fourminus.txt - eliminate words with > 7 unique letters
     minus pwords.txt - which (along with other files) is updated nightly...
@@ -412,6 +419,9 @@ if ($cmd eq 'xa') {
         if ($p->[0] ne $today_d8) {
             delete $ip_date{"$ip_id $p->[0]"};
         }
+    }
+    if ($date ne $today_d8) {
+        $new_puzzle = 1;
     }
     $date = $today_d8;
     $cmd = '';

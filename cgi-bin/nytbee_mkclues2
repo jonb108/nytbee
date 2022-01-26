@@ -42,11 +42,9 @@ my %clue_for
       grep {
           m{_clue\z}xms
           &&
-          $params{$_}
+          $params{$_} =~ m{\S}xms
       }
       keys %params;
-
-$puzzle_has_clues{$date} = 1;
 
 =comment
 
@@ -89,16 +87,49 @@ my $ins_clue_sth = $dbh->prepare(<<'EOS');
     VALUES (?, ?, ?, ?)
 
 EOS
+my $nclues = 0;
 for my $w (keys %clue_for) {
     $ins_clue_sth->execute($person_id, $date, $w, $clue_for{$w});
+    ++$nclues;
 }
+if (! $nclues) {
+    # so we cleared out all of our clues
+    # has anyone else offered clues?
+    # if not, delete the entry in %puzzle_has_clues
+    #
+    my $sth_clues = $dbh->prepare(<<'EOS');
 
-display_clues(first          => 1,
-              format         => 1,
-              show_date      => $show_date,
-              date           => $date,
-              person_id      => $person_id,
-              name           => $name,
-              clue_for_href  => \%clue_for,
-              was_found_href => {},
-);
+        SELECT word, clue
+          FROM bee_clue
+         WHERE date = ?
+
+EOS
+    $sth_clues->execute($date);
+    my ($word, $clue) = $sth_clues->fetchrow_array();
+    if (! $word) {
+        delete $puzzle_has_clues{$date};
+    }
+    print <<'EOH';
+<style>
+body {
+    margin: .5in;
+    font-family: Arial;
+    font-size: 18pt;
+}
+</style>
+You offered no clues at all.   You can close this window.
+EOH
+    exit;
+}
+else {
+    $puzzle_has_clues{$date} = 1;
+    display_clues(first          => 1,
+                  format         => 1,
+                  show_date      => $show_date,
+                  date           => $date,
+                  person_id      => $person_id,
+                  name           => $name,
+                  clue_for_href  => \%clue_for,
+                  was_found_href => {},
+    );
+}
