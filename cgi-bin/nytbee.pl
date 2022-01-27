@@ -274,6 +274,12 @@ tie %puzzle_has_clues, 'DB_File', 'nyt_puzzle_has_clues.dbm';
 
 my $ip_id = ip_id();
 
+#
+# returns an array or arrayrefs representing
+# the current list of puzzles.  each array ref has two elements:
+#   0 date (yyyymmdd or CP#)
+#   1 all_pangrams?(0/1) rank#
+#
 sub my_puzzles {
     return
     map {
@@ -1178,30 +1184,48 @@ elsif ($cmd eq 'cl') {
 }
 elsif ($cmd eq 'f') {
     # look for same 7
+    my %is_in_list = map { $_->[0] => 1 } my_puzzles();
     my @puz;
     while (my ($dt, $puz) = each %puzzle) {
         if (substr($puz, 0, 7) eq $seven) {
             push @puz, [ $dt, uc substr($puz, 8, 1)
-                              . ($dt eq $date? ' *': '') ];
+                              . (     $dt eq $date? ' ' . red('*')
+                                 :$is_in_list{$dt}? ' *'
+                                 :                  ''
+                                )
+                       ];
         }
     }
-    my $rows = '';
+    my @rows;
     for my $p (sort { $a->[0] cmp $b->[0] } @puz) {
-        $rows .= Tr(td(slash_date($p->[0])),
-                    td({ style => 'text-align: left' }, $p->[1]));
+        my $date = $p->[0];
+        push @rows,
+            Tr(td(qq!<span class=link onclick="new_date('$date');">!
+                  . slash_date($date) . "</span>"),
+               td({ style => 'text-align: left' }, $p->[1])
+              );
     }
     # also search the community puzzles
     my $s = `cd community_puzzles; grep -l 'seven.*=>.*$seven' *.txt`;
     for my $n ($s =~ m{(\d+)}xmsg) {
+        my $cpn = "CP$n";
         my $href = do "community_puzzles/$n.txt";
-        $rows .= Tr(td("CP$n"), td({ style => 'text-align: left' }, uc $href->{center}));
-    }
-    $message = table({ cellpadding => 5}, $rows);
+        my $cur =     $date eq $cpn? ' ' . red('*')
+                 :$is_in_list{$cpn}? ' *'
+                 :                     '';
+        push @rows,
+            Tr(td(qq!<span class=link onclick="new_date('$cpn);">$cpn</span>!),
+               td({ style => 'text-align: left' }, uc $href->{center} . $cur),
+              );
+     }
+    $message = table({ cellpadding => 2}, @rows);
     $cmd = '';
 }
 elsif ($cmd =~ m{\A s \s+ ([a-z]+) \s* \z}xms) {
     # search the archive for the word
     # we're searching everything after the |
+    #
+    my %is_in_list = map { $_->[0] => 1 } my_puzzles();
     my $word = $1;
     my @dates;
     while (my ($dt, $puz) = each %puzzle) {
@@ -1210,21 +1234,33 @@ elsif ($cmd =~ m{\A s \s+ ([a-z]+) \s* \z}xms) {
             push @dates, $dt;
         }
     }
-    $message = join '',
-               map {
-                   slash_date($_) . '<br>'
+    my @rows = map {
+                   Tr(td(qq!<span class=link onclick="new_date('$_');">!
+                         . slash_date($_) . "</span>"),
+                      td(     $date eq $_? ' ' . red('*')
+                         :$is_in_list{$_}? ' *'
+                         :                 ''),
+                     );
                }
                sort
                @dates
                ;
     # also search the community puzzles
     my $s = qx!cd community_puzzles; grep -l "words.*=>.*'$word'" [0-9]*.txt!;
-    $message .= join '<br>',
-                map { "CP$_" }
-                sort { $a <=> $b }
-                $s =~ m{(\d+)}xmsg;
-    if ($message) {
-        $message = "\U$word\E:<br>$message";
+    push @rows,
+        map {
+            my $cpn = "CP$_";
+            Tr(td(qq!<span class=link onclick="new_date('$cpn');">!
+                  . "$cpn</span>"),
+               td(     $date eq $cpn? ' ' . red('*')
+                  :$is_in_list{$cpn}? ' *'
+                  :                   ''),
+            );
+        }
+        sort { $a <=> $b }  # needed for the 11 vs 9 thing
+        $s =~ m{(\d+)}xmsg;
+    if (@rows) {
+        $message = "\U$word\E:<br>" . table({ cellpadding => 2}, @rows);
     }
     $cmd = '';
 }
@@ -1665,10 +1701,9 @@ my $create_add
     . "Create Puzzle</a>";
 my $add_clues_form = '';
 if ($date =~ m{\A \d}xms) {
-JON "ip_id = $ip_id";
     my $add_edit = index($puzzle_has_clues{$date}, $ip_id) >= 0? 'Edit': 'Add';
     $create_add
-        .= "<br><span class=add_clues onclick='add_clues();'>$add_edit Clues</span>";
+        .= "<br><span class=link onclick='add_clues();'>$add_edit Clues</span>";
     $add_clues_form = <<"EOH";
 <form target=_blank
       id=add_clues
@@ -1928,12 +1963,16 @@ $rank_colors_fonts
 .image_queen {
     width: 175px;
 }
-.add_clues {
+.link {
     cursor: pointer;
     color: blue;
 }
 </style>
 <script>
+function new_date(d) {
+    document.getElementById('new_words').value = d;
+    document.getElementById('main').submit();
+}
 function add_clues() {
     set_focus();
     document.getElementById('add_clues').submit();

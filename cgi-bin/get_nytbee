@@ -87,7 +87,7 @@ unlink "$bee/goo10k-7-nyt.txt",
        "/tmp/t";
 
 # add any new words to nyt-words.txt
-# and remove them from other_words.txt
+# and remove them from other-words.txt
 # by doing a comm with osx_usd_words-47.txt
 #
 open my $out2, '>>', "$bin/nyt-words.txt";

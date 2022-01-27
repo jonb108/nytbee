@@ -45,7 +45,7 @@ my (%score, %bscore);
 my (%four, %bfour);
 my (@pangrams, @bpangrams);
 
-open my $in, '<', 'pwords.txt';
+open my $in, '<', 'nyt-words.txt';
 while (my $word = <$in>) {
     chomp $word;
     if ($word !~ $regex) {
@@ -69,7 +69,7 @@ my $pl = $npangrams == 1? '': 's';
 
 # Now for the Big lexicon
 #
-open my $in2, '<', 'fourminus.txt';
+open my $in2, '<', 'other-words.txt';
 while (my $bword = <$in2>) {
     chomp $bword;
     if ($bword !~ $regex) {
