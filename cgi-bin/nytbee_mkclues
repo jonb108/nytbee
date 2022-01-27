@@ -29,7 +29,6 @@ my @words = $puzzle =~ m{([a-z]+)}xmsg;
 my $show_date = date($date)->format("%B %e, %Y");
 
 my @found = split ' ', $q->param('found');
-my %is_found = map { $_ => 1 } @found;
 
 my $nnf = @words - @found;
 my $nnf_disp = '';
@@ -78,6 +77,14 @@ EOS
         $got_clues = 1;
     }
 }
+if ($got_clues) {
+    push @found, keys %clue_for;
+    # and de-dup them
+    my %seen;
+    @found = grep { !$seen{$_}++ } @found;
+}
+
+my %is_found = map { $_ => 1 } @found;
 
 my ($href_prior_clues_for, $json)
     = get_clues($person_id, \@found, \%clue_for);

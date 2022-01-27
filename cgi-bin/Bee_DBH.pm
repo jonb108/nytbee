@@ -47,6 +47,7 @@ EOS
 #
 # pname and plocation is required
 # we return $person_id - the index into bee_person
+# and the corresponding $ip_id
 #
 sub add_update_person {
     my ($pname, $plocation) = @_;

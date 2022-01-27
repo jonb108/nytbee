@@ -4,6 +4,9 @@ use warnings;
 
 =comment
 
+REediting your puzzle clues - no need to have actually *found*
+all those words again...
+
 what if i want a specific word to appear in a puzzle?
 what pangramic word would make that possible?
 
@@ -629,10 +632,9 @@ sub load_nyt_clues {
         %nyt_cluer_name_of
             = %{ eval `curl -skL $log/cgi-bin/nytbee_get_cluers/$date` };
         my @cluer_colors = qw /
+            green
             tomato
-            springgreen
             skyblue
-            mediumorchid
             orange
             brown
         /;
@@ -870,27 +872,6 @@ sub do_define {
         }
         $cmd = '';
     }
-    elsif ($term =~ m{\A ([a-z]) \z}xms) {
-        my $let = $1;
-        if ($let =~ $letter_regex) {
-            $message = ul(red($cmd) . ": \U$1\E is not in \U$seven");
-        }
-        else {
-            $message = '';
-            for my $w (get_words($let)) {
-                my $def = define($w, $Dcmd, 0);
-                if ($def) {
-                    $message .= ul($def) . '--';
-                }
-            }
-            $message =~ s{--\z}{}xms;
-            $message =~ s{--}{$line<br>}xmsg;
-            if ($message) {
-                $message = "\U$term\E:<br>$message";
-            }
-        }
-        $cmd = '';
-    }
 }
 
 sub reveal {
@@ -1050,7 +1031,7 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     $message = ul(table({ cellpadding => 4}, $rows));
     $cmd = '';
 }
-elsif ($cmd =~ m{\A (d|d[*]) \s*  (p|[a-z]|[a-z]\d+|[a-z][a-z]) \z}xms) {
+elsif ($cmd =~ m{\A (d|d[*]) \s*  (p|[a-z]\d+|[a-z][a-z]) \z}xms) {
     my $Dcmd = $1;
     my $term = $2;
     do_define($Dcmd, $term);
@@ -1684,8 +1665,10 @@ my $create_add
     . "Create Puzzle</a>";
 my $add_clues_form = '';
 if ($date =~ m{\A \d}xms) {
+JON "ip_id = $ip_id";
+    my $add_edit = index($puzzle_has_clues{$date}, $ip_id) >= 0? 'Edit': 'Add';
     $create_add
-        .= "<br><span class=add_clues onclick='add_clues();'>Add Clues</span>";
+        .= "<br><span class=add_clues onclick='add_clues();'>$add_edit Clues</span>";
     $add_clues_form = <<"EOH";
 <form target=_blank
       id=add_clues

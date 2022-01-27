@@ -65,7 +65,7 @@ use Bee_DBH qw/
     add_update_person
 /;
 
-my ($person_id) = add_update_person($name, $location);
+my ($person_id, $ip_id) = add_update_person($name, $location);
 
 # clear old clues from this person for this date
 my $sth_clear = $dbh->prepare(<<'EOS');
@@ -107,7 +107,14 @@ EOS
     $sth_clues->execute($date);
     my ($word, $clue) = $sth_clues->fetchrow_array();
     if (! $word) {
+        # we must have been the only one
         delete $puzzle_has_clues{$date};
+    }
+    else {
+        $puzzle_has_clues{$date} = join '|',
+                                   grep { $_ ne $ip_id }
+                                   split /\|/,
+                                   $puzzle_has_clues{$date};
     }
     print <<'EOH';
 <style>
@@ -122,7 +129,12 @@ EOH
     exit;
 }
 else {
-    $puzzle_has_clues{$date} = 1;
+    if (exists $puzzle_has_clues{$date}) {
+        $puzzle_has_clues{$date} .= "|$ip_id";
+    }
+    else {
+        $puzzle_has_clues{$date} = $ip_id;
+    }
     display_clues(first          => 1,
                   format         => 1,
                   show_date      => $show_date,
