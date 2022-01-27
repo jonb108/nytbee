@@ -22,6 +22,7 @@ sub define {
     for my $def (@defs) {
         $def =~ s{\A \s*|\s* \z}{}xmsg;
         $def =~ s{<[^>]*>}{}xmsg;   # strip tags
+        $def =~ s{\A ">}{}xms;    # stray chars from somewhere
         $def =~ s{.*:\s+}{}xms;
     }
     if (! @defs) {

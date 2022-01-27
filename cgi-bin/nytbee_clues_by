@@ -16,6 +16,7 @@ use Date::Simple qw/
 /;
 
 my $first = $param{first};
+my $all_words = $param{all_words};
 my $date = $param{date};
 my $format = $param{format};
 my $person_id = $param{person_id};
@@ -64,6 +65,7 @@ EOS
     }
 }
 display_clues(first          => $first,
+              all_words      => $all_words,
               format         => $format,
               show_date      => $show_date,
               date           => $date,

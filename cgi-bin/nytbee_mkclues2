@@ -26,6 +26,7 @@ use Date::Simple qw/
 
 my $date = $q->param('date');       #  hidden field
 my $show_date = date($date)->format("%B %e, %Y");
+my $all_words = $q->param('all_words');
 my $name = $q->param('name');
 my $location = $q->param('location');
 
@@ -136,6 +137,7 @@ else {
         $puzzle_has_clues{$date} = $ip_id;
     }
     display_clues(first          => 1,
+                  all_words      => $all_words,
                   format         => 1,
                   show_date      => $show_date,
                   date           => $date,

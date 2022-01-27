@@ -37,7 +37,7 @@ print <<"EOH";
 </head>
 <body>
 <h1>Editing CP$n <span class=step_name>Words</span></h1>
-For the seven letters \U$seven\E and center letter <span class=center>\U$center\E</span> we have identified the qualified words AND the words you chose before.
+For the seven letters <span class=center>\U$seven\E</span> and center letter <span class=center>\U$center\E</span> we have identified the qualified words AND the words you chose before.
 <p>
 Check the words you want to include in the puzzle and press Submit at the bottom.  Make sure you include at least one pangram. They are colored <span class=red>red</span>.
 
@@ -104,7 +104,7 @@ close $in2;
 # the words in @words that were not
 # checked must be the 'other' words.
 #
-my @other_words = keys %was_checked;
+my @other_words = map { ucfirst } keys %was_checked;
 print <<"EOH";
 <p>
 Other qualified words to include:<br><input type=text size=40 name=other_words value='@other_words'>

@@ -30,6 +30,7 @@ sub display_clues {
     my (%param) = @_;
     for my $p (qw/
         first
+        all_words
         format
         show_date
         date
@@ -44,6 +45,7 @@ sub display_clues {
         }
     }
     my $first          = $param{first};
+    my $all_words      = $param{all_words};
     my $format         = $param{format};
     my $show_date      = $param{show_date};
     my $date           = $param{date};
@@ -52,6 +54,7 @@ sub display_clues {
     my $clue_for_href  = $param{clue_for_href};
     my $was_found_href = $param{was_found_href};
 
+    my $heading = $all_words? '': "<h3>Clues for $show_date by $name</h3>";
     my @found      = keys %$was_found_href;
     my @clue_words = keys %$clue_for_href;
     my $all_found = 1;
@@ -98,6 +101,7 @@ function clear_text() {
 <body>
 <form id=main method=POST action=/cgi-bin/nytbee_clues_by>
 <input type=hidden name=first value=$first>
+<input type=hidden name=all_words value=$all_words>
 <input type=hidden name=date value=$date>
 <input type=hidden name=name value='$name'>
 <input type=hidden name=person_id value='$person_id'>
@@ -119,14 +123,15 @@ EOH
     if ($first) {
         print <<"EOH";
 <p>
-The text below can be copy/pasted into the HiveMind forum.<br>
+Choose a format from the above links and then click on Ok.<br>
+You can then Select-All, Copy and Paste into the HiveMind forum.<br>
 This window can then be closed.
 <p>
 EOH
     }
     print <<"EOH";
 </div>
-<h3>Clues for $show_date by $name</h3>
+$heading
 EOH
     my $prev_l1 = '';
     my $prev_l2 = '';

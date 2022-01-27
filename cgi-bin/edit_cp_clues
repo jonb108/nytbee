@@ -30,7 +30,7 @@ my $person_id = $cp_href->{person_id};
 
 my $seven = $cp_href->{seven};
 my $center = $cp_href->{center};
-my @other_words = split ' ', $q->param('other_words');
+my @other_words = map { lc } split ' ', $q->param('other_words');
 my $regex = qr{[^$seven]}xms;
 
 # do these extra words 'qualify'?

@@ -12,6 +12,15 @@ use BeeUtil qw/
     Tr
     td
 /;
+use Date::Simple qw/
+    date
+    today
+/;
+use Bee_DBH qw/
+    $dbh
+    get_person
+    get_clues
+/;
 
 use CGI;
 use CGI::Carp qw/
@@ -20,15 +29,28 @@ use CGI::Carp qw/
 /;
 my $q = CGI->new();
 print $q->header();
-my $cgi = 'http://logicalpoetry.com/cgi-bin';
 
-my $date = $q->param('date');
+my $cgi = 'http://logicalpoetry.com/cgi-bin';
+my $date;
+my $all_words = $q->path_info() eq '/today';;
+if ($all_words) {
+    $date = today()->as_d8();
+}
+else {
+    $date = $q->param('date');
+}
 my $puzzle = $puzzle{$date};
 $puzzle =~ s{\A [^|]* [|]\ s* }{}xms;
 my @words = $puzzle =~ m{([a-z]+)}xmsg;
 my $show_date = date($date)->format("%B %e, %Y");
 
-my @found = split ' ', $q->param('found');
+my @found;
+if ($all_words) {
+    @found = @words;
+}
+else {
+    @found = split ' ', $q->param('found');
+}
 
 my $nnf = @words - @found;
 my $nnf_disp = '';
@@ -40,15 +62,6 @@ if ($nnf) {
         $nnf_disp = "As you know, there are $nnf words that have not yet been found.  These words will be hidden.<p>";
     }
 }
-
-use Date::Simple qw/
-    date
-/;
-use Bee_DBH qw/
-    $dbh
-    get_person
-    get_clues
-/;
 
 my ($ip_id, $person_id, $name, $location) = get_person();
 
@@ -120,8 +133,9 @@ function cycle(w) {
 </head>
 <body>
 <h2>Clues for the NYT Puzzle<br>on $show_date</h2>
-<form name=form action=nytbee_mkclues2 onsubmit="return check_name_location();">
+<form name=form action=$cgi/nytbee_mkclues2 onsubmit="return check_name_location();" method=POST>
 <input type=hidden name=date value='$date'>
+<input type=hidden name=all_words value='$all_words'>
 <p>
 $nnf_disp
 You do not have to give clues for all of the words.

@@ -1717,13 +1717,13 @@ elsif ($hive == 1) {        # bee hive honeycomb
     #    4     5
     #       6
     @coords = (
-        { top => 214, left => 173, }, #0    208 168
-        { top => 134, left => 173, }, #1
+        { top => 214, left => 172, }, #0    208 168
+        { top => 134, left => 172, }, #1
         { top => 175, left => 104, }, #2
         { top => 175, left => 241, }, #3
         { top => 253, left => 104, }, #4
         { top => 253, left => 239, }, #5
-        { top => 295, left => 173, }, #6
+        { top => 295, left => 172, }, #6
     );
     # adjust an I
     for my $i (1 .. 6) {
@@ -1732,7 +1732,7 @@ elsif ($hive == 1) {        # bee hive honeycomb
         }
     }
     if ($center eq 'i') {
-        $coords[0]{left} += 9;
+        $coords[0]{left} += 6;
     }
 }
 elsif ($hive == 2) {        # flower
