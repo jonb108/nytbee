@@ -1969,7 +1969,7 @@ function set_focus() {
      <img width=50 src=/pics/bee-logo.jpg>
 </div>
 <div class=float-child3>
-    <span class=help><a target=_blank onclick="set_focus();" href='$log/nytbee/help.html#words'>Help</a></span><br><span class=create_add>$create_add</span>
+    <span class=help><a target=_blank onclick="set_focus();" href='$log/nytbee/help.html'>Help</a></span><br><span class=create_add>$create_add</span>
 </div>
 <br><br>
 <form id=main name=form method=POST>
