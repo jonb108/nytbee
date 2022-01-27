@@ -123,7 +123,7 @@ sub get_clues {
           FROM bee_clue
          WHERE person_id = ?
            AND word IN ($words)
-      ORDER BY date desc;
+      ORDER BY clue
 
 EOS
     $sth_clue->execute($person_id);

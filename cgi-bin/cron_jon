@@ -1,2 +1,1 @@
-#0 3 * * * cd /var/www/vhosts/85/241411/webspace/cgi-bin;./get_nytbee >/tmp/out 2>&1
-51 11 * * * cd /var/www/vhosts/85/241411/webspace/cgi-bin;./get_nytbee >/tmp/out 2>&1
+0 3 * * * cd /var/www/vhosts/85/241411/webspace/cgi-bin;./get_nytbee

@@ -33,6 +33,10 @@ print $q->header();
 my $cgi = 'http://logicalpoetry.com/cgi-bin';
 my $date;
 my $all_words = $q->path_info() eq '/today';;
+#
+# the directory logicalpoetry.com/mkclues has an index.html
+# file that redirects to logicalpoetry.com/cgi-bin/nytbee_mkclues/today
+
 if ($all_words) {
     $date = today()->as_d8();
 }
@@ -105,7 +109,7 @@ my ($href_prior_clues_for, $json)
 my $prior_clues = %$href_prior_clues_for?
     "<p>You have given clues for some of the words before.": '';
 if ($json ne '{}') {
-    $prior_clues .= " If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=/nytbee/pics/cycle.jpg> icon.";
+    $prior_clues .= " If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=http://logicalpoetry.com/nytbee/pics/cycle.jpg> icon.";
 }
 
 print <<"EOH";
@@ -138,8 +142,10 @@ function cycle(w) {
 <input type=hidden name=all_words value='$all_words'>
 <p>
 $nnf_disp
-You do not have to give clues for all of the words.
-You can click on the words to get a dictionary definition.
+You do not have to give clues for all of the words.  You can return
+here to update/revise your clues.
+<p>
+Clicking on the words will show a dictionary definition.
 You may, instead, wish to give clues that are more
 ambiguous, clever, wordplay &#128522; - like clues for a crossword puzzle.
 $prior_clues
@@ -158,7 +164,7 @@ for my $w (@words) {
             if (ref $href_prior_clues_for->{$w}) {
                 # there is more than one prior clue
                 $clue = $href_prior_clues_for->{$w}->[0];
-                $cycle_td = td(qq!<img class=cursor onclick='cycle("$w");' src='/nytbee/cycle.jpg'>!);
+                $cycle_td = td(qq!<img class=cursor onclick='cycle("$w");' src='/nytbee/pics/cycle.jpg'>!);
             }
             else {
                 $clue = $href_prior_clues_for->{$w};
