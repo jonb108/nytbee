@@ -93,7 +93,7 @@ my $bpl = $bnpangrams == 1? '': 's';
 
 my $msg = '';
 if ($npangrams + $bnpangrams == 0) {
-    $msg = "No pangrams at all!  We'll put " . ucfirst($word) . " in Other qualified words.<p>";
+    $msg = "No pangrams at all!  We'll put " . ucfirst($word) . ' in "Other qualified" words.<p>';
 }
 
 print <<"EOH";

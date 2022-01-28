@@ -4,30 +4,47 @@ use warnings;
 
 =comment
 
-REediting your puzzle clues - no need to have actually *found*
-all those words again...
+location of my source - github
 
-what if i want a specific word to appear in a puzzle?
-what pangramic word would make that possible?
+a table somewhere could use the table/Tr/td/th routines
+    the hint table! yes.
+
+class pointer/link two .pointer! :(
+
+ask John Napiorkowski about FAST CGI or Dancer
+    or Plack or PSGI or ... mod_perl
+    if needed...
+
+it is so fast - FastCGI or mod_perl or ...
+    it's tricky with limited ability to install this or that
+    dancer?
+
+SC - put a line where we needed the first hint
+    store it somewhere in ip_date dbm
+    - the score when I needed the first hint?
+
+aren't found words stored in the ip_date dbm file
+    need it in hidden field?
+    other hidden fields? 
+    experiment
+
+no need for .ab if hive is not 2 or 3
+
+test suite!
+
+tips, tricks
+    Tab to get focus on new_words
+    pangram game or getting to a certain rank
 
 film(s)
-
-generate the pangramic and word lists at 3:05 am
-from the whole list and the newly inserted puzzle.
-don't try to optimize.
-then reindexize.
-
-pwords.txt
-fourminus.txt - eliminate words with > 7 unique letters
-    minus pwords.txt - which (along with other files) is updated nightly...
-
-for an NYT Puzzle with clues
-    authors are listed, click to see.
-    if multiple authors add an All to see them all together
-    test with different browsers, on cell.
-    same idea as definitions - just grouped
-    differently - and for all words
-    enter multiple people's clues
+cgi_style.css cached
+    even p01, p02, instead of generated each time...
+        I is problematic... :(
+rank1, rank2, ...
+js too
+better to cache than not generate...
+all the &nbsp;! another way?
+    width style value for td??
 
 Art is about "drawing the line".
     we're getting very close to the end.
@@ -39,17 +56,8 @@ Art is about "drawing the line".
     too complicated and would put off people
     from trying it in the first place!
 
-given a word find pangramic words that can
-    create a puzzle with that word as
-    part of the okay words.
-
 find beta testers - friends and the hivemind
 should it be labeled NYT Bee, ToBee, or what?
-
-need new images for help.html since I 
-resized the letters for hive 2, 3.
-DRY for cycle clues
-expand advantages, add clues in .html
 
 <script>
 several functions that
@@ -63,21 +71,6 @@ divide styles into two - static and dynamic
     cgi_style.css is a start
 scripts, too
 
-Fantasy and Future ideas:
-
-when a person creates a set of clues
-    they set the format - one or two letters, length or not
-        and whether the viewer can change it...
-
-a way to restrict what hints/clues you can get.
-    like no V, E, no HT, no TL, no 1 or 2, no definitions,
-    only clues, no D, no G Y of course
-perhaps on a per puzzle basis or for a competition(?)
-or as a way to personally restrain yourself.
-    like a NOH command to say No Hints  NOH 1-9 for different levels
-        until you say OKH or some such.
-        This is preserved in a cookie - like your preferred 'hive' display.
-        so you can quit the browser and start again.
 for a competition - announce a certain puzzle as the one for the day.
     this would work *only* with CP puzzles as all of the NYT puzzle
     answer words are available in various places - nytbee.com, shunn.net, etc
@@ -103,19 +96,6 @@ for a competition - announce a certain puzzle as the one for the day.
     prizes?
     A nice dream, anyway :).
 
-another advantage - the clues from several people
-    are shown all together (when using D) - and can be compared.
-and another - the ok words are not visible in the page source!
-
-?ECP to edit a puzzle that you created
-    can add/remove words, update clues
-
-when getting today's puzzle words (and pangrams)
-update the lists used when creating puzzles
-- the pangram lists and the list of words used in NYT puzzles
-and the list of words from the big lexicon
-easiest way is to simply regenerate and reindexize
-
     for testing of clues - make puzzles (with accompanying clues)
         with TION pangrams (adoption, antagonizing, annihilation)
         (also add clues for NYT puzzles that have
@@ -133,42 +113,9 @@ easiest way is to simply regenerate and reindexize
 some way to preserve your accomplishments?
 print it
 
-expand advantages, making clues
-what else?
-the scramble thing - only when no message and no cmd
-
-somewhere explain the keying off of ip address
-    and browser signature
-
 add to hint total when looking at all clues?
     clues are not as easy as dictionary definitions
     it's all just fun, anyway ...
-
-document making clues for NYT puzzles
-
-disadvantages
-    - not easy to play on the phone
-    - my software has not been thoroughly vetted and tested
-          there are undoubtably other problems to be found
-    - if many people start to use it
-          the server may be overwhelmed, response time would be slow,
-          and I'd need to optimize it and move it to its own server
-
-more colors for cluers
-    choose them better?
-
-hint strategy
-QBABM - ok, good for you
-others don't mind 
-myself ... if i get to Amazing by myself that's enough
-one CAN game the system, of course
-there are many answer sites shunn.net, nytbee.com, etc
-    even the new york times site - page source
-one can clear the puzzle and restart
-e15p, e14p,... until you get all but one letter
-    for only 2 hints
-G Y, copy, C Y, paste - QB!
-remember it is just a game!
 
 at some point it becomes Art
 practical use yields to beauty
@@ -176,28 +123,6 @@ to others its over-the-top impracticality
     seems insane and a waste of time
     but to the artist
     it gives meaning to life and is therapeutic
-
-somehow cache the results of getting nyt hints?
-
-TODO:
-
-
-saved games - with timestamp? and purge ones more than a month old
-
-_will_ work on the phone but it's awkward.
-most everyone has a laptop or desktop
-so we won't try to have the 7 letters clickable/tappable
-
-in hidden fields we store the minimum state we need:
-    date, puzzle data from archive, found words
-and we compute the rest - score, max_score, rankings, hint table
-it is plenty fast
-
-the usual web trick is to store the puzzle state
-in a stateless environment... with hidden fields
-and using ip_id index into dbm and cookies
-I want to avoid a registration step
-    so we use ip and browser signature
 
 =cut
 
@@ -668,25 +593,32 @@ my @ranks = (
     { name => 'Queen Bee',  pct => 100, value => $max_score },
 );
 
-my (@found, $nhints, $ht_chosen, $tl_chosen);
+my (@found, $nhints, $ht_chosen, $tl_chosen,
+    $score_at_first_hint, $score, $rank_name, $rank);
+
+sub add_hints {
+    my ($n) = @_;
+    if (! $score_at_first_hint) {
+        $score_at_first_hint = $score;
+    }
+    $nhints += $n;
+}
+
 my $ip_date_key = "$ip_id $date";
 if (exists $ip_date{$ip_date_key}) {
     my ($ap, $rank);    # all pangrams is not needed here...
                         # rank is recomputed
-    ($nhints, $ap, $ht_chosen, $tl_chosen, $rank, @found)
+    ($nhints, $ap, $ht_chosen, $tl_chosen, $rank, $score_at_first_hint, @found)
         = split ' ', $ip_date{$ip_date_key};
 }
 else {
     $nhints    = $new_puzzle? 0: $params{nhints} || 0;    # from before
     $ht_chosen = $new_puzzle? 0: $params{ht_chosen};
     $tl_chosen = $new_puzzle? 0: $params{tl_chosen};
+    $score_at_first_hint = 0;
     @found     = $new_puzzle? (): split ' ', $params{found_words};
 }
 my %is_found = map { $_ => 1 } @found;
-
-my $score;
-my $rank_name;
-my $rank;
 
 sub compute_score_and_rank {
     $score = 0;
@@ -732,7 +664,7 @@ sub define {
     # a Community Puzzle clue
     if (! $fullword && exists $clue_for{$word}) {
         if (! $fullword) {
-            $nhints += 3;
+            add_hints(3);
         }
         $def .= "<li style='list-style-type: circle'>$clue_for{$word}</li>\n";
         return $def if $Dcmd eq 'd'; 
@@ -750,7 +682,7 @@ sub define {
                  ;
         }
         # just one word, perhaps several hints for that word
-        $nhints += 3;
+        add_hints(3);
         return $def if $Dcmd eq 'd'; 
     }
 
@@ -798,7 +730,7 @@ sub define {
         @tidied_defs = splice @tidied_defs, 0, 3;
     }
     if (@tidied_defs && ! $fullword) {
-        $nhints += 3;
+        add_hints(3);
     }
     $def .= join '',
             map {
@@ -882,7 +814,7 @@ sub reveal {
         # can't see the whole word!
         return;
     }
-    $nhints += 2;
+    add_hints(2);
     if (! $beg_end) {
         return uc(substr($word, 0, $nlets))
                . ($dash x ($lw-$nlets))
@@ -980,14 +912,14 @@ sub do_reveal {
 if ($cmd eq 'ht') {
     if (! $ht_chosen) {
         $ht_chosen = 1;
-        $nhints += 10;
+        add_hints(10);
     }
     $cmd = '';
 }
 elsif ($cmd eq 'tl') {
     if (! $tl_chosen) {
         $tl_chosen = 1;
-        $nhints += 5;
+        add_hints(5);
     }
     $cmd = '';
 }
@@ -1059,7 +991,7 @@ elsif ($cmd =~ m{\A g \s+ y \z}xms) {
              grep { !$is_found{$_} }
              @ok_words;
     if (@words) {
-        $nhints += @words * 5;
+        add_hints(@words * 5);
         $message = "<p class=mess>@words";
     }
     $cmd = '';
@@ -1070,10 +1002,11 @@ elsif ($cmd =~ m{\A c \s+ y \z}xms) {
     $nhints = 0;
     $ht_chosen = 0;
     $tl_chosen = 0;
+    $score_at_first_hint = 0;
     $cmd = '';
 }
 elsif ($cmd eq 'sc') {
-    my $rows = '';
+    my @rows;
     my $tot = 0;
     my $space = '&nbsp;' x 1;
     for my $w (@found) {
@@ -1083,9 +1016,12 @@ elsif ($cmd eq 'sc') {
         if ($is_pangram{$w}) {
             $s = color_pg($s);
         }
-        $rows .= Tr(td($s), td($space.$sc), td($space.$space.$tot));
+        push @rows, Tr(td($s), td($space.$sc), td($space.$space.$tot));
+        if ($tot == $score_at_first_hint) {
+            push @rows, Tr(td({ colspan => 3 }, '<hr>'));
+        }
     }
-    $message = table({ cellpadding => 2 }, $rows);
+    $message = table({ cellpadding => 2 }, @rows);
     my $more = @ok_words - @found;
     my $pl = $more == 1? '': 's';
     $message .= "<p> $more more word$pl to find";
@@ -1497,7 +1433,7 @@ if ($cmd eq '1') {
     }
     if (@entries) {
         # not Queen Bee yet
-        ++$nhints;
+        add_hints(1);
         $message = $entries[ rand @entries ];
     }
 }
@@ -1511,7 +1447,7 @@ elsif ($cmd eq '2') {
     }
     if (@entries) {
         # not Queen Bee yet
-        ++$nhints;
+        add_hints(1);
         $message = $entries[ rand @entries ];
     }
 }
@@ -1685,7 +1621,8 @@ for my $p (@pangrams) {
 
 # save IP address and state of the solve
 $ip_date{$ip_date_key}
-    = "$nhints $all_pangrams $ht_chosen $tl_chosen $rank @found";
+    = "$nhints $all_pangrams $ht_chosen $tl_chosen $rank $score_at_first_hint"
+    . " @found";
 untie %ip_date;
 
 my $has_message = 0;
@@ -1992,10 +1929,6 @@ function define_ht(c, n) {
     document.getElementById('new_words').value = 'D' + c + n;
     document.getElementById('main').submit();
 }
-function define_ol(c) {
-    document.getElementById('new_words').value = 'D' + c;
-    document.getElementById('main').submit();
-}
 function clues_by(person_id) {
     document.getElementById('person_id').value = person_id;
     document.getElementById('clues_by').submit();
@@ -2020,10 +1953,6 @@ function set_focus() {
 <br><br>
 <form id=main name=form method=POST>
 <input type=hidden name=date value='$date'>
-<input type=hidden name=found_words value='@found'>
-<input type=hidden name=nhints value=$nhints>
-<input type=hidden name=ht_chosen value=$ht_chosen>
-<input type=hidden name=tl_chosen value=$tl_chosen>
 <input type=hidden name=has_message value=$has_message>
 <input type=hidden name=six value='@six'>
 <input type=hidden name=seven_let value='@seven_let'>

@@ -4,28 +4,22 @@ use warnings;
 use CGI;
 my $q = CGI->new();
 print $q->header();
-
 use BeeUtil qw/
+    word_score
+    trim
     my_today
 /;
-
-/;
 my $d8 = my_today->as_d8();
-
 use Bee_DBH qw/
     get_person
 /;
 my ($ip_id, $person_id, $name, $location) = get_person();
+
 # All may be null in case this is the first time
 # the person is creating a puzzle or adding clues.
 # we do this to get the $name and $location
 # in case they _have_ been here before.
 # 
-
-use BeeUtil qw/
-    word_score
-    trim
-/;
 
 use Data::Dumper;
 $Data::Dumper::Terse  = 1;
