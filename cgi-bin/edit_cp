@@ -39,16 +39,17 @@ print <<"EOH";
 <h1>Editing CP$n <span class=step_name>Words</span></h1>
 For the seven letters <span class=center>\U$seven\E</span> and center letter <span class=center>\U$center\E</span> we have identified the qualified words AND the words you chose before.
 <p>
-Check the words you want to include in the puzzle and press Submit at the bottom.  Make sure you include at least one pangram. They are colored <span class=red>red</span>.
+Check the words you want to include in the puzzle and press Submit.  Make sure you include at least one pangram. They are colored <span class=red>red</span>.
 
 <p>
 <form action=/cgi-bin/edit_cp_clues method=POST>
 <input type=hidden name=CPn value=$n>
 <h2>Qualified words used in previous NYT Bee Puzzles:</h2>
 You can, of course, UNcheck these words, if you wish.
+<button type=submit>Submit</button>
 <p>
 EOH
-open my $in, '<', 'pwords.txt';
+open my $in, '<', 'nyt-words.txt';
 LINE:
 while (my $line = <$in>) {
     chomp $line;
@@ -73,9 +74,13 @@ while (my $line = <$in>) {
     }
 }
 close $in;
-print "<h2>More words (qualified but some are rare and esoteric):</h2>\n";
-print "Surprisingly, there are many common ordinary words that have not yet been used in any of the NYT puzzles.<p>\n";
-open my $in2, '<', 'fourminus.txt';
+print <<'EOH';
+<h2>More words (qualified but some are rare and esoteric):</h2>
+Surprisingly, there are many common ordinary words that have not yet been used in any of the NYT puzzles.
+<button type=submit>Submit</button>
+<p>
+EOH
+open my $in2, '<', 'other-words.txt';
 LINE:
 while (my $line = <$in2>) {
     chomp $line;

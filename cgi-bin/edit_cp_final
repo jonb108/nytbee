@@ -5,8 +5,8 @@ use CGI;
 my $q = CGI->new();
 print $q->header();
 
-use Date::Simple qw/
-    today
+use BeeUtil qw/
+    my_today
 /;
 
 my %params = $q->Vars();
@@ -19,7 +19,7 @@ my $href = do $fname;
 #                 $href->{pangrams}
 #             and $href->{created}
 # all else is the same
-$href->{created}  = today->as_d8();
+$href->{created}  = my_today->as_d8();
 $href->{words}    = [ split ' ', $params{words}    ];
 $href->{pangrams} = [ split ' ', $params{pangrams} ];
 
@@ -62,7 +62,7 @@ for my $k (grep { m! _clue \z!xms } keys %params) {
         # no clue
         next CLUE;
     }
-    $sth_ins->execute($person_id, $date, $word, $clue);
+    $sth_ins->execute($person_id, $date, $word, ucfirst $clue);
     $clues{$word} = $clue;
 }
 $href->{clues} = \%clues;

@@ -19,7 +19,21 @@ our @EXPORT_OK = qw/
     shuffle
     JON
     red
+    my_today
 /;
+
+use Date::Simple qw/
+    today
+/;
+
+sub my_today {
+    my ($hour) = (localtime)[2];
+    my $today = today();
+    if ($hour < 3) {
+        --$today;
+    }
+    return $today;
+}
 
 sub slash_date {
     my ($d8) = @_;

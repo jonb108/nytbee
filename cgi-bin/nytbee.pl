@@ -210,6 +210,7 @@ use CGI::Carp qw/
 /;
 
 use BeeUtil qw/
+    my_today
     red
     trim
     ip_id
@@ -309,15 +310,6 @@ my %nyt_cluer_color_for;  # key is person_id
 my $log = 'http://logicalpoetry.com';
 
 my $message = '';
-
-sub my_today {
-    my ($hour) = (localtime)[2];
-    my $today = today();
-    if ($hour < 3) {
-        --$today;
-    }
-    return $today;
-}
 
 # Puzzle from which date are we dealing with?
 # This is Very confusing, hacky, kludgy, and messy.
@@ -1104,14 +1096,15 @@ elsif (my ($ncp) = $cmd =~ m{\A lcp \s*(\d*) \z}xms) {
     my $s = `cd community_puzzles; ls -tr1 [0-9]*.txt|tail -$ncp`;
     my @rows;
     my $title_row = Tr(th('&nbsp;'),
-                       th({ style => 'text-align: left' }, 'Name'),
-                       th({ style => 'text-align: left' }, 'Seven'),
+                       th(''),
+                       th({ class => 'lt' }, 'Name'),
+                       th({ class => 'lt' }, 'Seven'),
                        th('Center'),
                        th('Words'),
                        th('Points'),
                        th('Pangrams'),
                     );
-
+    my %is_in_list = map { $_->[0] => 1 } my_puzzles();
     for my $n (sort { $b <=> $a }
                $s =~ m{(\d+)}xmsg
     ) {
@@ -1125,11 +1118,16 @@ elsif (my ($ncp) = $cmd =~ m{\A lcp \s*(\d*) \z}xms) {
         for my $w (@words) {
             $points += word_score($w, $is_pangram{$w});
         }
-        push @rows, Tr(td("CP$n"),
-                       td($href->{name}),
-                       td(uc $href->{seven}),
-                       td({ style => 'text-align: center' },
-                          uc $href->{center}),
+        my $cpn = "CP$n";
+        push @rows, Tr(td({ class => 'rt' },
+                          qq!<span class=link onclick="new_date('$cpn');">!
+                          . "$cpn</span>"),
+                       td(     $date eq $cpn? red('*')
+                          :$is_in_list{$cpn}? '*'
+                          :                   ''),
+                       td({ class => 'lt' }, $href->{name}),
+                       td({ class => 'lt' }, uc $href->{seven}),
+                       td({ class => 'cn' }, uc $href->{center}),
                        td($nwords),
                        td($points),
                        td($npangrams),
@@ -1151,7 +1149,7 @@ elsif ($cmd eq 'ycp') {
         push @rows, Tr(td("<a target=nytbee onclick='set_focus();'"
                         . " href='$log/cgi-bin/edit_cp/$n'>CP$n</a>"),
                        td(slash_date($href->{created})),
-                       td({ style => 'text-align: left' }, @pangrams),
+                       td({ class => 'lt' }, @pangrams),
                     );
     }
     $message = "Your Community Puzzles:<p>"
@@ -1166,9 +1164,8 @@ elsif ($cmd eq 'l') {
         my $pg  = $p->[1]? '&nbsp;&nbsp;p': '';
         $message .= Tr(
                         td($n) . td($cur)
-                      . td({ style => 'text-align: left' }, slash_date($p->[0]))
-                      . td({ style => 'text-align: left'},
-                           $ranks[$p->[2]]->{name})
+                      . td({ class => 'lt' }, slash_date($p->[0]))
+                      . td({ class => 'lt' }, $ranks[$p->[2]]->{name})
                       . td($pg)
                     );
         ++$n;
@@ -1202,7 +1199,7 @@ elsif ($cmd eq 'f') {
         push @rows,
             Tr(td(qq!<span class=link onclick="new_date('$date');">!
                   . slash_date($date) . "</span>"),
-               td({ style => 'text-align: left' }, $p->[1])
+               td({ class => 'lt' }, $p->[1])
               );
     }
     # also search the community puzzles
@@ -1215,7 +1212,7 @@ elsif ($cmd eq 'f') {
                  :                     '';
         push @rows,
             Tr(td(qq!<span class=link onclick="new_date('$cpn);">$cpn</span>!),
-               td({ style => 'text-align: left' }, uc $href->{center} . $cur),
+               td({ class => 'lt' }, uc $href->{center} . $cur),
               );
      }
     $message = table({ cellpadding => 2}, @rows);
@@ -1428,7 +1425,7 @@ sub color_pg {
 my $found_words = '';
 if ($word_col == 1) {
     my @rows = map {
-                   Tr(td({ style => 'text-align: left' }, ucfirst))
+                   Tr(td({ class => 'lt' }, ucfirst))
                }
                @words_found;
     $found_words = ul(table(@rows));
@@ -1602,7 +1599,7 @@ if ($ht_chosen) {
     $hint_table .= "<th>$space&nbsp;&Sigma;</th></tr>\n";
     my $tot = 0;
     for my $c (@seven) {
-        $hint_table .= "<tr><th style='text-align: center'>\U$c\E</th>";
+        $hint_table .= "<tr><th class=lt >\U$c\E</th>";
         for my $l (4 .. $max_len) {
             $hint_table .= "<td>"
                         .  ($sums{$c}{$l}?
@@ -1615,7 +1612,7 @@ if ($ht_chosen) {
         $hint_table .= th($sums{$c}{1} || 0) . "</tr>\n";  # sigma
         $tot += $sums{$c}{1};
     }
-    $hint_table .= "<tr><th style='text-align: right'>&Sigma;</th>";
+    $hint_table .= "<tr><th class=rt>&Sigma;</th>";
     for my $l (4 .. $max_len) {
         my $sum = 0;
         for my $c (@seven) {
@@ -1848,6 +1845,7 @@ $letter_styles
 .two_lets {
     margin-top: 0mm;
     margin-left: 5mm;
+    line-height: 6mm;
 }
 .help {
     margin-left: 1in;
@@ -1966,6 +1964,15 @@ $rank_colors_fonts
 .link {
     cursor: pointer;
     color: blue;
+}
+.lt {
+    text-align: left;
+}
+.rt {
+    text-align: right;
+}
+.cn {
+    text-align: center;
 }
 </style>
 <script>

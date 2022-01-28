@@ -53,7 +53,7 @@ EOS
 my $date = "CP$n";
 for my $word (sort keys %{$clue_href}) {
     $sth_ins_clue->execute($person_id, $date,
-                           $word, $clue_href->{$word});
+                           $word, ucfirst $clue_href->{$word});
 }
 
 print <<"EOH";

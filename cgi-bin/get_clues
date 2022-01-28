@@ -5,10 +5,12 @@ use CGI;
 my $q = CGI->new();
 print $q->header();
 
-use Date::Simple qw/
-    today
+use BeeUtil qw/
+    my_today
 /;
-my $d8 = today->as_d8();
+
+/;
+my $d8 = my_today->as_d8();
 
 use Bee_DBH qw/
     get_person
