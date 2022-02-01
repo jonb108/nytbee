@@ -1,4 +1,0 @@
-#!/bin/bash
-./mktar
-cd /var/www/vhosts/85/241411/webspace/httpdocs/logicalpoetry.com/nytbee
-./mktar
