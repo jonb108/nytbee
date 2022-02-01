@@ -1,0 +1,147 @@
+hostmonster.com
+support phone: 866-573-4678
+new site: http://host2047.temp.domains/~logical9/
+ssh/sftp logical9@67.20.76.247 password *
+mysql -u logical9_sahadev -pyoG.Sit801 logical9_moliere
+crontab
+cgi-bin/notes
+hmlp% uname -a
+Linux host2047.hostmonster.com 4.19.150-76.ELK.el7.x86_64 #1 SMP Wed Oct 7 01:33:43 CDT 2020 x86_64 x86_64 x86_64 GNU/Linux
+cpanel: https://host2047.hostmonster.com:2083 logical9/*
+can I delete all wp files?
+JSON, DB_File, CGI, DBI
+FastCGI for Perl?
+ssh keys for passphraseless - done
+bash alias
+git clone
+
+managing the domain logicalpoetry.com
+manage.opensrs.net credentials: jbjornstad/*
+choose Domain Locking - it is not locked
+choose Domain Extras
+    Domain Auth Code
+        12-32 chars
+        set to soHuM108!Goy.
+
+the site at hostmysite.com - transfering the registered domain
+    didn't work
+    at the Control Panel
+        Websites
+        Manage Domains
+        Transfer Existing
+            choose Transfer a domain name
+            enter logicalpoetry and com
+            click on 'Transfer Domain'
+            got error:
+                "This domain name is not available for transfer.
+                Please check to make sure you have spelled the
+               name correctly and that this domain name is
+               registered with WHOIS database."
+
+after the transfer you can still access the old data at:
+
+ssh/sftp logicalpoetr@208.112.85.135
+    password soHuM108!
+
+-----------
+
+
+after get_nytbee runs and
+adds an entry into %puzzles (puzzles.dbm)
+we run another program which reads all
+the entries in puzzles.dbm and generates
+all the other files we need.
+
+it uses two other static files:
+- the big lexicon from OSX
+- the 10,000 common words from englishhere.com
+
+this generation will be quick and it is not
+necessary to try to optimize it.  if we did we'd
+have to save (and versionize) the intermediate files
+and that is trouble.
+
+we _will_ generate a .txt version of puzzles.dbm
+as a backup (chmod -r) and maybe for easier searching? and for
+periodic submission to git for safekeeping.
+
+films:
+
+intro - use Chrome so no popup annoyance
+    today's puzzle          choose a recent day with not
+                            too many words
+        no subscription, can play full game
+        enlarge/shrink as needed
+            not easy to play on the phone
+    basic operation
+        H - different presentations
+        Return to permute
+        entering words - more than one at a time
+            error messages, clearing
+            show all 5 error messages at once
+                BOAT and then:
+                BOAT BAT BAOBOB BARK AUTO - 1/28/22
+                already found
+                no center letter
+                too short
+                letter not in 7
+                not in word list
+        color of words - new, pangram, perfect
+        I - information
+        W - found order
+        R - rankings
+            ever-growing rank name
+            Amazing, Genius, Queen Bee image
+        HT
+        TL
+            separate or together
+            dynamic!  demonstrate this
+        SC
+        C Y     clear, start over
+        Help link - to top
+hints
+    hint total
+    D command
+        clicking on entry in HT and TL
+    D*
+    D <word>
+    V
+    E
+    1
+    2
+
+    DP, V2P
+the NYT archive
+    NR
+    m/d/y
+    L           *, p
+    N
+    P
+    P#
+    T
+    X
+    XA
+    Xnums
+creating clues
+    use a date with NOON
+    NYT, 'Add Clues'
+    definitions
+    previous clues, cycle
+    formats, Ok, copy/paste to Forum
+    RE-edit
+    D to show
+    I, click on author's name
+    multiple authors
+creating a community puzzle
+    'Create Puzzle'
+    1 - pangramic word
+        - find pangram for word
+    2 - center letter 
+    3 - words
+    4 - clues
+    5 - name, location
+    CP# to play
+    LCP, LCP 10
+    YCP
+        click to edit - change words, clues
+    XCP#
