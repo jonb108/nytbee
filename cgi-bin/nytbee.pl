@@ -598,7 +598,7 @@ my (@found, $nhints, $ht_chosen, $tl_chosen,
 
 sub add_hints {
     my ($n) = @_;
-    if (! $score_at_first_hint) {
+    if ($score_at_first_hint < 0) {
         $score_at_first_hint = $score;
     }
     $nhints += $n;
@@ -615,7 +615,8 @@ else {
     $nhints    = $new_puzzle? 0: $params{nhints} || 0;    # from before
     $ht_chosen = $new_puzzle? 0: $params{ht_chosen};
     $tl_chosen = $new_puzzle? 0: $params{tl_chosen};
-    $score_at_first_hint = 0;
+    $score_at_first_hint = -1;  # -1 since we may ask for a hint
+                                # at the very beginning!
     @found     = $new_puzzle? (): split ' ', $params{found_words};
 }
 my %is_found = map { $_ => 1 } @found;
@@ -671,12 +672,11 @@ sub define {
     }
     # community contributed NYT Bee Puzzle clues
     elsif (! $fullword && exists $nyt_clues_for{$word}) {
-        my $lw = length($word);
         for my $href (@{$nyt_clues_for{$word}}) {
             $def .= "<li style='list-style-type: circle'>"
                  .  "<span style='color:"
                  .  "$nyt_cluer_color_for{$href->{person_id}}'>"
-                 .  "$href->{clue} - $lw"
+                 .  $href->{clue}
                  .  "</span>"
                  .  "</li>\n"
                  ;
@@ -1002,12 +1002,16 @@ elsif ($cmd =~ m{\A c \s+ y \z}xms) {
     $nhints = 0;
     $ht_chosen = 0;
     $tl_chosen = 0;
-    $score_at_first_hint = 0;
+    $score_at_first_hint = -1;
     $cmd = '';
 }
 elsif ($cmd eq 'sc') {
     my @rows;
     my $tot = 0;
+    if ($tot == $score_at_first_hint) {
+        # they asked for a hint right away!
+        push @rows, Tr(td({ colspan => 3 }, '<hr>'));
+    }
     my $space = '&nbsp;' x 1;
     for my $w (@found) {
         my $sc = word_score($w, $is_pangram{$w});
@@ -1333,6 +1337,7 @@ for my $w (@new_words) {
 
 # now that we have added the new words...
 compute_score_and_rank();
+
 
 if (! $prefix && ! $pattern && ! $limit && ! @words_found) {
     # the default when there are no restrictions
@@ -1948,7 +1953,7 @@ function set_focus() {
      <img width=50 src=/pics/bee-logo.jpg>
 </div>
 <div class=float-child3>
-    <span class=help><a target=_blank onclick="set_focus();" href='$log/nytbee/help.html'>Help</a></span><br><span class=create_add>$create_add</span>
+    <span class=help><a target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html'>Help</a></span><br><span class=create_add>$create_add</span>
 </div>
 <br><br>
 <form id=main name=form method=POST>

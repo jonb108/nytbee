@@ -8,6 +8,7 @@ our @EXPORT_OK = qw/
     word_score
     trim
     ip_id
+    ip
     table
     Tr
     th

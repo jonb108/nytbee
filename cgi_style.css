@@ -56,3 +56,8 @@ button, .word_td {
 .step_name {
     color: green;
 }
+.help {
+    margin-left: 2.5in;
+    font-size: 18pt;
+    font-weight: normal;
+}
