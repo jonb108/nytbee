@@ -18,8 +18,7 @@ if (@chars > 7) {
 
 my @pangrams;
 
-my $bee = '/var/www/vhosts/85/241411/webspace'
-        . '/httpdocs/logicalpoetry.com/nytbee';
+my $bee = '/home4/logical9/www/nytbee';
 
 sub get_pangrams {
     my ($f) = @_;
