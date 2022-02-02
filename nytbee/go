@@ -1,0 +1,7 @@
+#!/bin/bash
+scp hm:/tmp/html.tar .
+scp hm:/tmp/cgi.tar .
+tar xvf html.tar
+cd ../cgi-bin
+tar xvf ../nytbee/cgi.tar
+git status

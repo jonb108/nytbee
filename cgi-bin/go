@@ -1,0 +1,5 @@
+#!/bin/bash
+./mktar
+echo ----------
+cd ../nytbee
+./mktar

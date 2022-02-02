@@ -1,7 +1,7 @@
 <html>
 <head>
 <title>The Spelling Bee Puzzle of New York Times</title>
-<link rel='stylesheet' type='text/css' href='cgi_style.css'/>
+<link rel='stylesheet' type='text/css' href='css/cgi_style.css'/>
 <script>
 function set_focus() {
     document.getElementById('word').focus();
@@ -9,7 +9,7 @@ function set_focus() {
 function submitWindow() {
     var word2 = document.getElementById('word2').value; 
     var newwin = window.open(
-        'http://logicalpoetry.com/cgi-bin/word_pangram/' + word2,
+        'http://host2047.temp.domains/~logical9/cgi-bin/word_pangram/' + word2,
         'windowNew','width=600, height=600'
     );
     newwin.moveTo(800, 0);
@@ -18,8 +18,8 @@ function submitWindow() {
 </script>
 </head>
 <body>
-<h1>Making an NYT Type<a target=nytbee_help class=help href='http://logicalpoetry.com/nytbee/help.html#create'>Help</a><br>Spelling Bee Puzzle<br>Step <span class=red>1</span> <span class=step_name>Pangramic Word</span></h1>
-<form name=form action=/cgi-bin/mkpuz_tally method=POST>
+<h1>Making an NYT Type<a target=nytbee_help class=help href='http://host2047.temp.domains/~logical9/nytbee/help.html#create'>Help</a><br>Spelling Bee Puzzle<br>Step <span class=red>1</span> <span class=step_name>Pangramic Word</span></h1>
+<form name=form action=http://host2047.temp.domains/~logical9/cgi-bin/mkpuz_tally.pl method=POST>
 Enter a pangramic word:<p>
 <input type=text name=word id=word size=15>
 <button type=submit>Submit</button>

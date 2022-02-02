@@ -1,0 +1,43 @@
+#!/bin/bash
+rm -f /tmp/cgi.tar
+tar cvf /tmp/cgi.tar  \
+BeeUtil.pm \
+BeeClues.pm \
+clues.pl \
+cron_jon \
+final_mkpuz.pl \
+get_clues.pl \
+get_nytbee.pl \
+get_pangrams \
+gwords.pl \
+load_nytbee \
+mkpuz_tally.pl \
+nytbee \
+nytbee_archive \
+nytbee.pl \
+rand_nytbee.pl \
+same_nytbee.pl \
+search_nytbee.pl \
+tally_nytbee.pl \
+mknyt \
+nytbee_mkclues.pl \
+nytbee_mkclues2.pl \
+Bee_DBH.pm \
+nytbee_clue_dates \
+nytbee_get_clues.pl \
+nytbee_get_cluers.pl \
+nytbee_clues_by.pl \
+nytbee_define.pl \
+mktar \
+go \
+dump_dbm \
+edit_cp.pl \
+edit_cp_clues.pl \
+edit_cp_final.pl \
+goo10k-47.txt \
+osx_usd_words-47.txt \
+word_pangram
+
+# these will not change
+#JSON/PP.pm
+#Date

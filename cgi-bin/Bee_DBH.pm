@@ -19,9 +19,9 @@ use JSON::PP qw/
 
 use DBI;
 our $dbh = DBI->connect(
-    'dbi:mysql:logicalpoetr:spruce.safesecureweb.com',
-    'logicalpoetr',
-    'bx42rg86',
+    'dbi:mysql:logical9_moliere:host2047.hostmonster.com',
+    'logical9_sahadev',
+    'yoG.Sit801',
     { RaiseError => 1, AutoCommit => 1 }
 ) or die "cannot connect to database\n";
 

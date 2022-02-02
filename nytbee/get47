@@ -1,0 +1,36 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+my $fname = shift or die "usage: get47 fname";
+open my $in, '<', $fname;
+
+my $fname47 = $fname;
+$fname47 =~ s{[.]txt}{-47.txt}xms;
+open my $f47, '>', $fname47;
+
+my $fname7 = $fname;
+$fname7 =~ s{[.]txt}{-7.txt}xms;
+open my $f7, '>', $fname7;
+
+sub nuniq {
+    my ($word) = @_;
+    my %seen;
+    my @chars = sort grep { !$seen{$_}++; } split //, $word;
+    return scalar(@chars);
+}
+
+LINE:
+while (my $line = <$in>) {
+    chomp $line;
+    my $nuniq = nuniq($line);
+    if ($nuniq == 7) {
+        print {$f7} "$line\n";
+    }
+    if (length $line < 4 || $nuniq > 7) {
+        next LINE;
+    }
+    print {$f47} "$line\n";
+}
+close $in;
+close $f7;
+close $f47;

@@ -150,6 +150,7 @@ use BeeUtil qw/
     div
     word_score
     JON
+    $log
 /;
 
 use Date::Simple qw/
@@ -231,8 +232,6 @@ my %nyt_clues_for;        # key is word,
                           # value is [ { person_id => x, clue => y }, ... ]
 my %nyt_cluer_name_of;    # key is person_id
 my %nyt_cluer_color_for;  # key is person_id
-
-my $log = 'http://logicalpoetry.com';
 
 my $message = '';
 
@@ -546,14 +545,14 @@ if ($cmd eq 'noop') {
 # this is all very syntactically intense.
 # also see 'i' and sub define
 # is there a better data structure?
-# perhaps have the colors in nytbee_get_clues or nytbee_get_cluers?
+# perhaps have the colors in nytbee_get_clues.pl or nytbee_get_cluers.pl?
 sub load_nyt_clues {
     if ($puzzle_has_clues{$date}) {
         # eliminate $href???
         %nyt_clues_for
-            = %{ eval `curl -skL $log/cgi-bin/nytbee_get_clues/$date` };
+            = %{ eval `curl -skL $log/cgi-bin/nytbee_get_clues.pl/$date` };
         %nyt_cluer_name_of
-            = %{ eval `curl -skL $log/cgi-bin/nytbee_get_cluers/$date` };
+            = %{ eval `curl -skL $log/cgi-bin/nytbee_get_cluers.pl/$date` };
         my @cluer_colors = qw /
             green
             tomato
@@ -1087,7 +1086,7 @@ elsif ($cmd eq 'ycp') {
         my $href = do "community_puzzles/$n.txt";
         my @pangrams = map { ucfirst } @{$href->{pangrams}};
         push @rows, Tr(td("<a target=nytbee onclick='set_focus();'"
-                        . " href='$log/cgi-bin/edit_cp/$n'>CP$n</a>"),
+                        . " href='$log/cgi-bin/edit_cp.pl/$n'>CP$n</a>"),
                        td(slash_date($href->{created})),
                        td({ class => 'lt' }, @pangrams),
                     );
@@ -1481,7 +1480,7 @@ EOH
         $show_clue_form = <<"EOH";
 <form target=nytbee
       id=clues_by
-      action=/cgi-bin/nytbee_clues_by
+      action=$log/cgi-bin/nytbee_clues_by.pl
       method=POST
 >
 <input type=hidden id=person_id name=person_id>
@@ -1607,7 +1606,7 @@ my $image = '';
 if (7 <= $rank && $rank <= 9) {
     my $name = lc $ranks[$rank]->{name};
     $name =~ s{\s.*}{}xms;  # for queen bee
-    $image = "<img class=image_$name src=$log/pics/$name.jpg>";
+    $image = "<img class=image_$name src=$log/nytbee/pics/$name.jpg>";
 }
 
 my $disp_nhints = "";
@@ -1646,7 +1645,7 @@ if ($date =~ m{\A \d}xms) {
     $add_clues_form = <<"EOH";
 <form target=_blank
       id=add_clues
-      action=$log/cgi-bin/nytbee_mkclues
+      action=$log/cgi-bin/nytbee_mkclues.pl
       method=POST
 >
 <input type=hidden id=date name=date value=$date>
@@ -1678,7 +1677,7 @@ if ($hive == 0) {
 EOH
 }
 elsif ($hive == 1) {        # bee hive honeycomb
-    $letters = "<p><img class=img src=/nytbee/pics/hive.jpg height=240><p>";
+    $letters = "<p><img class=img src=$log/nytbee/pics/hive.jpg height=240><p>";
     $letters .= "<span class='p0 ab'>\U$center\E</span>";
     for my $i (1 .. 6) {
         $letters .= "<span class='p$i ab'>$six[$i-1]</span>";
@@ -1710,7 +1709,7 @@ elsif ($hive == 1) {        # bee hive honeycomb
     }
 }
 elsif ($hive == 2) {        # flower
-    $letters = "<p><img class=img src=/nytbee/pics/flower.jpg height=250><p>";
+    $letters = "<p><img class=img src=$log/nytbee/pics/flower.jpg height=250><p>";
     $letters .= "<span class='p0 ab white'>\U$center\E</span>";
     for my $i (1 .. 6) {
         $letters .= "<span class='p$i ab'>$six[$i-1]</span>";
@@ -1950,7 +1949,7 @@ function set_focus() {
     <a target=_blank onclick="set_focus();" href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date$clues_are_present
 </div>
 <div class=float-child2>
-     <img width=50 src=/pics/bee-logo.jpg>
+     <img width=50 src=$log/nytbee/pics/bee-logo.jpg>
 </div>
 <div class=float-child3>
     <span class=help><a target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html'>Help</a></span><br><span class=create_add>$create_add</span>

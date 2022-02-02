@@ -12,8 +12,9 @@ can I delete all wp files?
 JSON, DB_File, CGI, DBI
 FastCGI for Perl?
 ssh keys for passphraseless - done
-bash alias
-git clone
+    scp to hm:
+bash alias - done
+git clone - trouble - back to mktar
 
 managing the domain logicalpoetry.com
 manage.opensrs.net credentials: jbjornstad/*

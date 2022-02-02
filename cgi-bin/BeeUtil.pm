@@ -21,11 +21,14 @@ our @EXPORT_OK = qw/
     JON
     red
     my_today
+    $log
 /;
 
 use Date::Simple qw/
     today
 /;
+
+our $log = 'http://host2047.temp.domains/~logical9';
 
 sub my_today {
     my ($hour) = (localtime)[2];
