@@ -4,7 +4,18 @@ use warnings;
 
 =comment
 
-location of my source - github
+UUID and all games in one dbm entry with key the uuid
+
+find pangrams that would result in a word in the puzzle
+    what if word is missing?
+
+add a few ranks (Great, Amazing, Genius, Queen Bee) to SC
+
+a bee image different from the NYT?  random cycle?
+    for later...
+
+In Tips/Tricks in doc - if you lose focus on text field
+    just hit Tab
 
 a table somewhere could use the table/Tr/td/th routines
     the hint table! yes.
@@ -18,10 +29,6 @@ ask John Napiorkowski about FAST CGI or Dancer
 it is so fast - FastCGI or mod_perl or ...
     it's tricky with limited ability to install this or that
     dancer?
-
-SC - put a line where we needed the first hint
-    store it somewhere in ip_date dbm
-    - the score when I needed the first hint?
 
 aren't found words stored in the ip_date dbm file
     need it in hidden field?
@@ -127,13 +134,9 @@ to others its over-the-top impracticality
 =cut
 
 use CGI;
-my $q = CGI->new();
-my $hive = $q->cookie('hive') || 0;
-my %params = $q->Vars();
 use CGI::Carp qw/
     fatalsToBrowser
 /;
-
 use BeeUtil qw/
     my_today
     red
@@ -152,15 +155,39 @@ use BeeUtil qw/
     JON
     $log
 /;
-
 use Date::Simple qw/
     today
     date
 /;
-
 use DB_File;
 use DB_File::Lock;
+use Data::Dumper qw/
+    Dumper
+/;
+$Data::Dumper::Indent = 0;
+$Data::Dumper::Terse  = 1;
 
+my $q = CGI->new();
+my $hive = $q->cookie('hive') || 0;
+my $uuid = $q->cookie('uuid');
+if (! $uuid) {
+    # only load this module if it is needed
+    require UUID::Tiny;
+    $uuid = UUID::Tiny::create_uuid_as_string(1);
+}
+my $hive_cookie = $q->cookie(
+    -name    => 'hive',
+    -value   => $hive,
+    -expires => '+20y'
+);
+my $uuid_cookie = $q->cookie(
+    -name    => 'uuid',
+    -value    => $uuid,
+    -expires => '+20y',
+);
+print $q->header(-cookie => [ $hive_cookie, $uuid_cookie ]);
+
+my %params = $q->Vars();
 ##############
 my %puzzle;
 tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
@@ -168,7 +195,6 @@ tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
 # key is d8
 # value is seven center pangrams... | words
 #-------------
-
 
 ###############
 my %ip_date;
@@ -182,9 +208,29 @@ tie %ip_date, 'DB_File::Lock', 'ip_date.dbm',
 # a complex hash key/value
 # key is 'ip_address browser_signature puzzle_date'
 #            0              1             2
-# value is #hints all_pangrams_found ht_chosen tl_chosen rank words_found...
+# value is:
+# #hints all_pangrams_found ht_chosen tl_chosen rank words_found...
 #            0         1                 2         3      4
 #-------------
+
+################
+# a better way of storing the current puzzle list for everyone
+my %cur_puzzles_store;
+tie %cur_puzzles_store, 'DB_File', 'cur_puzzles_store.dbm';
+
+# key is the uuid ("session" id)
+# value is a Data::Dumper created *string* representing a hash
+#     whose keys are the $date (or cp#)
+#     and the value is:
+#     #hints all_pangrams_found ht_chosen tl_chosen rank words_found...
+#     as above
+#---------------
+my %cur_puzzles;        # the current puzzles for the _current_ user
+my $s = $cur_puzzles_store{$uuid};
+if ($s) {
+    %cur_puzzles = %{ eval $s };    # the key point #1 (see below for #2)
+}
+JON "cur puzzles: " . Dumper(\%cur_puzzles);
 
 ################
 # clues for NYT puzzles are stored in the mysql database
@@ -258,6 +304,22 @@ my $cmd = lc $params{new_words};
     #
 $cmd = trim($cmd);
 
+#
+# SO ... what puzzle is current?
+# we need to set the variable $date.
+# the value of $cmd might very well change what puzzle is current.
+#
+#       T, NR,
+#       X, XA, Xnums,
+#       N, P, P#
+#       CP#, XCP,
+#       mm/dd/yy, mm/dd, dd
+#
+# the most common case is that the $date CGI parameter
+# (from a hidden field) is the current date we are dealing with.
+# next most common is that we have no date at all and
+# will load the most recent NYT puzzle - today's.
+# 
 my $first = date('5/29/18');
 my $date;
 my $today = my_today();
@@ -421,6 +483,19 @@ elsif ($cmd eq 't') {
     $new_puzzle = 1;
     $cmd = '';
 }
+elsif ($cmd eq 'n' || $cmd eq 'p') {
+    my @puzzles = my_puzzles();
+    PUZ:
+    for my $n (0 .. $#puzzles) {
+        if ($puzzles[$n][0] eq $date) {
+            my $x = $cmd eq 'n'? ($n == $#puzzles? 0: $n+1) 
+                   :             ($n == 0        ? $#puzzles: $n-1);
+            $date = $puzzles[$x][0];
+            $cmd = '';
+            last PUZ;
+        }
+    }
+}
 elsif ($cmd ne '1' && $cmd ne '2'
        && $cmd =~ m{\A ([\d/-]+) \z}xms
 ) {
@@ -452,23 +527,10 @@ if (! $date) {
     $date = $today->as_d8();
     $new_puzzle = 1;
 }
+
 my $show_date;
 my $clues_are_present = '';
 my $cp_href;
-
-if ($cmd eq 'n' || $cmd eq 'p') {
-    my @puzzles = my_puzzles();
-    PUZ:
-    for my $n (0 .. $#puzzles) {
-        if ($puzzles[$n][0] eq $date) {
-            my $x = $cmd eq 'n'? ($n == $#puzzles? 0: $n+1) 
-                   :             ($n == 0        ? $#puzzles: $n-1);
-            $date = $puzzles[$x][0];
-            $cmd = '';
-            last PUZ;
-        }
-    }
-}
 
 # we have a valid date. either d8 format or CP#
 if ($date =~ m{\A\d}xms) {
@@ -527,7 +589,7 @@ else {
 }
 
 if ((! $cmd || $cmd eq 'noop') && ! $params{has_message}) {
-    # We hit Return in an empy text field so
+    # We hit Return in an empty text field so
     # there is no command
     # and we didn't hit Return simply to clear a message
     # shuffle the @six and @seven_let
@@ -603,12 +665,18 @@ sub add_hints {
     $nhints += $n;
 }
 
-my $ip_date_key = "$ip_id $date";
-if (exists $ip_date{$ip_date_key}) {
+#my $ip_date_key = "$ip_id $date";
+#if (exists $ip_date{$ip_date_key}) {
+#    my ($ap, $rank);    # all pangrams is not needed here...
+#                        # rank is recomputed
+#    ($nhints, $ap, $ht_chosen, $tl_chosen, $rank, $score_at_first_hint, @found)
+#        = split ' ', $ip_date{$ip_date_key};
+#}
+if (exists $cur_puzzles{$date}) {
     my ($ap, $rank);    # all pangrams is not needed here...
                         # rank is recomputed
     ($nhints, $ap, $ht_chosen, $tl_chosen, $rank, $score_at_first_hint, @found)
-        = split ' ', $ip_date{$ip_date_key};
+        = split ' ', $cur_puzzles{$date};
 }
 else {
     $nhints    = $new_puzzle? 0: $params{nhints} || 0;    # from before
@@ -1624,10 +1692,17 @@ for my $p (@pangrams) {
 }
 
 # save IP address and state of the solve
-$ip_date{$ip_date_key}
+#$ip_date{$ip_date_key}
+#    = "$nhints $all_pangrams $ht_chosen $tl_chosen $rank $score_at_first_hint"
+#    . " @found";
+#untie %ip_date;
+# save the state of the current puzzle
+$cur_puzzles{$date}
     = "$nhints $all_pangrams $ht_chosen $tl_chosen $rank $score_at_first_hint"
-    . " @found";
-untie %ip_date;
+    . " @found"
+    ;
+$cur_puzzles_store{$uuid} = Dumper(\%cur_puzzles);  # the key point #2
+untie %cur_puzzles_store;
 
 my $has_message = 0;
 if ($message) {
@@ -1657,12 +1732,6 @@ EOH
 # now to display everything
 # cgi-bin/style.css?
 
-my $cookie = $q->cookie(
-    -name    => 'hive',
-    -value   => $hive,
-    -expires => '+20y'
-);
-print $q->header(-cookie => $cookie);
 my $letters = '';
 my @coords;
 my $let_size;

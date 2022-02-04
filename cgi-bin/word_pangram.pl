@@ -10,6 +10,11 @@ print "Content-Type: text/html; charset=ISO-8859-1\n\n";
 my $word = $ENV{PATH_INFO};
 $word =~ s{\A /}{}xms;
 
+if ($word !~ m{\S}xms) {
+    print "missing word to search for...";
+    exit;
+}
+
 my @chars = uniq_chars $word;
 if (@chars > 7) {
     print "Sorry, there are more than 7 unique characters in $word.";
