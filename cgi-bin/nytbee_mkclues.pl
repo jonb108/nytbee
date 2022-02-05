@@ -111,14 +111,14 @@ my ($href_prior_clues_for, $json)
 my $prior_clues = %$href_prior_clues_for?
     "<p>You have given clues for some of the words before.": '';
 if ($json ne '{}') {
-    $prior_clues .= " If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=http://logicalpoetry.com/nytbee/pics/cycle.jpg> icon.";
+    $prior_clues .= " If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=$log/nytbee/pics/cycle.jpg> icon.";
 }
 
 print <<"EOH";
 <html>
 <head>
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
-<script src="http://logicalpoetry.com/nytbee/js/nytbee.js"></script>
+<script src="$log/nytbee/js/nytbee.js"></script>
 <script>
 var newwin;
 function popup_define(word, height, width) {
@@ -138,7 +138,7 @@ function cycle(w) {
 </script>
 </head>
 <body>
-<h2>Clues for the NYT Puzzle<a target=nytbee_help class=help href='http://logicalpoetry.com/nytbee/help.html#clues'>Help</a><br>on $show_date</h2>
+<h2>Clues for the NYT Puzzle<a target=nytbee_help class=help href='$log/nytbee/help.html#clues'>Help</a><br>on $show_date</h2>
 <form name=form action='$cgi/nytbee_mkclues2.pl' onsubmit="return check_name_location();" method=POST>
 <input type=hidden name=date value='$date'>
 <input type=hidden name=all_words value='$all_words'>

@@ -1825,8 +1825,8 @@ EOS
 print <<"EOH";
 <html>
 <head>
+<title>Spelling Bee - $show_date</title>
 <style>
-/* styles with substitutions: */
 .img {
     margin-left: ${img_left_margin}px;
 }
@@ -1860,7 +1860,13 @@ $letter_styles
 <input type=hidden name=hive value=$hive>
 $letters
 $message
-<input class=new_words type=text size=40 id=new_words name=new_words><br>
+<input class=new_words
+       type=text
+       size=40
+       id=new_words
+       name=new_words
+       autocomplete=off
+><br>
 </form>
 <div class=found_words>
 $found_words
