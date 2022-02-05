@@ -3,6 +3,7 @@ use warnings;
 package BeeUtil;
 use base 'Exporter';
 our @EXPORT_OK = qw/
+    cgi_header
     uniq_chars
     error
     word_score
@@ -27,6 +28,28 @@ use Date::Simple qw/
 /;
 
 our $log = 'http://host2047.temp.domains/~logical9';
+
+sub cgi_header {
+    my ($q, $another_cookie) = @_;
+    my $uuid = $q->cookie('uuid');
+    if (! $uuid) {
+        # only load this module if it is needed
+        require UUID::Tiny;
+        $uuid = UUID::Tiny::create_uuid_as_string(1);
+    }
+    my $uuid_cookie = $q->cookie(
+        -name    => 'uuid',
+        -value    => $uuid,
+        -expires => '+20y',
+    );
+    if ($another_cookie) {
+        print $q->header(-cookie => [ $uuid_cookie, $another_cookie ]);
+    }
+    else {
+        print $q->header(-cookie => $uuid_cookie);
+    }
+    return $uuid;
+}
 
 sub my_today {
     my ($hour) = (localtime)[2];

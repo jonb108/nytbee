@@ -8,6 +8,7 @@ my %puzzle;
 tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
 
 use BeeUtil qw/
+    cgi_header
     table
     Tr
     td
@@ -22,7 +23,6 @@ use Bee_DBH qw/
     get_person
     get_clues
 /;
-
 use CGI;
 use CGI::Carp qw/
     fatalsToBrowser
@@ -30,18 +30,7 @@ use CGI::Carp qw/
 /;
 
 my $q = CGI->new();
-my $uuid = $q->cookie('uuid');
-if (! $uuid) {
-    # only load this module if it is needed
-    require UUID::Tiny;
-    $uuid = UUID::Tiny::create_uuid_as_string(1);
-}
-my $uuid_cookie = $q->cookie(
-    -name    => 'uuid',
-    -value    => $uuid,
-    -expires => '+20y',
-);
-print $q->header(-cookie => $uuid_cookie);
+my $uuid = cgi_header($q);
 
 my $cgi = "$log/cgi-bin";
 my $date;

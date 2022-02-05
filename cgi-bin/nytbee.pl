@@ -4,12 +4,8 @@ use warnings;
 
 =comment
 
-UUID and all games in one dbm entry with key the uuid
-
-find pangrams that would result in a word in the puzzle
-    what if word is missing?
-
-add a few ranks (Great, Amazing, Genius, Queen Bee) to SC
+some weirdness with <hr> for line ht before words then sc
+    colspan 4?
 
 a bee image different from the NYT?  random cycle?
     for later...
@@ -17,10 +13,7 @@ a bee image different from the NYT?  random cycle?
 In Tips/Tricks in doc - if you lose focus on text field
     just hit Tab
 
-a table somewhere could use the table/Tr/td/th routines
-    the hint table! yes.
-
-class pointer/link two .pointer! :(
+class pointer/link two .pointer! :(????
 
 ask John Napiorkowski about FAST CGI or Dancer
     or Plack or PSGI or ... mod_perl
@@ -29,11 +22,6 @@ ask John Napiorkowski about FAST CGI or Dancer
 it is so fast - FastCGI or mod_perl or ...
     it's tricky with limited ability to install this or that
     dancer?
-
-aren't found words stored in the ip_date dbm file
-    need it in hidden field?
-    other hidden fields? 
-    experiment
 
 no need for .ab if hive is not 2 or 3
 
@@ -138,6 +126,7 @@ use CGI::Carp qw/
     fatalsToBrowser
 /;
 use BeeUtil qw/
+    cgi_header
     my_today
     red
     trim
@@ -168,23 +157,12 @@ $Data::Dumper::Terse  = 1;
 
 my $q = CGI->new();
 my $hive = $q->param('hive') || $q->cookie('hive') || 1;
-my $uuid = $q->cookie('uuid');
-if (! $uuid) {
-    # only load this module if it is needed
-    require UUID::Tiny;
-    $uuid = UUID::Tiny::create_uuid_as_string(1);
-}
 my $hive_cookie = $q->cookie(
     -name    => 'hive',
-    -value   => $hive,
-    -expires => '+20y'
-);
-my $uuid_cookie = $q->cookie(
-    -name    => 'uuid',
-    -value    => $uuid,
+    -value    => $hive,
     -expires => '+20y',
 );
-print $q->header(-cookie => [ $hive_cookie, $uuid_cookie ]);
+my $uuid = cgi_header($q, $hive_cookie);
 
 my %params = $q->Vars();
 ##############
@@ -1058,22 +1036,33 @@ elsif ($cmd =~ m{\A c \s+ y \z}xms) {
     $cmd = '';
 }
 elsif ($cmd eq 'sc') {
+    my $r = 6;
     my @rows;
     my $tot = 0;
     if ($tot == $score_at_first_hint) {
         # they asked for a hint right away!
-        push @rows, Tr(td({ colspan => 3 }, '<hr>'));
+        push @rows, Tr(td({ colspan => 4, width => 130 }, '<hr>'));
     }
-    my $space = '&nbsp;' x 1;
+    my $space = '&nbsp;' x 2;
     for my $w (@found) {
         my $sc = word_score($w, $is_pangram{$w});
+        my $rank_name = '';
         $tot += $sc;
+        if ($tot >= $ranks[$r]{value}) {
+            $rank_name = $ranks[$r]{name};
+            ++$r;
+        }
         my $s = ucfirst $w;
         if ($is_pangram{$w}) {
             $s = color_pg($s);
         }
-        push @rows, Tr(td($s), td($space.$sc), td($space.$space.$tot));
+        push @rows, Tr(td($s),
+                       td($space.$sc),
+                       td($space.$tot),
+                       td({ class => 'lt' }, $space.$rank_name),
+                      );
         if ($tot == $score_at_first_hint) {
+            # yes == above
             push @rows, Tr(td({ colspan => 3 }, '<hr>'));
         }
     }
@@ -1569,7 +1558,7 @@ EOH
         $show_clue_form = <<"EOH";
 <form target=nytbee
       id=clues_by
-      action=/cgi-bin/nytbee_clues_by
+      action=$log/cgi-bin/nytbee_clues_by.pl
       method=POST
 >
 <input type=hidden id=person_id name=person_id>
@@ -1585,6 +1574,9 @@ EOH
 # the hint tables
 my $hint_table = '';
 if ($ht_chosen) {
+
+=comment
+
     $hint_table = "<table cellpadding=2 border=0>\n";
     my $space = '&nbsp;' x 4;
     $hint_table .= "<tr><th>&nbsp;</th>";
@@ -1593,6 +1585,7 @@ if ($ht_chosen) {
     }
     $hint_table .= "<th>$space&nbsp;&Sigma;</th></tr>\n";
     my $tot = 0;
+
     for my $c (@seven) {
         $hint_table .= "<tr><th class=lt >\U$c\E</th>";
         for my $l (4 .. $max_len) {
@@ -1617,6 +1610,45 @@ if ($ht_chosen) {
     }
     $hint_table .= "<th>$tot</th></tr>\n";
     $hint_table .= "</table>\n";
+
+=cut
+
+    my $space = '&nbsp;' x 4;
+    my @rows;
+    my @th;
+    push @th, th('&nbsp;');
+    for my $l (4 .. $max_len) {
+        push @th, th("$space$l");
+    }
+    push @th, th("$space&nbsp;&Sigma;");
+    push @rows, Tr(@th);
+    my $tot = 0;
+    for my $c (@seven) {
+        my @cells;
+        push @cells, th({ class => 'lt' }, uc $c);
+        for my $l (4 .. $max_len) {
+            push @cells, td($sums{$c}{$l}?
+                               "<span class=pointer"
+                               . qq! onclick="define_ht('$c', $l);">!
+                               . "$sums{$c}{$l}</span>"
+                           : '&nbsp;-&nbsp;'
+                          );
+        }
+        push @cells, th($sums{$c}{1} || 0);
+        push @rows, Tr(@cells);
+        $tot += $sums{$c}{1};
+    }
+    @th = th({ class => 'rt' }, '&Sigma;');
+    for my $l (4 .. $max_len) {
+        my $sum = 0;
+        for my $c (@seven) {
+            $sum += $sums{$c}{$l};
+        }
+        push @th, th($sum);
+    }
+    push @th, th($tot);
+    push @rows, Tr(@th);
+    $hint_table = table({ cellpadding => 2 }, @rows);
 }
 
 # two letter tallies
@@ -1632,7 +1664,8 @@ if ($tl_chosen) {
         if ($two_lets{$two[$i]} == 0) {
             next TWO;
         }
-        $two_lets .= qq!<span class=pointer onclick="define_tl('$two[$i]');">\U$two[$i]-$two_lets{$two[$i]}</span>!;
+        $two_lets .= qq!<span class=pointer onclick="define_tl('$two[$i]');">!
+                  .  qq!\U$two[$i]-$two_lets{$two[$i]}</span>!;
         if ($i < $#two
             && substr($two[$i], 0, 1) ne substr($two[$i+1], 0, 1)
         ) {
@@ -1678,12 +1711,6 @@ for my $p (@pangrams) {
     }
 }
 
-# save IP address and state of the solve
-#$ip_date{$ip_date_key}
-#    = "$nhints $all_pangrams $ht_chosen $tl_chosen $rank $score_at_first_hint"
-#    . " @found";
-#untie %ip_date;
-# save the state of the current puzzle
 $cur_puzzles{$date} = join ' ',
     $nhints, $all_pangrams, $ht_chosen,
     $tl_chosen, $rank, $score_at_first_hint,

@@ -8,6 +8,7 @@ use CGI::Carp qw/
     fatalsToBrowser
 /;
 use BeeUtil qw/
+    cgi_header
     uniq_chars
     error
     table
@@ -22,18 +23,7 @@ use Bee_DBH qw/
 /;
 
 my $q = CGI->new();
-my $uuid = $q->cookie('uuid');
-if (! $uuid) {
-    # only load this module if it is needed
-    require UUID::Tiny;
-    $uuid = UUID::Tiny::create_uuid_as_string(1);
-}
-my $uuid_cookie = $q->cookie(
-    -name    => 'uuid',
-    -value    => $uuid,
-    -expires => '+20y',
-);
-print $q->header(-cookie => $uuid_cookie);
+my $uuid = cgi_header($q);
 
 my ($person_id, $name, $location) = get_person($uuid);
 # note that $person_id may be undef

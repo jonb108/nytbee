@@ -27,7 +27,6 @@ use Bee_DBH qw/
 
 my $n = $q->param('CPn');
 my $cp_href = do "community_puzzles/$n.txt";
-my $ip_id = $cp_href->{ip_id};
 my $person_id = $cp_href->{person_id};
 
 my $seven = $cp_href->{seven};
