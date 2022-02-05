@@ -9,14 +9,9 @@ our @EXPORT_OK = qw/
     add_update_person
     get_clues
 /;
-
-use BeeUtil qw/
-    ip_id
-/;
 use JSON::PP qw/
     encode_json
 /;
-
 use DBI;
 our $dbh = DBI->connect(
     'dbi:mysql:logical9_moliere:host2047.hostmonster.com',
@@ -26,34 +21,37 @@ our $dbh = DBI->connect(
 ) or die "cannot connect to database\n";
 
 #
-# see if person exists (based on ip, browser_signature)
+# see if person exists (based on uuid)
 # if not return undef
-# else return $ip_id, $person_id, $name, $location
+# else return $uuid, $person_id, $name, $location
 #
 sub get_person {
-    my $ip_id = ip_id();
+    my ($uuid) = @_;
+    if (!$uuid) {
+        return;
+    }
     my $sth = $dbh->prepare(<<'EOS');
 
         SELECT id, name, location
           FROM bee_person
-         WHERE ip_id = ?
+         WHERE uuid = ?
 
 EOS
-    $sth->execute($ip_id);
+    $sth->execute($uuid);
     my ($person_id, $name, $location) = $sth->fetchrow_array();
-    return ($ip_id, $person_id, $name, $location);
+    return ($person_id, $name, $location);
 }
 
 #
 # pname and plocation is required
 # we return $person_id - the index into bee_person
-# and the corresponding $ip_id
+# and the corresponding $uuid
 #
 sub add_update_person {
-    my ($pname, $plocation) = @_;
+    my ($uuid, $pname, $plocation) = @_;
 
     $plocation ||= '';
-    my ($ip_id, $person_id, $name, $location) = get_person();
+    my ($person_id, $name, $location) = get_person($uuid);
     if ($person_id) {
         if ($name ne $pname || $location ne $plocation) {
             # existing identity but name or location changed
@@ -61,10 +59,10 @@ sub add_update_person {
 
             UPDATE bee_person
                SET name = ?, location = ?
-             WHERE ip_id = ?
+             WHERE uuid = ?
 
 EOS
-            $up_sth->execute($pname, $plocation, $ip_id);
+            $up_sth->execute($pname, $plocation, $uuid);
         }
         # else name and location did not change
     }
@@ -74,14 +72,14 @@ EOS
 
         INSERT 
           INTO bee_person
-               (ip_id, name, location)
+               (uuid, name, location)
         VALUES (?, ?, ?)
 
 EOS
-        $ins_sth->execute($ip_id, $pname, $plocation);
+        $ins_sth->execute($uuid, $pname, $plocation);
         $person_id = $dbh->last_insert_id(undef, undef, 'bee_person', 'id');
     }
-    return $person_id, $ip_id;
+    return $person_id;
 }
 
 #

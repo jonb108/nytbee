@@ -7,8 +7,6 @@ our @EXPORT_OK = qw/
     error
     word_score
     trim
-    ip_id
-    ip
     table
     Tr
     th
@@ -33,7 +31,9 @@ our $log = 'http://host2047.temp.domains/~logical9';
 sub my_today {
     my ($hour) = (localtime)[2];
     my $today = today();
-    if ($hour < 3) {
+    if ($hour < 1) {
+        # the machine is in MST
+        # and the "next day" doesn't start until 3:00 AM EST
         --$today;
     }
     return $today;
@@ -46,12 +46,6 @@ sub slash_date {
     }
     my ($y, $m, $d) = $d8 =~ m{\A ..(..)(..)(..) \z}xms;
     return "$m/$d/$y";
-}
-
-sub ip_id {
-    my $ua = $ENV{HTTP_USER_AGENT};
-    $ua =~ s{\D}{}xmsg;
-    return "$ENV{REMOTE_ADDR} $ua";
 }
 
 sub uniq_chars {

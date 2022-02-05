@@ -23,7 +23,7 @@ mknyt \
 nytbee_mkclues.pl \
 nytbee_mkclues2.pl \
 Bee_DBH.pm \
-nytbee_clue_dates \
+nytbee_clue_dates.pl \
 nytbee_get_clues.pl \
 nytbee_get_cluers.pl \
 nytbee_clues_by.pl \

@@ -93,7 +93,7 @@ for a competition - announce a certain puzzle as the one for the day.
     perhaps like 'ENTER CP5'
         you are prompted for mixed case Name, Location, and Contact Email
         and you are asked to promise to not use any other resource
-    The time is noted along with your ip_id.
+    The time is noted along with your uuid.
     When you achieve Queen Bee for the puzzle the timer is stopped
         and the time is noted.
     For competition, the hint restrictions are enforced regardless
@@ -141,7 +141,6 @@ use BeeUtil qw/
     my_today
     red
     trim
-    ip_id
     slash_date
     shuffle
     ul
@@ -230,7 +229,6 @@ my $s = $cur_puzzles_store{$uuid};
 if ($s) {
     %cur_puzzles = %{ eval $s };    # the key point #1 (see below for #2)
 }
-JON "cur puzzles: " . Dumper(\%cur_puzzles);
 
 ################
 # clues for NYT puzzles are stored in the mysql database
@@ -245,10 +243,8 @@ tie %puzzle_has_clues, 'DB_File', 'nyt_puzzle_has_clues.dbm';
 # you can ask 'exists' if you'd like
 #--------------
 
-my $ip_id = ip_id();
-
 #
-# returns an array or arrayrefs representing
+# returns an array of arrayrefs representing
 # the current list of puzzles.  each array ref has two elements:
 #   0 date (yyyymmdd or CP#)
 #   1 all_pangrams?(0/1) rank#
@@ -257,13 +253,12 @@ sub my_puzzles {
     return
     map {
         [
-            (split ' ', $_)[2],     # date/CPn
-            (split ' ', $ip_date{$_})[1, 4] # all_pangrams, rank#
+            $_,
+            (split ' ', $cur_puzzles{$_})[1, 4]
         ]
     }
     sort
-    grep { index($_, $ip_id) == 0 }
-    keys %ip_date;
+    keys %cur_puzzles;
 }
 
 
@@ -325,8 +320,20 @@ my $date;
 my $today = my_today();
 my $new_puzzle = 0;
 
+# initial guess at what puzzle we are looking at
+$date = $params{date};      # hidden field
+if (! $date) {
+    # today
+    $date = $today->as_d8();
+    $new_puzzle = 1;
+}
+
 # Remove a set of current puzzles.
 if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
+    #
+    # setting $cmd = '' means we are all done
+    # with this command and need to move on.
+    #
     $nums =~ s{\s*-\s*}{-}xms;
     my @terms = split /[,\s]+/, $nums;
     my @nums;
@@ -337,7 +344,7 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
         elsif (my ($start, $end) = $t =~ m{(\d+)-(\d+)}xms) {
             if ($start > $end) {
                 $message = "Illegal range: $start-$end";
-                $cmd = 'noop';
+                $cmd = '';
             }
             else {
                 push @nums, $start .. $end;
@@ -345,34 +352,29 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
         }
         else {
             $message = "Illegal puzzle numbers: $nums";
-            $cmd = 'noop';
+            $cmd = '';
         }
     }
-    if ($cmd) {
-        my @puzzles = my_puzzles();
+    my @puzzles = my_puzzles();
+    if (@nums) {
         my $npuzzles = @puzzles;
         for my $n (@nums) {
             if ($n > $npuzzles) {
                 $message = "$n: There are only $npuzzles current puzzles";
-                $cmd = 'noop';
+                $cmd = '';
             }
         }
     }
     if ($cmd) {
-        # it's weird - our puzzles are not in an array
-        # we need to get them each time...
-        # perhaps we can do it at the top and use it...???
-        #
         # @nums are valid puzzle numbers (base 1)
-        my @puzzles = my_puzzles();
         for my $n (@nums) {
-            # the key is complicated!
-            my $key = $ip_id . ' ' . $puzzles[$n-1][0];
-            delete $ip_date{$key};
+            delete $cur_puzzles{ $puzzles[$n-1][0] };
         }
+        # and reget the puzzles
         @puzzles = my_puzzles();
         if (! @puzzles) {
-            $cmd = 't';
+            $date = $today->as_d8();
+            $cmd = '';
         }
         else {
             PUZ:
@@ -380,7 +382,7 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
                 if ($p->[0] eq $params{date}) {
                     # we haven't deleted the current puzzle
                     # so leave it
-                    $cmd = 'noop';
+                    $cmd = '';
                     last PUZ;
                 }
             }
@@ -388,27 +390,25 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
                 # we deleted the current puzzle
                 # so move to the last one
                 # we know we have at least one.
-                $cmd = 'p' . scalar(@puzzles);
+                $date = $puzzles[-1][0];
             }
         }
+        $cmd = '';
     }
 }
 elsif ($cmd eq 'x') {
-    delete $ip_date{"$ip_id $params{date}"};
+    delete $cur_puzzles{$date};
     my @puzzles = my_puzzles();
-    if (@puzzles) {
-        $date = $puzzles[0][0];
-        $cmd = '';
-    }
-    else {
-        $cmd = 't';
-    }
+    $date = @puzzles? $puzzles[0][0]: $today->as_d8();
+    $cmd = '';
 }
-if ($cmd eq 'xa') {
+elsif ($cmd eq 'xa') {
     my $today_d8 = $today->as_d8();
-    for my $p (my_puzzles()) {
-        if ($p->[0] ne $today_d8) {
-            delete $ip_date{"$ip_id $p->[0]"};
+    my @puzzles = my_puzzles();
+    for my $p (@puzzles) {
+        my $dt = $p->[0];
+        if ($dt ne $today_d8) {
+            delete $cur_puzzles{$dt};
         }
     }
     if ($date ne $today_d8) {
@@ -422,46 +422,46 @@ elsif (my ($ncp) = $cmd =~ m{\A xcp \s* (\d+) \z}xms) {
     my $fname = "community_puzzles/$ncp.txt";
     if (! -f $fname) {
         $message = "CP$ncp: No such Community Puzzle";
-        $cmd = '';
     }
     else {
         my $href = do $fname;
-        if ($href->{ip_id} ne $ip_id) {
+        if ($href->{uuid} ne $uuid) {
             $message = ul(red("You did not create CP$ncp."));
-            $cmd = '';
         }
         else {
             unlink $fname;
             # and just in case it is in the current list...
-            delete $ip_date{"$ip_id CP$ncp"};
+            delete $cur_puzzles{"CP$ncp"};
             $message = ul "Deleted CP$ncp";
-            $cmd = 't';     # back to today
+            $date = $today->as_d8();
         }
     }
+    $cmd = '';
 }
-elsif (my ($puz_num) = $cmd =~ m{\A p \s* (\d+) \z}xms) {
+elsif (my ($puz_num) = $cmd =~ m{\A p \s* ([1-9]\d*) \z}xms) {
     my @puzzles = my_puzzles();
     if ($puz_num > @puzzles) {
         $message = "Not that many puzzles";
-        $cmd = 'noop';
-    }
-    my $puz_id = $puzzles[$puz_num-1][0];
-    if ($puz_id =~ m{\A \d}xms) {
-        $cmd = $puz_id;
     }
     else {
-        # CP\d+
-        # but we need lower case cp
-        # since we have ... have what???
-        $cmd = lc $puz_id;
+        my $puz_id = $puzzles[$puz_num-1][0];
+        if ($puz_id =~ m{\A \d}xms) {
+            $date = $puz_id;
+        }
+        else {
+            # CP\d+
+            # but we need lower case cp
+            # since we have ... have what???
+            $date = lc $puz_id;
+        }
     }
+    $cmd = '';
 }
-if ($cmd =~ m{\A n \s* r \z}xms) {
+elsif ($cmd =~ m{\A n \s* r \z}xms) {
     # random date since $first
     my $ndays = $today - $first + 1;
     $date = $first + int(rand $ndays);
     $date = $date->as_d8();
-    $params{found_words} = '';
     $new_puzzle = 1;
     $cmd = '';
 }
@@ -479,7 +479,6 @@ elsif (my ($cp_num) = $cmd =~ m{\A c \s* p \s* (\d+) \z}xms) {
 }
 elsif ($cmd eq 't') {
     $date = $today->as_d8();
-    $params{found_words} = '';
     $new_puzzle = 1;
     $cmd = '';
 }
@@ -505,7 +504,6 @@ elsif ($cmd ne '1' && $cmd ne '2'
         # it is a valid date but is it in the range?
         if ($first <= $dt && $dt <= $today) {
             $date = $dt->as_d8();
-            $params{found_words} = '';
             $new_puzzle = 1;
             $cmd = '';
         }
@@ -518,14 +516,6 @@ elsif ($cmd ne '1' && $cmd ne '2'
         $message = "Illegal date: $new_date";
         $cmd = 'noop';
     }
-}
-if (! $date) {
-    $date = $params{date};      # hidden field
-}
-if (! $date) {
-    # today
-    $date = $today->as_d8();
-    $new_puzzle = 1;
 }
 
 my $show_date;
@@ -665,26 +655,21 @@ sub add_hints {
     $nhints += $n;
 }
 
-#my $ip_date_key = "$ip_id $date";
-#if (exists $ip_date{$ip_date_key}) {
-#    my ($ap, $rank);    # all pangrams is not needed here...
-#                        # rank is recomputed
-#    ($nhints, $ap, $ht_chosen, $tl_chosen, $rank, $score_at_first_hint, @found)
-#        = split ' ', $ip_date{$ip_date_key};
-#}
 if (exists $cur_puzzles{$date}) {
     my ($ap, $rank);    # all pangrams is not needed here...
                         # rank is recomputed
-    ($nhints, $ap, $ht_chosen, $tl_chosen, $rank, $score_at_first_hint, @found)
+    ($nhints, $ap, $ht_chosen,
+     $tl_chosen, $rank, $score_at_first_hint,
+     @found)
         = split ' ', $cur_puzzles{$date};
 }
 else {
-    $nhints    = $new_puzzle? 0: $params{nhints} || 0;    # from before
-    $ht_chosen = $new_puzzle? 0: $params{ht_chosen};
-    $tl_chosen = $new_puzzle? 0: $params{tl_chosen};
+    $nhints    = 0;
+    $ht_chosen = 0;
+    $tl_chosen = 0;
     $score_at_first_hint = -1;  # -1 since we may ask for a hint
                                 # at the very beginning!
-    @found     = $new_puzzle? (): split ' ', $params{found_words};
+    @found     = ();
 }
 my %is_found = map { $_ => 1 } @found;
 
@@ -1146,7 +1131,7 @@ elsif (my ($ncp) = $cmd =~ m{\A lcp \s*(\d*) \z}xms) {
     $cmd = '';
 }
 elsif ($cmd eq 'ycp') {
-    my $s = `cd community_puzzles; grep -l '$ip_id' *.txt`;
+    my $s = `cd community_puzzles; grep -l '$uuid' *.txt`;
     my @nums = sort { $b <=> $a }
                $s =~ m{(\d+)}xmsg;
     my @rows;
@@ -1181,9 +1166,7 @@ elsif ($cmd eq 'l') {
     $cmd = '';
 }
 elsif ($cmd eq 'cl') {
-    my $s = $ip_id;
-    $s =~ s{\s}{_}xmsg;
-    $message = `curl -skL $log/cgi-bin/nytbee_clue_dates/$s`;
+    $message = `curl -skL $log/cgi-bin/nytbee_clue_dates.pl/$uuid`;
     $cmd = '';
 }
 elsif ($cmd eq 'f') {
@@ -1403,6 +1386,7 @@ for my $w (@new_words) {
 }
 
 # now that we have added the new words...
+# ??? is this right???  why is it called twice?
 compute_score_and_rank();
 
 
@@ -1697,9 +1681,10 @@ for my $p (@pangrams) {
 #    . " @found";
 #untie %ip_date;
 # save the state of the current puzzle
-$cur_puzzles{$date}
-    = "$nhints $all_pangrams $ht_chosen $tl_chosen $rank $score_at_first_hint"
-    . " @found"
+$cur_puzzles{$date} = join ' ',
+    $nhints, $all_pangrams, $ht_chosen,
+    $tl_chosen, $rank, $score_at_first_hint,
+    @found
     ;
 $cur_puzzles_store{$uuid} = Dumper(\%cur_puzzles);  # the key point #2
 untie %cur_puzzles_store;
@@ -1714,7 +1699,7 @@ my $create_add
     . "Create Puzzle</a>";
 my $add_clues_form = '';
 if ($date =~ m{\A \d}xms) {
-    my $add_edit = index($puzzle_has_clues{$date}, $ip_id) >= 0? 'Edit': 'Add';
+    my $add_edit = index($puzzle_has_clues{$date}, $uuid) >= 0? 'Edit': 'Add';
     $create_add
         .= "<br><span class=link onclick='add_clues();'>$add_edit Clues</span>";
     $add_clues_form = <<"EOH";

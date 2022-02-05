@@ -3,8 +3,6 @@ use strict;
 use warnings;
 
 use CGI;
-my $q = CGI->new();
-print $q->header();
 
 # we will save the name, location, and word => clues
 use Bee_DBH qw/
@@ -16,10 +14,23 @@ use Data::Dumper;
 $Data::Dumper::Terse  = 1;
 $Data::Dumper::Indent = 0;
 
+my $q = CGI->new();
+my $uuid = $q->cookie('uuid');
+if (! $uuid) {
+    # only load this module if it is needed
+    require UUID::Tiny;
+    $uuid = UUID::Tiny::create_uuid_as_string(1);
+}
+my $uuid_cookie = $q->cookie(
+    -name    => 'uuid',
+    -value    => $uuid,
+    -expires => '+20y',
+);
+print $q->header(-cookie => $uuid_cookie);
 my %params = $q->Vars();
-my ($person_id, $ip_id) = add_update_person($params{name}, $params{location});
+my $person_id = add_update_person($uuid, $params{name}, $params{location});
 $params{person_id} = $person_id;
-$params{ip_id} = $ip_id;
+$params{uuid} = $uuid;
 my $clue_href = eval $params{clues};
 $params{clues} = $clue_href;
 $params{words} = [ split ' ', $params{words} ];

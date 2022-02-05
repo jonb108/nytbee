@@ -1,17 +1,11 @@
 #!/bin/bash
 rm -f /tmp/html.tar
 tar cvf /tmp/html.tar \
-apple.html \
 help.html \
 index.html \
 mkpuz.html \
 css \
-windows.html \
 js \
 mktar \
 goo10k-7.txt \
 osx_usd_words-7.txt
-
-# these will not change
-#nytbee_cmd.html
-#nytbee_cmd.pl

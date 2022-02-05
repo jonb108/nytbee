@@ -2,17 +2,27 @@
 use strict;
 use warnings;
 
-# a poor man's CGI:
-print "Content-Type: text/html; charset=ISO-8859-1\n\n";
-my $n = $ENV{PATH_INFO};
+use CGI;
+my $q = CGI->new();
+my $uuid = $q->cookie('uuid');
+if (! $uuid) {
+    # only load this module if it is needed
+    require UUID::Tiny;
+    $uuid = UUID::Tiny::create_uuid_as_string(1);
+}
+my $uuid_cookie = $q->cookie(
+    -name    => 'uuid',
+    -value    => $uuid,
+    -expires => '+20y',
+);
+print $q->header(-cookie => $uuid_cookie);
+my $n = $q->path_info();
 $n =~ s{\A /}{}xms;
 
 use BeeUtil qw/
-    ip_id
     uniq_chars
     $log
 /;
-my $ip_id = ip_id();
 my $fname = "community_puzzles/$n.txt";
 
 if (! -f $fname) {
@@ -21,7 +31,7 @@ if (! -f $fname) {
 }
 my $href = do $fname;
 
-if ($ip_id ne $href->{ip_id}) {
+if ($uuid ne $href->{uuid}) {
     print "you did not create CP$n\n";
     exit;
 }

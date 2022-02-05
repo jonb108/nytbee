@@ -7,12 +7,7 @@ use DB_File;
 my %puzzle_has_clues;
 tie %puzzle_has_clues, 'DB_File', 'nyt_puzzle_has_clues.dbm';
 
-use CGI qw/
-    :standard
-/;
-my $q = CGI->new();
-print $q->header();
-
+use CGI;
 use BeeUtil qw/
     trim
     ip_id
@@ -23,6 +18,20 @@ use BeeClues qw/
 use Date::Simple qw/
     date
 /;
+
+my $q = CGI->new();
+my $uuid = $q->cookie('uuid');
+if (! $uuid) {
+    # only load this module if it is needed
+    require UUID::Tiny;
+    $uuid = UUID::Tiny::create_uuid_as_string(1);
+}
+my $uuid_cookie = $q->cookie(
+    -name    => 'uuid',
+    -value    => $uuid,
+    -expires => '+20y',
+);
+print $q->header(-cookie => $uuid_cookie);
 
 my $date = $q->param('date');       #  hidden field
 my $show_date = date($date)->format("%B %e, %Y");
@@ -51,7 +60,7 @@ my %clue_for
 
 insert into mysql database
 two tables - bee_person, bee_clue
-bee_person  (id, ip_id, name) ip_id is ip+browser - id is integer shorthand
+bee_person  (id, uuid, name)
 bee_clue    (person_id, date, word, clue)
         primary key is (person_id, date, word)
 
@@ -66,7 +75,7 @@ use Bee_DBH qw/
     add_update_person
 /;
 
-my ($person_id, $ip_id) = add_update_person($name, $location);
+my $person_id = add_update_person($uuid, $name, $location);
 
 # clear old clues from this person for this date
 my $sth_clear = $dbh->prepare(<<'EOS');
@@ -113,7 +122,7 @@ EOS
     }
     else {
         $puzzle_has_clues{$date} = join '|',
-                                   grep { $_ ne $ip_id }
+                                   grep { $_ ne $uuid }
                                    split /\|/,
                                    $puzzle_has_clues{$date};
     }
@@ -131,10 +140,10 @@ EOH
 }
 else {
     if (exists $puzzle_has_clues{$date}) {
-        $puzzle_has_clues{$date} .= "|$ip_id";
+        $puzzle_has_clues{$date} .= "|$uuid";
     }
     else {
-        $puzzle_has_clues{$date} = $ip_id;
+        $puzzle_has_clues{$date} = $uuid;
     }
     display_clues(first          => 1,
                   all_words      => $all_words,

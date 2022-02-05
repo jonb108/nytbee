@@ -28,8 +28,20 @@ use CGI::Carp qw/
     fatalsToBrowser
     warningsToBrowser
 /;
+
 my $q = CGI->new();
-print $q->header();
+my $uuid = $q->cookie('uuid');
+if (! $uuid) {
+    # only load this module if it is needed
+    require UUID::Tiny;
+    $uuid = UUID::Tiny::create_uuid_as_string(1);
+}
+my $uuid_cookie = $q->cookie(
+    -name    => 'uuid',
+    -value    => $uuid,
+    -expires => '+20y',
+);
+print $q->header(-cookie => $uuid_cookie);
 
 my $cgi = "$log/cgi-bin";
 my $date;
@@ -68,7 +80,7 @@ if ($nnf) {
     }
 }
 
-my ($ip_id, $person_id, $name, $location) = get_person();
+my ($person_id, $name, $location) = get_person($uuid);
 
 my %clue_for;
 my $got_clues = 0;

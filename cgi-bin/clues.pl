@@ -1,15 +1,12 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-use CGI;
-my $q = CGI->new();
-print $q->header();
 
+use CGI;
 use CGI::Carp qw/
     warningsToBrowser
     fatalsToBrowser
 /;
-
 use BeeUtil qw/
     uniq_chars
     error
@@ -24,7 +21,21 @@ use Bee_DBH qw/
     get_clues
 /;
 
-my ($ip_id, $person_id, $name, $location) = get_person();
+my $q = CGI->new();
+my $uuid = $q->cookie('uuid');
+if (! $uuid) {
+    # only load this module if it is needed
+    require UUID::Tiny;
+    $uuid = UUID::Tiny::create_uuid_as_string(1);
+}
+my $uuid_cookie = $q->cookie(
+    -name    => 'uuid',
+    -value    => $uuid,
+    -expires => '+20y',
+);
+print $q->header(-cookie => $uuid_cookie);
+
+my ($person_id, $name, $location) = get_person($uuid);
 # note that $person_id may be undef
 # we create the bee_person record only when ...
 

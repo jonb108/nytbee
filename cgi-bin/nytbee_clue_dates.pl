@@ -9,9 +9,8 @@ use BeeUtil qw/
 # no need to use CGI
 print "Content-Type: text/html; charset=ISO-8859-1\n\n";
 
-my $ip_id = $ENV{PATH_INFO};
-$ip_id =~ s{\A /}{}xms;
-$ip_id =~ s{_}{ }xmsg;
+my $uuid = $ENV{PATH_INFO};
+$uuid =~ s{\A /}{}xms;
 
 use Bee_DBH qw/
     $dbh
@@ -21,10 +20,10 @@ my $sth = $dbh->prepare(<<'EOS');
 
     SELECT id
       FROM bee_person
-     WHERE ip_id = ?
+     WHERE uuid = ?
 
 EOS
-$sth->execute($ip_id);
+$sth->execute($uuid);
 my ($id) = $sth->fetchrow_array();
 
 my $sth_dates = $dbh->prepare(<<'EOH');

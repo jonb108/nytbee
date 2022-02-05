@@ -1,7 +1,7 @@
 drop table if exists bee_person;
 create table bee_person (
     id int(11) primary key auto_increment,
-    ip_id varchar(100),
+    uuid varchar(100),
     name varchar(50),
     location varchar(50)
 );

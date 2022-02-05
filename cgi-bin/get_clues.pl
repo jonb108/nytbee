@@ -1,20 +1,34 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+
 use CGI;
-my $q = CGI->new();
-print $q->header();
 use BeeUtil qw/
     word_score
     trim
     my_today
     $log
 /;
-my $d8 = my_today->as_d8();
 use Bee_DBH qw/
     get_person
 /;
-my ($ip_id, $person_id, $name, $location) = get_person();
+
+my $q = CGI->new();
+my $uuid = $q->cookie('uuid');
+if (! $uuid) {
+    # only load this module if it is needed
+    require UUID::Tiny;
+    $uuid = UUID::Tiny::create_uuid_as_string(1);
+}
+my $uuid_cookie = $q->cookie(
+    -name    => 'uuid',
+    -value    => $uuid,
+    -expires => '+20y',
+);
+print $q->header(-cookie => $uuid_cookie);
+
+my $d8 = my_today->as_d8();
+my ($person_id, $name, $location) = get_person($uuid);
 
 # All may be null in case this is the first time
 # the person is creating a puzzle or adding clues.
