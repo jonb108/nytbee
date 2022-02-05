@@ -4,4 +4,5 @@ scp hm:/tmp/cgi.tar .
 tar xvf html.tar
 cd ../cgi-bin
 tar xvf ../nytbee/cgi.tar
+cd ../nytbee
 git status

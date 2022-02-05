@@ -65,7 +65,7 @@ print <<"EOH";
 <html>
 <head>
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
-<script src="$log/nytbee/js/name_location.js"></script>
+<script src="$log/nytbee/js/nytbee.js"></script>
 </head>
 <body>
 <h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>5</span> <span class=step_name>Name and Location</span></h1>
@@ -94,7 +94,7 @@ Finally, provide some information about yourself.
 
 <tr>
 <th>&nbsp;</th>
-<td style="text-align: left"><button class=submit type=submit>Submit</button></td>
+<td style="text-align: left"><button type=submit>Submit</button></td>
 </tr>
 
 </table>

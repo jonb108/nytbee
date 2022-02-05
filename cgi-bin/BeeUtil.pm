@@ -95,7 +95,7 @@ body {
 </style>
 $msg
 <p>
-Please <button class=back id=back onclick="history.go(-1)">go back</button> and fix this.
+Please <button class=back id=back onclick="history.go(-1)">Go Back</button> and fix this.
 <script type='text/javascript'>document.getElementById('back').focus();</script>
 EOH
     exit;

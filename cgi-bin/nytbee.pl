@@ -4,6 +4,8 @@ use warnings;
 
 =comment
 
+system call with command line params instead of curl?
+
 some weirdness with <hr> for line ht before words then sc
     colspan 4?
 
@@ -173,27 +175,11 @@ tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
 # value is seven center pangrams... | words
 #-------------
 
-###############
-my %ip_date;
-tie %ip_date, 'DB_File::Lock', 'ip_date.dbm',
-              O_CREAT|O_RDWR, 0666, $DB_HASH, 'write';
-# the current puzzles for each "person" = ip_address/browser_signature
-# and their current state
-#
-# We lock & unlock this DBM file.
-#
-# a complex hash key/value
-# key is 'ip_address browser_signature puzzle_date'
-#            0              1             2
-# value is:
-# #hints all_pangrams_found ht_chosen tl_chosen rank words_found...
-#            0         1                 2         3      4
-#-------------
-
 ################
-# a better way of storing the current puzzle list for everyone
+# a better way of storing the current puzzle list for *everyone*
 my %cur_puzzles_store;
-tie %cur_puzzles_store, 'DB_File', 'cur_puzzles_store.dbm';
+tie %cur_puzzles_store, 'DB_File::Lock', 'cur_puzzles_store.dbm',
+                        O_CREAT|O_RDWR, 0666, $DB_HASH, 'write';
 
 # key is the uuid ("session" id)
 # value is a Data::Dumper created *string* representing a hash
@@ -207,6 +193,7 @@ my $s = $cur_puzzles_store{$uuid};
 if ($s) {
     %cur_puzzles = %{ eval $s };    # the key point #1 (see below for #2)
 }
+# otherwise this is a brand new user...
 
 ################
 # clues for NYT puzzles are stored in the mysql database
@@ -412,6 +399,8 @@ elsif (my ($ncp) = $cmd =~ m{\A xcp \s* (\d+) \z}xms) {
             delete $cur_puzzles{"CP$ncp"};
             $message = ul "Deleted CP$ncp";
             $date = $today->as_d8();
+            # and delete all clues
+            `curl $log/cgi-bin/cp_del_clues.pl/$ncp`;
         }
     }
     $cmd = '';
@@ -578,7 +567,6 @@ if ($cmd eq 'noop') {
 # perhaps have the colors in nytbee_get_clues.pl or nytbee_get_cluers.pl?
 sub load_nyt_clues {
     if ($puzzle_has_clues{$date}) {
-        # eliminate $href???
         %nyt_clues_for
             = %{ eval `curl -skL $log/cgi-bin/nytbee_get_clues.pl/$date` };
         %nyt_cluer_name_of
@@ -1677,19 +1665,6 @@ if ($tl_chosen) {
     }
 }
 
-# generate the rank colors and font sizes
-my $rank_colors_fonts = "";
-for my $i (0 .. 9) {
-    my $color = 205-10*$i;
-    my $size = 15+3*$i;
-    $rank_colors_fonts .= <<"EOCSS";
-.rank$i {
-    font-size: ${size}pt;
-    color: rgb(255, $color, 255);
-}
-EOCSS
-}
-
 my $image = '';
 if (7 <= $rank && $rank <= 9) {
     my $name = lc $ranks[$rank]->{name};
@@ -1851,6 +1826,7 @@ print <<"EOH";
 <html>
 <head>
 <style>
+/* styles with substitutions: */
 .img {
     margin-left: ${img_left_margin}px;
 }
@@ -1861,172 +1837,9 @@ print <<"EOH";
     font-size: ${let_size}px;
 }
 $letter_styles
-.gray {
-    color: lightgray;
-}
-.pointer {
-    cursor: pointer;
-}
-.two_lets {
-    margin-top: 0mm;
-    margin-left: 5mm;
-    line-height: 6mm;
-}
-.help {
-    margin-left: 1in;
-}
-.create_add, .help {
-    font-size: 13pt;
-}
-.mess {
-    width: 600px;
-    word-spacing: 10px;
-}
-a {
-    text-decoration: none;
-    color: blue;
-}
-.pointer {
-    cursor: pointer;
-    color: blue;
-}
-.float-child1 {
-    float: left;
-    text-align: left;
-}
-.float-child2 {
-    float: left;
-    margin-left: .3in;
-}
-.float-child3 {
-    float: left;
-    margin-left: .2in;
-    text-align: right;
-}
-.float-child4 {
-    float: left;
-    margin-left: .3in;
-}
-.float-child5 {
-    float: left;
-    margin-left: .1in;
-}
-.new_word {
-    color: coral;
-}
-ul {
-    margin-top: 0px;
-    margin-bottom: 0px;
-}
-li {
-    width: 600px;
-}
-td, th {
-    text-align: right;
-    font-size: 18pt;
-    font-family: Arial;
-}
-.not_okay {
-    color: red;
-}
-pre {
-    font-size: 26pt;
-}
-body {
-    margin: .3in;
-    font-size: 18pt;
-    font-family: Arial;
-}
-input, .submit {
-    font-size: 18pt;
-    font-family: Arial;
-}
-.new_words {
-    text-transform: uppercase;
-}
-.over {
-    margin-left: 1in;
-}
-.white {
-    color: white;
-}
-.red1, .red2 {
-    color: red;
-}
-.red2 {
-    font-weight: bold;
-}
-.green {
-    color: green;
-}
-.purple {
-    color: purple;
-}
-.found_words {
-    width: 600px;
-    word-spacing: 10px;
-}
-.submit {
-    background: green;
-    color: white;
-}
-.rank_name {
-    margin-left: .5in;
-}
-$rank_colors_fonts
-.rank9 {
-    font-weight: bold;
-}
-.image_amazing {
-    width: 75px;
-}
-.image_genius {
-    width: 125px;
-}
-.image_queen {
-    width: 175px;
-}
-.link {
-    cursor: pointer;
-    color: blue;
-}
-.lt {
-    text-align: left;
-}
-.rt {
-    text-align: right;
-}
-.cn {
-    text-align: center;
-}
 </style>
-<script>
-function new_date(d) {
-    document.getElementById('new_words').value = d;
-    document.getElementById('main').submit();
-}
-function add_clues() {
-    set_focus();
-    document.getElementById('add_clues').submit();
-}
-function define_tl(two_let) {
-    document.getElementById('new_words').value = 'D' + two_let;
-    document.getElementById('main').submit();
-}
-function define_ht(c, n) {
-    document.getElementById('new_words').value = 'D' + c + n;
-    document.getElementById('main').submit();
-}
-function clues_by(person_id) {
-    document.getElementById('person_id').value = person_id;
-    document.getElementById('clues_by').submit();
-    set_focus();
-}
-function set_focus() {
-    document.form.new_words.focus();
-    return true;
-}
-</script>
+<link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
+<script src="$log/nytbee/js/nytbee.js"></script>
 </head>
 <body>
 <div class=float-child1>

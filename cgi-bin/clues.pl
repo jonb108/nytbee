@@ -94,7 +94,7 @@ var newwin;
 function popup_define(word, height, width) {
     document.getElementById(word + '_clue').focus();
     newwin = window.open(
-        'http://logicalpoetry.com/cgi-bin/nytbee_define/' + word, 'define',
+        '$log/cgi-bin/nytbee_define.pl/' + word, 'define',
         'height=' + height + ',width=' + width +', scrollbars'
     );
     newwin.moveTo(800, 0);
@@ -138,10 +138,9 @@ for my $w (@ok_words) {
              . qq! value="$clue">!);
     push @rows, Tr($word_td, $clue_td, $cycle_td);
 }
+push @rows, Tr(td(''), td({ class => 'lt' }, '<button type=submit>Submit</button>'));
 print table(@rows);
 print <<"EOH";
-<p>
-<button class=submit type=submit>Submit</button>
 </body>
 </html>
 <script>document.form.$ok_words[0]_clue.focus();</script>

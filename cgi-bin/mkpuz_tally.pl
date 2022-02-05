@@ -39,7 +39,7 @@ if (length $word == 0) {
 
 my @lets = uniq_chars($word);
 if (@lets != 7) {
-    error "There are not 7 unique letters in '$word'. :(";
+    error "There are not 7 unique letters in '$word'.";
 }
 my $lets = join '', @lets;
 my $regex = qr{[^$lets]}xms;

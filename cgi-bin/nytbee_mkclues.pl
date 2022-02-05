@@ -118,7 +118,7 @@ print <<"EOH";
 <html>
 <head>
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
-<script src="http://logicalpoetry.com/nytbee/js/name_location.js"></script>
+<script src="http://logicalpoetry.com/nytbee/js/nytbee.js"></script>
 <script>
 var newwin;
 function popup_define(word, height, width) {
