@@ -167,7 +167,7 @@ $Data::Dumper::Indent = 0;
 $Data::Dumper::Terse  = 1;
 
 my $q = CGI->new();
-my $hive = $q->cookie('hive') || 0;
+my $hive = $q->param('hive') || $q->cookie('hive') || 1;
 my $uuid = $q->cookie('uuid');
 if (! $uuid) {
     # only load this module if it is needed
@@ -556,7 +556,7 @@ my $nwords = @ok_words;
 my $letter_regex = qr{([^$seven])}xms;  # see sub check_word
 my $npangrams = @pangrams;
 
-# get ready for hive == 3
+# get ready for hive == 4
 my @seven_let;
 if ($params{seven_let} && $date eq $params{date}) {
     @seven_let = split ' ', $params{seven_let};
@@ -1252,11 +1252,14 @@ elsif ($cmd =~ m{\A s \s+ ([a-z]+) \s* \z}xms) {
     $cmd = '';
 }
 elsif ($cmd eq 'h') {
-    $hive = ($hive+1) % 4;
+    ++$hive;
+    if ($hive == 5) {
+        $hive = 1;
+    }
     $cmd = '';
 }
 elsif ($cmd =~ m{\A h \s* ([1-4]) \z}xms) {
-    $hive = $1-1;
+    $hive = $1;
     $cmd = '';
 }
 
@@ -1721,7 +1724,7 @@ my $letters = '';
 my @coords;
 my $let_size;
 my $img_left_margin;
-if ($hive == 0) {
+if ($hive == 1) {
     $letters = <<"EOH";
 <pre>
      $six[0]   $six[1]
@@ -1730,7 +1733,7 @@ if ($hive == 0) {
 </pre>
 EOH
 }
-elsif ($hive == 1) {        # bee hive honeycomb
+elsif ($hive == 2) {        # bee hive honeycomb
     $letters = "<p><img class=img src=$log/nytbee/pics/hive.jpg height=240><p>";
     $letters .= "<span class='p0 ab'>\U$center\E</span>";
     for my $i (1 .. 6) {
@@ -1762,7 +1765,7 @@ elsif ($hive == 1) {        # bee hive honeycomb
         $coords[0]{left} += 6;
     }
 }
-elsif ($hive == 2) {        # flower
+elsif ($hive == 3) {        # flower
     $letters = "<p><img class=img src=$log/nytbee/pics/flower.jpg height=250><p>";
     $letters .= "<span class='p0 ab white'>\U$center\E</span>";
     for my $i (1 .. 6) {
@@ -1794,7 +1797,7 @@ elsif ($hive == 2) {        # flower
         $coords[0]{left} += 7;
     }
 }
-elsif ($hive == 3) {
+elsif ($hive == 4) {
     $letters = "<pre>\n  ";
     for my $c (@seven_let) {
         if ($c eq uc $center) {
@@ -2014,6 +2017,7 @@ function set_focus() {
 <input type=hidden name=has_message value=$has_message>
 <input type=hidden name=six value='@six'>
 <input type=hidden name=seven_let value='@seven_let'>
+<input type=hidden name=hive value=$hive>
 $letters
 $message
 <input class=new_words type=text size=40 id=new_words name=new_words><br>
