@@ -1,1 +1,1 @@
-0 1 * * * cd /home4/logical9/www/cgi-bin;./get_nytbee
+0 1 * * * cd /home4/logical9/www/cgi-bin;./get_nytbee.pl
