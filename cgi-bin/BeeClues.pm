@@ -6,12 +6,14 @@ our @EXPORT_OK = qw/
     display_clues
 /;
 
+my $log = 'http://host2047.temp.domains/~logical9';
+
 #
 # all information should be provided to the
 # display_clues subroutine.  It should not 
 # need to look elsewhere.
 #
-# this is used by nytbee_mkclues2 and by nytbee_clues_by
+# this is used by nytbee_mkclues2.pl and by nytbee_clues_by.pl
 #
 
 sub _mklink {
@@ -99,7 +101,7 @@ function clear_text() {
 </script>
 </head>
 <body>
-<form id=main method=POST action=/cgi-bin/nytbee_clues_by>
+<form id=main method=POST action=$log/cgi-bin/nytbee_clues_by.pl>
 <input type=hidden name=first value=$first>
 <input type=hidden name=all_words value=$all_words>
 <input type=hidden name=date value=$date>

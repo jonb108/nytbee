@@ -1041,7 +1041,7 @@ elsif ($cmd eq 'sc') {
     my $tot = 0;
     if ($tot == $score_at_first_hint) {
         # they asked for a hint right away!
-        push @rows, Tr(td({ colspan => 4, width => 130 }, '<hr>'));
+        push @rows, Tr(td({ colspan => 3 }, '<hr>'));
     }
     my $space = '&nbsp;' x 2;
     for my $w (@found) {
