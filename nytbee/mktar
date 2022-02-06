@@ -4,6 +4,7 @@ tar cvf /tmp/html.tar \
 help.html \
 index.html \
 mkpuz.html \
+mkclues_index.html \
 css \
 js \
 mktar \
