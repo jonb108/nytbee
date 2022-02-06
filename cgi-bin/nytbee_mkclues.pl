@@ -185,7 +185,7 @@ for my $w (@words) {
     }
     print Tr($word_td, $clue_td, $cycle_td), "\n";
 }
-print Tr(td('&nbsp'), td({ style => 'text-align: left;' }, "<button type=submit>Submit</button>")), "\n";
+print Tr(td('&nbsp'), td({ class => 'lt' }, "<button type=submit>Submit</button>")), "\n";
 print <<"EOH";
 </table>
 </body>
