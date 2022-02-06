@@ -115,7 +115,7 @@ sub trim {
 
 sub _attrs {
     my $href = shift;
-    return join ',',
+    return join ' ',
            map { "$_=$href->{$_}" }
            keys %$href;
 }

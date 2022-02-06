@@ -264,6 +264,15 @@ my $cmd = lc $params{new_words};
     #
 $cmd = trim($cmd);
 
+my $show_Heading    = exists $params{show_Heading}?
+                             $params{show_Heading}: 1;
+my $show_WordList   = exists $params{show_WordList}?
+                             $params{show_WordList}: 1;
+my $show_RankImage  = exists $params{show_RankImage}?
+                             $params{show_RankImage}: 1;
+my $show_ZeroRowCol = exists $params{show_ZeroRowCol}?
+                             $params{show_ZeroRowCol}: 1;
+
 #
 # SO ... what puzzle is current?
 # we need to set the variable $date.
@@ -941,6 +950,22 @@ elsif ($cmd eq 'tl') {
     }
     $cmd = '';
 }
+elsif ($cmd eq 'he') {
+    $show_Heading = ! $show_Heading;
+    $cmd = '';
+}
+elsif ($cmd eq 'wl') {
+    $show_WordList = ! $show_WordList;
+    $cmd = '';
+}
+elsif ($cmd eq 'im') {
+    $show_RankImage = ! $show_RankImage;
+    $cmd = '';
+}
+elsif ($cmd eq 'co') {
+    $show_ZeroRowCol = ! $show_ZeroRowCol;
+    $cmd = '';
+}
 # do we have a reveal command?
 elsif (my ($ev, $nlets, $term)
     = $cmd =~ m{
@@ -1428,9 +1453,14 @@ else {
         $found_words .= " <span class=gray>$nwords</span>";
     }
 }
+$found_words = "<div class=found_words>$found_words</div>";
+if (! $show_WordList) {
+    $found_words = '';
+}
 
 # get the HT and TL tables ready
 # $sums{$c}{1} is the rightmost column (sigma)
+# $sums{1}{$l} is the bottom row       (sigma)
 #
 my %sums;
 my %two_lets;
@@ -1450,9 +1480,30 @@ for my $w (@ok_words) {
     }
     my $c2 = substr($w, 0, 2);
     ++$sums{$c1}{$l};
+
+    # the summations:
     ++$sums{$c1}{1};
+    ++$sums{1}{$l};
+    ++$sums{1}{1};
+
+    # and the two letter list
     ++$two_lets{$c2};
 }
+
+# how many Non-zero columns and rows?
+my $ncols = 0;
+for my $l (4 .. $max_len) {
+    if ($sums{1}{$l} != 0) {
+        ++$ncols;
+    }
+}
+my $nrows = 0;
+for my $c (@seven) {
+    if ($sums{$c}{1} != 0) {
+        ++$nrows;
+    }
+}
+
 my $bingo = keys %first_char == 7? ', Bingo': '';
 
 # now that #we have computed %sums and %two_lets
@@ -1562,80 +1613,58 @@ EOH
 # the hint tables
 my $hint_table = '';
 if ($ht_chosen) {
-
-=comment
-
-    $hint_table = "<table cellpadding=2 border=0>\n";
-    my $space = '&nbsp;' x 4;
-    $hint_table .= "<tr><th>&nbsp;</th>";
-    for my $l (4 .. $max_len) {
-        $hint_table .= "<th>$space$l</th>";
-    }
-    $hint_table .= "<th>$space&nbsp;&Sigma;</th></tr>\n";
-    my $tot = 0;
-
-    for my $c (@seven) {
-        $hint_table .= "<tr><th class=lt >\U$c\E</th>";
-        for my $l (4 .. $max_len) {
-            $hint_table .= "<td>"
-                        .  ($sums{$c}{$l}?
-                               "<span class=pointer"
-                             . qq! onclick="define_ht('$c', $l);">!
-                             . "$sums{$c}{$l}</span>"
-                          : '&nbsp;-&nbsp;')
-                        . "</td>";
-        }
-        $hint_table .= th($sums{$c}{1} || 0) . "</tr>\n";  # sigma
-        $tot += $sums{$c}{1};
-    }
-    $hint_table .= "<tr><th class=rt>&Sigma;</th>";
-    for my $l (4 .. $max_len) {
-        my $sum = 0;
-        for my $c (@seven) {
-            $sum += $sums{$c}{$l};
-        }
-        $hint_table .= "<th>$sum</th>";
-    }
-    $hint_table .= "<th>$tot</th></tr>\n";
-    $hint_table .= "</table>\n";
-
-=cut
-
     my $space = '&nbsp;' x 4;
     my @rows;
     my @th;
+    my $dash = '&nbsp;-&nbsp;';
     push @th, th('&nbsp;');
+    LEN:
     for my $l (4 .. $max_len) {
+        if (! $show_ZeroRowCol && $sums{1}{$l} == 0) {
+            next LEN;
+        }
         push @th, th("$space$l");
     }
-    push @th, th("$space&nbsp;&Sigma;");
+    if ($show_ZeroRowCol || $ncols > 1) {
+        push @th, th("$space&nbsp;&Sigma;");
+    }
     push @rows, Tr(@th);
-    my $tot = 0;
+    CHAR:
     for my $c (@seven) {
+        if (! $show_ZeroRowCol && $sums{$c}{1} == 0) {
+            next CHAR;
+        }
         my @cells;
         push @cells, th({ class => 'lt' }, uc $c);
+        LEN:
         for my $l (4 .. $max_len) {
+            if (! $show_ZeroRowCol && $sums{1}{$l} == 0) {
+                next LEN;
+            }
             push @cells, td($sums{$c}{$l}?
                                "<span class=pointer"
                                . qq! onclick="define_ht('$c', $l);">!
                                . "$sums{$c}{$l}</span>"
-                           : '&nbsp;-&nbsp;'
+                           : $dash
                           );
         }
-        push @cells, th($sums{$c}{1} || 0);
-        push @rows, Tr(@cells);
-        $tot += $sums{$c}{1};
-    }
-    @th = th({ class => 'rt' }, '&Sigma;');
-    for my $l (4 .. $max_len) {
-        my $sum = 0;
-        for my $c (@seven) {
-            $sum += $sums{$c}{$l};
+        if ($show_ZeroRowCol || ($sums{$c}{1} != 0 && $ncols > 1)) {
+            push @cells, th($sums{$c}{1} || 0);
         }
-        push @th, th($sum);
+        push @rows, Tr(@cells);
     }
-    push @th, th($tot);
-    push @rows, Tr(@th);
+    if ($nrows > 1 || $show_ZeroRowCol) {
+        @th = th({ class => 'rt' }, '&Sigma;');
+        LEN:
+        for my $l (4 .. $max_len) {
+            if (! $show_ZeroRowCol && $sums{1}{$l} == 0) {
+                next LEN;
+            }
+            push @th, th($sums{1}{$l} || $dash);
+        }
+        push @th, th($sums{1}{1} || 0);
+        push @rows, Tr(@th);
+    }
     $hint_table = table({ cellpadding => 2 }, @rows);
 }
 
@@ -1653,7 +1682,7 @@ if ($tl_chosen) {
             next TWO;
         }
         $two_lets .= qq!<span class=pointer onclick="define_tl('$two[$i]');">!
-                  .  qq!\U$two[$i]-$two_lets{$two[$i]}</span>!;
+                  .  qq!\U$two[$i]\E-$two_lets{$two[$i]}</span>!;
         if ($i < $#two
             && substr($two[$i], 0, 1) ne substr($two[$i+1], 0, 1)
         ) {
@@ -1671,6 +1700,9 @@ if (7 <= $rank && $rank <= 9) {
     $name =~ s{\s.*}{}xms;  # for queen bee
     $image = "<img class=image_$name src=$log/nytbee/pics/$name.jpg>";
 }
+my $rank_image = $show_RankImage?
+        "<span class='rank_name rank$rank'>$rank_name</span>$image"
+       : $rank_name;
 
 my $disp_nhints = "";
 if ($nhints) {
@@ -1721,6 +1753,19 @@ EOH
 
 # now to display everything
 # cgi-bin/style.css?
+
+my $heading = $show_Heading? <<"EOH": '';
+<div class=float-child1>
+    <a target=_blank onclick="set_focus();" href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date$clues_are_present
+</div>
+<div class=float-child2>
+     <img width=50 src=$log/nytbee/pics/bee-logo.jpg>
+</div>
+<div class=float-child3>
+    <span class=help><a target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html'>Help</a></span><br><span class=create_add>$create_add</span>
+</div>
+<br><br>
+EOH
 
 my $letters = '';
 my @coords;
@@ -1811,6 +1856,12 @@ elsif ($hive == 4) {
     }
     $letters .= "</pre>";
 }
+if (! $show_Heading && ($hive == 2 || $hive == 3)) {
+    for my $c (@coords) {
+        $c->{top} -= 79;
+    }
+}
+
 my $letter_styles = '';
 if (@coords) {
     for my $i (0 .. 6) {
@@ -1821,6 +1872,26 @@ if (@coords) {
 }
 EOS
     }
+}
+
+my $hint_table_list = '';
+if ($ht_chosen && ($show_ZeroRowCol || $sums{1}{1} != 0)) {
+    $hint_table_list .= <<"EOH";
+<div class=float-child4>
+    <div id=hint_table class=hint_table>
+    $hint_table
+    </div>
+</div>
+EOH
+}
+if ($tl_chosen && ($show_ZeroRowCol || $sums{1}{1} != 0)) {
+    $hint_table_list .= <<"EOH";
+<div class=float-child5>
+    <div id=two_lets class=two_lets>
+    $two_lets
+    </div>
+</div>
+EOH
 }
 print <<"EOH";
 <html>
@@ -1842,22 +1913,17 @@ $letter_styles
 <script src="$log/nytbee/js/nytbee.js"></script>
 </head>
 <body>
-<div class=float-child1>
-    <a target=_blank onclick="set_focus();" href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date$clues_are_present
-</div>
-<div class=float-child2>
-     <img width=50 src=$log/nytbee/pics/bee-logo.jpg>
-</div>
-<div class=float-child3>
-    <span class=help><a target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html'>Help</a></span><br><span class=create_add>$create_add</span>
-</div>
-<br><br>
+$heading
 <form id=main name=form method=POST>
 <input type=hidden name=date value='$date'>
 <input type=hidden name=has_message value=$has_message>
 <input type=hidden name=six value='@six'>
 <input type=hidden name=seven_let value='@seven_let'>
 <input type=hidden name=hive value=$hive>
+<input type=hidden name=show_Heading value=$show_Heading>
+<input type=hidden name=show_WordList value=$show_WordList>
+<input type=hidden name=show_RankImage value=$show_RankImage>
+<input type=hidden name=show_ZeroRowCol value=$show_ZeroRowCol>
 $letters
 $message
 <input class=new_words
@@ -1868,23 +1934,10 @@ $message
        autocomplete=off
 ><br>
 </form>
-<div class=found_words>
 $found_words
-</div>
 <p>
-Score: $score<span class='rank_name rank$rank'>$rank_name</span>
-$image
-$disp_nhints
-<div class=float-child4>
-    <div id=hint_table class=hint_table>
-    $hint_table
-    </div>
-</div>
-<div class=float-child5>
-    <div id=two_lets class=two_lets>
-    $two_lets
-    </div>
-</div>
+Score: $score $rank_image
+$disp_nhints$hint_table_list
 $show_clue_form$add_clues_form
 </body>
 <script>set_focus();</script>

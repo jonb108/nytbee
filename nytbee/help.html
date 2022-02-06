@@ -286,8 +286,15 @@ These commands are of more limited use.  Some of them were added just for fun.
 <tr><td><span class=cmd>Wn</span></td><td>Show the found words of length n.</td></tr>
 <tr><td><span class=cmd>W&nbsp;&nbsp;&lt;prefix&gt;</span></td><td>Show the found words that start with &lt;prefix&gt;.</td></tr>
 <tr><td><span class=cmd>W/&lt;pattern&gt;</span></td><td>Show the found words that match the pattern.<br>For example, W/OO will show the found words that contain OO - like OOZE, LOOT, or TATTOO. For <i>Super</i> Power Users: The pattern is a <a target=nytbee href='https://perldoc.perl.org/perlrequick'>Perl Regular Expression</a> with the /x flag.</td></tr>
-<tr><td><span class=cmd>1W</span></td><td>Show the found words in a single column.  This may be more convenient if you wish to copy/paste the word list.</td></tr>
-<tr><td><span class=cmd>G&nbsp;&nbsp;Y</span></td><td>Give up and show the words you have not yet found.</td></tr>
+<tr><td><span class=cmd>1W</span></td><td>Show the found words in a single column.  This may be more convenient if you wish to copy/paste the word list.<p></td></tr>
+<tr><td colspan=2>If you are a minimalist:</td></tr>
+<tr><td><span class=cmd>HE</span></td><td>Toggle the showing of the <span class=cmd>he</span>ader.  Default is to show it.</td></tr>
+<tr><td><span class=cmd>WL</span></td><td>Toggle the showing of the list of found words.  Default is to show the <span class=cmd>w</span>ord <span class=cmd>l</span>ist.</td></tr>
+<tr><td><span class=cmd>IM</span></td><td>Toggle the showing of the <span class=cmd>im</span>age for the ranks of Amazing, Genius, and Queen Bee.  Default is to show it.</td></tr>
+<tr><td><span class=cmd>CO</span></td><td>Toggle the <span class=cmd>co</span>llapsing of the Hint Table.  Default is to show columns and rows that have only zeroes.<p></td></tr>
+<tr><td colspan=2>Finally, we have the Ultimate Hint:</td></tr>
+<tr><td><span class=cmd>G&nbsp;&nbsp;Y</span></td><td>
+Give up and show the words you have not yet found.</td></tr>
 </table>
 </ul>
 <a name=create></a>
@@ -350,7 +357,7 @@ However &#128522; ... among those 54 I do see these that are quite reasonable:
 <li>Let's say you have a friend named Bob Smith.  Notice that there are
 exactly 7 unique letters in his name.  There are no pangramic words
 in any of the above lists that use the letters 
-<span class=green>B H I M O S T</span> but we
+<span class=green>bhimost</span> but we
 can still proceed with making a puzzle for Bob.  Enter BobSmith
 as the pangramic word and choose a center letter.
 The "word" <span class=green>Bobsmith</span>
@@ -380,7 +387,7 @@ The command <span class=cmd>YCP</span> will list the community puzzles
 that you have created.  You can click on the <span class=blue>CP#</span> link
 to re-edit your puzzle.  You can update/change/delete the words and clues - but not the 7 letters or center letter.
 <p>
-The command <span class=cmd>XCP</span> can be used to <i>delete</i> puzzles
+The command <span class=cmd>XCP&lt;num&gt;</span> can be used to <i>delete</i> puzzles
 that <i>you</i> have created.
 <a name=clues></a>
 <h2>Clues for Puzzles
@@ -848,7 +855,7 @@ It is possible but not easy.
 It's best with an actual keyboard as on a laptop or desktop computer.
 <li>There is no forum for discussion about this new mechanism.
 The NYT HiveMind Forum or a FaceBook group page could serve this purpose.
-<li>Since you do not need to register and login, your identity
+<li>Since you do not need to register and login (which is nice), your identity
 is preserved in a 'cookie' (aka website data)
 within your web browser.  As long as you
 don't 'clear your cookies' you will be fine.  All browsers have a way
@@ -862,6 +869,8 @@ simply reset the game with the <span class=cmd>C Y</span> command.
 <li>The software was not designed for high volume.
 If the usage becomes high the response time would suffer.
 The software would need to be redesigned and possibly rewritten.
+<li>Finally, I know there are many unknown issues.  If you find them
+please <a href='mailto:Jon Bjornstad <jon.bjornstad@gmail.com>?subject=NYT Bee'>let me know</a>.
 </ul>
 </body>
 </html>
