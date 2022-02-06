@@ -5,20 +5,33 @@ use warnings;
 use BeeUtil qw/
     uniq_chars
 /;
+
+sub error {
+    my ($msg) = @_;
+    print <<"EOH";
+<style>
+body {
+    margin: .5in;
+    font-size: 18pt;
+}
+</style>
+$msg
+EOH
+    exit;
+}
+
 # a poor man's CGI:
 print "Content-Type: text/html; charset=ISO-8859-1\n\n";
 my $word = $ENV{PATH_INFO};
 $word =~ s{\A /}{}xms;
 
 if ($word !~ m{\S}xms) {
-    print "missing word to search for...";
-    exit;
+    error "Missing word to search for...";
 }
 
 my @chars = uniq_chars $word;
 if (@chars > 7) {
-    print "Sorry, there are more than 7 unique characters in $word.";
-    exit;
+    error "Sorry, there are more than 7 unique characters in $word.";
 }
 
 my @pangrams;

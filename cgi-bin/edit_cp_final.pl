@@ -77,7 +77,7 @@ close $out;
 print <<"EOH";
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='http://logicalpoetry.com/nytbee/cgi_style.css'/>
+<link rel='stylesheet' type='text/css' href='https://logicalpoetry.com/nytbee/cgi_style.css'/>
 </head>
 <body>
 Finished editing CP$CPn.

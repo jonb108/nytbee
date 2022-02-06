@@ -5,8 +5,9 @@ use base 'Exporter';
 our @EXPORT_OK = qw/
     display_clues
 /;
-
-my $log = 'http://host2047.temp.domains/~logical9';
+use BeeUtil qw/
+    $log
+/;
 
 #
 # all information should be provided to the

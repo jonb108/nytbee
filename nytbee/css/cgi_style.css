@@ -3,10 +3,6 @@ body {
     margin: .5in;
     font-size: 18pt;
 }
-/* li {
-    margin-bottom: 4mm;
-}
-*/
 td, th {
     font-family: Arial;
     font-size: 18pt;
@@ -27,12 +23,6 @@ td, th {
 .word {
     font-size: 24pt;
     color: green;
-}
-.green {
-    color: green;
-}
-.gray {
-    color: gray;
 }
 a {
     text-decoration: none;
@@ -57,12 +47,11 @@ button, .word_td {
 .step_name {
     color: green;
 }
-.help {
-    margin-left: 2.5in;
+a.help {
+    margin-left: 1in;
     font-size: 18pt;
     font-weight: normal;
 }
-/* from nytbee.pl - some duplication? */
 .gray {
     color: lightgray;
 }
@@ -74,19 +63,12 @@ button, .word_td {
     margin-left: 5mm;
     line-height: 6mm;
 }
-.help {
-    margin-left: 1in;
-}
 .create_add, .help {
     font-size: 13pt;
 }
 .mess {
     width: 600px;
     word-spacing: 10px;
-}
-a {
-    text-decoration: none;
-    color: blue;
 }
 .pointer {
     cursor: pointer;

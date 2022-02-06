@@ -3,6 +3,7 @@
 <head>
 <title>The Spelling Bee Puzzle of New York Times</title>
 <link rel='stylesheet' type='text/css' href='css/style.css'/>
+<script src="https://logicalpoetry.com/nytbee/js/nytbee.js"></script>
 </head>
 <body>
 <h1><img height=70 src='pics/bee-logo.jpg'><br>The Spelling Bee Puzzle<br>of<br>
@@ -24,15 +25,16 @@ Here is the NY Times version:
 </ul>
 Now there's <i>another</i> way to play:
 <ul>
-<a target=nytbee2 href='http://host2047.temp.domains/~logical9/cgi-bin/nytbee.pl'>logicalpoetry.com/nytbee</a>
+<a target=nytbee2 href='https://logicalpoetry.com/cgi-bin/nytbee.pl'>logicalpoetry.com/nytbee</a>
 </ul>
-The new enhanced mechanism has several <a href=#advantages>advantages</a>.
-It works best with an actual keyboard as on a laptop or desktop computer
-rather than on a mobile phone.
-There are several <a href=#videos>short videos</a> that show how it works.
+This new enhanced alternate mechanism has several 
+<a href=#advantages>advantages</a>.
+One <i>dis</i>advantage is that it is not easy to play on a mobile phone.
+It works best with an actual keyboard on a laptop or desktop computer.
 <p>
-Give it a try and 
-<a href='mailto:Jon Bjornstad <jon.bjornstad@gmail.com>?subject=NYT Bee'>let me know</a> what you think.
+There are several <a href=#videos>short videos</a> to show how it works.
+<p>
+Give it a try and <script>abcd('let me know');</script> what you think.
 <p>
 My name is Jon Bjornstad.  I live in Davis, CA.  I am 72 years old.
 I retired from the corporate software world a few years ago
@@ -50,7 +52,7 @@ And I have.  The complete source code for this project is on
 <a href=#introduction>Introduction</a><br>
 <a href=#videos>Videos</a><br>
 <a href=#how>How to Play</a><br>
-<a href=#advantages>Advantages of the New Mechanism</a><br>
+<a href=#advantages>Advantages</a><br>
 <a href=#words>Words and Commands</a><br>
 <a href=#hint_commands>Hint Commands</a><br>
 <a href=#table_list>The Hint Table and the Two Letter List</a><br>
@@ -71,7 +73,7 @@ And I have.  The complete source code for this project is on
 Videos
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
-Video demonstrations on YouTube:
+These short video demonstrations on YouTube give a quick overview.
 <p>
 <div class=toc>
 <a target=nyt_videos href=''>Basic Operation</a><br>
@@ -103,13 +105,14 @@ that are obscure, hyphenated, or proper nouns.
 <li>Each puzzle includes at least one "pangram" which uses every letter. These are worth 7 extra points!
 </ul>
 <a name=advantages></a>
-<h2>Advantages of the New Mechanism
+<h2>Advantages
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
-The many advantages of this new way include:
+The many advantages of this alternate way include:
 <ul>
 <li>The Hint Table and Two Letter List are <i>dynamic</i>.
-<li>You can play the large archive of NYT puzzles (random or specific dates).
+<li>You can play the large archive of NYT puzzles.
+<li>Dictionary definitions as hints - to enlarge and challenge your vocabulary.
 <li>Create your <i>own</i> puzzle with clues and share it with the HiveMind.
 <li>Clerical assistance in <a href=#clues>creating clues for NYT Puzzles</a> to post in the HiveMind Forum or on FaceBook.
 Clues are shown with the <span class=cmd>D</span> command.
@@ -117,7 +120,6 @@ Clues are shown with the <span class=cmd>D</span> command.
 <li>No subscription needed to play the full puzzle.
 <li>4 different presentations of the 7 letters.
 <li>Multiple puzzles at once - multi-tasking.
-<li>Dictionary definitions - to enlarge and challenge your vocabulary.
 <li>Incremental revealing of letters.
 <li>REplaying puzzles.
 <li>Search the NYT puzzle archive and community puzzles for words.
@@ -178,7 +180,7 @@ Merriam-Webster (<a target=nytbee href='https://merriam-webster.com'>merriam-web
 <tr><td colspan=2><span class=cmd>D&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.
 You can ask for definitions of <i>any</i> word - not just the ones in the puzzle.
 No hints are tallied.
-This form of the <span class=cmd>D</span> command serves as a quick and fun way to browse a dictionary.  More pleasant somehow than the full merriam-webster.com site.
+This form of the <span class=cmd>D</span> command serves as a quick and fun way to browse a dictionary that is more pleasant somehow than the full merriam-webster.com site.
 </td></tr>
 <tr><td><span class=cmd>D*&nbsp;&nbsp;...</span></td><td>The above <span class=cmd>D</span> commands give at most 3 definitions. <span class=cmd>D*</span> will give them <i>all</i> plus any <a href=#clues>clues</a>.<p></td></tr>
 <tr><td><span class=cmd>V2P</span></td><td>Reveal the first two letters of the pangrams.</td></tr>
@@ -263,7 +265,7 @@ Commands to access the large NY Times <a href=#nyt_archive>Archive</a> of Spelli
 <tr><td><span class=cmd>XA</span></td><td>Remove all puzzles from the list and return to today's NYT puzzle.  The words you found in today's puzzle are preserved.</td></tr>
 <tr><td colspan=2><hr width=500></td></tr>
 <tr><td><span class=cmd>LCP</span></td><td>List the 5 most recent Community Puzzles.  List 10 with <span class=cmd>LCP 10</span>.  Click on the <span class=blue>CP#</span> to start solving the puzzle.</td></tr>
-<tr><td><span class=cmd>CP&lt;num&gt;</span></td><td>New Community Puzzle #num.  This <i>plays</i> the puzzle.  To <i>create</i> a puzzle click <a target=nytbee3 href='http://logicalpoetry.com/nytbee/mkpuz.html'>here</a>.</td></tr>
+<tr><td><span class=cmd>CP&lt;num&gt;</span></td><td>New Community Puzzle #num.  This <i>plays</i> the puzzle.  To <i>create</i> a puzzle click <a target=nytbee3 href='https://logicalpoetry.com/nytbee/mkpuz.html'>here</a>.</td></tr>
 <tr><td><span class=cmd>YCP</span></td><td>List the Community Puzzles that you created.  Click on the <span style="color: blue">CP#</span> to edit the puzzle. You can change the words and the clues.</td></tr>
 <tr><td><span class=cmd>XCP&lt;num&gt;</span></td><td>Delete Community Puzzle #num and revert to today's NYT puzzle. You can only delete puzzles that you created.  You would only do this if you deem the puzzle to be flawed in some way.</td></tr>
 </table>
@@ -307,7 +309,7 @@ Why should Sam Ezersky be the only one to have the fun
 HiveMind community.  To do so just click on the 'Create Puzzle' link
 at the top of the main screen (right under 'Help').
 You can also click on it here:
-<a target=nytbee4 href='http://logicalpoetry.com/nytbee/mkpuz.html'>Create Puzzle</a>.
+<a target=nytbee4 href='https://logicalpoetry.com/nytbee/mkpuz.html'>Create Puzzle</a>.
 <p>
 There are 5 steps to create a puzzle:
 <style>
@@ -327,9 +329,9 @@ How to find a pangramic word?  There are four ways:
 <li>There are 3 large lists of pangramic words to peruse:
 <p>
 <ol>
-<li><a target=nytbee href='http://logicalpoetry.com/nytbee/nyt_pangrams.html'>Pangrams from NYT Puzzles</a>
-<li><a target=nytbee href='http://logicalpoetry.com/nytbee/goo10k-7-nyt.html'>Pangramic words from a list of 10,000 common English words</a>
-<li><a target=nytbee href='http://logicalpoetry.com/nytbee/osx_usd_words-7-nyt-goo.html'>Pangramic words from a large lexicon</a>
+<li><a target=nytbee href='https://logicalpoetry.com/nytbee/nyt_pangrams.html'>Pangrams from NYT Puzzles</a>
+<li><a target=nytbee href='https://logicalpoetry.com/nytbee/goo10k-7-nyt.html'>Pangramic words from a list of 10,000 common English words</a>
+<li><a target=nytbee href='https://logicalpoetry.com/nytbee/osx_usd_words-7-nyt-goo.html'>Pangramic words from a large lexicon</a>
 </ol>
 These lists are disjoint.
 <li>If you have a word that you want to appear in the puzzle
@@ -452,7 +454,7 @@ your clue offering is effectively deleted.
 If you simply want to make clues for today's puzzle
 to copy/paste into the HiveMind forum there is this link:
 <ul>
-<a target=nytbee href='http://logicalpoetry.com/mkclues'>logicalpoetry.com/mkclues</a>
+<a target=nytbee href='https://logicalpoetry.com/mkclues'>logicalpoetry.com/mkclues</a>
 </ul>
 Spoiler warning: This link will reveal <i>all</i> of the words.
 <a name=articles></a>
@@ -504,7 +506,7 @@ Also see September 16 at <a target=nytbee href='https://www.cs.rpi.edu/academics
 <p>
 <a target=nytbee href='https://cs.brynmawr.edu/Courses/cs399/Spring2020/Final/Spelling_Bee_Final_Draft.pdf'>Bryn Mawr College</a> An ambitious Senior Project for 4 students.
 <h4>Pangram Haiku</h4>
-<a target=nytbee href='http://www.logicalpoetry.com/cgi-bin/get_haiku'>My own project</a>.
+<a target=nytbee href='https://www.logicalpoetry.com/cgi-bin/get_haiku'>My own project</a>.
 Pangram puzzles form the basis of writing poetry.
 Four people created a total of 1158 clever, wise, and inventive <a target=nytbee href='https://en.wikipedia.org/wiki/Haiku'>haiku</a>.
 <h4>Solver and Creator</h4>
@@ -852,16 +854,22 @@ It has limitations and weaknesses.  Here are the known issues:
 <ul>
 <li>It is not easy to play this verson on a mobile phone. 
 It is possible but not easy.
-It's best with an actual keyboard as on a laptop or desktop computer.
+It's best with an actual keyboard on a laptop or desktop computer.
 <li>There is no forum for discussion about this new mechanism.
 The NYT HiveMind Forum or a FaceBook group page could serve this purpose.
 <li>Since you do not need to register and login (which is nice), your identity
 is preserved in a 'cookie' (aka website data)
 within your web browser.  As long as you
-don't 'clear your cookies' you will be fine.  All browsers have a way
+don't 'clear your cookies' you will be fine.  Your identity within the program
+is only truly important if you have added clues or created a community puzzle.
+You can play the game regardless.
+<p>
+All browsers have a way
 to clear the history without removing the website data.  For example,
 on Safari holding the Option (aka Alt) key while clearing the history will
-Keep Website Data.
+Keep Website Data.  If you inadvertently clear your cookie (i.e. your identity)
+<script>abcd('send me an email');</script> with your name and location and
+I can help restore the cookie.
 <li>If two people using the same computer
 want to play separate games they
 can use two different browsers (Safari, Chrome, Firefox, etc) OR
@@ -870,7 +878,7 @@ simply reset the game with the <span class=cmd>C Y</span> command.
 If the usage becomes high the response time would suffer.
 The software would need to be redesigned and possibly rewritten.
 <li>Finally, I know there are many unknown issues.  If you find them
-please <a href='mailto:Jon Bjornstad <jon.bjornstad@gmail.com>?subject=NYT Bee'>let me know</a>.
+please <script>abcd('let me know');</script>.
 </ul>
 </body>
 </html>

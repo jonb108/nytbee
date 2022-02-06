@@ -2,8 +2,6 @@
 use strict;
 use warnings;
 
-#my $bin = '/var/www/vhosts/85/241411/webspace/cgi-bin';
-#my $bee = '/var/www/vhosts/85/241411/webspace/httpdocs/logicalpoetry.com/nytbee';
 my $bin = '/home4/logical9/www/cgi-bin';
 my $bee = '/home4/logical9/www/nytbee';
 

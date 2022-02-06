@@ -63,7 +63,7 @@ for my $word (sort keys %{$clue_href}) {
 print <<"EOH";
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='http://logicalpoetry.com/nytbee/cgi_style.css'/>
+<link rel='stylesheet' type='text/css' href='https://logicalpoetry.com/nytbee/cgi_style.css'/>
 </head>
 <body>
 Finished. &#128077;<br>

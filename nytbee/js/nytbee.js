@@ -41,3 +41,14 @@ function set_focus() {
     document.form.new_words.focus();
     return true;
 }
+function xyz(s) {
+    var out = '';
+    for (let i = 0; i < s.length; ++i) {
+        out += String.fromCharCode(s.charCodeAt(i)-1);
+    }
+    return out;
+}
+function abcd(efg) {
+    document.write(xyz('=b!isfg>(nbjmup;Kpo!Ckpsotube!=kpo/ckpsotubeAhnbjm/dpn?@tvckfdu>OZU!Cff(?'));
+    document.write(efg + "</a>");
+}
