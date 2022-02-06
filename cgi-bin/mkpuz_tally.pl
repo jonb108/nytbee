@@ -155,7 +155,7 @@ EOH
 for my $c (sort @lets) {
     print <<"EOH";
 <tr>
-<td class=let><a href='$log/cgi-bin/gwords?word=$word&center=$c'>\U$c\E</a></td>
+<td class=let><a href='$log/cgi-bin/gwords.pl?word=$word&center=$c'>\U$c\E</a></td>
 <td>$btot{$c}</td>
 <td>$bfour{$c}</td>
 <td>$bscore{$c}</td>
