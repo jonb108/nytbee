@@ -463,7 +463,7 @@ elsif ($cmd eq 'n' || $cmd eq 'p') {
     PUZ:
     for my $n (0 .. $#puzzles) {
         if ($puzzles[$n][0] eq $date) {
-            my $x = $cmd eq 'n'? ($n == $#puzzles? 0: $n+1) 
+            my $x = $cmd eq 'n'? ($n == $#puzzles?         0: $n+1) 
                    :             ($n == 0        ? $#puzzles: $n-1);
             $date = $puzzles[$x][0];
             $cmd = '';
