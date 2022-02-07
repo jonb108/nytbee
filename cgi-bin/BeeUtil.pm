@@ -27,8 +27,7 @@ use Date::Simple qw/
     today
 /;
 
-#our $log = 'https://logicalpoetry.com';
-our $log = 'http://host2047.temp.domains/~logical9';
+our $log = 'https://logicalpoetry.com';
 
 sub cgi_header {
     my ($q, $another_cookie) = @_;
