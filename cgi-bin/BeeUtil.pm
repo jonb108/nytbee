@@ -21,17 +21,30 @@ our @EXPORT_OK = qw/
     red
     my_today
     $log
+    $cgi_dir
 /;
 
 use Date::Simple qw/
     today
 /;
 
-our $log = 'https://logicalpoetry.com';
+our $log     = 'https://logicalpoetry.com';
+our $cgi_dir = '/home4/logical9/www/cgi-bin';
 
+#
+# handle the creation and maintenance of the uuid
+#
 sub cgi_header {
     my ($q, $another_cookie) = @_;
-    my $uuid = $q->cookie('uuid');
+
+    my $cmd = $q->param('new_words');
+    my $uuid;
+    if ($cmd =~ m{\A id \s+ (\S+) \s* \z}xmsi) {
+        $uuid = $1;
+    }
+    else {
+        $uuid = $q->cookie('uuid');
+    }
     if (! $uuid) {
         # only load this module if it is needed
         require UUID::Tiny;

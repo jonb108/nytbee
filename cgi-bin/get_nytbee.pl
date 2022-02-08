@@ -77,14 +77,16 @@ system "$bin/indexize $bee/goo10k-7-nyt.txt Pangramic Words from a list of 10,00
 # and REmake the osx_usd_words-7-nyt-goo.html file
 # thereby ensuring the new pangrams are not there either.
 #
-system "/bin/cat $bee/nyt_pangrams.txt $bee/goo10k-7-nyt.txt >/tmp/t;";
-system "sort -u -o /tmp/t /tmp/t";
-system "/usr/bin/comm -23 $bee/osx_usd_words-7.txt /tmp/t > $bee/osx_usd_words-7-nyt-goo.txt";
+my $tmp = "/tmp/$$";
+system "/bin/cat $bee/nyt_pangrams.txt $bee/goo10k-7-nyt.txt >$tmp;";
+system "sort -u -o $tmp $tmp";
+system "/usr/bin/comm -23 $bee/osx_usd_words-7.txt $tmp > $bee/osx_usd_words-7-nyt-goo.txt";
 system "$bin/indexize $bee/osx_usd_words-7-nyt-goo.txt Pangramic Words from a Large Lexicon";
 unlink "$bee/goo10k-7-nyt.txt",
        "$bee/nyt_pangrams.txt",
        "$bee/osx_usd_words-7-nyt-goo.txt",
-       "/tmp/t";
+       $tmp
+       ;
 
 # add any new words to nyt-words.txt
 # and remove them from other-words.txt

@@ -5,6 +5,7 @@ use warnings;
 use CGI;
 use BeeUtil qw/
     cgi_header
+    $log
 /;
 
 # we will save the name, location, and word => clues
@@ -63,7 +64,7 @@ for my $word (sort keys %{$clue_href}) {
 print <<"EOH";
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='https://logicalpoetry.com/nytbee/cgi_style.css'/>
+<link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
 </head>
 <body>
 Finished. &#128077;<br>

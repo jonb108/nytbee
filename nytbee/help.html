@@ -142,7 +142,7 @@ acceptable.  Any error messages will appear above the text field.
 Pressing Return when the text field is empty will clear any messages.
 If there are no messages to clear the 6 outer letters will be permuted.
 <p>
-If you lose focus on the text field you can easily recover it by
+If you lose focus on the text field you can restore it by
 hitting the Tab key.
 <p>
 There are also many commands you can enter in the text field:
@@ -177,9 +177,12 @@ Most of us mere mortals need kind of some help to get to Amazing or Genius.
 <tr><td><span class=cmd>DB8</span></td><td>Define the words beginning with B of length 8.</td></tr>
 <tr><td><span class=cmd>DTR</span></td><td>Define the words beginning with TR.</td></tr>
 <tr><td colspan=2>
-If there is a <a href=#clue>"clue"</a> for a word it is shown instead of a
-dictionary definition.  Definitions come from
-Merriam-Webster (<a target=nytbee href='https://merriam-webster.com'>merriam-webster.com</a>) and Oxford (<a target=nytbee href='https://lexico.com'>lexico.com</a>).  <p></td></tr>
+Definitions come from Merriam-Webster (<a target=nytbee
+href='https://merriam-webster.com'>merriam-webster.com</a>)
+and Oxford (<a target=nytbee href='https://lexico.com'>lexico.com</a>).  
+If there there is a <a href=#clues>clue</a> for a word it is shown
+instead of a dictionary definition.
+<p></td></tr>
 <tr><td colspan=2><span class=cmd>D&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.
 You can ask for definitions of <i>any</i> word - not just the ones in the puzzle.
 No hints are tallied.
@@ -263,7 +266,7 @@ Commands to access the large NY Times <a href=#nyt_archive>Archive</a> of Spelli
 <p>
 <table cellpadding=5>
 <tr><td><span class=cmd>NR</span></td><td>New NYT puzzle from a Random date.</td></tr>
-<tr><td><span class=cmd>&lt;date&gt;</span></td><td>New NYT puzzle from the given date.  You can enter dates in several ways: 10/20/19 or 9/23 (current year) or 15 (current month).  Dates must be on or after May 29, 2018.</td></tr>
+<tr><td><span class=cmd>&lt;date&gt;</span></td><td>New NYT puzzle from the given date.  You can enter dates in several ways: 10/20/19 or 9/23 (current year) or 15 (current month - but not 1 or 2 for the 1st or 2nd).  Dates must be on or after May 29, 2018.</td></tr>
 <tr><td><span class=cmd>T</span></td><td>Return to today's NYT puzzle.</td></tr>
 <tr><td><span class=cmd>L</span></td><td>List the current puzzles.  <span class=red>*</span> marks the current puzzle.  p marks puzzles where all pangrams have been found.</td></tr>
 <tr><td><span class=cmd>N</span></td><td>Move to the next puzzle in the list - wrapping from last to first.</td></tr>
@@ -282,14 +285,17 @@ Commands to access the large NY Times <a href=#nyt_archive>Archive</a> of Spelli
 <h2>Power User Commands
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
-These commands are of more limited use.  Some of them were added just for fun.
+These commands are of more limited use.  Some of them were added just for the beauty of software Art.
 <ul>
 <table cellpadding=3>
 <tr><td><span class=cmd>H&lt;num&gt</span></td><td>Directly change the 7 letter presentation instead of cycling around. 1 = Hex Letters, 2 = Honeycomb, 3 = Flower, 4 = Inline Letters</td></tr>
-<tr><td><span class=cmd>CL</span></td><td>List the dates on which you have offered clues.  This includes the Community Puzzles you created.</td></tr>
-<tr><td><span class=cmd>F</span></td><td>Find other puzzles that use the same seven letters.  You can click on the dates to start solving the puzzle.</td></tr>
-<tr><td><span class=cmd>S&nbsp;&nbsp;&lt;word&gt;</span></td><td>Search for other puzzles where the word is used.  You can click on the dates to start solving the puzzle.</td></tr>
-<tr><td><span class=cmd>R%</span></td><td>Show the rankings with the percentage of the maximum score.</td></tr>
+<tr><td><span class=cmd>R%</span></td><td>Show the rankings with the percentage of the maximum score.<br><br></td></tr>
+<tr><td colspan=2>Searching the Puzzles</td></tr>
+<tr><td><span class=cmd>CL</span></td><td>Find puzzles for which you have added clues.</td></tr>
+<tr><td><span class=cmd>F</span></td><td>Find puzzles that use the same seven letters as the current puzzle.</td></tr>
+<tr><td><span class=cmd>S&nbsp;&nbsp;&lt;word&gt;</span></td><td>Search for puzzles which include the word.</td></tr>
+<tr><td colspan=2>The above 3 commands will search both NYT Puzzles and Community Puzzles.   You can click on the <span class=blue>date</span> or <span class=blue>CP#</span> links to start solving the puzzles.<br><br></td></tr>
+<tr><td colspan=2>Fun with the Word List</td></tr>
 <tr><td><span class=cmd>W&gt;</span></td><td>Show the found words in order of increasing length.</td></tr>
 <tr><td><span class=cmd>W&gt;n</span></td><td>Show the found words of length greater than n.</td></tr>
 <tr><td><span class=cmd>W&lt;</span></td><td>Show the found words in order of decreasing length.</td></tr>
@@ -302,7 +308,12 @@ These commands are of more limited use.  Some of them were added just for fun.
 <tr><td><span class=cmd>HE</span></td><td>Toggle the showing of the <span class=cmd>he</span>ader.  Default is to show it.</td></tr>
 <tr><td><span class=cmd>WL</span></td><td>Toggle the showing of the list of found words.  Default is to show the <span class=cmd>w</span>ord <span class=cmd>l</span>ist.</td></tr>
 <tr><td><span class=cmd>IM</span></td><td>Toggle the showing of the <span class=cmd>im</span>age for the ranks of Amazing, Genius, and Queen Bee.  Default is to show it.</td></tr>
-<tr><td><span class=cmd>CO</span></td><td>Toggle the <span class=cmd>co</span>llapsing of the Hint Table.  Default is to <i>include</i> columns and rows that have no entries.<br><br></td></tr>
+<tr><td><span class=cmd>CO</span></td><td>Toggle the <span class=cmd>co</span>llapsing of the <a href=#table_list>Hint Table</a>.  Default is to <i>include</i> columns and rows that have no entries.<br><br></td></tr>
+<tr><td colspan=2>Preserving your Identity</td></tr>
+<tr><td><span class=cmd>ID</span></td><td>Show the long string of characters that constitute your 'identity' to the program.  It will look something like this:
+<div style='color: green; margin-left: .5in'>963e4401-81eq-18ec-g81c-b1f85c942ex3<span></div>Save this string in a secure place.</td></tr>
+<tr><td><span class=cmd>ID</span>&nbsp;...</td><td>In case you inadvertently clear your Website Data (aka cookies) you can restore your identity with this command:
+<div style="margin-top: 0mm; margin-left: .5in;"><span class=cmd>ID</span>&nbsp;&nbsp;<span class=green>963e4401-81eq-18ec-g81c-b1f85c942ex3</span></div> The long string of characters was retrieved from where you securely stored it.<br><br></td></tr>
 <tr><td colspan=2>Finally, we have the Ultimate Hint:</td></tr>
 <tr><td><span class=cmd>G&nbsp;&nbsp;Y</span></td><td>
 Give up and show the words you have not yet found. <span class=cmd>G&nbsp;&nbsp;Y</span> means Give up and confirm Yes.</td></tr>
@@ -344,8 +355,8 @@ How to find a pangramic word?  There are four ways:
 </ol>
 These lists are disjoint.
 <li>If you have a word that you want to appear in the puzzle
-there is a way to search for pangramic words whose resulting puzzle
-will have that word as part of the solution.    There is a second
+you can search for pangramic words whose resulting puzzle
+could have that word as part of the solution.    There is a second
 text field for this purpose.
 <p>
 For example, the word '<span style="color: purple">enigma</span>' yields
@@ -879,6 +890,9 @@ on Safari holding the Option (aka Alt) key while clearing the history will
 Keep Website Data.  If you inadvertently clear your cookie (i.e. your identity)
 <script>abcd('send me an email');</script> with your name and location and
 I can help restore the cookie.
+<p>
+Note that the <span class=cmd>ID</span> <a href=#power>Power User command</a>
+is a way to restore your identity yourself.
 <li>If two people using the same computer
 want to play separate games they
 can use two different browsers (Safari, Chrome, Firefox, etc) OR

@@ -144,6 +144,7 @@ use BeeUtil qw/
     word_score
     JON
     $log
+    $cgi_dir
 /;
 use Date::Simple qw/
     today
@@ -165,8 +166,14 @@ my $hive_cookie = $q->cookie(
     -expires => '+20y',
 );
 my $uuid = cgi_header($q, $hive_cookie);
-
 my %params = $q->Vars();
+if ($params{new_words} =~ m{\A \s* id \s+}xmsi) {
+    # we took care of this case in cgi_header
+    $params{new_words} = '';
+}
+# search for 'id' below
+
+
 ##############
 my %puzzle;
 tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
@@ -1168,7 +1175,26 @@ elsif ($cmd eq 'l') {
     $cmd = '';
 }
 elsif ($cmd eq 'cl') {
-    $message = `curl -skL $log/cgi-bin/nytbee_clue_dates.pl/$uuid`;
+    my %is_in_list = map { $_->[0] => 1 } my_puzzles();
+    my @dates = `$cgi_dir/nytbee_clue_dates.pl $uuid`;
+    chomp @dates;
+    if (!@dates) {
+        $message = '';
+    }
+    else {
+        $message
+            = 'Puzzles you clued:<br>'
+            . table(
+                  map {
+                      Tr(td(qq!<span class=link onclick="new_date('$_');">!
+                           .(/^\d/? slash_date($_): $_)
+                           .'</span>'),
+                         td($is_in_list{$_}? ($_ eq $date? red('*'): '*'): ''),
+                        )
+                  }
+                  @dates
+              );
+    }
     $cmd = '';
 }
 elsif ($cmd eq 'f') {
@@ -1195,7 +1221,7 @@ elsif ($cmd eq 'f') {
               );
     }
     # also search the community puzzles
-    my $s = `cd community_puzzles; grep -l 'seven.*=>.*$seven' *.txt`;
+    my $s = `cd community_puzzles; grep -l "'seven' => '$seven'" *.txt`;
     for my $n ($s =~ m{(\d+)}xmsg) {
         my $cpn = "CP$n";
         my $href = do "community_puzzles/$n.txt";
@@ -1549,6 +1575,7 @@ for my $p (keys %is_pangram) {
 if ($nperfect) {
     $perfect = " ($nperfect Perfect)"
 }
+my $need_show_clue_form = 0;
 my $show_clue_form = '';
 if ($cmd eq 'i') {
     $message = "Words: $nwords, Points: $max_score, "
@@ -1560,18 +1587,7 @@ if ($cmd eq 'i') {
 <span class=pointer style='color: blue' onclick='clues_by(0)'>$cp_href->{name}</span>, $cp_href->{location}<br>
 EOH
         $message .= "<br>Community Puzzle #$n - $created<br>Created by $s";
-        $show_clue_form = <<"EOH";
-<form target=nytbee
-      id=clues_by
-      action=$log/cgi-bin/nytbee_clues_by.pl
-      method=POST
->
-<input type=hidden id=person_id name=person_id>
-<input type=hidden id=date name=date value=$date>
-<input type=hidden id=found name=found value='@found'>
-<input type=hidden name=format value=1>
-</form>
-EOH
+        $need_show_clue_form = 1;
     }
     else {
         load_nyt_clues;
@@ -1593,7 +1609,10 @@ EOH
                   ;
             }
             $message .= "<br>Clues by " . join ', ', @names;
+            $need_show_clue_form = 1;
         }
+    }
+    if ($need_show_clue_form) {
         $show_clue_form = <<"EOH";
 <form target=nytbee
       id=clues_by
@@ -1607,6 +1626,12 @@ EOH
 </form>
 EOH
     }
+    $cmd = '';
+}
+elsif ($cmd eq 'id') {
+    # show the $uuid so the user can save it
+    # for later application with the 'ID ...' command
+    $message = $uuid;
     $cmd = '';
 }
 

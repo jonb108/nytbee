@@ -6,11 +6,7 @@ use BeeUtil qw/
     slash_date
 /;
 
-# no need to use CGI
-print "Content-Type: text/html; charset=ISO-8859-1\n\n";
-
-my $uuid = $ENV{PATH_INFO};
-$uuid =~ s{\A /}{}xms;
+my $uuid = shift;
 
 use Bee_DBH qw/
     $dbh
@@ -35,13 +31,6 @@ my $sth_dates = $dbh->prepare(<<'EOH');
 
 EOH
 $sth_dates->execute($id);
-my @dates;
 while (my ($date) = $sth_dates->fetchrow_array()) {
-    push @dates, $date;
+    print "$date\n";
 }
-# may be some are community puzzles ...
-print join '<br>',
-      map {
-          /^\d/? slash_date($_): $_;
-      }
-      @dates;

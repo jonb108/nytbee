@@ -7,6 +7,7 @@ print $q->header();
 
 use BeeUtil qw/
     my_today
+    $log
 /;
 
 my %params = $q->Vars();
@@ -77,7 +78,7 @@ close $out;
 print <<"EOH";
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='https://logicalpoetry.com/nytbee/cgi_style.css'/>
+<link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
 </head>
 <body>
 Finished editing CP$CPn.
