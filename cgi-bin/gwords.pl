@@ -41,22 +41,20 @@ open my $in, '<', 'nyt-words.txt';
 LINE:
 while (my $line = <$in>) {
     chomp $line;
-    if ($line !~ $regex) {
-        if (index($line, $center) >= 0) {
-            if ($line eq $word) {
-                $used_word = 1;
-            }
-            my $Line = ucfirst $line;
-            print "<input type=checkbox name=ok value=$line checked>&nbsp; ";
-            my @uchars = uniq_chars($line);
-            if (@uchars == 7) {
-                print "<span class=red>$Line</span>";
-            }
-            else {
-                print $Line;
-            }
-            print "<br>\n";
+    if ($line !~ $regex && index($line, $center) >= 0) {
+        if ($line eq $word) {
+            $used_word = 1;
         }
+        my $Line = ucfirst $line;
+        print "<label><input type=checkbox name=ok value=$line checked>&nbsp; ";
+        my @uchars = uniq_chars($line);
+        if (@uchars == 7) {
+            print "<span class=red>$Line</span>";
+        }
+        else {
+            print $Line;
+        }
+        print "</label><br>\n";
     }
 }
 close $in;
@@ -66,22 +64,20 @@ open my $in2, '<', 'other-words.txt';
 LINE:
 while (my $line = <$in2>) {
     chomp $line;
-    if ($line !~ $regex) {
-        if (index($line, $center) >= 0) {
-            if ($line eq $word) {
-                $used_word = 1;
-            }
-            my $Line = ucfirst $line;
-            print "<input type=checkbox name=ok value=$line>&nbsp; ";
-            my @uchars = uniq_chars($line);
-            if (@uchars == 7) {
-                print "<span class=red>$Line</span>";
-            }
-            else {
-                print $Line;
-            }
-            print "<br>\n";
+    if ($line !~ $regex && index($line, $center) >= 0) {
+        if ($line eq $word) {
+            $used_word = 1;
         }
+        my $Line = ucfirst $line;
+        print "<label><input type=checkbox name=ok value=$line>&nbsp; ";
+        my @uchars = uniq_chars($line);
+        if (@uchars == 7) {
+            print "<span class=red>$Line</span>";
+        }
+        else {
+            print $Line;
+        }
+        print "</label><br>\n";
     }
 }
 close $in2;

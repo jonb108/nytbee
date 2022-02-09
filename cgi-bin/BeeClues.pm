@@ -98,6 +98,8 @@ function set_format(n) {
 }
 function clear_text() {
     document.getElementById('info').style.display = 'none';
+    var clue_text = document.getElementById('clue_text').innerText;
+    navigator.clipboard.writeText(clue_text);
 }
 </script>
 </head>
@@ -127,13 +129,16 @@ EOH
         print <<"EOH";
 <p>
 Choose a format from the above links and then click on Ok.<br>
-You can then Select-All, Copy and Paste into the HiveMind forum.<br>
+This will copy the clues onto the system clipboard.<br>
+You can then Paste them into the HiveMind forum, if you wish.
+<p>
 This window can then be closed.
 <p>
 EOH
     }
     print <<"EOH";
 </div>
+<div id=clue_text>
 $heading
 EOH
     my $prev_l1 = '';
@@ -170,10 +175,11 @@ EOH
             print "<span class=$class>";
         }
         if ($format == 4 || $format == 5) {
-            print "&bull; ";
+            print "- ";     # &bull;
         }
         if ($format == 1 || $format == 2) {
-            print '&nbsp;' x 3;
+            #print '&nbsp;' x 3;
+            print ' ' x 3;
         }
         print ucfirst($clue_for_href->{$w});
         if ($format == 1 || $format == 4) {
@@ -192,6 +198,7 @@ EOH
         $prev_l2 = $l2;
     }
     print <<'EOH';
+</div> <!-- clue_text -->
 </body>
 </html>
 EOH

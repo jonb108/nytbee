@@ -2,6 +2,16 @@
 <head>
 <title>The Spelling Bee Puzzle of New York Times</title>
 <link rel='stylesheet' type='text/css' href='css/cgi_style.css'/>
+<script>
+function rand5(source) {
+    newwin = window.open(
+        "https://logicalpoetry.com/cgi-bin/rand5.pl/" + source, 'rand',
+        'height=330, width=400'
+    );
+    newwin.moveTo(800, 0);
+    set_focus();
+}
+</script>
 <style>
 li {
     width: 100%;
@@ -30,14 +40,17 @@ Enter a pangramic word:<p>
 <button type=submit>Submit</button>
 </form>
 <p>
-In this context a pangramic word is one that has exactly 7 unique letters.
+A pangramic word is one that has exactly 7 unique letters.
 <p>
 Here are three large lists of pangramic words:
 <p>
 <ol>
-<li><a target=nyt_pangramic onclick="set_focus();" href='nyt_pangrams.html'>From the NYT Puzzles</a>
-<li><a target=goo_pangramic onclick="set_focus();" href='goo10k-7-nyt.html'>From a list of 10,000 commonly used words</a> (from <a onclick="set_focus();" href='https://github.com/first20hours/google-10000-english'>first20hours github repo</a>)
-<li><a target=big_pangramic onclick="set_focus();" href='osx_usd_words-7-nyt-goo.html'>From a large lexicon</a> (some rare and esoteric - from /usr/share/dict/words on OSX)
+<li><a target=nyt_pangramic onclick="set_focus();" href='nyt_pangrams.html'>The NYT Puzzles</a>
+<a class=rand href='javascript:rand5(1);'>R?</a>
+<li><a target=goo_pangramic onclick="set_focus();" href='goo10k-7-nyt.html'>A list of 10,000 commonly used words</a> (from <a onclick="set_focus();" href='https://github.com/first20hours/google-10000-english'>github repo</a>)
+<a class=rand href='javascript:rand5(2);'>R?</a>
+<li><a target=big_pangramic onclick="set_focus();" href='osx_usd_words-7-nyt-goo.html'>A large lexicon</a> (/usr/share/dict/words on OSX)
+<a class=rand href='javascript:rand5(3);'>R?</a>
 </ol>
 <p>
 Find pangramic words whose puzzles will contain this word:

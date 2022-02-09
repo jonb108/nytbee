@@ -3,6 +3,10 @@ body {
     margin: .5in;
     font-size: 18pt;
 }
+.rand {
+    margin-left: 6mm;
+    color: skyblue;
+}
 td, th {
     font-family: Arial;
     font-size: 18pt;

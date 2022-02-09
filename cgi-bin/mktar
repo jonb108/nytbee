@@ -38,7 +38,8 @@ cp_del_clues.pl \
 goo10k-47.txt \
 set_uuid.pl \
 osx_usd_words-47.txt \
-word_pangram.pl
+word_pangram.pl \
+rand5.pl
 
 # these will not change
 #JSON/PP.pm

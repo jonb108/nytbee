@@ -21,6 +21,7 @@ our @EXPORT_OK = qw/
     red
     my_today
     $log
+    $cgi
     $cgi_dir
 /;
 
@@ -29,6 +30,7 @@ use Date::Simple qw/
 /;
 
 our $log     = 'https://logicalpoetry.com';
+our $cgi     = 'https://logicalpoetry.com/cgi-bin';
 our $cgi_dir = '/home4/logical9/www/cgi-bin';
 
 #

@@ -4,16 +4,16 @@ use warnings;
 
 =comment
 
-system call with command line params instead of curl?
+L and click
 
-some weirdness with <hr> for line ht before words then sc
-    colspan 4?
+in some places
+don't use curl with cgi
+just execute directly - with @ARGV!
+system call with command line params instead of curl?
+yeah
 
 a bee image different from the NYT?  random cycle?
     for later...
-
-In Tips/Tricks in doc - if you lose focus on text field
-    just hit Tab
 
 class pointer/link two .pointer! :(????
 
@@ -144,6 +144,7 @@ use BeeUtil qw/
     word_score
     JON
     $log
+    $cgi
     $cgi_dir
 /;
 use Date::Simple qw/
@@ -252,6 +253,8 @@ my $message = '';
 # This is Very confusing, hacky, kludgy, and messy.
 # Thorough testing is critical!
 #
+# content of $params{new_words}:
+#
 # NR random puzzle
 # 2/23/19
 # date from hidden field (date) - i.e. the "current" puzzle
@@ -295,6 +298,8 @@ my $show_ZeroRowCol = exists $params{show_ZeroRowCol}?
 # (from a hidden field) is the current date we are dealing with.
 # next most common is that we have no date at all and
 # will load the most recent NYT puzzle - today's.
+#
+# then there is the path_info - appended to nytbee.pl/ 
 # 
 my $first = date('5/29/18');
 my $date;
@@ -302,7 +307,11 @@ my $today = my_today();
 my $new_puzzle = 0;
 
 # initial guess at what puzzle we are looking at
-$date = $params{date};      # hidden field
+$date = substr($q->path_info(), 1);       # no need for the leading /
+                                          # it is either yyyymmdd or CPx
+if (!$date || $date !~ m{\A \d{8} | CP\d+ \z}xms) {
+    $date = $params{date};      # hidden field
+}
 if (! $date) {
     # today
     $date = $today->as_d8();
@@ -539,7 +548,7 @@ my $nwords = @ok_words;
 my $letter_regex = qr{([^$seven])}xms;  # see sub check_word
 my $npangrams = @pangrams;
 
-# get ready for hive == 4
+# get ready for hive == 3 (seven straight letters)
 my @seven_let;
 if ($params{seven_let} && $date eq $params{date}) {
     @seven_let = split ' ', $params{seven_let};
@@ -1158,16 +1167,19 @@ elsif ($cmd eq 'ycp') {
     $cmd = '';
 }
 elsif ($cmd eq 'l') {
-    my @puzzles = my_puzzles();
     my $n = 1;
-    for my $p (@puzzles) {
+    for my $p (my_puzzles()) {
         my $cur = $p->[0] eq $date? red('*'): '';
         my $pg  = $p->[1]? '&nbsp;&nbsp;p': '';
         $message .= Tr(
-                        td($n) . td($cur)
-                      . td({ class => 'lt' }, slash_date($p->[0]))
-                      . td({ class => 'lt' }, $ranks[$p->[2]]->{name})
-                      . td($pg)
+                       td($n),
+                       td($cur),
+                       td({ class => 'lt' }, 
+                      qq!<span class=link onclick="new_date('$p->[0]');">!
+                          . slash_date($p->[0])
+                          . "<span>"),
+                      td({ class => 'lt' }, $ranks[$p->[2]]->{name}),
+                      td($pg)
                     );
         ++$n;
     }
@@ -1187,7 +1199,7 @@ elsif ($cmd eq 'cl') {
             . table(
                   map {
                       Tr(td(qq!<span class=link onclick="new_date('$_');">!
-                           .(/^\d/? slash_date($_): $_)
+                           .slash_date($_)
                            .'</span>'),
                          td($is_in_list{$_}? ($_ eq $date? red('*'): '*'): ''),
                         )
@@ -1784,7 +1796,7 @@ my $heading = $show_Heading? <<"EOH": '';
     <a target=_blank onclick="set_focus();" href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date$clues_are_present
 </div>
 <div class=float-child2>
-     <img width=50 src=$log/nytbee/pics/bee-logo.jpg>
+     <img width=50 src=$log/nytbee/pics/bee-logo.jpg onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');set_focus();" class=link>
 </div>
 <div class=float-child3>
     <span class=help><a target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html'>Help</a></span><br><span class=create_add>$create_add</span>
@@ -1796,7 +1808,7 @@ my $letters = '';
 my @coords;
 my $let_size;
 my $img_left_margin;
-if ($hive == 1) {
+if ($hive == 4) {
     $letters = <<"EOH";
 <pre>
      $six[0]   $six[1]
@@ -1805,7 +1817,7 @@ if ($hive == 1) {
 </pre>
 EOH
 }
-elsif ($hive == 2) {        # bee hive honeycomb
+elsif ($hive == 1) {        # bee hive honeycomb
     $letters = "<p><img class=img src=$log/nytbee/pics/hive.jpg height=240><p>";
     $letters .= "<span class='p0 ab'>\U$center\E</span>";
     for my $i (1 .. 6) {
@@ -1837,7 +1849,7 @@ elsif ($hive == 2) {        # bee hive honeycomb
         $coords[0]{left} += 6;
     }
 }
-elsif ($hive == 3) {        # flower
+elsif ($hive == 2) {        # flower
     $letters = "<p><img class=img src=$log/nytbee/pics/flower.jpg height=250><p>";
     $letters .= "<span class='p0 ab white'>\U$center\E</span>";
     for my $i (1 .. 6) {
@@ -1869,7 +1881,7 @@ elsif ($hive == 3) {        # flower
         $coords[0]{left} += 7;
     }
 }
-elsif ($hive == 4) {
+elsif ($hive == 3) {    # hex letters
     $letters = "<pre>\n  ";
     for my $c (@seven_let) {
         if ($c eq uc $center) {
@@ -1881,7 +1893,7 @@ elsif ($hive == 4) {
     }
     $letters .= "</pre>";
 }
-if (! $show_Heading && ($hive == 2 || $hive == 3)) {
+if (! $show_Heading && ($hive == 1 || $hive == 2)) {
     for my $c (@coords) {
         $c->{top} -= 79;
     }
@@ -1939,7 +1951,7 @@ $letter_styles
 </head>
 <body>
 $heading
-<form id=main name=form method=POST>
+<form id=main name=form method=POST action='$cgi/nytbee.pl'>
 <input type=hidden name=date value='$date'>
 <input type=hidden name=has_message value=$has_message>
 <input type=hidden name=six value='@six'>

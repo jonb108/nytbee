@@ -3,6 +3,9 @@ body {
     font-size: 18pt;
     font-family: Helvetica;
 }
+.rand {
+    color: skyblue;
+}
 .rt {
     text-align: right;
 }
