@@ -11,6 +11,7 @@ use CGI;
 use BeeUtil qw/
     cgi_header
     trim
+    $log
 /;
 use BeeClues qw/
     display_clues
@@ -115,14 +116,12 @@ EOS
                                    split /\|/,
                                    $puzzle_has_clues{$date};
     }
-    print <<'EOH';
-<style>
-body {
-    margin: .5in;
-    font-family: Arial;
-    font-size: 18pt;
-}
-</style>
+    print <<"EOH";
+<html>
+<head>
+<link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
+</head>
+<body>
 You offered no clues at all.   You can close this window.
 EOH
     exit;

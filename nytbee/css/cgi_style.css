@@ -3,6 +3,10 @@ body {
     margin: .5in;
     font-size: 18pt;
 }
+.copied {
+    font-size: 13pt;
+    color: green;
+}
 .rand {
     margin-left: 6mm;
     color: skyblue;

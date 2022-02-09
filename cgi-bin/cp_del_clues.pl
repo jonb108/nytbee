@@ -2,10 +2,7 @@
 use strict;
 use warnings;
 
-use CGI;
-my $q = CGI->new();
-my $n = $q->path_info();
-$n =~ s{\A /}{}xms;
+my $n = shift;
 
 use Bee_DBH qw/
     $dbh
@@ -20,5 +17,3 @@ my $sth_clear = $dbh->prepare(<<'EOS');
 
 EOS
 $sth_clear->execute("CP$n");
-
-print $q->header(); # so no error

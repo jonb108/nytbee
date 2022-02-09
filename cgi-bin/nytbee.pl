@@ -4,19 +4,6 @@ use warnings;
 
 =comment
 
-L and click
-
-in some places
-don't use curl with cgi
-just execute directly - with @ARGV!
-system call with command line params instead of curl?
-yeah
-
-a bee image different from the NYT?  random cycle?
-    for later...
-
-class pointer/link two .pointer! :(????
-
 ask John Napiorkowski about FAST CGI or Dancer
     or Plack or PSGI or ... mod_perl
     if needed...
@@ -25,8 +12,6 @@ it is so fast - FastCGI or mod_perl or ...
     it's tricky with limited ability to install this or that
     dancer?
 
-no need for .ab if hive is not 2 or 3
-
 test suite!
 
 tips, tricks
@@ -34,14 +19,6 @@ tips, tricks
     pangram game or getting to a certain rank
 
 film(s)
-cgi_style.css cached
-    even p01, p02, instead of generated each time...
-        I is problematic... :(
-rank1, rank2, ...
-js too
-better to cache than not generate...
-all the &nbsp;! another way?
-    width style value for td??
 
 Art is about "drawing the line".
     we're getting very close to the end.
@@ -146,6 +123,7 @@ use BeeUtil qw/
     $log
     $cgi
     $cgi_dir
+    get_html
 /;
 use Date::Simple qw/
     today
@@ -425,7 +403,7 @@ elsif (my ($ncp) = $cmd =~ m{\A xcp \s* (\d+) \z}xms) {
             $message = ul "Deleted CP$ncp";
             $date = $today->as_d8();
             # and delete all clues
-            `curl $log/cgi-bin/cp_del_clues.pl/$ncp`;
+            system "$cgi_dir/cp_del_clues.pl $ncp";
         }
     }
     $cmd = '';
@@ -593,15 +571,20 @@ if ($cmd eq 'noop') {
 sub load_nyt_clues {
     if ($puzzle_has_clues{$date}) {
         %nyt_clues_for
-            = %{ eval `curl -skL $log/cgi-bin/nytbee_get_clues.pl/$date` };
+            = %{ eval get_html "$log/cgi-bin/nytbee_get_clues.pl/$date" };
         %nyt_cluer_name_of
-            = %{ eval `curl -skL $log/cgi-bin/nytbee_get_cluers.pl/$date` };
+            = %{ eval get_html "$log/cgi-bin/nytbee_get_cluers.pl/$date" };
         my @cluer_colors = qw /
             green
             tomato
             skyblue
             orange
             brown
+            coral
+            greenyellow
+            indigo
+            lightseagreen
+            maroon
         /;
         my $n = 0;
         for my $person_id (
@@ -732,7 +715,7 @@ sub define {
     my ($html, @defs);
 
     # merriam-webster
-    $html = `curl -skL https://www.merriam-webster.com/dictionary/$word`;
+    $html = get_html "https://www.merriam-webster.com/dictionary/$word";
     # to catch an adequate definition for 'bought':
     push @defs, 'MERRIAM-WEBSTER:' if $Dcmd eq 'd*'; 
     push @defs, $html =~  m{meaning\s+of\s+$word\s+is\s+(.*?)[.]\s+How\s+to}xmsi;
@@ -750,7 +733,7 @@ sub define {
     if ($Dcmd eq 'd*' || ! @defs) {
         # oxford/lexico
         push @defs, 'OXFORD:' if $Dcmd eq 'd*';
-        $html = `curl -skL https://www.lexico.com/en/definition/$word`;
+        $html = get_html "https://www.lexico.com/en/definition/$word";
         push @defs, $html =~ m{Lexical\s+data\s+-\s+en-us">(.*?)</span>}xmsg;
     }
     my $stars = '*' x length $word;
@@ -1643,7 +1626,9 @@ EOH
 elsif ($cmd eq 'id') {
     # show the $uuid so the user can save it
     # for later application with the 'ID ...' command
-    $message = $uuid;
+    $message = $uuid . " <span id=uuid class=copied></span><script>copy_uuid_to_clipboard('$uuid');</script>";
+                       # a clever invisible way to invoke
+                       # javascript without a user click...
     $cmd = '';
 }
 
@@ -1796,7 +1781,7 @@ my $heading = $show_Heading? <<"EOH": '';
     <a target=_blank onclick="set_focus();" href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date$clues_are_present
 </div>
 <div class=float-child2>
-     <img width=50 src=$log/nytbee/pics/bee-logo.jpg onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');set_focus();" class=link>
+     <img width=50 src=$log/nytbee/pics/bee-logo.jpg onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
 </div>
 <div class=float-child3>
     <span class=help><a target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html'>Help</a></span><br><span class=create_add>$create_add</span>

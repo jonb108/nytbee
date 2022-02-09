@@ -2,6 +2,10 @@
 use strict;
 use warnings;
 
+use LWP::Simple qw/
+    get
+/;
+
 print "Content-Type: text/html; charset=ISO-8859-1\n\n";
 
 sub define {
@@ -10,7 +14,7 @@ sub define {
     my ($html, @defs);
 
     # merriam-webster
-    $html = `curl -skL https://www.merriam-webster.com/dictionary/$word`;
+    $html = get "https://www.merriam-webster.com/dictionary/$word";
     # to catch an adequate definition for 'bought':
     @defs = $html =~  m{meaning\s+of\s+$word\s+is\s+(.*?)[.]\s+How\s+to}xmsi;
     push @defs, $html =~ m{dtText(.*?)\n}xmsg;
@@ -27,7 +31,7 @@ sub define {
     }
     if (! @defs) {
         # collins
-        $html = `curl -skL https://www.lexico.com/en/definition/$word`;
+        $html = get "https://www.lexico.com/en/definition/$word";
         @defs = $html =~ m{Lexical\s+data\s+-\s+en-us">(.*?)</span>}xmsg;
     }
     # sometimes the definition is duplicated so ...

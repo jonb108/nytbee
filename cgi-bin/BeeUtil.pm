@@ -23,6 +23,7 @@ our @EXPORT_OK = qw/
     $log
     $cgi
     $cgi_dir
+    get_html
 /;
 
 use Date::Simple qw/
@@ -176,6 +177,12 @@ sub JON {
     open my $jon, '>>', '/tmp/jon';
     print {$jon} "@_\n";
     close $jon;
+}
+
+sub get_html {
+    my ($url) = @_;
+    require LWP::Simple;
+    return LWP::Simple::get($url);
 }
 
 1;

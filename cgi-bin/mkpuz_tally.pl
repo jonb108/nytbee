@@ -33,6 +33,7 @@ EOH
 
 
 my $word = lc trim $q->param('word');
+my $Word = ucfirst trim $q->param('word');
 if (length $word == 0) {
     error "Missing pangramic word";
 }
@@ -101,7 +102,7 @@ if ($npangrams + $bnpangrams == 0) {
 
 print <<"EOH";
 <h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>2</span> <span class=step_name>Center Letter</span></h1>
-The pangramic word is: <span class=word>$word</span>
+The pangramic word is: <span class=word>$Word</span>
 <p>
 $msg
 For each of the 7 unique letters in the word we have done tallies of 'qualified' words.
@@ -109,7 +110,7 @@ A qualified word is one that:
 <ul>
 <li>includes the center letter
 <li>is at least 4 letters long
-<li>uses only the seven letters: <span class=green>@lets</span>
+<li>uses only the seven letters: <span class=green>\U@lets\E</span>
 </ul>
 <p>
 Use the tallies to decide which letter should be the center one.

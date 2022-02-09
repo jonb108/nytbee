@@ -22,10 +22,10 @@ sub _mklink {
 
     my $space = '&nbsp;' x 3;
     if ($n == $f) {
-        print "<span style='color: gray;'>$s</span>$space";
+        print "<span style='color: gray;'>$s</span>$space\n";
     }
     else {
-        print "<span class=link onclick='set_format($n)'>$s</span>$space";
+        print "<span class=link onclick='set_format($n)'>$s</span>$space\n";
     }
 }
 
@@ -57,7 +57,7 @@ sub display_clues {
     my $clue_for_href  = $param{clue_for_href};
     my $was_found_href = $param{was_found_href};
 
-    my $heading = $all_words? '': "<h3>Clues for $show_date by $name</h3>";
+    my $heading = $all_words? '': "<h3>Clues for $show_date by $name <span class=copied id=clues></span></h3>";
     my @found      = keys %$was_found_href;
     my @clue_words = keys %$clue_for_href;
     my $all_found = 1;
@@ -90,7 +90,13 @@ body {
 .info {
     display: normal;
 }
+.copied {
+    color: green;
+    font-size: 15pt;
+    font-weight: normal;
+}
 </style>
+<script src="$log/nytbee/js/nytbee.js"></script>
 <script>
 function set_format(n) {
     document.getElementById('format').value = n;
@@ -122,9 +128,9 @@ EOH
     _mklink($format, 1, "AB-x");
     _mklink($format, 2, "AB(x)");
     _mklink($format, 3, "ABx");
-    _mklink($format, 4, "A-x");
+    _mklink($format, 4, "Ax");
     _mklink($format, 5, "A");
-    print "&nbsp;&nbsp;<span class=link onclick='clear_text();'>Ok</span>";
+    print qq!&nbsp;&nbsp;<span class=link onclick="clear_text();show_copied('clues');">Ok</span>!;
     if ($first) {
         print <<"EOH";
 <p>
@@ -174,16 +180,16 @@ EOH
         if ($format <= 2 || $format == 4 || $format == 5) {
             print "<span class=$class>";
         }
-        if ($format == 4 || $format == 5) {
-            print "- ";     # &bull;
-        }
         if ($format == 1 || $format == 2) {
             #print '&nbsp;' x 3;
             print ' ' x 3;
         }
         print ucfirst($clue_for_href->{$w});
-        if ($format == 1 || $format == 4) {
+        if ($format == 1) {
             print " - $lw";
+        }
+        if ($format == 4) {
+            print " $lw";
         }
         elsif ($format == 2) {
             print " ($lw) ";

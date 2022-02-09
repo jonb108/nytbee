@@ -318,9 +318,10 @@ These commands are of more limited use.  Some of them were added just for the be
 <tr><td><span class=cmd>CO</span></td><td>Toggle the <span class=cmd>co</span>llapsing of the <a href=#table_list>Hint Table</a>.  Default is to <i>include</i> columns and rows that have no entries.<br><br></td></tr>
 <tr><td colspan=2>Preserving your Identity</td></tr>
 <tr><td><span class=cmd>ID</span></td><td>Show the long string of characters that constitute your 'identity' to the program.  It will look something like this:
-<div style='color: green; margin-left: .5in'>963e4401-81eq-18ec-g81c-b1f85c942ex3<span></div>Save this string in a secure place.</td></tr>
+<div class=long_string>963e4401-81eq-18ec-g81c-b1f85c942ex3<span></div>This command copies the long string to the system clipboard.  Save this string in a secure place.</td></tr>
 <tr><td><span class=cmd>ID</span>&nbsp;...</td><td>In case you inadvertently clear your Website Data (aka cookies) you can restore your identity with this command:
-<div style="margin-top: 0mm; margin-left: .5in;"><span class=cmd>ID</span>&nbsp;&nbsp;<span class=green>963e4401-81eq-18ec-g81c-b1f85c942ex3</span></div> The long string of characters was retrieved from where you securely stored it.<br><br></td></tr>
+<div class=long_string><span class=cmd>ID</span>&nbsp;&nbsp;<span class=green>963e4401-81eq-18ec-g81c-b1f85c942ex3</span></div> The long string of characters was retrieved from where you securely stored it.
+This command also allows you to switch your identity from one browser to another (e.g. Safari to Chrome or desktop browser to mobile browser).<br><br></td></tr>
 <tr><td colspan=2>Finally, we have the Ultimate Hint:</td></tr>
 <tr><td><span class=cmd>G&nbsp;&nbsp;Y</span></td><td>
 Give up and show the words you have not yet found. <span class=cmd>G&nbsp;&nbsp;Y</span> means Give up and confirm Yes.</td></tr>
@@ -372,9 +373,10 @@ lists of pangramic words to choose from:
 These lists are disjoint.
 <li>It is overwhelming to be confronted with such a large number
 of word choices.  It's nice to be offered a smaller number.
-On the page you'll see an <span class=rand>R?</span>
+On the page you'll see an <span class=rand>R5</span>
 after the above 3 lists. They are links.
 Clicking on them will show you 5 random pangramic words from that file.
+Pressing Return will give you 5 more.
 <li>If you have a word that you want to appear in the puzzle
 you can search for pangramic words whose resulting puzzle
 could have that word as part of the solution.    There is a second
@@ -401,11 +403,11 @@ However &#128522; ... among those 54 I do see these that are quite reasonable:
 exactly 7 unique letters in his name.  There are no pangramic words
 in any of the above lists that use the letters 
 <span class=green>bhimost</span> but we
-can still proceed with making a puzzle for Bob.  Enter BobSmith
+can still proceed with making a puzzle for Bob.  Enter bobsmith
 as the pangramic word and choose a center letter.
 The "word" <span class=green>Bobsmith</span>
 will be added to the "Other qualified" words and I'm sure you can
-come up with a clever clue for Bobsmith that will make Bob smile &#128522;.
+come up with a clever clue for Bobsmith that will make Bob Smith smile &#128522;.
 </ol>
 <li>Given your pangramic word, tallies are done of words, scores, 4 letter words, and pangrams by center letter.
 Analyze these and choose a center letter.
@@ -902,6 +904,8 @@ It has limitations and weaknesses.  Here are the known issues:
 <li>It is not easy to play this verson on a mobile phone. 
 It is possible but not easy.
 It's best with an actual keyboard on a laptop or desktop computer.
+Note that with the ID command you <i>can</i> share your
+identity between a mobile and a laptop.
 <li>There is no forum for discussion about this new mechanism.
 The NYT HiveMind Forum or a FaceBook group page could serve this purpose.
 <li>Since you do not need to register and login (which is nice), your identity

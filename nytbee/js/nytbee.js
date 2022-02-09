@@ -52,3 +52,14 @@ function abcd(efg) {
     document.write(xyz('=b!isfg>(nbjmup;Kpo!Ckpsotube!=kpo/ckpsotubeAhnbjm/dpn?@tvckfdu>OZU!Cff(?'));
     document.write(efg + "</a>");
 }
+function copy_uuid_to_clipboard(uuid) {
+    navigator.clipboard.writeText(uuid);
+    show_copied('uuid');
+}
+function show_copied(id) {
+    var el = document.getElementById(id);
+    el.innerHTML = 'copied';
+    setTimeout(() => {
+        el.innerHTML = "";
+    }, 1000);
+}

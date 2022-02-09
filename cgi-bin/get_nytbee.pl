@@ -2,6 +2,10 @@
 use strict;
 use warnings;
 
+use LWP::Simple qw/
+    get
+/;
+
 my $bin = '/home4/logical9/www/cgi-bin';
 my $bee = '/home4/logical9/www/nytbee';
 
@@ -22,7 +26,7 @@ my $cur_date = sprintf "%4d-%02d-%02d", $year, $month, $day;
 my $gameData;
 SLEEP_LOOP:
 while (1) {
-    my $html = `curl -sk https://www.nytimes.com/puzzles/spelling-bee`;
+    my $html = get "https://www.nytimes.com/puzzles/spelling-bee";
     ($gameData) = $html =~ m! "today": \s* \{ ([^}]*) \} !xms;
         # \s* because there really isn't any space
         # even though Safari shows it
