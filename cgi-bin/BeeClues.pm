@@ -130,7 +130,8 @@ EOH
     _mklink($format, 3, "ABx");
     _mklink($format, 4, "Ax");
     _mklink($format, 5, "A");
-    print qq!&nbsp;&nbsp;<span class=link onclick="clear_text();show_copied('clues');">Ok</span>!;
+    my $copy = $first? "show_copied('clues');": '';
+    print qq!&nbsp;&nbsp;<span class=link onclick="clear_text();$copy">Ok</span>!;
     if ($first) {
         print <<"EOH";
 <p>

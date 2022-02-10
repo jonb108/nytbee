@@ -58,9 +58,9 @@ And I have.  The complete source code for this project is on
 <a href=#table_list>The Hint Table and the Two Letter List</a><br>
 <a href=#hint>Hint Strategy</a><br>
 <a href=#archival_and_community>Archival and Community Puzzles</a><br>
-<a href=#power>Power User Commands</a><br>
-<a href=#create>Create Your Own Puzzle to Share</a><br>
 <a href=#clues>Clues for Puzzles</a><br>
+<a href=#create>Create Your Own Puzzle to Share</a><br>
+<a href=#power>Power User Commands</a><br>
 <a href=#articles>Articles about the NYT Bee</a><br>
 <a href=#other>Other NYT Bee Projects</a><br>
 <a href=#without>Without a Subscription?</a><br>
@@ -69,23 +69,21 @@ And I have.  The complete source code for this project is on
 <a href=#known_issues>Known Issues</a>
 </div>
 <a name=videos></a>
-<h2>
-Videos
+<h2>Videos
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
 <ul>
 <table cellpadding=5>
 <tr><td><a target=nyt_videos href='https://youtu.be/27LtkeFAAk4'>Basic Operation</a></td><td class=rt>7:47</td></tr>
 <tr><td><a target=nyt_videos href='https://youtu.be/HVHXSOEiVHw'>Hints</a></td><td class=rt>13:13</td></tr>
-<tr><td><a target=nyt_videos href=''>The NYT Archive</a></td><td></td></tr>
+<tr><td><a target=nyt_videos href='https://youtu.be/I2QLU_ltxTM'>The NYT Archive</a></td><td class=rt>6:51</td></tr>
 <tr><td><a target=nyt_videos href=''>Clues</a></td><td></td></tr>
 <tr><td><a target=nyt_videos href=''>Community Puzzles</a></td><td></td></tr>
 <tr><td><a target=nyt_videos href=''>Power Users</a></td><td></td></tr>
 </table>
 </ul>
 <a name=how></a>
-<h2>
-How to Play
+<h2>How to Play
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
 <ul style='margin-top: 8px'>
@@ -281,59 +279,78 @@ Commands to access the large NY Times <a href=#nyt_archive>Archive</a> of Spelli
 <tr><td><span class=cmd>YCP</span></td><td>List the Community Puzzles that you created.  Click on the <span style="color: blue">CP#</span> to edit the puzzle. You can change the words and the clues.</td></tr>
 <tr><td><span class=cmd>XCP&lt;num&gt;</span></td><td>Delete Community Puzzle #num and revert to today's NYT puzzle. You can only delete puzzles that you created.  You would only do this if you deem the puzzle to be flawed in some way.</td></tr>
 </table>
-<a name=power></a>
-<h2>Power User Commands
+<a name=clues></a>
+<h2>Clues for Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
-These commands are of more limited use.  Some of them were added just for the beauty of software Art.
+Getting dictionary definitions for words with the
+<span class=cmd>D</span> command
+is nice &ndash; even though some people would consider it 'cheating' &#128521;.
+Even more fun is to look at <b>clues</b> generously provided by the
+members of the HiveMind.  These clues are often humorous and clever
+wordplay - as in crossword puzzle clues.
+<p>
+You can write clues when you create a Community Puzzle as seen <a href=#create>above</a>.
+You can <i>also</i> create clues for NYT Puzzles.
+When the current puzzle is an NYT Puzzle choose the
+<span class=blue>Add Clues</span> link
+at the top.  There are several things to note:
 <ul>
-<table cellpadding=3>
-<tr><td><span class=cmd>H&lt;num&gt</span></td><td>Directly change the 7 letter presentation instead of cycling around.
-<div class=toc style='margin-top: 3mm'>
-1 = Honeycomb<br>
-2 = Flower<br>
-3 = Inline Letters<br>
-4 = Hex Letters
-</div>
-</td></tr>
-<tr><td><span class=cmd>R%</span></td><td>Show the rankings with the percentage of the maximum score.<br><br></td></tr>
-<tr><td colspan=2>Searching the Puzzles</td></tr>
-<tr><td><span class=cmd>CL</span></td><td>Find puzzles for which you have added clues.</td></tr>
-<tr><td><span class=cmd>F</span></td><td>Find puzzles that use the same seven letters as the current puzzle.</td></tr>
-<tr><td><span class=cmd>S&nbsp;&nbsp;&lt;word&gt;</span></td><td>Search for puzzles which include the word.</td></tr>
-<tr><td colspan=2>The above 3 commands will search both NYT Puzzles and Community Puzzles.   You can click on the <span class=blue>date</span> or <span class=blue>CP#</span> link to start solving the puzzle.<br><br></td></tr>
-<tr><td colspan=2>Fun with the Word List</td></tr>
-<tr><td><span class=cmd>W&gt;</span></td><td>Show the found words in order of increasing length.</td></tr>
-<tr><td><span class=cmd>W&gt;n</span></td><td>Show the found words of length greater than n.</td></tr>
-<tr><td><span class=cmd>W&lt;</span></td><td>Show the found words in order of decreasing length.</td></tr>
-<tr><td><span class=cmd>W&lt;n</span></td><td>Show the found words of length less than n.</td></tr>
-<tr><td><span class=cmd>Wn</span></td><td>Show the found words of length n.</td></tr>
-<tr><td><span class=cmd>W&nbsp;&nbsp;&lt;prefix&gt;</span></td><td>Show the found words that start with &lt;prefix&gt;.</td></tr>
-<tr><td><span class=cmd>W/&lt;pattern&gt;</span></td><td>Show the found words that match the pattern.<br>For example, W/OO will show the found words that contain OO - like OOZE, LOOT, or TATTOO. For <i>Super</i> Power Users: The pattern is a <a target=nytbee href='https://perldoc.perl.org/perlrequick'>Perl Regular Expression</a> with the /x flag.</td></tr>
-<tr><td><span class=cmd>1W</span></td><td>Show the found words in a single column.  This may be more convenient if you wish to copy/paste the word list.<br><br></td></tr>
-<tr><td colspan=2>If you are a minimalist:</td></tr>
-<tr><td><span class=cmd>HE</span></td><td>Toggle the showing of the <span class=cmd>he</span>ader.  Default is to show it.</td></tr>
-<tr><td><span class=cmd>WL</span></td><td>Toggle the showing of the list of found words.  Default is to show the <span class=cmd>w</span>ord <span class=cmd>l</span>ist.</td></tr>
-<tr><td><span class=cmd>IM</span></td><td>Toggle the showing of the <span class=cmd>im</span>age for the ranks of Amazing, Genius, and Queen Bee.  Default is to show it.</td></tr>
-<tr><td><span class=cmd>CO</span></td><td>Toggle the <span class=cmd>co</span>llapsing of the <a href=#table_list>Hint Table</a>.  Default is to <i>include</i> columns and rows that have no entries.<br><br></td></tr>
-<tr><td colspan=2>Preserving your Identity</td></tr>
-<tr><td><span class=cmd>ID</span></td><td>Show the long string of characters that constitute your 'identity' to the program.  It will look something like this:
-<div class=long_string>963e4401-81eq-18ec-g81c-b1f85c942ex3<span></div>This command copies the long string to the system clipboard.  Save this string in a secure place.</td></tr>
-<tr><td><span class=cmd>ID</span>&nbsp;...</td><td>In case you inadvertently clear your Website Data (aka cookies) you can restore your identity with this command:
-<div class=long_string><span class=cmd>ID</span>&nbsp;&nbsp;<span class=green>963e4401-81eq-18ec-g81c-b1f85c942ex3</span></div> The long string of characters was retrieved from where you securely stored it.
-This command also allows you to switch your identity from one browser to another (e.g. Safari to Chrome or desktop browser to mobile browser).<br><br></td></tr>
-<tr><td colspan=2>Finally, we have the Ultimate Hint:</td></tr>
-<tr><td><span class=cmd>G&nbsp;&nbsp;Y</span></td><td>
-Give up and show the words you have not yet found. <span class=cmd>G&nbsp;&nbsp;Y</span> means Give up and confirm Yes.</td></tr>
-</table>
+<li>Only the words you have found are shown.
+<li>No need to give clues for <i>every</i> word.
+<li>You can get dictionary definitions of the words to give
+you some ideas.
+<li>If you have given clues for a word before (such as for
+frequently occuring words
+like LOLL, NOON or TOOT) your clues will be offered and you can
+cycle through them.
+<li>Emojis on OSX can be inserted into clues with control-command-space.
 </ul>
-Oh ... One more thing ... If you are enjoying
-a puzzle from the archive and would like to share it with a friend
-you can click on the bee logo <img src=pics/bee-logo.jpg height=40> at the top.
-This will take a link
-to the puzzle and (invisibly) copy it to the system clipboard.
-The link can then be pasted from the clipboard into a text message
-or an email.
+When you have finished with your clues they are all presented in a nice format.
+In fact, there are 5 <i>different</i> nice formats in which to see your clues.
+Choose your preferred format and then click on 'Ok'.  This will do two things:
+<ol>
+<li>Clear the format choices.
+<li>Copy the clues onto the system clipboard.
+</ol>
+Then, if you wish, you can Paste your clues into the HiveMind forum.
+In this way your clues can benefit those
+people who are playing Spelling Bee with the NYT app or
+the standard NYT web application.
+<p>
+When <i>playing</i> an NYT Puzzle, if clues have been provided,
+there will be a red asterisk <span class=red>*</span> after the date at the top.
+<p>
+Clues are shown when you use the <span class=cmd>D</span> command.
+If multiple people have added clues for the word you will see them all together.
+<p>
+The <span class=cmd>I</span> (information) command will show the
+names of people who submitted clues.
+Clicking on an author's name will show the complete list of their clues.
+Note that in this display,
+if you've already found a word, that word is appended to the clue
+and the whole line is in gray rather than black.  This helps you
+focus on the clues for the words you have not yet found.
+<p>
+If there are clues from multiple authors they will be color-coded. &#128522;
+<p>
+The tradition in the HiveMind forum is that clues come in
+the word alphabetical order and <i>can</i> have the length shown as well.
+If you know this you have more information beyond the clue itself.
+<p>
+The <span class=cmd>CL</span> command will list the dates
+of the NYT puzzles for which you have created clues. 
+<p>
+You can choose <span class=blue>Edit Clues</span> to update your clues.
+If you leave all of the clue fields blank
+your clue offering is effectively deleted.
+<p>
+If you simply want to make clues for today's puzzle
+to copy/paste into the HiveMind forum there is this link:
+<ul>
+<a target=nytbee href='https://logicalpoetry.com/mkclues'>logicalpoetry.com/mkclues</a>
+</ul>
+Spoiler warning: This link will reveal <i>all</i> of the words.
 <a name=create></a>
 <h2>Create Your Own Puzzle to Share
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -434,78 +451,59 @@ to re-edit your puzzle.  You can update/change/delete the words and clues - but 
 <p>
 The command <span class=cmd>XCP&lt;num&gt;</span> can be used to <i>delete</i> puzzles
 that <i>you</i> have created.
-<a name=clues></a>
-<h2>Clues for Puzzles
+<a name=power></a>
+<h2>Power User Commands
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
-Getting dictionary definitions for words with the
-<span class=cmd>D</span> command
-is nice &ndash; even though some people would consider it 'cheating' &#128521;.
-Even more fun is to look at <b>clues</b> generously provided by the
-members of the HiveMind.  These clues are often humorous and clever
-wordplay - as in crossword puzzle clues.
-<p>
-You can write clues when you create a Community Puzzle as seen <a href=#create>above</a>.
-You can <i>also</i> create clues for NYT Puzzles.
-When the current puzzle is an NYT Puzzle choose the
-<span class=blue>Add Clues</span> link
-at the top.  There are several things to note:
+These commands are of more limited use.  Some of them were added just for the beauty of software Art.
 <ul>
-<li>Only the words you have found are shown.
-<li>No need to give clues for <i>every</i> word.
-<li>You can get dictionary definitions of the words to give
-you some ideas.
-<li>If you have given clues for a word before (such as for
-frequently occuring words
-like LOLL, NOON or TOOT) your clues will be offered and you can
-cycle through them.
-<li>Emojis on OSX can be inserted into clues with control-command-space.
+<table cellpadding=3>
+<tr><td><span class=cmd>H&lt;num&gt</span></td><td>Directly change the 7 letter presentation instead of cycling around.
+<div class=toc style='margin-top: 3mm'>
+1 = Honeycomb<br>
+2 = Flower<br>
+3 = Inline Letters<br>
+4 = Hex Letters
+</div>
+</td></tr>
+<tr><td><span class=cmd>R%</span></td><td>Show the rankings with the percentage of the maximum score.<br><br></td></tr>
+<tr><td colspan=2>Searching the Puzzles</td></tr>
+<tr><td><span class=cmd>CL</span></td><td>Find puzzles for which you have added clues.</td></tr>
+<tr><td><span class=cmd>F</span></td><td>Find puzzles that use the same seven letters as the current puzzle.</td></tr>
+<tr><td><span class=cmd>S&nbsp;&nbsp;&lt;word&gt;</span></td><td>Search for puzzles which include the word.</td></tr>
+<tr><td colspan=2>The above 3 commands will search both NYT Puzzles and Community Puzzles.   You can click on the <span class=blue>date</span> or <span class=blue>CP#</span> link to start solving the puzzle.<br><br></td></tr>
+<tr><td colspan=2>Fun with the Word List</td></tr>
+<tr><td><span class=cmd>W&gt;</span></td><td>Show the found words in order of increasing length.</td></tr>
+<tr><td><span class=cmd>W&gt;n</span></td><td>Show the found words of length greater than n.</td></tr>
+<tr><td><span class=cmd>W&lt;</span></td><td>Show the found words in order of decreasing length.</td></tr>
+<tr><td><span class=cmd>W&lt;n</span></td><td>Show the found words of length less than n.</td></tr>
+<tr><td><span class=cmd>Wn</span></td><td>Show the found words of length n.</td></tr>
+<tr><td><span class=cmd>W&nbsp;&nbsp;&lt;prefix&gt;</span></td><td>Show the found words that start with &lt;prefix&gt;.</td></tr>
+<tr><td><span class=cmd>W/&lt;pattern&gt;</span></td><td>Show the found words that match the pattern.<br>For example, W/OO will show the found words that contain OO - like OOZE, LOOT, or TATTOO. For <i>Super</i> Power Users: The pattern is a <a target=nytbee href='https://perldoc.perl.org/perlrequick'>Perl Regular Expression</a> with the /x flag.</td></tr>
+<tr><td><span class=cmd>1W</span></td><td>Show the found words in a single column.  This may be more convenient if you wish to copy/paste the word list.<br><br></td></tr>
+<tr><td colspan=2>If you are a minimalist:</td></tr>
+<tr><td><span class=cmd>HE</span></td><td>Toggle the showing of the <span class=cmd>he</span>ader.  Default is to show it.</td></tr>
+<tr><td><span class=cmd>WL</span></td><td>Toggle the showing of the list of found words.  Default is to show the <span class=cmd>w</span>ord <span class=cmd>l</span>ist.</td></tr>
+<tr><td><span class=cmd>IM</span></td><td>Toggle the showing of the <span class=cmd>im</span>age for the ranks of Amazing, Genius, and Queen Bee.  Default is to show it.</td></tr>
+<tr><td><span class=cmd>CO</span></td><td>Toggle the <span class=cmd>co</span>llapsing of the <a href=#table_list>Hint Table</a>.  Default is to <i>include</i> columns and rows that have no entries.<br><br></td></tr>
+<tr><td colspan=2>Preserving your Identity</td></tr>
+<tr><td><span class=cmd>ID</span></td><td>Show the long string of characters that constitute your 'identity' to the program.  It will look something like this:
+<div class=long_string>963e4401-81eq-18ec-g81c-b1f85c942ex3<span></div>This command copies the long string to the system clipboard.  Save this string in a secure place.</td></tr>
+<tr><td><span class=cmd>ID</span>&nbsp;...</td><td>In case you inadvertently clear your Website Data (aka cookies) you can restore your identity with this command:
+<div class=long_string><span class=cmd>ID</span>&nbsp;&nbsp;<span class=green>963e4401-81eq-18ec-g81c-b1f85c942ex3</span></div> The long string of characters was retrieved from where you securely stored it.
+This command also allows you to switch your identity from one browser to another (e.g. Safari to Chrome or desktop browser to mobile browser).<br><br></td></tr>
+<tr><td colspan=2>Finally, we have the Ultimate Hint:</td></tr>
+<tr><td><span class=cmd>G&nbsp;&nbsp;Y</span></td><td>
+Give up and show the words you have not yet found. <span class=cmd>G&nbsp;&nbsp;Y</span> means Give up and confirm Yes.</td></tr>
+</table>
 </ul>
-When you have finished with your clues they are all presented in a nice format.
-In fact, there are 5 <i>different</i> nice formats in which to see your clues.
-Choose your preferred format and then click on 'Ok'.  This will do two things:
-<ol>
-<li>Clear the format choices.
-<li>Copy the clues onto the system clipboard.
-</ol>
-Then, if you wish, you can Paste your clues into the HiveMind forum.
-In this way your clues can benefit those
-people who are playing Spelling Bee with the NYT app or
-the standard NYT web application.
-<p>
-When <i>playing</i> an NYT Puzzle, if clues have been provided,
-there will be a red asterisk <span class=red>*</span> after the date at the top.
-<p>
-Clues are shown when you use the <span class=cmd>D</span> command.
-If multiple people have added clues for the word you will see them all together.
-<p>
-The <span class=cmd>I</span> (information) command will show the
-names of people who submitted clues.
-Clicking on an author's name will show the complete list of their clues.
-Note that in this display,
-if you've already found a word, that word is appended to the clue
-and the whole line is in gray rather than black.  This helps you
-focus on the clues for the words you have not yet found.
-<p>
-If there are clues from multiple authors they will be color-coded. &#128522;
-<p>
-The tradition in the HiveMind forum is that clues come in
-the word alphabetical order and <i>can</i> have the length shown as well.
-If you know this you have more information beyond the clue itself.
-<p>
-The <span class=cmd>CL</span> command will list the dates
-of the NYT puzzles for which you have created clues. 
-<p>
-You can choose <span class=blue>Edit Clues</span> to update your clues.
-If you leave all of the clue fields blank
-your clue offering is effectively deleted.
-<p>
-If you simply want to make clues for today's puzzle
-to copy/paste into the HiveMind forum there is this link:
-<ul>
-<a target=nytbee href='https://logicalpoetry.com/mkclues'>logicalpoetry.com/mkclues</a>
-</ul>
-Spoiler warning: This link will reveal <i>all</i> of the words.
+Oh ... One more thing ... If you are enjoying
+a puzzle from the archive and would like to share it with a friend
+you can click on the bee logo <img src=pics/bee-logo.jpg height=40> at the top.
+This will take a link
+to the puzzle and (invisibly) copy it to the system clipboard.
+The link can then be pasted from the clipboard into a text message
+or an email.
 <a name=articles></a>
 <h2>Articles about the NYT Spelling Bee
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -904,8 +902,8 @@ It has limitations and weaknesses.  Here are the known issues:
 <li>It is not easy to play this verson on a mobile phone. 
 It is possible but not easy.
 It's best with an actual keyboard on a laptop or desktop computer.
-Note that with the ID command you <i>can</i> share your
-identity between a mobile and a laptop.
+Note that with the ID command you <i>can</i> transfer your
+identity from a laptop to a mobile phone.
 <li>There is no forum for discussion about this new mechanism.
 The NYT HiveMind Forum or a FaceBook group page could serve this purpose.
 <li>Since you do not need to register and login (which is nice), your identity
