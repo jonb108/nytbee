@@ -7,8 +7,10 @@ my $out_fname = $fname;
 $out_fname =~ s{txt}{html}xms;
 open my $in, '<', $fname or die "no open $fname: $!\n";
 my %lets = map { $_ => 0 } ('A' .. 'Z');
+my $count;
 while (my $line = <$in>) {
     $lets{uc substr($line, 0, 1)}++;
+    ++$count;
 }
 my @links;
 for my $c (sort keys %lets) {
@@ -52,11 +54,16 @@ a {
     margin-top: 5mm;
     margin-bottom: 0mm;
 }
+.count {
+    margin-left: 10mm;
+    color: lightgray;
+    font-size: 16pt;
+}
 </style>
 </head>
 <body>
 <a name=top></a>
-<h2>$heading</h2>
+<h2>$heading<span class=count>$count</span></h2>
 $links
 <pre>
 EOH

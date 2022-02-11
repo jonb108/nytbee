@@ -4,6 +4,8 @@ use warnings;
 
 =comment
 
+to email: https://cs.brynmawr.edu/~dkumar/
+
 ask John Napiorkowski about FAST CGI or Dancer
     or Plack or PSGI or ... mod_perl
     if needed...
