@@ -145,8 +145,9 @@ EOH
     }
     print <<"EOH";
 </div>
-<div id=clue_text>
 $heading
+<p>
+<div id=clue_text>
 EOH
     my $prev_l1 = '';
     my $prev_l2 = '';
@@ -159,7 +160,7 @@ EOH
             print "<span class=$class>";
         }
         if (($format == 4 || $format == 5) && $prev_l1 ne $l1) {
-            print "<p>$l1<br>\n";
+            print "<br>$l1<br>\n";
             $prev_l1 = $l1;
         }
         if ($format <= 3 && $prev_l2 ne $l2) {
@@ -170,9 +171,9 @@ EOH
             }
             else {
                 if ($prev_l2) {
-                    print "</div><br>\n";
+                    print "<br>\n";
                 }
-                print "$l2<div class=clues>";
+                print "$l2<br>";
             }
         }
         if ($format == 3) {

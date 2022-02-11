@@ -153,8 +153,8 @@ ambiguous, clever, wordplay &#128522; - like clues for a crossword puzzle.
 $prior_clues
 <p>
 <table cellpadding=3>
-<tr><td>Your Name</td><td><input name=name id=name size=30 value='$name'></td></tr>
-<tr><td>Your Location</td><td><input name=location id=location size=30 value='$location'></td></tr>
+<tr><td>Your Name</td><td class=lt><input name=name id=name size=30 value='$name'></td></tr>
+<tr><td>Your Location</td><td class=lt><input name=location id=location size=30 value='$location'></td></tr>
 <tr><td colspan=2>&nbsp;</td></tr>
 EOH
 for my $w (@words) {
@@ -176,7 +176,7 @@ for my $w (@words) {
             $clue = '';
         }
         $word_td = td(qq!<a href="javascript:popup_define('$w',300,500)">$uw</a>!);
-        $clue_td = td("<input type=text size=30 name=${w}_clue id=${w}_clue"
+        $clue_td = td("<input type=text size=45 name=${w}_clue id=${w}_clue"
                  . qq! value="$clue">!)
     }
     else {

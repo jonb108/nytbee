@@ -49,12 +49,17 @@ sub define {
     @tidied_defs = splice @tidied_defs, 0, 5;
     my $Word = ucfirst $word;
     print <<"EOH";
+<html>
+<head>
+<title>Definition of $Word</title>
 <style>
 body {
     font-family: Arial;
     margin: 5mm;
 }
 </style>
+</head>
+<body>
 <h2>Definition of $Word</h2>
 <ul>
 EOH
@@ -70,3 +75,8 @@ my $word = $ENV{PATH_INFO};
 $word =~ s{\A /}{}xms;
 
 define($word);
+
+print <<'EOH';
+</body>
+</html>
+EOH
