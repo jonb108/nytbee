@@ -173,7 +173,8 @@ Most of us mere mortals need kind of some help to get to Amazing or Genius.
 <tr><td colspan=2>The Hint Table and the Two Letter List are explained <a href=#table_list>below</a>.<p></td></tr>
 <tr><td><span class=cmd>DP</span></td><td>Define the Pangrams.</td></tr>
 <tr><td><span class=cmd>DB8</span></td><td>Define the words beginning with B of length 8.</td></tr>
-<tr><td><span class=cmd>DTR</span></td><td>Define the words beginning with TR.</td></tr>
+<tr><td><span class=cmd>DGA</span></td><td>Define the words beginning with GA.</td></tr>
+<tr><td><span class=cmd>DR</span></td><td>Define a random word from the list of words not yet found.</td></tr>
 <tr><td colspan=2>
 Definitions come from Merriam-Webster (<a target=nytbee
 href='https://merriam-webster.com'>merriam-webster.com</a>)
@@ -189,8 +190,8 @@ This form of the <span class=cmd>D</span> command serves as a quick and fun way 
 <tr><td><span class=cmd>D*&nbsp;&nbsp;...</span></td><td>The above <span class=cmd>D</span> commands give at most 3 definitions. <span class=cmd>D*</span> will give them <i>all</i> plus any <a href=#clues>clues</a>.<p></td></tr>
 <tr><td><span class=cmd>V2P</span></td><td>Reveal the first two letters of the pangrams.</td></tr>
 <tr><td><span class=cmd>V3B8</span></td><td>Reveal the first 3 letters of the words beginning with B of length 8.</td></tr>
-<tr><td><span class=cmd>V4TR</span></td><td>Reveal the first 4 letters of the words beginning with TR.</td></tr>
-<tr><td colspan=2>Using <span class=cmd>E</span> instead of <span class=cmd>V</span> reveals letters at the front and at the End of the word.  Commands that would reveal the entire word (like V4B4) are silently ignored (as are commands like V1B8 or V2TR).</td></tr>
+<tr><td><span class=cmd>V4GA</span></td><td>Reveal the first 4 letters of the words beginning with GA.</td></tr>
+<tr><td colspan=2>Using <span class=cmd>E</span> instead of <span class=cmd>V</span> reveals letters at the front and at the End of the word.  Commands that would reveal the entire word (like V4B4) are silently ignored (as are commands like V1B8 or V2GA).</td></tr>
 <tr><td colspan=2>Both define and reveal commands skip words that have already been found.<p></td></tr>
 <tr><td><span class=cmd>1</span></td><td>Show a random entry from the Hint Table.</td></tr>
 <tr><td><span class=cmd>2</span></td><td>Show a random entry from the Two Letter List.
@@ -248,6 +249,7 @@ The number of hints are tallied like so:
 <tr><td><span class=cmd>V,E</span></td><td align=right>2</td><td>for each word</td></tr>
 <tr><td><span class=cmd>1</span></td><td align=right>1</td></tr>
 <tr><td><span class=cmd>2</span></td><td align=right>1</td></tr>
+<tr><td><span class=cmd>DR</span></td><td align=right>1</td></tr>
 <tr><td><span class=cmd>G&nbsp;Y</span></td><td align=right>5</td><td>for each word</td></tr>
 </table>
 </ul>
@@ -493,7 +495,7 @@ These commands are of more limited use.  Some of them were added just for the be
 <div class=long_string>963e4401-81eq-18ec-g81c-b1f85c942ex3<span></div>This command copies the long string to the system clipboard.  Save this string in a secure place.</td></tr>
 <tr><td><span class=cmd>ID</span>&nbsp;...</td><td>In case you inadvertently clear your Website Data (aka cookies) you can restore your identity with this command:
 <div class=long_string><span class=cmd>ID</span>&nbsp;&nbsp;<span class=green>963e4401-81eq-18ec-g81c-b1f85c942ex3</span></div> The long string of characters was retrieved from where you securely stored it.
-This command also allows you to switch your identity from one browser to another (e.g. Safari to Chrome or desktop browser to mobile browser).<br><br></td></tr>
+This command also allows you to replicate your identity from one browser to another (e.g. Safari to Chrome or desktop browser to mobile browser).<br><br></td></tr>
 <tr><td colspan=2>Finally, we have the Ultimate Hint:</td></tr>
 <tr><td><span class=cmd>G&nbsp;&nbsp;Y</span></td><td>
 Give up and show the words you have not yet found. <span class=cmd>G&nbsp;&nbsp;Y</span> means Give up and confirm Yes.</td></tr>
@@ -904,7 +906,7 @@ It has limitations and weaknesses.  Here are the known issues:
 <li>It is not easy to play this verson on a mobile phone. 
 It is possible but not easy.
 It's best with an actual keyboard on a laptop or desktop computer.
-Note that with the ID command you <i>can</i> transfer your
+Note that with the ID command you <i>can</i> replicate your
 identity from a laptop to a mobile phone.  This would allow you
 to have mostly use your laptop with ease but also have mobility
 for poking at the puzzle whereever you are.
@@ -930,6 +932,8 @@ is a way to restore your identity yourself.
 want to play separate games they
 can use two different browsers (Safari, Chrome, Firefox, etc) OR
 simply reset the game with the <span class=cmd>C Y</span> command.
+<li>There is some issue with copying to the clipboard on the
+Safari browser.
 <li>The software was not designed for high volume.
 If the usage becomes high the response time would suffer.
 The software would need to be redesigned and possibly rewritten.

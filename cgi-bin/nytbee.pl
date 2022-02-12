@@ -4,6 +4,22 @@ use warnings;
 
 =comment
 
+?? Safari:
+try {
+    // try to use Clipboard API
+    await navigator.clipboard.writeText(text);
+    return true
+} catch (_) {
+    // Clipboard API is not supported
+    const el = document.createElement('textarea')
+    el.value = text
+    document.body.appendChild(el)
+    el.select()
+    const result = document.execCommand('copy')
+    document.body.removeChild(el)
+    return result === 'unsuccessful' ? false : true
+}
+
 to email: https://cs.brynmawr.edu/~dkumar/
 
 ask John Napiorkowski about FAST CGI or Dancer
@@ -749,6 +765,7 @@ sub define {
         $d =~ s{[^[:print:]]}{}xmsg; # excise any non-printing chars
         $d =~ s{$word}{$stars}xmsgi unless $fullword;    # hide the word
         $d =~ s{\A ">}{}xms;    # stray chars from somewhere
+        $d =~ s{[^[:print:]]}{}xmsga;
         if ($seen{$d}++) {
             next DEF;
         }
@@ -785,6 +802,14 @@ sub do_define {
         if ($message) {
             $message = "Pangrams:$message";
         }
+        $cmd = '';
+    }
+    elsif ($term eq 'r') {
+        # a random word that has not yet been found
+        my @words = grep { !$is_found{$_} }
+                    @ok_words;
+        $message = define($words[ rand @words ], $Dcmd);
+        add_hints(-2);  # hack 
         $cmd = '';
     }
     elsif ($term =~ m{\A ([a-z])(\d+) \z}xms) {
@@ -1005,7 +1030,7 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     $message = ul(table({ cellpadding => 4}, $rows));
     $cmd = '';
 }
-elsif ($cmd =~ m{\A (d|d[*]) \s*  (p|[a-z]\d+|[a-z][a-z]) \z}xms) {
+elsif ($cmd =~ m{\A (d|d[*]) \s*  (p|r|[a-z]\d+|[a-z][a-z]) \z}xms) {
     my $Dcmd = $1;
     my $term = $2;
     do_define($Dcmd, $term);
