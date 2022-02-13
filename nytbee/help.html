@@ -59,7 +59,7 @@ And I have.  The complete source code for this project is on
 <a href=#hint>Hint Strategy</a><br>
 <a href=#archival_and_community>Archival and Community Puzzles</a><br>
 <a href=#clues>Clues for Puzzles</a><br>
-<a href=#create>Create Your Own Puzzle to Share</a><br>
+<a href=#create>Creating a Community Puzzle</a><br>
 <a href=#power>Power User Commands</a><br>
 <a href=#articles>Articles about the NYT Bee</a><br>
 <a href=#other>Other NYT Bee Projects</a><br>
@@ -77,8 +77,8 @@ And I have.  The complete source code for this project is on
 <tr><td><a target=nyt_videos href='https://youtu.be/27LtkeFAAk4'>Basic Operation</a></td><td class=rt>7:47</td></tr>
 <tr><td><a target=nyt_videos href='https://youtu.be/HVHXSOEiVHw'>Hints</a></td><td class=rt>13:13</td></tr>
 <tr><td><a target=nyt_videos href='https://youtu.be/I2QLU_ltxTM'>The NYT Archive</a></td><td class=rt>6:51</td></tr>
-<tr><td><a target=nyt_videos href=''>Clues</a></td><td></td></tr>
-<tr><td><a target=nyt_videos href=''>Community Puzzles</a></td><td></td></tr>
+<tr><td><a target=nyt_videos href='https://youtu.be/6uvgvFNoNcE'>Clues</a></td><td>11:14</td></tr>
+<tr><td><a target=nyt_videos href='https://youtu.be/K70xi4pglEE'>Creating a Community Puzzle</a></td><td>16:41</td></tr>
 <tr><td><a target=nyt_videos href=''>Power Users</a></td><td></td></tr>
 </table>
 </ul>
@@ -102,6 +102,8 @@ that are obscure, hyphenated, or proper nouns.
 <li>Longer words earn 1 point per letter.
 <li>Each puzzle includes at least one "pangram" which uses every letter. These are worth 7 extra points!
 </ul>
+The 'allowed list' is a finite list of words chosen by
+the puzzle creator.  Your challenge is to find them all.
 <a name=advantages></a>
 <h2>Advantages
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -185,9 +187,9 @@ instead of a dictionary definition.
 <tr><td colspan=2><span class=cmd>D&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.
 You can ask for definitions of <i>any</i> word - not just the ones in the puzzle.
 No hints are tallied.
-This form of the <span class=cmd>D</span> command serves as a quick and fun way to browse a dictionary that is more pleasant somehow than the full merriam-webster.com site.
+This form of the <span class=cmd>D</span> command serves as a quick and fun way to browse a dictionary that is more pleasant somehow than the full merriam-webster.com site.  You can give multiple words on the command line.
 </td></tr>
-<tr><td><span class=cmd>D*&nbsp;&nbsp;...</span></td><td>The above <span class=cmd>D</span> commands give at most 3 definitions. <span class=cmd>D*</span> will give them <i>all</i> plus any <a href=#clues>clues</a>.<p></td></tr>
+<tr><td><span class=cmd>D*&nbsp;&nbsp;...</span></td><td>The above <span class=cmd>D</span> commands give at most 3 definitions. <span class=cmd>D*</span> will give them <i>all</i> (to a max of 20) plus any <a href=#clues>clues</a>.<p></td></tr>
 <tr><td><span class=cmd>V2P</span></td><td>Reveal the first two letters of the pangrams.</td></tr>
 <tr><td><span class=cmd>V3B8</span></td><td>Reveal the first 3 letters of the words beginning with B of length 8.</td></tr>
 <tr><td><span class=cmd>V4GA</span></td><td>Reveal the first 4 letters of the words beginning with GA.</td></tr>
@@ -229,6 +231,7 @@ Another thing to know is the Power User command
 This is a toggle to show or not show (collapse) the rows and columns
 in the Hint Table that have no entries.  As you get closer to Queen Bee
 it is fun to see the table shrink.
+<p>
 <a name=hint></a>
 <h2>Hint Strategy
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -258,6 +261,7 @@ It <i>is</i> just a game and they feel that games should be fun. &#128521;
 If I make it to the rank of Amazing all by myself I call it a very good day.
 And some days I consider it a success
 if the Hints total is less than the Score. &#128522;
+<p>
 <a name=archival_and_community></a>
 <h2>Archival and Community Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -287,6 +291,7 @@ This will take a link
 to the puzzle and copy it to the system clipboard.
 The link can then be pasted from the clipboard into a text message
 or an email.
+<p>
 <a name=clues></a>
 <h2>Clues for Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -361,8 +366,9 @@ to copy/paste into the HiveMind forum there is this link:
 <a target=nytbee href='https://logicalpoetry.com/mkclues'>logicalpoetry.com/mkclues</a>
 </ul>
 Spoiler warning: This link will reveal <i>all</i> of the words.
+<p>
 <a name=create></a>
-<h2>Create Your Own Puzzle to Share
+<h2>Creating a Community Puzzle
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
 Why should Sam Ezersky be the only one to have the fun
@@ -461,6 +467,7 @@ to re-edit your puzzle.  You can update/change/delete the words and clues - but 
 <p>
 The command <span class=cmd>XCP&lt;num&gt;</span> can be used to <i>delete</i> puzzles
 that <i>you</i> have created.
+<p>
 <a name=power></a>
 <h2>Power User Commands
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -598,6 +605,7 @@ it in an iframe.  How did they get around the need to subscribe?
 Clever, but evil somehow.
 <h4>NY Times Engineering Director</h4>
 <a target=nytbee href='nyt_engineering_director.pdf'>This page</a> is a December 9, 2021 advertisement for a job at the NY Times as Director of Engineering for the Games team - to manage 30 engineers!
+<p>
 <a name=without></a>
 <h2>Without a Subscription?
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -635,6 +643,7 @@ window.gameData = {
 So the words in the puzzle <i>are</i> available publicly each day.
 The new mechanism I created is simply an alternate way
 of using these words.
+<p>
 <a name=same></a>
 <h2>Same 7 Letters
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -667,6 +676,7 @@ same 7 letters as in the current puzzle.
 These other puzzles usually (but not always)
 have a different center letter.
 Note these identical puzzles: 08/03/19 and 08/24/20.
+<p>
 <a name=nyt_archive></a>
 <h2>NYT Archival Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>

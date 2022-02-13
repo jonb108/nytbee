@@ -68,7 +68,7 @@ print <<"EOH";
 </head>
 <body>
 Finished. &#128077;<br>
-You have created an NYT Type Puzzle for the Hivemind Community.
+You have created a Community Puzzle to share with the HiveMind.
 <p>
 Your puzzle is #$n.<br>
 You will use the <span class=cmd>CP$n</span> command to open it.

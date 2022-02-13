@@ -732,16 +732,20 @@ sub define {
 
     my ($html, @defs);
 
+    my $max = 20;   # without this D*TIME causes a fatal error! :(
+
     # merriam-webster
     $html = get_html "https://www.merriam-webster.com/dictionary/$word";
     # to catch an adequate definition for 'bought':
     push @defs, 'MERRIAM-WEBSTER:' if $Dcmd eq 'd*'; 
     push @defs, $html =~  m{meaning\s+of\s+$word\s+is\s+(.*?)[.]\s+How\s+to}xmsi;
     push @defs, $html =~ m{dtText(.*?)\n}xmsg;
+    $#defs = $max if @defs > $max;
     if ($Dcmd eq 'd*' || ! @defs || @defs < 3) {
         # some definitions (like 'from') use a different format
         # no clue why
         push @defs, $html =~ m{"unText">(.*?)</span>}xmsg;
+        $#defs = $max if @defs > $max;
     }
     for my $d (@defs) {
         $d = trim($d);
@@ -753,6 +757,7 @@ sub define {
         push @defs, 'OXFORD:' if $Dcmd eq 'd*';
         $html = get_html "https://www.lexico.com/en/definition/$word";
         push @defs, $html =~ m{Lexical\s+data\s+-\s+en-us">(.*?)</span>}xmsg;
+        $#defs = $max if @defs > $max;
     }
     my $stars = '*' x length $word;
     # sometimes the definition is duplicated so ...
@@ -1036,18 +1041,21 @@ elsif ($cmd =~ m{\A (d|d[*]) \s*  (p|r|[a-z]\d+|[a-z][a-z]) \z}xms) {
     do_define($Dcmd, $term);
     $cmd = '';
 }
-elsif ($cmd =~ m{\A (d[*]) \s* ([a-z]+) \z}xms
+elsif ($cmd =~ m{\A (d[*]) \s* ([a-z ]+) \z}xms
        ||
-       $cmd =~ m{\A (d) \s+ ([a-z]+) \z}xms
+       $cmd =~ m{\A (d) \s+ ([a-z ]+) \z}xms
 ) {
     # dictionary definitions of full words not clues
     my $Dcmd = $1;
-    my $word = $2;
-    $message = "\U$word:"
-             . "<ul>"
-             . define($word, $Dcmd, 1)
-             . "</ul><p>"
-             ;
+    my $words = $2;
+    my @words = split ' ', $words;
+    for my $word (@words) {
+        $message .= "\U$word:"
+                 .  "<ul>"
+                 .  define($word, $Dcmd, 1)
+                 .  "</ul><p>"
+                 ;
+    }
     $cmd = '';
 }
 elsif ($cmd =~ m{\A g \s+ y \z}xms) {
@@ -1636,7 +1644,7 @@ EOH
     }
     if ($need_show_clue_form) {
         $show_clue_form = <<"EOH";
-<form target=nytbee
+<form target=_blank
       id=clues_by
       action=$log/cgi-bin/nytbee_clues_by.pl
       method=POST

@@ -145,7 +145,7 @@ function cycle(w) {
 <p>
 $nnf_disp
 You do not have to give clues for all of the words.  You can return
-here to update/revise your clues.
+here to update and revise your clues.
 <p>
 Clicking on the words will show a dictionary definition.
 You may, instead, wish to give clues that are more
@@ -176,7 +176,7 @@ for my $w (@words) {
             $clue = '';
         }
         $word_td = td(qq!<a href="javascript:popup_define('$w',300,500)">$uw</a>!);
-        $clue_td = td("<input type=text size=45 name=${w}_clue id=${w}_clue"
+        $clue_td = td("<input type=text size=40 name=${w}_clue id=${w}_clue"
                  . qq! value="$clue">!)
     }
     else {

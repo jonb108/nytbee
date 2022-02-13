@@ -103,7 +103,7 @@ $cycle_function
 </script>
 </head>
 <body>
-<h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>4</span> <span class=step_name>Clues</span></h1>
+<h1>Creating a<br>Community Puzzle<br>Step <span class=red>4</span> <span class=step_name>Clues</span></h1>
 Optionally, provide clues for each word.
 $prior_clues
 You can click on the words to get a dictionary definition.
@@ -124,7 +124,7 @@ for my $w (@ok_words) {
         if (ref $href_prior_clues_for->{$w} eq 'ARRAY') {
             # there is more than one prior clue
             $clue = $href_prior_clues_for->{$w}->[0];
-            $cycle_td = td(qq!<img class=cursor onclick='cycle("$w");' src='/nytbee/cycle.jpg'>!);
+            $cycle_td = td(qq!<img class=cursor onclick='cycle("$w");' src='/nytbee/pics/cycle.jpg'>!);
         }
         else {
             $clue = $href_prior_clues_for->{$w};

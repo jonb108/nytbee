@@ -29,7 +29,7 @@ if ($word !~ m{\S}xms) {
     error "Missing word to search for...";
 }
 
-my @chars = uniq_chars $word;
+my @chars = uniq_chars lc $word;
 if (@chars > 7) {
     error "Sorry, there are more than 7 unique characters in $word.";
 }

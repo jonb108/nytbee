@@ -68,7 +68,7 @@ print <<"EOH";
 <script src="$log/nytbee/js/nytbee.js"></script>
 </head>
 <body>
-<h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>5</span> <span class=step_name>Name and Location</span></h1>
+<h1>Creating a<br>Community Puzzle<br>Step <span class=red>5</span> <span class=step_name>Name and Location</span></h1>
 <form name=form action=$log/cgi-bin/final_mkpuz.pl method=POST onsubmit="return check_name_location();">
 <input type=hidden name=seven value='$seven'>
 <input type=hidden name=center value='$center'>

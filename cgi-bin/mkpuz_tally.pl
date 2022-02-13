@@ -101,7 +101,7 @@ if ($npangrams + $bnpangrams == 0) {
 }
 
 print <<"EOH";
-<h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>2</span> <span class=step_name>Center Letter</span></h1>
+<h1>Creating a<br>Community Puzzle<br>Step <span class=red>2</span> <span class=step_name>Center Letter</span></h1>
 The pangramic word is: <span class=word>$Word</span>
 <p>
 $msg

@@ -6,9 +6,7 @@
 function rand5(source) {
     newwin = window.open(
         "https://logicalpoetry.com/cgi-bin/rand5.pl/" + source, 'rand',
-        'height=330, width=400'
-    );
-    newwin.moveTo(800, 0);
+        'height=330,width=400,left=800,top=0');
     set_focus();
 }
 </script>
@@ -25,15 +23,12 @@ function submitWindow() {
     var word2 = document.getElementById('word2').value; 
     var newwin = window.open(
         'https://logicalpoetry.com/cgi-bin/word_pangram.pl/' + word2,
-        'windowNew','width=600, height=600'
-    );
-    newwin.moveTo(800, 0);
-    return true;
+        '_blank','width=600,height=600,left=800,top=0'); return true;
 }
 </script>
 </head>
 <body>
-<h1>Making an NYT Type<a target=nytbee_help class=help href='https://logicalpoetry.com/nytbee/help.html#create'>Help</a><br>Spelling Bee Puzzle<br>Step <span class=red>1</span> <span class=step_name>Pangramic Word</span></h1>
+<h1>Creating a<a target=nytbee_help class=help href='https://logicalpoetry.com/nytbee/help.html#create'>Help</a><br>Community Puzzle<br>Step <span class=red>1</span> <span class=step_name>Pangramic Word</span></h1>
 <form name=form action=https://logicalpoetry.com/cgi-bin/mkpuz_tally.pl method=POST>
 Enter a pangramic word:<p>
 <input type=text name=word id=word size=15>

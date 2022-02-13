@@ -24,7 +24,7 @@ print <<"EOH";
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
 </head>
 <body>
-<h1>Making an NYT Type<br>Spelling Bee Puzzle<br>Step <span class=red>3</span> <span class=step_name>Words</span></h1>
+<h1>Creating a<br>Community Puzzle<br>Step <span class=red>3</span> <span class=step_name>Words</span></h1>
 For the pangramic word <span class=word>$Word</span> and center letter <span class=center>\U$center\E</span> we have identified the qualified words.
 <p>
 Check the words you want to include in the puzzle and press Submit at the bottom.  Make sure you include at least one pangram. They are colored <span class=red>red</span>.
