@@ -1816,7 +1816,7 @@ my $heading = $show_Heading? <<"EOH": '';
     <a target=_blank onclick="set_focus();" href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date$clues_are_present
 </div>
 <div class=float-child2>
-     <img width=50 src=$log/nytbee/pics/bee-logo.jpg onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
+     <img width=53 src=$log/nytbee/pics/bee-logo.jpg onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
 </div>
 <div class=float-child3>
     <span class=help><a target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html'>Help</a></span><br><span class=create_add>$create_add</span>
