@@ -123,6 +123,7 @@ use CGI::Carp qw/
     fatalsToBrowser
 /;
 use BeeUtil qw/
+    uniq_chars
     cgi_header
     my_today
     red
@@ -1395,6 +1396,25 @@ elsif ($cmd =~ m{\A w \s+ ([a-z]+)}xms) {
                    @found;
     $cmd = '';
 }
+elsif ($cmd eq 'sl') {
+    my %groups;
+    for my $w (@found) {
+        my $chars = join '', uniq_chars($w);
+        push @{$groups{$chars}}, $w;
+    }
+    my @rows;
+    GROUP:
+    for my $cs (sort keys %groups) {
+        if (@{$groups{$cs}} == 1) {
+            next GROUP;
+        }
+        push @rows, Tr(td({ valign => 'top', class => 'lt' }, $cs),
+                       td({ class => 'lt', width => 420 },
+                            join(', ', @{$groups{$cs}})));
+    }
+    $message = table({ cellpadding => 2 }, @rows);
+    $cmd = '';
+}
 
 # so we have dealt with the various commands.
 # except for 1 and 2, that is.
@@ -1483,8 +1503,34 @@ if ($word_col == 1) {
                @words_found;
     $found_words = ul(table(@rows));
 }
-else {
+elsif ($order) {
+    my @rows;
     my $prev_length = 0;
+    my $words = '';
+    for my $w (@words_found) {
+        my $lw = length $w;
+        if ($prev_length && $lw != $prev_length) {
+            push @rows, Tr(td({ class => 'rt', valign => 'top' },
+                              $prev_length),
+                           td({ class => 'lt',
+                                width => 475,
+                                style => 'word-spacing:10px'
+                              },
+                              $words)
+                          );
+            $words = '';
+        }
+        $prev_length = $lw;
+        $words .= ucfirst "$w ";
+    }
+    push @rows, Tr(td({ class => 'rt', valign => 'top' },
+                      $prev_length),
+                   td({ class => 'lt', width => 550 },
+                      $words)
+                  );
+    $found_words = table({ cellpadding => 3 }, @rows);
+}
+else {
     for my $w (@words_found) {
         my $lw = length($w);
         my $uw = ucfirst $w;
@@ -1497,14 +1543,9 @@ else {
         else {
             $w = $uw;
         }
-        my $pre = ! $prev_length               ? ($order? "$lw: ": '')
-                 :$order && $lw != $prev_length? "<br>$lw: "
-                 :                               ' '
-                 ;
-        $found_words .= "$pre$w";
-        $prev_length = $lw;
+        $found_words .= "$w ";
     }
-    if (@found && @words_found == @found && ! $order) {
+    if (@found && @words_found == @found) {
         my $nwords = @found;
         $found_words .= " <span class=gray>$nwords</span>";
     }
