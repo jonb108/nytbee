@@ -1325,6 +1325,7 @@ elsif ($cmd =~ m{\A h \s* ([1-4]) \z}xms) {
 # now to prepare the display the words we have found
 # some subset, some order
 my $order = 0;
+my $same_letters = 0;
 my $prefix = '';
 my $pattern = '';
 my $limit = 0;
@@ -1397,22 +1398,7 @@ elsif ($cmd =~ m{\A w \s+ ([a-z]+)}xms) {
     $cmd = '';
 }
 elsif ($cmd eq 'sl') {
-    my %groups;
-    for my $w (@found) {
-        my $chars = join '', uniq_chars($w);
-        push @{$groups{$chars}}, $w;
-    }
-    my @rows;
-    GROUP:
-    for my $cs (sort keys %groups) {
-        if (@{$groups{$cs}} == 1) {
-            next GROUP;
-        }
-        push @rows, Tr(td({ valign => 'top', class => 'lt' }, $cs),
-                       td({ class => 'lt', width => 420 },
-                            join(', ', @{$groups{$cs}})));
-    }
-    $message = table({ cellpadding => 2 }, @rows);
+    $same_letters = 1;
     $cmd = '';
 }
 
@@ -1529,6 +1515,24 @@ elsif ($order) {
                       $words)
                   );
     $found_words = table({ cellpadding => 3 }, @rows);
+}
+elsif ($same_letters) {
+    my %groups;
+    for my $w (@found) {
+        my $chars = join '', uniq_chars($w);
+        push @{$groups{$chars}}, ucfirst $w;
+    }
+    my @rows;
+    GROUP:
+    for my $cs (sort keys %groups) {
+        if (@{$groups{$cs}} == 1) {
+            next GROUP;
+        }
+        push @rows, Tr(td({ valign => 'top', class => 'lt' }, $cs),
+                       td({ class => 'lt', width => 550 },
+                          "@{$groups{$cs}}"));
+    }
+    $found_words = table({ cellpadding => 2 }, @rows);
 }
 else {
     for my $w (@words_found) {
