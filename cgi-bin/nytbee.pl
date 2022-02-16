@@ -1189,7 +1189,7 @@ elsif ($cmd eq 'l') {
     my $n = 1;
     for my $p (my_puzzles()) {
         my $cur = $p->[0] eq $date? red('*'): '';
-        my $pg  = $p->[1]? '&nbsp;&nbsp;p': '';
+        my $pg  = $p->[1]? '&nbsp;&nbsp;<span class=green>p</span>': '';
         $message .= Tr(
                        td($n),
                        td($cur),
