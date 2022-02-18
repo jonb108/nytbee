@@ -80,8 +80,8 @@ sub my_today {
 
 sub slash_date {
     my ($d8) = @_;
-    if ($d8 =~ m{\A CP}xms) {
-        return $d8;
+    if ($d8 =~ m{\A CP}xmsi) {
+        return uc $d8;
     }
     my ($y, $m, $d) = $d8 =~ m{\A ..(..)(..)(..) \z}xms;
     return "$m/$d/$y";

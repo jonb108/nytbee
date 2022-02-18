@@ -171,6 +171,14 @@ if ($params{new_words} =~ m{\A \s* id \s+}xmsi) {
 }
 # search for 'id' below
 
+#
+# save the uuid and the ip address 
+# so we can know where people are playing from
+#
+my %uuid_ip;
+tie %uuid_ip, 'DB_File', 'uuid_ip.dbm';
+$uuid_ip{$uuid} = $ENV{REMOTE_ADDR};
+
 
 ##############
 my %puzzle;
