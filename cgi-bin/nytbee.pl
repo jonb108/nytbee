@@ -177,7 +177,7 @@ if ($params{new_words} =~ m{\A \s* id \s+}xmsi) {
 #
 my %uuid_ip;
 tie %uuid_ip, 'DB_File', 'uuid_ip.dbm';
-$uuid_ip{$uuid} = $ENV{REMOTE_ADDR};
+$uuid_ip{$uuid} = $ENV{REMOTE_ADDR} . '|' . $ENV{HTTP_USER_AGENT};
 
 
 ##############
@@ -278,6 +278,12 @@ my $cmd = lc $params{new_words};
     # even though it looks like we are typing upper case...
     #
 $cmd = trim($cmd);
+{
+open my $out, '>>', 'cmd_log.txt';
+print {$out} substr($uuid, 0, 5) . " = $cmd\n";
+close $out;
+}
+
 
 my $show_Heading    = exists $params{show_Heading}?
                              $params{show_Heading}: 1;
@@ -741,7 +747,7 @@ sub define {
 
     my ($html, @defs);
 
-    my $max = 20;   # without this D*TIME causes a fatal error! :(
+    my $max = 10;   # without this D*TIME causes a fatal error! :(
 
     # merriam-webster
     $html = get_html "https://www.merriam-webster.com/dictionary/$word";
@@ -1515,7 +1521,8 @@ elsif ($order) {
             $words = '';
         }
         $prev_length = $lw;
-        $words .= ucfirst "$w ";
+        my $uw = ucfirst $w;
+        $words .= ($is_pangram{$w}? color_pg($uw): $uw) . ' ';
     }
     push @rows, Tr(td({ class => 'rt', valign => 'top' },
                       $prev_length),

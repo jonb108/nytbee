@@ -128,10 +128,12 @@ for my $w (@ok_words) {
              . qq! value="$clue">!);
     push @rows, Tr($word_td, $clue_td, $cycle_td);
 }
+push @rows, Tr(td('&nbsp'),
+               td({ class => 'lt' },
+                  '<button class=submit type=submit>Submit</button>')
+            );
 print table(@rows);
 print <<"EOH";
-<p>
-<button class=submit type=submit>Submit</button>
 </body>
 </html>
 <script>document.form.$ok_words[0]_clue.focus();</script>
