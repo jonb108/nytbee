@@ -45,6 +45,10 @@ if ($all_words) {
 else {
     $date = $q->param('date');
 }
+open my $out, '>>', 'cmd_log.txt';
+print {$out} substr($uuid, 0, 5) . " mkclues $date\n";
+close $out;
+
 my $puzzle = $puzzle{$date};
 $puzzle =~ s{\A [^|]* [|]\ s* }{}xms;
 my @words = $puzzle =~ m{([a-z]+)}xmsg;

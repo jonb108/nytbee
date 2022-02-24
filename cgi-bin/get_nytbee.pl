@@ -60,6 +60,10 @@ my $dt = sprintf "%04d%02d%02d", $year, $month, $day;
 $puzzle{$dt} = "$seven $center @pangrams | @words";
 untie %puzzle;
 
+open my $out, '>>', 'cmd_log.txt';
+print {$out} "new puzzle for $dt: @pangrams\n";
+close $out;
+
 # add the pangrams to nyt_pangrams.html
 # they may be there already
 #

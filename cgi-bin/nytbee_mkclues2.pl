@@ -24,6 +24,11 @@ my $q = CGI->new();
 my $uuid = cgi_header($q);
 
 my $date = $q->param('date');       #  hidden field
+
+open my $out, '>>', 'cmd_log.txt';
+print {$out} substr($uuid, 0, 5) . " mkclues2 $date\n";
+close $out;
+
 my $show_date = date($date)->format("%B %e, %Y");
 my $all_words = $q->param('all_words');
 my $name = $q->param('name');
