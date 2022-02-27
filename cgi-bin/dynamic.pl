@@ -14,7 +14,18 @@ use BeeUtil qw/
     word_score
 /;
 use DB_File;
-cgi_header($q);
+my $uuid = cgi_header($q);
+open my $out, '>>', 'cmd_log.txt';
+print {$out} substr($uuid, 0, 5) . " dynamic tables\n";
+close $out;
+#
+# save the uuid and the ip address 
+# so we can know where people are playing from
+#
+my %uuid_ip;
+tie %uuid_ip, 'DB_File', 'uuid_ip.dbm';
+$uuid_ip{$uuid} = $ENV{REMOTE_ADDR} . '|' . $ENV{HTTP_USER_AGENT};
+
 my $pwords = $q->param('words') || '';
 $pwords =~ s{\A \s*|\s* \z}{}xmsg;
 $pwords =~ s{"}{}xmsg;
