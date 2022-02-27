@@ -472,7 +472,7 @@ elsif (my ($cp_num) = $cmd =~ m{\A c \s* p \s* (\d+) \z}xms) {
     my $fname = "$comm_dir/$cp_num.txt";
     if (! -f $fname) {
         $message = "$cp_num: No such Community Puzzle";
-        $cmd = 'noop';
+        $cmd = 'nooop';
     }
     else {
         $date = "CP$cp_num";
@@ -512,12 +512,12 @@ elsif ($cmd ne '1' && $cmd ne '2'
         }
         else {
             $message = "Illegal date: $new_date";
-            $cmd = 'noop';
+            $cmd = 'nooop';
         }
     }
     else {
         $message = "Illegal date: $new_date";
-        $cmd = 'noop';
+        $cmd = 'nooop';
     }
 }
 
@@ -581,7 +581,7 @@ else {
            @seven;
 }
 
-if ((! $cmd || $cmd eq 'noop') && ! $params{has_message}) {
+if ((! $cmd || $cmd eq 'nooop') && ! $params{has_message}) {
     # We hit Return in an empty text field so
     # there is no command
     # and we didn't hit Return simply to clear a message
@@ -589,7 +589,7 @@ if ((! $cmd || $cmd eq 'noop') && ! $params{has_message}) {
     @six = shuffle(@six);
     @seven_let = shuffle(@seven_let);
 }
-if ($cmd eq 'noop') {
+if ($cmd eq 'nooop') {
     $cmd = '';
 }
 

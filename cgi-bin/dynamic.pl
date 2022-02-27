@@ -29,7 +29,9 @@ $uuid_ip{$uuid} = $ENV{REMOTE_ADDR} . '|' . $ENV{HTTP_USER_AGENT};
 my $pwords = $q->param('words') || '';
 $pwords =~ s{\A \s*|\s* \z}{}xmsg;
 $pwords =~ s{"}{}xmsg;
-$pwords .= ' ' if $pwords;
+$pwords =~ s{\A .*You\s+have\s+found\s+\d*\s+words}{}xms;
+$pwords =~ s{Type\s+or\s+click.*\z}{}xms;
+
 my $words = $pwords;
 $words =~ s{[^a-z ]}{}xmsgi;
 my ($hint_table, $two_lets) = ('', '');
@@ -38,7 +40,6 @@ my %puzzle;
 tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
 my ($s, $t) = split /[|]/, $puzzle{ $today->as_d8() };
 my ($seven, $center, @pangrams) = split ' ', $s;
-my $letter_regex = qr{([^$seven])}xms;  # see sub check_word
 my @seven = split //, $seven;
 my @ok_words = split ' ', $t;
 my %is_pangram = map { $_ => 1 }
@@ -67,6 +68,11 @@ my %is_found = map { $_ => 1 }
                map { lc }
                $words =~ m{([a-z]+)}xmsgi;
 my @words = keys %is_found;
+$pwords = join ' ',
+          map { ucfirst }
+          sort
+          @words;
+$pwords .= ' ' if $pwords;
 my $nwords = @words;
 my $pl_w = $nwords == 1? '': 's';
 my $score = 0;
@@ -251,7 +257,7 @@ function set_focus() {
 }
 function help_win() {
     window.open('https://logicalpoetry.com/nytbee/dyn_help.html', 'help',
-                'popup=1, width=400, height=400, left=700');
+                'popup=1, width=400, height=470, left=700');
 }
 </script>
 <body>
