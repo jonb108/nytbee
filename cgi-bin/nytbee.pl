@@ -1584,16 +1584,16 @@ my $max_len = 0;
 my %first_char;
 WORD:
 for my $w (@ok_words) {
+    if ($is_found{$w}) {
+        # skip it
+        next WORD;
+    }
     my $l = length($w);
     if ($max_len < $l) {
         $max_len = $l;
     }
     my $c1 = substr($w, 0, 1);
     ++$first_char{$c1};
-    if ($is_found{$w}) {
-        # skip it
-        next WORD;
-    }
     my $c2 = substr($w, 0, 2);
     ++$sums{$c1}{$l};
 

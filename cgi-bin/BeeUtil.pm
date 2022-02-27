@@ -42,7 +42,7 @@ sub cgi_header {
 
     my $cmd = $q->param('new_words');
     my $uuid;
-    if ($cmd =~ m{\A id \s+ (\S+) \s* \z}xmsi) {
+    if ($cmd && $cmd =~ m{\A id \s+ (\S+) \s* \z}xmsi) {
         $uuid = $1;
     }
     else {

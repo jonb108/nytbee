@@ -13,10 +13,10 @@ use BeeUtil qw/
     Tr
     td
     $log
+    my_today
 /;
 use Date::Simple qw/
     date
-    today
 /;
 use Bee_DBH qw/
     $dbh
@@ -40,7 +40,7 @@ my $all_words = $q->path_info() eq '/today';;
 # file that redirects to logicalpoetry.com/cgi-bin/nytbee_mkclues.pl/today
 
 if ($all_words) {
-    $date = today()->as_d8();
+    $date = my_today()->as_d8();
 }
 else {
     $date = $q->param('date');

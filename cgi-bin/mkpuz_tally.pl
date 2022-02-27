@@ -13,7 +13,7 @@ use strict;
 use warnings;
 use CGI;
 my $q = CGI->new();
-print $q->header();
+my $uuid = cgi_header($q);
 
 use BeeUtil qw/
     uniq_chars
@@ -21,7 +21,12 @@ use BeeUtil qw/
     word_score
     trim
     $log
+    cgi_header
 /;
+
+open my $out, '>>', 'cmd_log.txt';
+print {$out} substr($uuid, 0, 5) . " $ENV{REMOTE_ADDR} making a puzzle\n";
+close $out;
 
 print <<"EOH";
 <html>

@@ -41,6 +41,7 @@ goo10k-47.txt \
 set_uuid.pl \
 osx_usd_words-47.txt \
 word_pangram.pl \
+dynamic.pl \
 rand5.pl
 
 # these will not change
