@@ -1779,7 +1779,9 @@ if ($ht_chosen) {
             }
             push @th, th($sums{1}{$l} || $dash);
         }
-        push @th, th($sums{1}{1} || 0);
+        if ($ncols > 1) {
+            push @th, th($sums{1}{1} || 0);
+        }
         push @rows, Tr(@th);
     }
     $hint_table = table({ cellpadding => 2 }, @rows);

@@ -58,12 +58,13 @@ my @ranks = (
 
 # prior words
 my %is_found;
+my $prior = $q->param('prior_words');
 if ($q->param('date') eq $today_d8) {
     # the new puzzle may have been released
     # while we were in the midst of it here...
     # in which case we ignore the prior words.
     %is_found = map { $_ => 1 }
-                split ' ', $q->param('prior_words');
+                split ' ', $prior;
 }
 
 # more words that were pasted in/entered just now
@@ -81,6 +82,7 @@ for my $w (grep { $is_ok_word{$_} }
 my @words = sort keys %is_found;
 my @uwords = map { ucfirst } @words;
 my $nwords = @words;
+my $the_more = $nwords? 'more': 'the';
 my $pl_w = $nwords == 1? '': 's';
 my $score = 0;
 for my $w (@words) {
@@ -94,6 +96,12 @@ for my $r (reverse @ranks) {
         $rank = $r->{name};
         last RANK;
     }
+}
+my $input = "<input type=text name=words size=45"
+          . " placeholder='Paste $the_more words you have found here'>";
+if ($rank eq 'Queen Bee') {
+    $rank = "<span class=twolet>$rank</span>";
+    $input = '';
 }
 
 # prepare the hint table and two letter list
@@ -162,7 +170,8 @@ for my $c (@seven) {
         next CHAR;
     }
     my @cells;
-    push @cells, th({ class => 'lt' }, uc $c);
+    push @cells, th({ class => 'lt' },
+                    "<span class=let>\U$c\E</span>");
     LEN:
     for my $l (4 .. $max_len) {
         if ($sums{1}{$l} == 0) {
@@ -174,6 +183,13 @@ for my $c (@seven) {
     if ($sums{$c}{1} != 0 && $ncols > 1) {
         push @cells, th({ class => 'rt' }, $sums{$c}{1} || 0);
     }
+    push @cells, td({ width => 25 }, '&nbsp;');
+    # the two letter tallies
+    my $two_lets;
+    for my $tl (grep { /^$c/ } sort keys %two_lets) {
+        $two_lets .= "<span class='twolet'>\U$tl\E</span><span class=dash>-</span>$two_lets{$tl} ";
+    }
+    push @cells, td("<span class=two_let>$two_lets</span>");
     push @rows, Tr(@cells);
 }
 if ($nrows > 1) {
@@ -185,37 +201,26 @@ if ($nrows > 1) {
         }
         push @th, th({ class => 'rt' }, $sums{1}{$l} || $dash);
     }
-    push @th, th({ class => 'rt' }, $sums{1}{1} || 0);
+    if ($ncols > 1) {
+        push @th, th({ class => 'rt' }, $sums{1}{1} || 0);
+    }
     push @rows, Tr(@th);
 }
-$hint_table = table({ cellpadding => 2 }, @rows);
-
-# two letter tallies
-$two_lets = '';
-my @two = grep {
-              $two_lets{$_}
-          }
-          sort
-          keys %two_lets;
-TWO:
-for my $i (0 .. $#two) {
-    if ($two_lets{$two[$i]} == 0) {
-        next TWO;
-    }
-    $two_lets .= "\U$two[$i]\E-$two_lets{$two[$i]}";
-    if ($i < $#two
-        && substr($two[$i], 0, 1) ne substr($two[$i+1], 0, 1)
-    ) {
-        $two_lets .= "<p>";
-    }
-    else {
-        $two_lets .= '&nbsp;&nbsp;';
-    }
+if ($nrows > 0) {
+    $hint_table = table({ cellpadding => 2 }, @rows);
 }
 print <<"EOH";
 <html>
 <head>
 <style>
+.dash {
+    font-weight: normal;
+    color: black;
+}
+.twolet {
+    font-weight: normal;
+    color: red;
+}
 body, td, th, input {
     margin-top: .3in;
     margin-left: .3in;
@@ -251,7 +256,21 @@ p {
 .words {
     width: 500px;
     word-spacing: 8px;
-    line-height: 28px;
+    line-height: 30px;
+}
+.two_let {
+    word-spacing: 8px;
+}
+td {
+    color: seagreen;
+    font-weight: bold;
+}
+th {
+    color: darkblue;
+    font-weight: normal;
+}
+.let {
+    color: red;
 }
 </style>
 </head>
@@ -280,19 +299,14 @@ print qq!<span class=help onclick="help_win(); set_focus();">Help</span>\n!;
 print <<"EOH";
 <p>
 <form action=$cgi/dynamic.pl name=form method=post style="margin-bottom: 0mm">
-<input type=text name=words size=45 placeholder="Paste the words you have found here">
+$input
 <input type=hidden name=date value="$today_d8">
 <input type=hidden name=prior_words value="@words">
 </form>
 <p>
 $nwords word$pl_w, $score point$pl_sc, $rank
-<table>
-<tr>
-<td>$hint_table</td>
-<td width=20></td>
-<td>$two_lets</td>
-</tr>
-</table>
+<p>
+$hint_table
 <div class=words>
 @uwords
 </div>
