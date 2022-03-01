@@ -26,19 +26,12 @@ my %uuid_ip;
 tie %uuid_ip, 'DB_File', 'uuid_ip.dbm';
 $uuid_ip{$uuid} = $ENV{REMOTE_ADDR} . '|' . $ENV{HTTP_USER_AGENT};
 
-my $pwords = $q->param('words') || '';
-$pwords =~ s{\A \s*|\s* \z}{}xmsg;
-$pwords =~ s{"}{}xmsg;
-$pwords =~ s{\A .*You\s+have\s+found\s+\d*\s+words}{}xms;
-$pwords =~ s{Type\s+or\s+click.*\z}{}xms;
-
-my $words = $pwords;
-$words =~ s{[^a-z ]}{}xmsgi;
 my ($hint_table, $two_lets) = ('', '');
 my $today = my_today();
+my $today_d8 = $today->as_d8();
 my %puzzle;
 tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
-my ($s, $t) = split /[|]/, $puzzle{ $today->as_d8() };
+my ($s, $t) = split /[|]/, $puzzle{ $today_d8 };
 my ($seven, $center, @pangrams) = split ' ', $s;
 my @seven = split //, $seven;
 my @ok_words = split ' ', $t;
@@ -62,23 +55,38 @@ my @ranks = (
     { name => 'Genius',     pct =>  70, value => int(.70*$max_score + 0.5) },
     { name => 'Queen Bee',  pct => 100, value => $max_score },
 );
-# extract, validate, lower case, and unduplicate
-my %is_found = map { $_ => 1 }
-               grep { $is_ok_word{$_} }
-               map { lc }
-               $words =~ m{([a-z]+)}xmsgi;
-my @words = keys %is_found;
-$pwords = join ' ',
-          map { ucfirst }
-          sort
-          @words;
-$pwords .= ' ' if $pwords;
+
+# prior words
+my %is_found;
+if ($q->param('date') eq $today_d8) {
+    # the new puzzle may have been released
+    # while we were in the midst of it here...
+    # in which case we ignore the prior words.
+    %is_found = map { $_ => 1 }
+                split ' ', $q->param('prior_words');
+}
+
+# more words that were pasted in/entered just now
+# get, tidy, lower case, extract, validate, and unduplicate
+my $words = lc $q->param('words') || '';
+$words =~ s{\A .*uou\s+have\s+found\s+\d*\s+words}{}xms;
+$words =~ s{type\s+or\s+click.* \z}{}xms;
+$words =~ s{[^a-z ]}{}xmsg;        # strip stray characters
+
+for my $w (grep { $is_ok_word{$_} } 
+           $words =~ m{([a-z]+)}xmsgi
+) {
+    $is_found{$w} = 1;
+}
+my @words = sort keys %is_found;
+my @uwords = map { ucfirst } @words;
 my $nwords = @words;
 my $pl_w = $nwords == 1? '': 's';
 my $score = 0;
 for my $w (@words) {
     $score += word_score($w, $is_pangram{$w});
 }
+my $pl_sc = $score == 1? '': 's';
 my $rank = '';
 RANK:
 for my $r (reverse @ranks) {
@@ -87,7 +95,8 @@ for my $r (reverse @ranks) {
         last RANK;
     }
 }
-my $pl_sc = $score == 1? '': 's';
+
+# prepare the hint table and two letter list
 my %sums;
 my %two_lets;
 my $max_len = 0;
@@ -227,16 +236,6 @@ input {
 .lt {
     text-align: left;
 }
-.float1 {
-    float: left;
-    margin-left: 0mm;
-}
-.float2 {
-    float: left;
-    margin-top: 0mm;
-    margin-left: 6mm;
-    line-height: 9mm;
-}
 .help {
     margin-left: .5in;
     color: blue;
@@ -248,6 +247,11 @@ input {
 p {
     margin-top: 3mm;
     margin-bottom: 3mm;
+}
+.words {
+    width: 500px;
+    word-spacing: 8px;
+    line-height: 28px;
 }
 </style>
 </head>
@@ -276,12 +280,22 @@ print qq!<span class=help onclick="help_win(); set_focus();">Help</span>\n!;
 print <<"EOH";
 <p>
 <form action=$cgi/dynamic.pl name=form method=post style="margin-bottom: 0mm">
-<input type=text name=words size=45 value="$pwords">
+<input type=text name=words size=45 placeholder="Paste the words you have found here">
+<input type=hidden name=date value="$today_d8">
+<input type=hidden name=prior_words value="@words">
+</form>
 <p>
-</form>$nwords word$pl_w, $score point$pl_sc, $rank
-<p>
-<div class=float1>$hint_table</div>
-<div class=float2>$two_lets</div>
+$nwords word$pl_w, $score point$pl_sc, $rank
+<table>
+<tr>
+<td>$hint_table</td>
+<td width=20></td>
+<td>$two_lets</td>
+</tr>
+</table>
+<div class=words>
+@uwords
+</div>
 </body>
 </html>
 <script>set_focus();</script>
