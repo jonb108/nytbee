@@ -12,6 +12,7 @@ use BeeUtil qw/
     my_today
     $cgi
     word_score
+    $log
 /;
 use DB_File;
 my $uuid = cgi_header($q);
@@ -80,9 +81,19 @@ for my $w (grep { $is_ok_word{$_} }
     $is_found{$w} = 1;
 }
 my @words = sort keys %is_found;
-my @uwords = map { ucfirst } @words;
+my @uwords;
+for my $w (@words) {
+    my $uw = ucfirst $w;
+    if ($is_pangram{$w}) {
+        my $color = length $w == 7? 'purple': 'green';
+        push @uwords, "<span style='color: $color'>$uw</span>";
+    }
+    else {
+        push @uwords, $uw;
+    }
+}
 my $nwords = @words;
-my $the_more = $nwords? 'more': 'the';
+my $the_more = $nwords? ' or enter more': 'the';
 my $pl_w = $nwords == 1? '': 's';
 my $score = 0;
 for my $w (@words) {
@@ -189,7 +200,7 @@ for my $c (@seven) {
     for my $tl (grep { /^$c/ } sort keys %two_lets) {
         $two_lets .= "<span class='twolet'>\U$tl\E</span><span class=dash>-</span>$two_lets{$tl} ";
     }
-    push @cells, td("<span class=two_let>$two_lets</span>");
+    push @cells, td($two_lets);
     push @rows, Tr(@cells);
 }
 if ($nrows > 1) {
@@ -212,67 +223,7 @@ if ($nrows > 0) {
 print <<"EOH";
 <html>
 <head>
-<style>
-.dash {
-    font-weight: normal;
-    color: black;
-}
-.twolet {
-    font-weight: normal;
-    color: red;
-}
-body, td, th, input {
-    margin-top: .3in;
-    margin-left: .3in;
-    font-family: Arial;
-    font-size: 18pt;
-}
-form {
-    margin-top: 0mm;
-    margin-bottom: 0mm;
-}
-input {
-    margin-top: 0mm;
-    margin-left: 0mm;
-}
-.rt {
-    text-align: right;
-}
-.lt {
-    text-align: left;
-}
-.help {
-    margin-left: .5in;
-    color: blue;
-    cursor: pointer;
-}
-.date {
-    margin-right: .5in;
-}
-p {
-    margin-top: 3mm;
-    margin-bottom: 3mm;
-}
-.words {
-    width: 500px;
-    word-spacing: 8px;
-    line-height: 30px;
-}
-.two_let {
-    word-spacing: 8px;
-}
-td {
-    color: seagreen;
-    font-weight: bold;
-}
-th {
-    color: darkblue;
-    font-weight: normal;
-}
-.let {
-    color: red;
-}
-</style>
+<link rel='stylesheet' type='text/css' href='$log/nytbee/css/dyn_style.css'/>
 </head>
 <script>
 function set_focus() {
@@ -285,7 +236,7 @@ function help_win() {
 </script>
 <body>
 EOH
-print "<span class=date>" . $today->format("%B %e, %Y") . "</span>";
+#print "<span class=date>" . $today->format("%B %e, %Y") . "</span>";
 for my $c (@seven) {
     my $C = uc $c;
     if ($c eq $center) {
