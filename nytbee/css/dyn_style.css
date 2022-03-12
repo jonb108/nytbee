@@ -1,0 +1,59 @@
+.dash {
+    font-weight: normal;
+    color: black;
+}
+.twolet {
+    font-weight: normal;
+    color: red;
+}
+body, td, th, input {
+    margin-top: .3in;
+    margin-left: .3in;
+    font-family: Arial;
+    font-size: 18pt;
+}
+form {
+    margin-top: 0mm;
+    margin-bottom: 0mm;
+}
+input {
+    margin-top: 0mm;
+    margin-left: 0mm;
+}
+.rt {
+    text-align: right;
+}
+.lt {
+    text-align: left;
+}
+.help {
+    margin-left: .5in;
+    color: blue;
+    cursor: pointer;
+}
+.date {
+    margin-right: .5in;
+}
+p {
+    margin-top: 3mm;
+    margin-bottom: 3mm;
+}
+.words {
+    width: 500px;
+    word-spacing: 8px;
+    line-height: 30px;
+}
+.two_let {
+    word-spacing: 8px;
+}
+td {
+    color: seagreen;
+    font-weight: bold;
+}
+th {
+    color: darkblue;
+    font-weight: normal;
+}
+.let {
+    color: red;
+}

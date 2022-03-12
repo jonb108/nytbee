@@ -1,0 +1,239 @@
+body {
+    font-family: Arial;
+    margin: .5in;
+    font-size: 18pt;
+}
+.copied {
+    font-size: 13pt;
+    color: green;
+}
+.rand {
+    margin-left: 6mm;
+    color: skyblue;
+}
+td, th {
+    font-family: Arial;
+    font-size: 18pt;
+    text-align: right;
+}
+.left {
+    text-align: left;
+}
+.let {
+    text-align: center;
+    font-weight: bold;
+    font-size: 24pt;
+}
+.center {
+    color: green;
+    font-size: 24pt;
+}
+.word {
+    font-size: 24pt;
+    color: green;
+}
+a {
+    text-decoration: none;
+    color: blue;
+}
+input, button {
+    font-size: 18pt;
+}
+.red {
+    color: red;
+}
+button, .word_td {
+    background: lightgreen;
+}
+.cmd {
+    color: darkred;
+}
+.cursor {
+    cursor: pointer;
+    color: blue;
+}
+.step_name {
+    color: green;
+}
+.let:focus {
+    outline: none;
+}
+a.help {
+    margin-left: 1in;
+    font-size: 18pt;
+    font-weight: normal;
+}
+.gray {
+    color: lightgray;
+}
+.pointer {
+    cursor: pointer;
+}
+.cursor_black {
+    cursor: pointer;
+    color: black;
+}
+.two_lets {
+    margin-top: 0mm;
+    margin-left: 5mm;
+    line-height: 6mm;
+}
+.create_add, .help {
+    font-size: 13pt;
+}
+.mess {
+    width: 400px;
+    word-spacing: 10px;
+}
+.pointer {
+    cursor: pointer;
+    color: blue;
+}
+.float-child1 {
+    float: left;
+    text-align: left;
+}
+.float-child2 {
+    float: left;
+    margin-left: .3in;
+}
+.float-child3 {
+    float: left;
+    margin-left: .3in;
+    text-align: right;
+}
+/* .float-child4 {
+    float: left;
+    margin-left: .3in;
+}
+*/
+.float-child5 {
+    margin-top: 5mm;
+}
+.new_word {
+    color: coral;
+}
+ul {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+li {
+    width: 400px;
+}
+td, th {
+    text-align: right;
+    font-size: 18pt;
+    font-family: Arial;
+}
+.not_okay {
+    color: red;
+}
+pre {
+    font-size: 26pt;
+}
+body {
+    margin: .3in;
+    font-size: 18pt;
+    font-family: Arial;
+}
+input, .submit {
+    font-size: 18pt;
+    font-family: Arial;
+}
+.new_words {
+    text-transform: uppercase;
+}
+.over {
+    margin-left: 1in;
+}
+.white {
+    color: white;
+}
+.red1, .red2 {
+    color: red;
+}
+.red2 {
+    font-weight: bold;
+}
+.green {
+    color: green;
+}
+.purple {
+    color: purple;
+}
+.found_words {
+    width: 400px;
+    word-spacing: 10px;
+}
+.submit {
+    background: green;
+    color: white;
+}
+.rank_name {
+    margin-left: .5in;
+}
+.rank9 {
+    font-weight: bold;
+}
+.image_amazing {
+    width: 75px;
+}
+.image_genius {
+    width: 125px;
+}
+.image_queen {
+    width: 175px;
+}
+.link {
+    cursor: pointer;
+    color: blue;
+}
+.lt {
+    text-align: left;
+}
+.rt {
+    text-align: right;
+}
+.cn {
+    text-align: center;
+}
+.rank0 {
+    font-size: 15pt;
+    color: rgb(255, 205, 255);
+}
+.rank1 {
+    font-size: 18pt;
+    color: rgb(255, 195, 255);
+}
+.rank2 {
+    font-size: 21pt;
+    color: rgb(255, 185, 255);
+}
+.rank3 {
+    font-size: 24pt;
+    color: rgb(255, 175, 255);
+}
+.rank4 {
+    font-size: 27pt;
+    color: rgb(255, 165, 255);
+}
+.rank5 {
+    font-size: 30pt;
+    color: rgb(255, 155, 255);
+}
+.rank6 {
+    font-size: 33pt;
+    color: rgb(255, 145, 255);
+}
+.rank7 {
+    font-size: 36pt;
+    color: rgb(255, 135, 255);
+}
+.rank8 {
+    font-size: 39pt;
+    color: rgb(255, 125, 255);
+}
+.rank9 {
+    font-size: 42pt;
+    color: rgb(255, 115, 255);
+}

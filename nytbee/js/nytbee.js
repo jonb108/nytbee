@@ -1,6 +1,21 @@
 function empty(s) {
     return s.trim().length === 0;
 }
+function add_let(c) {
+    document.getElementById('new_words').value += c;
+}
+function del_let() {
+    var el = document.getElementById('new_words');
+    var s = el.value;
+    el.value = s.slice(0, -1);
+}
+function shuffle() {
+    document.getElementById('new_words').value = '';
+    document.getElementById('main').submit();
+}
+function sub_lets() {
+    document.getElementById('main').submit();
+}
 function check_name_location() {
     var name = document.getElementById('name');
     if (empty(name.value)) {

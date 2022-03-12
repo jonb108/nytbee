@@ -179,6 +179,8 @@ my %uuid_ip;
 tie %uuid_ip, 'DB_File', 'uuid_ip.dbm';
 $uuid_ip{$uuid} = $ENV{REMOTE_ADDR} . '|' . $ENV{HTTP_USER_AGENT};
 
+my $mobile = $ENV{HTTP_USER_AGENT} =~ m{iPhone|Android}xms;
+$mobile = 1;
 
 ##############
 my %puzzle;
@@ -286,13 +288,13 @@ close $out;
 
 
 my $show_Heading    = exists $params{show_Heading}?
-                             $params{show_Heading}: 1;
+                             $params{show_Heading}: !$mobile;
 my $show_WordList   = exists $params{show_WordList}?
                              $params{show_WordList}: 1;
 my $show_RankImage  = exists $params{show_RankImage}?
-                             $params{show_RankImage}: 1;
+                             $params{show_RankImage}: !$mobile;
 my $show_ZeroRowCol = exists $params{show_ZeroRowCol}?
-                             $params{show_ZeroRowCol}: 1;
+                             $params{show_ZeroRowCol}: !$mobile;
 
 #
 # SO ... what puzzle is current?
@@ -925,7 +927,7 @@ sub do_reveal {
             $message .= reveal($p, $nlets, $end);
         }
     }
-    elsif (my ($first, $len) = $term =~ m{\A ([a-z])\s*(\d+)}xms) {
+    elsif (my ($first, $len) = $term =~ m{\A ([a-z])(\d+)}xms) {
         if ($first =~ $letter_regex) {
             $message = ul(red($cmd) . ": \U$first\E is not in \U$seven");
             $err = 1;
@@ -941,10 +943,10 @@ sub do_reveal {
             }
         }
     }
-    elsif (length($term) == 2) {
+    else {
         # $term is two letters
         if ($term =~ $letter_regex) {
-            $message = ul(red($cmd) . ": \U$1\E is not in \U$seven");
+            $message = ul(red(uc $cmd) . ": \U$1\E is not in \U$seven");
             $err = 1;
         }
         else {
@@ -952,25 +954,6 @@ sub do_reveal {
                 # silently ignore
             }
             else {
-                $term =~ s{\s}{}xmsg;       # if v2 a b instead of v2ab
-                for my $w (get_words($term)) {
-                    $message .= reveal($w, $nlets, $end);
-                }
-            }
-        }
-    }
-    else {
-        # $term is one letter
-        if ($term =~ $letter_regex) {
-            $message = ul(red($cmd) . ": \U$1\E is not in \U$seven");
-            $err = 1;
-        }
-        else {
-            if ($nlets == 1) {
-                # silently ignore
-            }
-            else {
-                $term =~ s{\s}{}xmsg;       # if v2 a b instead of v2ab
                 for my $w (get_words($term)) {
                     $message .= reveal($w, $nlets, $end);
                 }
@@ -1015,7 +998,7 @@ elsif ($cmd eq 'co') {
 # do we have a reveal command?
 elsif (my ($ev, $nlets, $term)
     = $cmd =~ m{
-        \A ([ev])\s*(\d+)\s*(p|[a-z]|[a-z]\s*\d+|[a-z]\s*[a-z]) \z
+        \A ([ev])\s*(\d+)\s*(p|[a-z]\d+|[a-z][a-z]) \z
       }xms
 ) {
     do_reveal($ev, $nlets, $term);
@@ -1050,7 +1033,7 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     $message = ul(table({ cellpadding => 4}, $rows));
     $cmd = '';
 }
-elsif ($cmd =~ m{\A (d|d[*]) \s*  (p|r|[a-z]\d+|[a-z][a-z]) \z}xms) {
+elsif ($cmd =~ m{\A (d|d[*])(p|r|[a-z]\d+|[a-z][a-z]) \z}xms) {
     my $Dcmd = $1;
     my $term = $2;
     do_define($Dcmd, $term);
@@ -1900,10 +1883,44 @@ if ($hive == 4) {
 EOH
 }
 elsif ($hive == 1) {        # bee hive honeycomb
-    $letters = "<p><img class=img src=$log/nytbee/pics/hive.jpg height=240><p>";
-    $letters .= "<span class='p0 ab'>\U$center\E</span>";
-    for my $i (1 .. 6) {
-        $letters .= "<span class='p$i ab'>$six[$i-1]</span>";
+    if (! $mobile) {
+        $letters = "<p><img class=img src=$log/nytbee/pics/hive.jpg height=240><p>";
+        $letters .= "<span class='p0 ab'>\U$center\E</span>";
+        for my $i (1 .. 6) {
+            $letters .= "<span class='p$i ab'>$six[$i-1]</span>";
+        }
+    }
+    if ($mobile) {
+        $letters = "<p><img usemap='#mapletters' class=img src=$log/nytbee/pics/hive.jpg height=240><p>";
+        $letters .= qq!<span onclick="add_let('$center');" class='p0 ab cursor_black'>\U$center\E</span>!;
+        for my $i (1 .. 6) {
+            $letters .= qq!<span onclick="add_let('$six[$i-1]');" class='p$i ab cursor_black'>$six[$i-1]</span>!;
+        }
+        # enter, permute, delete
+        # positioned absolutely as well
+        $letters .= <<"EOH";
+<map name=mapletters>
+<area shape='poly' href='javascript: add_let("$center")' class=let
+      coords=' 94, 83, 136, 83, 157,120, 136,156,  94,156,  74,120,  94, 83, '>
+<area shape='poly' href='javascript: add_let("$six[0]")' class=let
+      coords=' 94,  2, 136,  2, 157, 39, 136, 75,  94, 75,  74, 39,  94,  2, '>
+<area shape='poly' href='javascript: add_let("$six[1]")' class=let
+      coords=' 25, 42,  67, 42,  88, 79,  67,115,  25,115,   5, 79,  25, 42, '>
+<area shape='poly' href='javascript: add_let("$six[2]")' class=let
+      coords='165, 42, 207, 42, 228, 79, 207,115, 165,115, 145, 79, 165, 42, '>
+<area shape='poly' href='javascript: add_let("$six[3]")' class=let
+      coords=' 25,123,  67,123,  88,160,  67,196,  25,196,   5,160,  25,123, '>
+<area shape='poly' href='javascript: add_let("$six[4]")' class=let
+      coords='165,123, 207,123, 228,160, 207,196, 165,196, 145,160, 165,123, '>
+<area shape='poly' href='javascript: add_let("$six[5]")' class=let
+      coords=' 94,163, 136,163, 157,200, 136,236,  94,236,  74,200,  94,163, '>
+</map>
+EOH
+        $letters .= <<"EOH";
+<span class='enter cursor_black' onclick="sub_lets();">Enter</span>
+<span class='shuffle cursor_black' onclick="shuffle();"><img src='$log/nytbee/pics/cycle.jpg'></span>
+<span class='delete cursor_black' onclick="del_let();">Delete</span>
+EOH
     }
     $let_size = 24;
     $img_left_margin = 37;
@@ -2012,6 +2029,11 @@ if ($tl_chosen && ($show_ZeroRowCol || $sums{1}{1} != 0)) {
 </div>
 EOH
 }
+my $css = $mobile? 'mobile_': '';
+my $new_words_size = $mobile? 30: 40;
+my $enter_top    = 90 + ($show_Heading? 79: 0);
+my $shuffle_top = 135 + ($show_Heading? 79: 0);
+my $delete_top  = 185 + ($show_Heading? 79: 0);
 print <<"EOH";
 <html>
 <head>
@@ -2027,8 +2049,23 @@ print <<"EOH";
     font-size: ${let_size}px;
 }
 $letter_styles
+.enter {
+    position: absolute;
+    left: 350;
+    top: $enter_top;
+}
+.shuffle {
+    position: absolute;
+    left: 350;
+    top: $shuffle_top;
+}
+.delete {
+    position: absolute;
+    left: 350;
+    top: $delete_top;
+}
 </style>
-<link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
+<link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_${css}style.css'/>
 <script src="$log/nytbee/js/nytbee.js"></script>
 </head>
 <body>
@@ -2047,7 +2084,7 @@ $letters
 $message
 <input class=new_words
        type=text
-       size=40
+       size=$new_words_size
        id=new_words
        name=new_words
        autocomplete=off
