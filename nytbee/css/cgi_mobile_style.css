@@ -82,6 +82,7 @@ a.help {
     font-size: 13pt;
 }
 .mess {
+    font-size: 10pt;
     width: 400px;
     word-spacing: 10px;
 }
@@ -102,11 +103,6 @@ a.help {
     margin-left: .3in;
     text-align: right;
 }
-/* .float-child4 {
-    float: left;
-    margin-left: .3in;
-}
-*/
 .float-child5 {
     margin-top: 5mm;
 }
@@ -118,7 +114,8 @@ ul {
     margin-bottom: 0px;
 }
 li {
-    width: 400px;
+    font-size: 10pt;
+    width: 500px;
 }
 td, th {
     text-align: right;
@@ -236,4 +233,7 @@ input, .submit {
 .rank9 {
     font-size: 42pt;
     color: rgb(255, 115, 255);
+}
+.dr {
+    margin-left: .3in;
 }

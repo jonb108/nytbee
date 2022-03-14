@@ -1,20 +1,31 @@
+var lets;
+var nw;
+var main;
+function init() {
+    lets = document.getElementById('letspan');
+    nw   = document.getElementById('new_words');
+    main = document.getElementById('main');
+}
 function empty(s) {
     return s.trim().length === 0;
 }
 function add_let(c) {
-    document.getElementById('new_words').value += c;
+    lets.textContent += c;
 }
 function del_let() {
-    var el = document.getElementById('new_words');
-    var s = el.value;
-    el.value = s.slice(0, -1);
+    lets.textContent = lets.textContent.slice(0, -1);
 }
 function shuffle() {
-    document.getElementById('new_words').value = '';
-    document.getElementById('main').submit();
+    nw.value = '';
+    main.submit();
 }
 function sub_lets() {
-    document.getElementById('main').submit();
+    nw.value = lets.textContent;
+    main.submit();
+}
+function rand_def() {
+    nw.value = 'DR';
+    main.submit();
 }
 function check_name_location() {
     var name = document.getElementById('name');
@@ -32,20 +43,20 @@ function check_name_location() {
     return true;
 }
 function new_date(d) {
-    document.getElementById('new_words').value = d;
-    document.getElementById('main').submit();
+    nw.value = d;
+    main.submit();
 }
 function add_clues() {
     set_focus();
     document.getElementById('add_clues').submit();
 }
 function define_tl(two_let) {
-    document.getElementById('new_words').value = 'D' + two_let;
-    document.getElementById('main').submit();
+    nw.value = 'D' + two_let;
+    main.submit();
 }
 function define_ht(c, n) {
-    document.getElementById('new_words').value = 'D' + c + n;
-    document.getElementById('main').submit();
+    nw.value = 'D' + c + n;
+    main.submit();
 }
 function clues_by(person_id) {
     document.getElementById('person_id').value = person_id;
