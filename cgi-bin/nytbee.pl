@@ -1894,39 +1894,40 @@ EOH
 elsif ($hive == 1) {        # bee hive honeycomb
     if (! $mobile) {
         $letters = "<p><img class=img src=$log/nytbee/pics/hive.jpg height=240><p>";
-        $letters .= "<span class='p0 ab'>\U$center\E</span>";
+        $letters .= "<span class='p0 ab' tabindex=-1>\U$center\E</span>";
         for my $i (1 .. 6) {
-            $letters .= "<span class='p$i ab'>$six[$i-1]</span>";
+            $letters .= "<span class='p$i ab' tabindex=-1>$six[$i-1]</span>";
         }
     }
     if ($mobile) {
         $letters = "<p><img usemap='#mapletters' class=img src=$log/nytbee/pics/hive.jpg height=240><p>";
-        $letters .= qq!<span onclick="add_let('$Center');" class='p0 ab cursor_black'>\U$center\E</span>!;
+        $letters .= qq!<span onclick="add_let('$Center');" class='p0 ab cursor_black' tabindex=-1>\U$center\E</span>!;
         for my $i (1 .. 6) {
-            $letters .= qq!<span onclick="add_let('$six[$i-1]');" class='p$i ab cursor_black'>$six[$i-1]</span>!;
+            $letters .= qq!<span onclick="add_let('$six[$i-1]');" class='p$i ab cursor_black' tabindex=-1>$six[$i-1]</span>!;
         }
         # enter, permute, delete
         # positioned absolutely as well
         $letters .= <<"EOH";
 <map name=mapletters>
-<area shape='poly' href='javascript: add_let("$Center")' class=let
+<area tabindex=-1 shape='poly' href='javascript: add_let("$Center")' class=let
       coords=' 94, 83, 136, 83, 157,120, 136,156,  94,156,  74,120,  94, 83, '>
-<area shape='poly' href='javascript: add_let("$six[0]")' class=let
+<area tabindex=-1 shape='poly' href='javascript: add_let("$six[0]")' class=let
       coords=' 94,  2, 136,  2, 157, 39, 136, 75,  94, 75,  74, 39,  94,  2, '>
-<area shape='poly' href='javascript: add_let("$six[1]")' class=let
+<area tabindex=-1 shape='poly' href='javascript: add_let("$six[1]")' class=let
       coords=' 25, 42,  67, 42,  88, 79,  67,115,  25,115,   5, 79,  25, 42, '>
-<area shape='poly' href='javascript: add_let("$six[2]")' class=let
+<area tabindex=-1 shape='poly' href='javascript: add_let("$six[2]")' class=let
       coords='165, 42, 207, 42, 228, 79, 207,115, 165,115, 145, 79, 165, 42, '>
-<area shape='poly' href='javascript: add_let("$six[3]")' class=let
+<area tabindex=-1 shape='poly' href='javascript: add_let("$six[3]")' class=let
       coords=' 25,123,  67,123,  88,160,  67,196,  25,196,   5,160,  25,123, '>
-<area shape='poly' href='javascript: add_let("$six[4]")' class=let
+<area tabindex=-1 shape='poly' href='javascript: add_let("$six[4]")' class=let
       coords='165,123, 207,123, 228,160, 207,196, 165,196, 145,160, 165,123, '>
-<area shape='poly' href='javascript: add_let("$six[5]")' class=let
+<area tabindex=-1 shape='poly' href='javascript: add_let("$six[5]")' class=let
       coords=' 94,163, 136,163, 157,200, 136,236,  94,236,  74,200,  94,163, '>
 </map>
 EOH
         $letters .= <<"EOH";
 <span class='enter cursor_black' onclick="sub_lets();">Enter</span>
+<span class='define cursor_black' onclick="rand_def();">Define</span>
 <span class=lets id=lets></span>
 <span class='delete cursor_black' onclick="del_let();">Delete</span>
 EOH
@@ -2041,6 +2042,7 @@ EOH
 my $css = $mobile? 'mobile_': '';
 my $new_words_size = $mobile? 30: 40;
 my $enter_top  = 90 + ($show_Heading? 79: 0);
+my $define_top  = 90 + ($show_Heading? 79: 0);
 my $lets_top   = 135 + ($show_Heading? 79: 0);
 my $delete_top = 185 + ($show_Heading? 79: 0);
 print <<"EOH";
@@ -2062,6 +2064,11 @@ $letter_styles
     position: absolute;
     left: 350;
     top: $enter_top;
+}
+.define {
+    position: absolute;
+    left: 450;
+    top: $define_top;
 }
 .lets {
     position: absolute;
