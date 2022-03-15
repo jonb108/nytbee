@@ -1,9 +1,11 @@
 var lets;
 var nw;
+var hnw;
 var main;
 function init() {
-    lets = document.getElementById('letspan');
     nw   = document.getElementById('new_words');
+    hnw  = document.getElementById('hidden_new_words');
+    lets = document.getElementById('lets');
     main = document.getElementById('main');
 }
 function empty(s) {
@@ -20,11 +22,11 @@ function shuffle() {
     main.submit();
 }
 function sub_lets() {
-    nw.value = lets.textContent;
+    hnw.value = lets.textContent;
     main.submit();
 }
 function rand_def() {
-    nw.value = 'DR';
+    hnw.value = 'DR';
     main.submit();
 }
 function check_name_location() {
@@ -43,7 +45,7 @@ function check_name_location() {
     return true;
 }
 function new_date(d) {
-    nw.value = d;
+    hnw.value = d;
     main.submit();
 }
 function add_clues() {
@@ -51,11 +53,11 @@ function add_clues() {
     document.getElementById('add_clues').submit();
 }
 function define_tl(two_let) {
-    nw.value = 'D' + two_let;
+    hnw.value = 'D' + two_let;
     main.submit();
 }
 function define_ht(c, n) {
-    nw.value = 'D' + c + n;
+    hnw.value = 'D' + c + n;
     main.submit();
 }
 function clues_by(person_id) {
@@ -64,7 +66,7 @@ function clues_by(person_id) {
     set_focus();
 }
 function set_focus() {
-    document.form.new_words.focus();
+    nw.focus();
     return true;
 }
 function xyz(s) {

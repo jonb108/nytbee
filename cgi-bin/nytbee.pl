@@ -181,6 +181,13 @@ $uuid_ip{$uuid} = $ENV{REMOTE_ADDR} . '|' . $ENV{HTTP_USER_AGENT};
 
 my $mobile = $ENV{HTTP_USER_AGENT} =~ m{iPhone|Android}xms;
 $mobile = 1;
+my $focus = $mobile? '': 'set_focus();';
+
+#
+# DR
+# no cycle
+# .dr
+#
 
 ##############
 my %puzzle;
@@ -244,6 +251,7 @@ sub my_puzzles {
 
 my $comm_dir = 'community_puzzles';
 my ($seven, $center, @pangrams);
+my $Center;
 my @seven;
 my @ok_words;
 my %clue_for;
@@ -275,7 +283,7 @@ my $message = '';
 # or
 #    hit Return in an empty field when there are no messages to clear
 #
-my $cmd = lc $params{new_words};
+my $cmd = lc($params{hidden_new_words} || $params{new_words});
     # $cmd is all in lower case
     # even though it looks like we are typing upper case...
     #
@@ -538,6 +546,7 @@ if ($date =~ m{\A\d}xms) {
 
     my ($s, $t) = split /[|]/, $puzzle;
     ($seven, $center, @pangrams) = split ' ', $s;
+    $Center = uc $center;
     @seven = split //, $seven;
     @ok_words = split ' ', $t;
     # %clue_for is initialized from the database
@@ -1892,7 +1901,7 @@ elsif ($hive == 1) {        # bee hive honeycomb
     }
     if ($mobile) {
         $letters = "<p><img usemap='#mapletters' class=img src=$log/nytbee/pics/hive.jpg height=240><p>";
-        $letters .= qq!<span onclick="add_let('$center');" class='p0 ab cursor_black'>\U$center\E</span>!;
+        $letters .= qq!<span onclick="add_let('$Center');" class='p0 ab cursor_black'>\U$center\E</span>!;
         for my $i (1 .. 6) {
             $letters .= qq!<span onclick="add_let('$six[$i-1]');" class='p$i ab cursor_black'>$six[$i-1]</span>!;
         }
@@ -1900,7 +1909,7 @@ elsif ($hive == 1) {        # bee hive honeycomb
         # positioned absolutely as well
         $letters .= <<"EOH";
 <map name=mapletters>
-<area shape='poly' href='javascript: add_let("$center")' class=let
+<area shape='poly' href='javascript: add_let("$Center")' class=let
       coords=' 94, 83, 136, 83, 157,120, 136,156,  94,156,  74,120,  94, 83, '>
 <area shape='poly' href='javascript: add_let("$six[0]")' class=let
       coords=' 94,  2, 136,  2, 157, 39, 136, 75,  94, 75,  74, 39,  94,  2, '>
@@ -1918,7 +1927,7 @@ elsif ($hive == 1) {        # bee hive honeycomb
 EOH
         $letters .= <<"EOH";
 <span class='enter cursor_black' onclick="sub_lets();">Enter</span>
-<span class='shuffle cursor_black' onclick="shuffle();"><img src='$log/nytbee/pics/cycle.jpg'></span>
+<span class=lets id=lets></span>
 <span class='delete cursor_black' onclick="del_let();">Delete</span>
 EOH
     }
@@ -2031,9 +2040,9 @@ EOH
 }
 my $css = $mobile? 'mobile_': '';
 my $new_words_size = $mobile? 30: 40;
-my $enter_top    = 90 + ($show_Heading? 79: 0);
-my $shuffle_top = 135 + ($show_Heading? 79: 0);
-my $delete_top  = 185 + ($show_Heading? 79: 0);
+my $enter_top  = 90 + ($show_Heading? 79: 0);
+my $lets_top   = 135 + ($show_Heading? 79: 0);
+my $delete_top = 185 + ($show_Heading? 79: 0);
 print <<"EOH";
 <html>
 <head>
@@ -2054,10 +2063,12 @@ $letter_styles
     left: 350;
     top: $enter_top;
 }
-.shuffle {
+.lets {
     position: absolute;
     left: 350;
-    top: $shuffle_top;
+    top: $lets_top;
+    font-size: 24pt;
+    color: green;
 }
 .delete {
     position: absolute;
@@ -2068,7 +2079,7 @@ $letter_styles
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_${css}style.css'/>
 <script src="$log/nytbee/js/nytbee.js"></script>
 </head>
-<body>
+<body onload='init(); $focus'>
 $heading
 <form id=main name=form method=POST action='$cgi/nytbee.pl'>
 <input type=hidden name=date value='$date'>
@@ -2082,6 +2093,7 @@ $heading
 <input type=hidden name=show_ZeroRowCol value=$show_ZeroRowCol>
 $letters
 $message
+<input type=hidden name=hidden_new_words id=hidden_new_words>
 <input class=new_words
        type=text
        size=$new_words_size
@@ -2096,6 +2108,5 @@ Score: $score $rank_image
 $disp_nhints$hint_table_list
 $show_clue_form$add_clues_form
 </body>
-<script>set_focus();</script>
 </html>
 EOH
