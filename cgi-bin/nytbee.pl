@@ -300,7 +300,7 @@ my $show_Heading    = exists $params{show_Heading}?
 my $show_WordList   = exists $params{show_WordList}?
                              $params{show_WordList}: 1;
 my $show_RankImage  = exists $params{show_RankImage}?
-                             $params{show_RankImage}: !$mobile;
+                             $params{show_RankImage}: 1;
 my $show_ZeroRowCol = exists $params{show_ZeroRowCol}?
                              $params{show_ZeroRowCol}: !$mobile;
 
@@ -1923,6 +1923,7 @@ EOH
 <span class='define cursor_black' onclick="rand_def();">Define</span>
 <span class=lets id=lets></span>
 <span class='delete cursor_black' onclick="del_let();">Delete</span>
+<a class='helplink cursor_black' target=_blank href='$log/nytbee/help.html'">Help</a>
 EOH
     }
     else {
@@ -2045,7 +2046,8 @@ my $new_words_size = $mobile? 30: 40;
 my $enter_top  = 90 + ($show_Heading? 79: 0);
 my $define_top  = 90 + ($show_Heading? 79: 0);
 my $lets_top   = 135 + ($show_Heading? 79: 0);
-my $delete_top = 185 + ($show_Heading? 79: 0);
+my $delete_top = 190 + ($show_Heading? 79: 0);
+my $help_top = 190 + ($show_Heading? 79: 0);
 print <<"EOH";
 <html>
 <head>
@@ -2082,6 +2084,11 @@ $letter_styles
     position: absolute;
     left: 350;
     top: $delete_top;
+}
+.helplink {
+    position: absolute;
+    left: 450;
+    top: $help_top;
 }
 </style>
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_${css}style.css'/>

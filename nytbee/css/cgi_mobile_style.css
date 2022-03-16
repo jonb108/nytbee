@@ -83,7 +83,7 @@ a.help {
 }
 .mess {
     font-size: 14pt;
-    width: 400px;
+    width: 500px;
     word-spacing: 10px;
 }
 .pointer {
@@ -159,7 +159,7 @@ input, .submit {
     color: purple;
 }
 .found_words {
-    width: 400px;
+    width: 500px;
     word-spacing: 10px;
 }
 .submit {
