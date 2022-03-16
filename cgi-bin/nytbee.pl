@@ -180,7 +180,7 @@ tie %uuid_ip, 'DB_File', 'uuid_ip.dbm';
 $uuid_ip{$uuid} = $ENV{REMOTE_ADDR} . '|' . $ENV{HTTP_USER_AGENT};
 
 my $mobile = $ENV{HTTP_USER_AGENT} =~ m{iPhone|Android}xms;
-$mobile = 1;
+#$mobile = 1;
 my $focus = $mobile? '': 'set_focus();';
 
 #
@@ -1892,21 +1892,14 @@ if ($hive == 4) {
 EOH
 }
 elsif ($hive == 1) {        # bee hive honeycomb
-    if (! $mobile) {
-        $letters = "<p><img class=img src=$log/nytbee/pics/hive.jpg height=240><p>";
-        $letters .= "<span class='p0 ab' tabindex=-1>\U$center\E</span>";
-        for my $i (1 .. 6) {
-            $letters .= "<span class='p$i ab' tabindex=-1>$six[$i-1]</span>";
-        }
-    }
     if ($mobile) {
         $letters = "<p><img usemap='#mapletters' class=img src=$log/nytbee/pics/hive.jpg height=240><p>";
         $letters .= qq!<span onclick="add_let('$Center');" class='p0 ab cursor_black' tabindex=-1>\U$center\E</span>!;
         for my $i (1 .. 6) {
             $letters .= qq!<span onclick="add_let('$six[$i-1]');" class='p$i ab cursor_black' tabindex=-1>$six[$i-1]</span>!;
         }
-        # enter, permute, delete
-        # positioned absolutely as well
+        # enter, wordlets, delete, define
+        # all positioned absolutely as well
         $letters .= <<"EOH";
 <map name=mapletters>
 <area tabindex=-1 shape='poly' href='javascript: add_let("$Center")' class=let
@@ -1931,6 +1924,14 @@ EOH
 <span class=lets id=lets></span>
 <span class='delete cursor_black' onclick="del_let();">Delete</span>
 EOH
+    }
+    else {
+        # non-mobile phone...
+        $letters = "<p><img class=img src=$log/nytbee/pics/hive.jpg height=240><p>";
+        $letters .= "<span class='p0 ab' tabindex=-1>\U$center\E</span>";
+        for my $i (1 .. 6) {
+            $letters .= "<span class='p$i ab' tabindex=-1>$six[$i-1]</span>";
+        }
     }
     $let_size = 24;
     $img_left_margin = 37;
