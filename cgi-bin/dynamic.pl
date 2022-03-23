@@ -93,7 +93,8 @@ for my $w (@words) {
     }
 }
 my $nwords = @words;
-my $the_more = $nwords? ' or enter more': 'the';
+my $placeholder = $nwords? 'Paste or or enter more words here'
+                 :         'Paste the words you have found here';
 my $pl_w = $nwords == 1? '': 's';
 my $score = 0;
 for my $w (@words) {
@@ -109,7 +110,7 @@ for my $r (reverse @ranks) {
     }
 }
 my $input = "<input type=text name=words size=45"
-          . " placeholder='Paste $the_more words you have found here'>";
+          . " placeholder='$placeholder'>";
 if ($rank eq 'Queen Bee') {
     $rank = "<span class=twolet>$rank</span>";
     $input = '';
