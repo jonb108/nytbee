@@ -1,0 +1,117 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+my $w = 50;
+my $s = 6;
+my $f = 24;
+
+my $w2 = $w/2;
+my $s2 = $s/2;
+
+my $w1 = sqrt($w**2 - $w2**2);
+my $s1 = sqrt($s**2 - $s2**2);
+
+my $svgx = 4*$w + 2*$s1 + 2*$w2;
+my $svgy = 6*$w1 + 2*$s;
+
+my $OX = $svgx/2;
+my $OY = $svgy/2;
+
+my $svg;
+
+sub do_hex {
+    my ($X, $Y, $C, $color) = @_;
+    
+    my $Ox = $OX + $X;
+    my $Oy = $OY + $Y;
+
+    my $fx = $Ox - $f*0.50;
+    my $fy = $Oy + $f*0.45;
+
+    my @hex = (
+        [ $Ox-$w,  $Oy ],
+        [ $Ox-$w2, $Oy-$w1 ],
+        [ $Ox+$w2, $Oy-$w1 ],
+        [ $Ox+$w,  $Oy ],
+        [ $Ox+$w2, $Oy+$w1 ],
+        [ $Ox-$w2, $Oy+$w1 ],
+    );
+
+    my $points = '';
+    for my $h (@hex) {
+        $points .= "$h->[0],$h->[1],";
+    }
+    print {$svg} <<"EOH";
+<polygon
+    onclick="add_let('$C')"
+    points="$points"
+    fill="$color"
+    style="cursor: pointer;"
+></polygon>
+<text
+    x="$fx"
+    y="$fy"
+    fill="black"
+    onclick="add_let('$C')"
+    style="font-family: Arial; font-size: ${f}pt; cursor: pointer"
+>$C</text>
+EOH
+}
+
+sub init {
+    open $svg, '>', 'svg.html';
+    print {$svg} <<"EOH";
+<html>
+<head>
+<style>
+body {
+    margin-top: .5in;
+    margin-left: .5in;
+}
+.lets {
+    font-family: Arial;
+    font-size: 20pt;
+}
+</style>
+<script>
+var lets;
+function init() {
+    lets = document.getElementById('lets');
+}
+function add_let(c) {
+    lets.textContent += c; 
+}
+</script>
+</head>
+<body>
+<svg
+width="$svgx"
+height="$svgy"
+>
+EOH
+}
+
+sub finis {
+    print {$svg} <<"EOH";
+</svg>
+<p>
+<span class=lets id=lets></span>
+</body>
+</html>
+<script>init();</script>
+EOH
+    close $svg;
+}
+
+my $gray = '#d5d5d5';
+
+init();
+do_hex(              0,             0, 'C', 'lightblue');
+do_hex(              0, -1*(2*$w1+$s), 'D', $gray);
+do_hex(              0,  1*(2*$w1+$s), 'E', $gray);
+do_hex( 1*($w+$w2+$s1),   1*($w1+$s2), 'F', $gray);
+do_hex(-1*($w+$w2+$s1),  -1*($w1+$s2), 'G', $gray);
+do_hex(-1*($w+$w2+$s1),   1*($w1+$s2), 'H', $gray);
+do_hex( 1*($w+$w2+$s1),  -1*($w1+$s2), 'K', $gray);
+finis();
