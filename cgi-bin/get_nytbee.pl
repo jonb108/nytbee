@@ -5,6 +5,9 @@ use warnings;
 use LWP::Simple qw/
     get
 /;
+use BeeUtil qw/
+    ymd
+/;
 
 my $bin = '/home4/logical9/www/cgi-bin';
 my $bee = '/home4/logical9/www/nytbee';
@@ -60,7 +63,7 @@ my $dt = sprintf "%04d%02d%02d", $year, $month, $day;
 $puzzle{$dt} = "$seven $center @pangrams | @words";
 untie %puzzle;
 
-open my $out, '>>', 'cmd_log.txt';
+open my $out, '>>', 'beelog/' . ymd();
 print {$out} "new puzzle for $dt: @pangrams\n";
 close $out;
 

@@ -3,6 +3,7 @@ use warnings;
 package BeeUtil;
 use base 'Exporter';
 our @EXPORT_OK = qw/
+    ymd
     cgi_header
     uniq_chars
     error
@@ -183,6 +184,13 @@ sub get_html {
     my ($url) = @_;
     require LWP::Simple;
     return LWP::Simple::get($url);
+}
+
+sub ymd {
+    my ($day, $month, $year) = (localtime)[3..5];
+    ++$month;
+    $year += 1900;
+    return sprintf "%02d-%02d-%02d", $year, $month, $day;
 }
 
 1;

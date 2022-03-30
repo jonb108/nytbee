@@ -4,6 +4,21 @@ use warnings;
 
 =comment
 
+separate files for each day's log in an log/ directory
+a cgi-bin command to extract statistics from the day's log
+    count of different people using the full vs dynamic grid
+    count of dynamic single words vs multiple words entered
+    locations of unique people (remember them in a DBM file)
+        https://freegeoip.app/csv/$ip
+    total lines
+
+in dynamic.pl if someone enters 5 single words 
+    show them the full application url
+        in a pop up window they have to dismiss
+    and remember you have done that so you don't spam them...
+
+after making a new puzzle show the link to it
+
 ?? Safari:
 try {
     // try to use Clipboard API
@@ -123,6 +138,7 @@ use CGI::Carp qw/
     fatalsToBrowser
 /;
 use BeeUtil qw/
+    ymd
     uniq_chars
     cgi_header
     my_today
@@ -289,7 +305,7 @@ my $cmd = lc($params{hidden_new_words} || $params{new_words});
     #
 $cmd = trim($cmd);
 {
-open my $out, '>>', 'cmd_log.txt';
+open my $out, '>>', 'beelog/' . ymd();
 print {$out} substr($uuid, 0, 5) . " = $cmd\n";
 close $out;
 }

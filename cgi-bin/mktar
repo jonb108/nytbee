@@ -42,7 +42,8 @@ set_uuid.pl \
 osx_usd_words-47.txt \
 word_pangram.pl \
 dynamic.pl \
-rand5.pl
+rand5.pl \
+admin.pl
 
 # these will not change
 #JSON/PP.pm

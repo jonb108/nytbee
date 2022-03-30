@@ -4,6 +4,7 @@ use warnings;
 use CGI;
 my $q = CGI->new();
 use BeeUtil qw/
+    ymd
     cgi_header
     table
     Tr
@@ -16,9 +17,6 @@ use BeeUtil qw/
 /;
 use DB_File;
 my $uuid = cgi_header($q);
-open my $out, '>>', 'cmd_log.txt';
-print {$out} substr($uuid, 0, 5) . " dynamic tables\n";
-close $out;
 #
 # save the uuid and the ip address 
 # so we can know where people are playing from
@@ -58,19 +56,16 @@ my @ranks = (
 );
 
 # prior words
-my %is_found;
 my $prior = $q->param('prior_words');
-if ($q->param('date') eq $today_d8) {
-    # the new puzzle may have been released
-    # while we were in the midst of it here...
-    # in which case we ignore the prior words.
-    %is_found = map { $_ => 1 }
-                split ' ', $prior;
-}
+my %is_found = map { $_ => 1 }
+               split ' ', $prior;
 
 # more words that were pasted in/entered just now
 # get, tidy, lower case, extract, validate, and unduplicate
 my $words = lc $q->param('words') || '';
+open my $out, '>>', 'beelog/' . ymd();
+print {$out} substr($uuid, 0, 5) . " dynamic tables: $words\n";
+close $out;
 $words =~ s{\A .*uou\s+have\s+found\s+\d*\s+words}{}xms;
 $words =~ s{type\s+or\s+click.* \z}{}xms;
 $words =~ s{[^a-z ]}{}xmsg;        # strip stray characters
@@ -237,7 +232,6 @@ function help_win() {
 </script>
 <body>
 EOH
-#print "<span class=date>" . $today->format("%B %e, %Y") . "</span>";
 for my $c (@seven) {
     my $C = uc $c;
     if ($c eq $center) {
@@ -252,7 +246,6 @@ print <<"EOH";
 <p>
 <form action=$cgi/dynamic.pl name=form method=post style="margin-bottom: 0mm">
 $input
-<input type=hidden name=date value="$today_d8">
 <input type=hidden name=prior_words value="@words">
 </form>
 <p>

@@ -2,9 +2,9 @@
 use strict;
 use warnings;
 
-my $w = 50;
-my $s = 6;
-my $f = 24;
+my $w = 70;
+my $s = 8;
+my $f = 28;
 
 my $w2 = $w/2;
 my $s2 = $s/2;
