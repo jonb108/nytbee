@@ -187,10 +187,8 @@ sub get_html {
 }
 
 sub ymd {
-    my ($day, $month, $year) = (localtime)[3..5];
-    ++$month;
-    $year += 1900;
-    return sprintf "%02d-%02d-%02d", $year, $month, $day;
+    my $today = my_today();
+    return $today->format("%Y-%m-%d");
 }
 
 1;

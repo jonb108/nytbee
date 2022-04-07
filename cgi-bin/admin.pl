@@ -16,19 +16,21 @@ my %uid_location;
 tie %uid_location, 'DB_File', 'uid_location.dbm';
 
 my $q = CGI->new();
-print $q->header();
+print $q->header(-charset => 'utf-8');
 my $pi = $q->path_info();
 $pi =~ s{\A /}{}xms;
 my $log;
+my $ymd;
 if ($pi) {
     my $dt = date($pi);
-    if (! open $log, '<', 'beelog/' . $dt->format("%Y-%m-%d")) {
-        print "cannot open log for $pi";
-        exit;
-    }
+    $ymd = $dt->format("%Y-%m-%d");
 }
 else {
-    open $log, '<', 'beelog/' . ymd();
+    $ymd = ymd();
+}
+if (! open $log, '<', "beelog/$ymd") {
+    print "cannot open log for $ymd\n";
+    exit;
 }
 my %uid;
 my $nlines = 0;
@@ -36,7 +38,7 @@ my $ngrid = 0;
 my $nprog = 0;
 while (my $line = <$log>) {
     ++$nlines;
-    if ($line =~ m{dynamic\stable}xms) {
+    if ($line =~ m{dyntab}xms) {
         ++$ngrid;
     }
     elsif ($line =~ m{\s=\s}xms) {
@@ -45,10 +47,22 @@ while (my $line = <$log>) {
     my ($uid) = $line =~ m{\A (\S+)}xms;
     ++$uid{$uid};
 }
+print <<'EOH';
+<style>
+body {
+    font-size: 18pt;
+    margin: .5in;
+}
+.red {
+    color: red;
+}
+</style>
+EOH
+print "$ymd<br>\n";
 print "$nlines lines<br>\n";
 print "$ngrid grid<br>\n";
 print "$nprog prog<br>\n";
-my %locations;
+my @data;
 for my $uid (sort keys %uid) {
     if (! exists $uid_location{$uid}) {
         for my $uuid (keys %uuid_ip) {
@@ -57,19 +71,24 @@ for my $uid (sort keys %uid) {
                 $ip =~ s{[|].*}{}xms;
                 my $s = `curl -s https://freegeoip.app/csv/$ip`;
                 my ($country, $region, $city) = (split ',', $s)[2,4,5];
-                $uid_location{$uid} = "$city, $region";
+                my $ss = "$city, $region";
                 if ($country ne 'United States') {
-                    $uid_location{$uid} .= ", $country";
+                    $ss .= ", $country";
                 }
+                $uid_location{$uid} = $ss;
             }
         }
     }
-    $locations{$uid_location{$uid}} = $uid{$uid};
+    push @data, [ $uid, $uid_location{$uid}, $uid{$uid} ];
 }
-LOC:
-for my $l (sort keys %locations) {
-    if ($l =~ m{\A [ ,]* \z}xms) {
-        next LOC;
+for my $d (sort { $a->[1] cmp $b->[1] } @data) {
+    my $loc = $d->[1];
+    if ($loc =~ m{,.*,}xms) {
+        $loc = "<span class=red>$loc</span>";
     }
-    print "$l = $locations{$l}<br>\n";
+    print "$loc => $d->[2]<br>\n";
+}
+my $prev = (date($ymd)-1)->format("%Y-%m-%d");
+if (-f "beelog/$prev") {
+    print "<a href=https://logicalpoetry.com/cgi-bin/admin.pl/$prev>Previous</a><br>";
 }

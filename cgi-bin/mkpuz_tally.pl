@@ -92,7 +92,7 @@ while (my $bword = <$in2>) {
             if (length $bword == 4) {
                 ++$bfour{$c};
             }
-            $bscore{$c} += word_score($word, $pangram);
+            $bscore{$c} += word_score($bword, $pangram);
         }
     }
 }

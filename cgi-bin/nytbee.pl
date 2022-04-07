@@ -4,6 +4,35 @@ use warnings;
 
 =comment
 
+creating empty community puzzle - with a refresh somehow?
+
+with CO not collapsing
+I still see collapsing of columns but not rows
+
+improve admin.pl - a table id, location, prog, grid, which games
+
+LE ooooooC     use the parameter as the scrambled LEtters
+    for making a nice screenshot (FINDME Y => indemnify)
+    C is center letter, oooooo are the 6 outer letters
+    document it in super power user section
+
+document mobile use, define
+
+admin.pl - show location (even multiple at same location) 
+    with prog/grid tallies
+
+id sahadev108!
+
+    enter "your" id on each device
+        and after each time you clear the cookies
+    can share identities
+    or just switch identities for two people in same house
+        on same machine
+    it saves the previous settings entirely
+
+save game status and history in the database
+    at some interval?  or before clearing the game...
+
 separate files for each day's log in an log/ directory
 a cgi-bin command to extract statistics from the day's log
     count of different people using the full vs dynamic grid
@@ -138,6 +167,7 @@ use CGI::Carp qw/
     fatalsToBrowser
 /;
 use BeeUtil qw/
+JON
     ymd
     uniq_chars
     cgi_header
@@ -578,6 +608,7 @@ else {
     $seven = $cp_href->{seven};
     @seven = split //, $seven;
     $center = $cp_href->{center};
+    $Center = uc $center;
     @pangrams = @{$cp_href->{pangrams}};
     @ok_words = @{$cp_href->{words}};
     %clue_for = %{$cp_href->{clues}};
@@ -1343,6 +1374,21 @@ elsif ($cmd =~ m{\A h \s* ([1-4]) \z}xms) {
     $hive = $1;
     $cmd = '';
 }
+elsif ($cmd =~ m{\A le \s+ (\S{6}) \s* \z}xms) {
+    # $1 is oooooo (all 6 outer letters)
+    my @lets = split //, uc $1;
+    my $six = join '', sort @six;
+    my $new = join '', sort @lets;
+    if ($six ne $new) {
+        $message = "$new != $six";
+        $cmd = '';
+    }
+    else {
+        @six = @lets;
+        @seven_let = (@lets, $Center);
+        $cmd = '';
+    }
+}
 
 # now to prepare the display the words we have found
 # some subset, some order
@@ -1745,7 +1791,7 @@ if ($ht_chosen) {
     push @th, th('&nbsp;');
     LEN:
     for my $l (4 .. $max_len) {
-        if (! $show_ZeroRowCol && $sums{1}{$l} == 0) {
+        if ($sums{1}{$l} == 0 && !$show_ZeroRowCol) {
             next LEN;
         }
         push @th, th("$space$l");
