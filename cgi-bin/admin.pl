@@ -33,23 +33,31 @@ if (! open $log, '<', "beelog/$ymd") {
     exit;
 }
 my %uid;
+my %g_uid;
+my %p_uid;
 my $nlines = 0;
 my $ngrid = 0;
+my $n_single_grid = 0;
 my $nprog = 0;
 LINE:
 while (my $line = <$log>) {
-    ++$nlines;
-    if ($line =~ m{dyntab}xms) {
-        ++$ngrid;
-    }
-    elsif ($line =~ m{\s=\s}xms) {
-        ++$nprog;
-    }
     if ($line =~ m{new\s+puzzle}xms) {
         next LINE;
     }
+    ++$nlines;
     my ($uid) = $line =~ m{\A (\S+)}xms;
     ++$uid{$uid};
+    if ($line =~ m{dyntab}xms) {
+        ++$ngrid;
+        ++$g_uid{$uid};
+        if ($line =~ m{: \s+ [a-z]+ \s* \z}xms) {
+            ++$n_single_grid;
+        }
+    }
+    elsif ($line =~ m{\s=\s}xms) {
+        ++$nprog;
+        ++$p_uid{$uid};
+    }
 }
 print <<'EOH';
 <style>
@@ -65,6 +73,7 @@ EOH
 print "$ymd<br>\n";
 print "$nlines lines<br>\n";
 print "$ngrid grid<br>\n";
+print "$n_single_grid single grid<br>\n";
 print "$nprog prog<br>\n";
 my @data;
 for my $uid (sort keys %uid) {
@@ -83,14 +92,14 @@ for my $uid (sort keys %uid) {
             }
         }
     }
-    push @data, [ $uid, $uid_location{$uid}, $uid{$uid} ];
+    push @data, [ $uid, $uid_location{$uid}, $g_uid{$uid}, $p_uid{$uid} ];
 }
 for my $d (sort { $a->[1] cmp $b->[1] } @data) {
     my $loc = $d->[1];
     if ($loc =~ m{,.*,}xms) {
         $loc = "<span class=red>$loc</span>";
     }
-    print "$loc => $d->[2]<br>\n";
+    print "$loc => g $d->[2] p $d->[3]<br>\n";
 }
 my $prev = (date($ymd)-1)->format("%Y-%m-%d");
 if (-f "beelog/$prev") {
