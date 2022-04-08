@@ -36,6 +36,7 @@ my %uid;
 my $nlines = 0;
 my $ngrid = 0;
 my $nprog = 0;
+LINE:
 while (my $line = <$log>) {
     ++$nlines;
     if ($line =~ m{dyntab}xms) {
@@ -43,6 +44,9 @@ while (my $line = <$log>) {
     }
     elsif ($line =~ m{\s=\s}xms) {
         ++$nprog;
+    }
+    if ($line =~ m{new\s+puzzle}xms) {
+        next LINE;
     }
     my ($uid) = $line =~ m{\A (\S+)}xms;
     ++$uid{$uid};

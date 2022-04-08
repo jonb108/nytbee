@@ -1638,13 +1638,13 @@ my $max_len = 0;
 my %first_char;
 WORD:
 for my $w (@ok_words) {
-    if ($is_found{$w}) {
-        # skip it
-        next WORD;
-    }
     my $l = length($w);
     if ($max_len < $l) {
         $max_len = $l;
+    }
+    if ($is_found{$w}) {
+        # skip it
+        next WORD;
     }
     my $c1 = substr($w, 0, 1);
     ++$first_char{$c1};
