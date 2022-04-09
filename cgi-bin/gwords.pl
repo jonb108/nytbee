@@ -1,14 +1,17 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-use CGI;
-my $q = CGI->new();
-print $q->header();
 
 use BeeUtil qw/
     uniq_chars
     $log
+    ymd
+    cgi_header
 /;
+
+use CGI;
+my $q = CGI->new();
+my $uuid = cgi_header($q);
 
 my $word = lc $q->param('word');
 my $Word = ucfirst $word;
@@ -16,6 +19,11 @@ my $used_word = 0;
 
 my @lets = uniq_chars($word);
 my $center = $q->param('center');
+
+open my $out, '>>', 'beelog/' . ymd();
+print {$out} substr($uuid, 0, 11) . " making puzzle with word '$Word' and center letter \U$center\n";
+close $out;
+
 my $seven = join '', @lets;
 my $regex = qr{[^$seven]}xms;
 print <<"EOH";

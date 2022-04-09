@@ -12,6 +12,7 @@ use BeeUtil qw/
     cgi_header
     trim
     $log
+    ymd
 /;
 use BeeClues qw/
     display_clues
@@ -25,8 +26,8 @@ my $uuid = cgi_header($q);
 
 my $date = $q->param('date');       #  hidden field
 
-open my $out, '>>', 'cmd_log.txt';
-print {$out} substr($uuid, 0, 5) . " mkclues2 $date\n";
+open my $out, '>>', 'beelog/' . ymd();
+print {$out} substr($uuid, 0, 11) . " mkclues2 $date\n";
 close $out;
 
 my $show_date = date($date)->format("%B %e, %Y");

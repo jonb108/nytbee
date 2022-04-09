@@ -14,6 +14,7 @@ use BeeUtil qw/
     td
     $log
     my_today
+    ymd
 /;
 use Date::Simple qw/
     date
@@ -45,8 +46,8 @@ if ($all_words) {
 else {
     $date = $q->param('date');
 }
-open my $out, '>>', 'cmd_log.txt';
-print {$out} substr($uuid, 0, 5) . " mkclues $date\n";
+open my $out, '>>', 'beelog/' . ymd();
+print {$out} substr($uuid, 0, 11) . " mkclues $date\n";
 close $out;
 
 my $puzzle = $puzzle{$date};

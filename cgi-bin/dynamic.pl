@@ -64,7 +64,7 @@ my %is_found = map { $_ => 1 }
 # get, tidy, lower case, extract, validate, and unduplicate
 my $words = lc $q->param('words') || '';
 open my $out, '>>', 'beelog/' . ymd();
-print {$out} substr($uuid, 0, 5) . " dyntab: $words\n";
+print {$out} substr($uuid, 0, 11) . " dyntab: $words\n";
 close $out;
 $words =~ s{\A .*uou\s+have\s+found\s+\d*\s+words}{}xms;
 $words =~ s{type\s+or\s+click.* \z}{}xms;

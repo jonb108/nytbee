@@ -9,6 +9,7 @@ use BeeUtil qw/
     trim
     my_today
     $log
+    ymd
 /;
 use Bee_DBH qw/
     get_person
@@ -49,6 +50,11 @@ for my $k (grep { m! _clue \z!xms } keys %params) {
 }
 my $clues = Dumper(\%clues);
 my $seven = $params{seven};
+
+open my $out, '>>', 'beelog/' . ymd();
+print {$out} substr($uuid, 0, 11) . " getting clues for 7: $seven\n";
+close $out;
+
 my $center = $params{center};
 my $words = $params{words};
 my $pangrams = $params{pangrams};

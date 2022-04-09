@@ -15,6 +15,7 @@ use BeeUtil qw/
     Tr
     td
     $log
+    ymd
 /;
 use Bee_DBH qw/
     $dbh
@@ -31,6 +32,11 @@ my ($person_id, $name, $location) = get_person($uuid);
 
 my $seven = $q->param('seven');
 my $center = $q->param('center');
+
+open my $out, '>>', 'beelog/' . ymd();
+print {$out} substr($uuid, 0, 11) . " asking for clues for puzzle with 7: $seven\n";
+close $out;
+
 my @other_words = split ' ', lc $q->param('other_words');
 my $regex = qr{[^$seven]}xms;
 

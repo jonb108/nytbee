@@ -4,10 +4,10 @@ use warnings;
 
 =comment
 
-creating empty community puzzle - with a refresh somehow?
+add your email address on the screen?
+    info@logicalpoetry.com??
 
-with CO not collapsing
-I still see collapsing of columns but not rows
+creating empty community puzzle - with a refresh somehow?
 
 improve admin.pl - a table id, location, prog, grid, which games
 
@@ -336,7 +336,7 @@ my $cmd = lc($params{hidden_new_words} || $params{new_words});
 $cmd = trim($cmd);
 {
 open my $out, '>>', 'beelog/' . ymd();
-print {$out} substr($uuid, 0, 5) . " = $cmd\n";
+print {$out} substr($uuid, 0, 11) . " = $cmd\n";
 close $out;
 }
 

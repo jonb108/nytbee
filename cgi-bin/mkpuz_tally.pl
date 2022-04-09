@@ -22,11 +22,8 @@ use BeeUtil qw/
     trim
     $log
     cgi_header
+    ymd
 /;
-
-open my $out, '>>', 'cmd_log.txt';
-print {$out} substr($uuid, 0, 5) . " $ENV{REMOTE_ADDR} making a puzzle\n";
-close $out;
 
 print <<"EOH";
 <html>
@@ -42,6 +39,10 @@ my $Word = ucfirst trim $q->param('word');
 if (length $word == 0) {
     error "Missing pangramic word";
 }
+
+open my $out, '>>', 'beelog/' . ymd();
+print {$out} substr($uuid, 0, 11) . " making a puzzle with '$Word'\n";
+close $out;
 
 my @lets = uniq_chars($word);
 if (@lets != 7) {

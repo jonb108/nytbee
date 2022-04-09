@@ -6,6 +6,7 @@ use CGI;
 use BeeUtil qw/
     cgi_header
     $log
+    ymd
 /;
 
 # we will save the name, location, and word => clues
@@ -43,6 +44,10 @@ close $out;
 open my $puz, '>', "community_puzzles/$n.txt";
 print {$puz} Dumper(\%params);
 close $puz;
+
+open my $logout, '>>', 'beelog/' . ymd();
+print {$logout} substr($uuid, 0, 11) . " creating CP$n\n";
+close $logout;
 
 #
 # now save the clues in the database

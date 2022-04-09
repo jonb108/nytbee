@@ -72,9 +72,9 @@ body {
 EOH
 print "$ymd<br>\n";
 print "$nlines lines<br>\n";
+print "$nprog prog<br>\n";
 print "$ngrid grid<br>\n";
 print "$n_single_grid single grid<br>\n";
-print "$nprog prog<br>\n";
 my @data;
 for my $uid (sort keys %uid) {
     if (! exists $uid_location{$uid}) {
