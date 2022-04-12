@@ -38,6 +38,7 @@ my %p_uid;
 my $nlines = 0;
 my $ngrid = 0;
 my $n_single_grid = 0;
+my $n_suggest = 0;
 my $nprog = 0;
 LINE:
 while (my $line = <$log>) {
@@ -52,6 +53,9 @@ while (my $line = <$log>) {
         ++$g_uid{$uid};
         if ($line =~ m{: \s+ [a-z]+ \s* \z}xms) {
             ++$n_single_grid;
+        }
+        elsif ($line =~ m{dyntab\s+suggestion}xms) {
+            ++$n_suggest;
         }
     }
     elsif ($line =~ m{\s=\s}xms) {
@@ -75,6 +79,7 @@ print "$nlines lines<br>\n";
 print "$nprog prog<br>\n";
 print "$ngrid grid<br>\n";
 print "$n_single_grid single grid<br>\n";
+print "$n_suggest grid suggestions<br>\n";
 my @data;
 for my $uid (sort keys %uid) {
     if (! exists $uid_location{$uid}) {

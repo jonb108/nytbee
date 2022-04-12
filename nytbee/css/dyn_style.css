@@ -57,3 +57,12 @@ th {
 .let {
     color: red;
 }
+.suggest {
+    color: green;
+    width: 600px;
+}
+.link {
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+}

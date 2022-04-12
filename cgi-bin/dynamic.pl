@@ -2,7 +2,10 @@
 use strict;
 use warnings;
 use CGI;
-my $q = CGI->new();
+use CGI::Carp qw/
+    warningsToBrowser
+    fatalsToBrowser
+/;
 use BeeUtil qw/
     ymd
     cgi_header
@@ -16,6 +19,12 @@ use BeeUtil qw/
     $log
 /;
 use DB_File;
+use DB_File::Lock;
+use Data::Dumper;
+$Data::Dumper::Indent = 0;
+$Data::Dumper::Terse  = 1;
+
+my $q = CGI->new();
 my $uuid = cgi_header($q);
 #
 # save the uuid and the ip address 
@@ -24,6 +33,10 @@ my $uuid = cgi_header($q);
 my %uuid_ip;
 tie %uuid_ip, 'DB_File', 'uuid_ip.dbm';
 $uuid_ip{$uuid} = $ENV{REMOTE_ADDR} . '|' . $ENV{HTTP_USER_AGENT};
+
+# how often has this person entered a single word?
+my %uuid_single;
+tie %uuid_single, 'DB_File', 'uuid_single.dbm';
 
 my ($hint_table, $two_lets) = ('', '');
 my $today = my_today();
@@ -63,9 +76,6 @@ my %is_found = map { $_ => 1 }
 # more words that were pasted in/entered just now
 # get, tidy, lower case, extract, validate, and unduplicate
 my $words = lc $q->param('words') || '';
-open my $out, '>>', 'beelog/' . ymd();
-print {$out} substr($uuid, 0, 11) . " dyntab: $words\n";
-close $out;
 $words =~ s{\A .*uou\s+have\s+found\s+\d*\s+words}{}xms;
 $words =~ s{type\s+or\s+click.* \z}{}xms;
 $words =~ s{[^a-z ]}{}xmsg;        # strip stray characters
@@ -77,9 +87,11 @@ for my $w (grep { $is_ok_word{$_} }
 }
 my @words = sort keys %is_found;
 my @uwords;
+my $n_pangrams_found = 0;
 for my $w (@words) {
     my $uw = ucfirst $w;
     if ($is_pangram{$w}) {
+        ++$n_pangrams_found;
         my $color = length $w == 7? 'purple': 'green';
         push @uwords, "<span style='color: $color'>$uw</span>";
     }
@@ -97,13 +109,71 @@ for my $w (@words) {
 }
 my $pl_sc = $score == 1? '': 's';
 my $rank = '';
+my $rank_index = 9;
 RANK:
 for my $r (reverse @ranks) {
     if ($score >= $r->{value}) {
         $rank = $r->{name};
         last RANK;
     }
+    --$rank_index;
 }
+my $suggest = '';
+my $new_form = '';
+# a single word?
+if ($words =~ m{\A \s* [a-z]+ \s* \z}xms) {
+    ++$uuid_single{$uuid};
+    if ($uuid_single{$uuid} % 5 == 0) {
+        $suggest = <<'EOH'
+<div class=suggest>
+You are entering single words instead of
+select/copy/pasting words from the NYT app.
+There's another place to play the game that you may find interesting:<p>
+<ul>
+    <span class=link onclick='play();'>https://logicalpoetry.com/nytbee</span>
+</ul>
+<p>
+This place <i>also</i> has a dynamic grid in addition to many
+other ways to get hints.  Click on the link above and
+give it a try!   There is a Help file that explains how it works.
+</div>
+EOH
+    }
+    # update the person's data to have the words found
+    # and HT and TL already entered
+    my %cur_puzzles_store;
+    tie %cur_puzzles_store, 'DB_File::Lock', 'cur_puzzles_store.dbm',
+                            O_CREAT|O_RDWR, 0666, $DB_HASH, 'write';
+    my %cur_puzzles;
+    my $s = $cur_puzzles_store{$uuid};
+    if ($s) {
+        %cur_puzzles = %{ eval $s };
+    }
+    my $all_pg = (@pangrams == $n_pangrams_found)? 1: 0;
+    $cur_puzzles{$today_d8} = "15 $all_pg 1 1 $rank_index $score @words";
+    $cur_puzzles_store{$uuid} = Dumper(\%cur_puzzles);
+    untie %cur_puzzles_store;
+    $new_form = <<"EOH";
+<form id=nytbee
+      target=_blank
+      action='https://logicalpoetry.com/cgi-bin/nytbee.pl'
+      method=POST
+>
+<input type=hidden name=date value='$today_d8'>
+<input type=hidden name=has_message value=0>
+<input type=hidden name=hive value=1>
+<input type=hidden name=show_ZeroRowCol value=0>
+</form>
+EOH
+}
+
+open my $out, '>>', 'beelog/' . ymd();
+print {$out} substr($uuid, 0, 11) . " dyntab: $words\n";
+if ($suggest) {
+    print {$out} substr($uuid, 0, 11) . " dyntab suggestion\n";
+}
+close $out;
+
 my $input = "<input type=text name=words size=45"
           . " placeholder='$placeholder'>";
 if ($rank eq 'Queen Bee') {
@@ -229,6 +299,10 @@ function help_win() {
     window.open('https://logicalpoetry.com/nytbee/dyn_help.html', 'help',
                 'popup=1, width=400, height=470, left=700');
 }
+function play() {
+    var f = document.getElementById('nytbee');
+    f.submit();
+}
 </script>
 <body>
 EOH
@@ -249,12 +323,15 @@ $input
 <input type=hidden name=prior_words value="@words">
 </form>
 <p>
+$suggest
+<p>
 $nwords word$pl_w, $score point$pl_sc, $rank
 <p>
 $hint_table
 <div class=words>
 @uwords
 </div>
+$new_form
 </body>
 </html>
 <script>set_focus();</script>

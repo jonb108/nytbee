@@ -63,9 +63,9 @@ my $dt = sprintf "%04d%02d%02d", $year, $month, $day;
 $puzzle{$dt} = "$seven $center @pangrams | @words";
 untie %puzzle;
 
-open my $out, '>>', 'beelog/' . ymd();
-print {$out} "new puzzle for $dt: @pangrams\n";
-close $out;
+open my $outlog, '>>', 'beelog/' . ymd();
+print {$outlog} "new puzzle for $dt: @pangrams\n";
+close $outlog;
 
 # add the pangrams to nyt_pangrams.html
 # they may be there already
