@@ -8,6 +8,7 @@ cron_jon \
 final_mkpuz.pl \
 get_clues.pl \
 get_nytbee.pl \
+nyt_puzzles.txt \
 indexize \
 de_indexize \
 get_pangrams \
