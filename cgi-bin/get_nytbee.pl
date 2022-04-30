@@ -63,7 +63,7 @@ my $dt = sprintf "%04d%02d%02d", $year, $month, $day;
 $puzzle{$dt} = "$seven $center @pangrams | @words";
 open my $puzzle_out, '>', 'nyt_puzzles.txt';
 for my $dt (sort keys %puzzle) {
-    print {$puzzle_out} "$puzzle{$dt}\n";
+    print {$puzzle_out} "$dt => $puzzle{$dt}\n";
 }
 close $puzzle_out;
 untie %puzzle;
