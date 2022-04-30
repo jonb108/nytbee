@@ -4,6 +4,20 @@ use warnings;
 
 =comment
 
+make Collapse the default and remove CO
+
+allow clicking on letters even if not mobile
+
+why is the response time of pangram haiku puzzles tapping faster?
+
+all the words used in NYT puzzles ...
+    make a list - sorted by length, then alphabetically
+                - sorted alphabetically 
+                - sorted by frequency of use
+    how many times has a word been used?
+    when was a word first used?
+    given a date (like today) which words were used for the FIRST time?
+
 add your email address on the screen?
     info@logicalpoetry.com??
 
@@ -231,8 +245,38 @@ my $focus = $mobile? '': 'set_focus();';
 
 #
 # DR
-# no cycle
-# .dr
+# no cycle - no need for cycle graphic on mobile site
+#       just Enter with blank text field
+# .dr - for absolute placement
+# for define random...
+# LE, DB, use SVG graphics for hexagon - or what pangram haiku does
+#                                      - might be better
+# let Aruna, Navin, Denise know?
+#   maybe they have forgiven?   not exonerated but forgiven?
+# clicking is ok if not mobile
+# describe and show the mobile settings
+# DB or FT? FT = first time
+# DB - which words in current puzzle are debuting?
+# DB abcd - when did abcd debut?
+# DB 4/5/19 - what words debuted on this date?
+# ID sahadev108! explained
+# comment in video section about new commands since
+#   videos were made
+# GAB GP GB4 'G Y' - give up and add to the found list
+# add Karen's site to list of projects
+# add comment about Shun's word analysis
+#   sbsolver.com = linked to from shunn.net
+#   his hints are nice - but you need to switch
+#   to his site.
+#   his grid is also not dynamic...
+#   some cool effects in the grid but no hints
+#       on individual words like reveal or define
+#       nice to click on 2 letter entries and get 3 letter tallies
+# get his early puzzles
+# nytbee.com ends at 7/29/18
+# mine ends at 5/29/18  sbsolver.com goes back further to 5/9/18
+# We are 'toiling in the same field'.
+# Remove the CO command - have it always collapse - like the /bee
 #
 
 ##############
@@ -368,7 +412,7 @@ my $show_ZeroRowCol = exists $params{show_ZeroRowCol}?
 #
 # then there is the path_info - appended to nytbee.pl/ 
 # 
-my $first = date('5/29/18');
+my $first = date('5/9/18');
 my $date;
 my $today = my_today();
 my $new_puzzle = 0;

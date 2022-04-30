@@ -101,7 +101,7 @@ for my $w (@words) {
 }
 my $nwords = @words;
 my $placeholder = $nwords? 'Paste or or enter more words here'
-                 :         'Paste the words you have found here';
+                 :         'Paste words here and hit Return';
 my $pl_w = $nwords == 1? '': 's';
 my $score = 0;
 for my $w (@words) {

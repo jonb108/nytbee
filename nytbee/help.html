@@ -298,7 +298,7 @@ Commands to access the large NY Times <a href=#nyt_archive>Archive</a> of Spelli
 <p>
 <table cellpadding=5>
 <tr><td><span class=cmd>NR</span></td><td>New NYT puzzle from a Random date.</td></tr>
-<tr><td><span class=cmd>&lt;date&gt;</span></td><td>New NYT puzzle from the given date.  You can enter dates in several ways: 10/20/19 or 9/23 (current year) or 15 (current month - but not 1 or 2 for the 1st or 2nd).  Dates must be on or after May 29, 2018.</td></tr>
+<tr><td><span class=cmd>&lt;date&gt;</span></td><td>New NYT puzzle from the given date.  You can enter dates in several ways: 10/20/19 or 9/23 (current year) or 15 (current month - but not 1 or 2 for the 1st or 2nd).  Dates must be on or after May 9, 2018.</td></tr>
 <tr><td><span class=cmd>T</span></td><td>Return to today's NYT puzzle.</td></tr>
 <tr><td><span class=cmd>L</span></td><td>List the current puzzles.  <span class=red>*</span> marks the current puzzle.  <span class=green>p</span> marks puzzles where all pangrams have been found.  You can click on the puzzle date to switch to that puzzle.</td></tr>
 <tr><td><span class=cmd>N</span></td><td>Move to the next puzzle in the list - wrapping from last to first.</td></tr>
@@ -585,7 +585,8 @@ Again, doesn't use NYT words.  It also generates new games.
 <p>
 <a target=nytbee href='https://www.youtube.com/watch?v=E3qIxYZtqbw'>A sequence of 7 videos</a> The functionality of the NYT Spelling Bee is (sort of) replicated in Javascript/HTML/CSS.  The entire process is explained in great (<i>excruciating</i>) detail.
 <h4>A Dynamic Hints Table</h4>
-<a target=nytbee href='http://ljkrakauer.com/LJK/20s/spellingbee.htm'>Spreadsheet for the Hints Table</a> This updates the hint table as words are found.
+<a target=nytbee href='https://worker-bee.io'>Dynamic Hint Table</a> in Javascript - pretty but fragile as it doesn't have the full word list<p>
+<a target=nytbee href='http://ljkrakauer.com/LJK/20s/spellingbee.htm'>Spreadsheet for the Hints Table</a> This updates the hint table as words are found and pasted in.
 <h4>Class Projects</h4>
 <a target=nytbee href='rpi_hw.pdf'>Rensselaer Polytechnic Institute</a>
 Course assignment for CSCI-1200 Data Structures.
@@ -618,9 +619,12 @@ see what words they missed.  Most have annoying ads. &#128542;
 <li><a target=nytbee href=http://nytbee.com>nytbee.com</a>
 by Chris McLeester. This site was the main source for the <a href=#nyt_archive>archive</a>.
 Historical analysis of the puzzles and nice graphs.  No ads &#128077;.
-<li><a target=nytbee href='https://www.shunn.net/bee'>shun.net/bee</a>
+<li><a target=nytbee href='https://www.sbsolver.com'>sbsolver.com</a>
+The source for early NYT Puzzles.
 Optionally shows the table of hints and the 2 letter counts.
+Clever historical analysis of words.
 An entertaining FAQ.
+The ads are very annoying!
 <li><a target=nytbee href='https://hejhej.dev/bee'>hejhej.dev/bee</a>
 Today and yesterday only.  No ads &#128077;.
 <li><a target=nytbee href='https://spellingbeeanswers.com'>spellingbeeanswers.com</a> Pretty formatting but not much else.
@@ -718,7 +722,7 @@ The archive was gathered mostly from
 <a target=nytbee href=https://nytbee.com>nytbee.com</a>.
 It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
-back to May 29, 2018.
+back to May 9, 2018.
 <p>
 Which puzzles from the large archive to play?
 You can get one at random with the <span class=cmd>NR</span> command or you could
