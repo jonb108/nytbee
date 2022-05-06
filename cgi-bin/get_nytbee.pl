@@ -68,9 +68,13 @@ for my $dt (sort keys %puzzle) {
 close $puzzle_out;
 untie %puzzle;
 
+# the various lists
+system("rm ../nytbee/list/*; $bin/regen_list.pl");
+
 open my $outlog, '>>', 'beelog/' . ymd();
 print {$outlog} "new puzzle for $dt: @pangrams\n";
 close $outlog;
+
 
 # add the pangrams to nyt_pangrams.html
 # they may be there already

@@ -132,7 +132,7 @@ sub trim {
 
 sub _attrs {
     my $href = shift;
-    return join ' ',
+    return ' ' . join ' ',
            map { "$_=$href->{$_}" }
            keys %$href;
 }
@@ -146,15 +146,15 @@ sub div {
 }
 sub Tr {
     my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
-    return "<tr $attrs>@_</tr>";
+    return "<tr$attrs>", @_, "</tr>";
 }
 sub th {
     my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
-    return "<th $attrs>@_</th>";
+    return "<th$attrs>@_</th>";
 }
 sub td {
     my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
-    return "<td $attrs>@_</td>";
+    return "<td$attrs>@_</td>";
 }
 sub ul {
     return "<ul>@_</ul>";

@@ -9,6 +9,8 @@ final_mkpuz.pl \
 get_clues.pl \
 get_nytbee.pl \
 nyt_puzzles.txt \
+nytbee_list.pl \
+regen_list.pl \
 indexize \
 de_indexize \
 get_pangrams \

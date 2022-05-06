@@ -10,16 +10,54 @@ allow clicking on letters even if not mobile
 
 why is the response time of pangram haiku puzzles tapping faster?
 
-all the words used in NYT puzzles ...
-    make a list - sorted by length, then alphabetically
-                - sorted alphabetically 
-                - sorted by frequency of use
-    how many times has a word been used?
-    when was a word first used?
-    given a date (like today) which words were used for the FIRST time?
+after creating a puzzle have a link to click on
+    and copy that link to clipboard
+
+does copy to clipboard work on phone?
+
+when Queen Bee is reached - show the ratio #hints/#points
+    to two decimal points
+    and log it 
+    and have a command to show the 
+        progress - table/graph
+    when QueenBee is reached what is the ratio
+    when QB is reached store it in the database
+        words found in order plus first hint, # hints
+    then list all queen bees with stats with QB command
+        by date, click on the date
+
+A new section in the help.html
+    Lists of Words and Puzzles
+    with links
+ALL words
+    word, length, frequency of use, first used
+        dynamic, see if it's fast enough
+    otherwise several files asc, desc, with links to each in heading
+ALL puzzles
+    date with #words, #points, #4letters, #pangrams, bingo?
+at first - make these dynamic and see how fast it is
+    otherwise - make a bunch of files - nah
+
+when using the W commands add a count at the end
+    of the lines in gray - just like the normal display
+
+Bingo is not set properly - c y, i, g y and copy/paste, then i
+
+in /bee link /bee-def add definitions - for an active dynamic grid
+    add to the Help
+
+given a date (like today) which words were used for the FIRST time?
+    'FT', 'FT 4/5/19'
+
+make the nyt_puzzles.txt file downloadable
+    in some order
 
 add your email address on the screen?
     info@logicalpoetry.com??
+    with 'questions?   feedback?' like Karen
+
+add definitions to /bee?
+in the Help - add link to /nytbee
 
 creating empty community puzzle - with a refresh somehow?
 
@@ -277,6 +315,10 @@ my $focus = $mobile? '': 'set_focus();';
 # mine ends at 5/29/18  sbsolver.com goes back further to 5/9/18
 # We are 'toiling in the same field'.
 # Remove the CO command - have it always collapse - like the /bee
+#
+# when solving today's puzzle - recommend a subscription?
+#
+# make the nyt_puzzles.txt file downloadable!
 #
 
 ##############
