@@ -138,15 +138,15 @@ sub _attrs {
 }
 sub table {
     my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
-    return "<table $attrs>@_</table>";
+    return "<table$attrs>@_</table>";
 }
 sub div {
     my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
-    return "<div $attrs>@_</div>";
+    return "<div$attrs>@_</div>";
 }
 sub Tr {
     my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
-    return "<tr$attrs>", @_, "</tr>";
+    return "<tr$attrs>@_</tr>";
 }
 sub th {
     my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';

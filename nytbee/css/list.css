@@ -1,0 +1,44 @@
+body {
+    margin: .5in;
+}
+h1 {
+    font-family: Arial;
+    font-size: 30pt;
+}
+td, th {
+    font-family: Arial;
+}
+th {
+    font-size: 16pt;
+}
+td {
+    font-size: 16pt;
+}
+.lf {
+    text-align: left;
+}
+.rt {
+    text-align: right;
+}
+.cn {
+    text-align: center;
+}
+a {
+    text-decoration: none;
+    color: red;
+}
+.red {
+    color: red;
+}
+.black {
+    color: black;
+}
+.green {
+    color: green;
+}
+.perfect_pg_color {
+    color: purple;
+}
+.pg_color {
+    color: darkgreen;
+}

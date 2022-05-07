@@ -4,6 +4,10 @@ use warnings;
 
 =comment
 
+can redo nytbee_list.pl to generate all the files
+    with a _single_ pass through nyt_puzzles.txt
+count puzzles and words and update help.html
+
 make Collapse the default and remove CO
 
 allow clicking on letters even if not mobile
@@ -219,7 +223,6 @@ use CGI::Carp qw/
     fatalsToBrowser
 /;
 use BeeUtil qw/
-JON
     ymd
     uniq_chars
     cgi_header
