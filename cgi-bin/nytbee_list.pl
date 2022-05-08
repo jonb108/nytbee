@@ -34,6 +34,7 @@ my ($type, $sort, $order);
 sub col_head {
     my ($s) = @_;
     my $t = lc substr($s, 0, 4);
+    $sort =~ s{\A n}{}xms;  # nwords => words
     my $color = $t eq substr($sort, 0, 4)? "green": "black";
     return "<span class=$color>$s</span>";
 }
