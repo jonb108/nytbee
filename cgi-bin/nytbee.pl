@@ -8,6 +8,9 @@ can redo nytbee_list.pl to generate all the files
     with a _single_ pass through nyt_puzzles.txt
 count puzzles and words and update help.html
 
+when creating a puzzle
+    somehow mark words that do NOT have s, re, ing?
+
 make Collapse the default and remove CO
 
 allow clicking on letters even if not mobile
