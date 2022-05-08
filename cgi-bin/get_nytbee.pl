@@ -69,7 +69,7 @@ close $puzzle_out;
 untie %puzzle;
 
 # the various lists
-system("rm ../nytbee/list/*; $bin/regen_list.pl");
+system("$bin/regen_list.pl");
 
 open my $outlog, '>>', 'beelog/' . ymd();
 print {$outlog} "new puzzle for $dt: @pangrams\n";
