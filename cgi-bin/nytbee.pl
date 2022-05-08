@@ -1204,20 +1204,26 @@ elsif ($cmd =~ m{\A (d[*]) \s* ([a-z ]+) \z}xms
     }
     $cmd = '';
 }
-elsif ($cmd =~ m{\A g \s+ y \z}xms) {
-    my @words =
-             map {
-                 $is_pangram{lc $_}? color_pg($_): $_
-             }
-             map { ucfirst }
-             sort
-             grep { !$is_found{$_} }
-             @ok_words;
-    if (@words) {
-        add_hints(@words * 5);
-        $message = "<p class=mess>@words";
+elsif ($cmd =~ m{\A g \s+ yp? \z}xms) {
+    my @words = grep { !$is_found{$_} }
+                @ok_words;
+    if ($cmd =~ /p/) {
+        $cmd = "@words";
+        # as if they typed them...
     }
-    $cmd = '';
+    else {
+        @words = map {
+                     $is_pangram{lc $_}? color_pg($_): $_
+                 }
+                 map { ucfirst }
+                 sort
+                 @words;
+        if (@words) {
+            $message = "<p class=mess>@words";
+        }
+        $cmd = '';
+    }
+    add_hints(@words * 5);
 }
 elsif ($cmd =~ m{\A c \s+ y \z}xms) {
     @found = ();
@@ -1412,7 +1418,22 @@ elsif ($cmd eq 'f') {
     $message = table({ cellpadding => 2}, @rows);
     $cmd = '';
 }
-elsif ($cmd =~ m{\A s \s+ ([a-z]+) \s* \z}xms) {
+elsif ($cmd =~ m{\A ft \s+ ([a-z]+) \z}xms) {
+    my $word = $1;
+    # when did this word first appear?
+    my %first_appeared;
+    tie %first_appeared, 'DB_File', 'first_appeared.dbm';
+    my $dt = $first_appeared{$word};
+    if ($dt) {
+        $message = qq!<span class=link onclick="new_date('$dt');">!
+                 . slash_date($dt)
+                 . '</span>'
+                 ;
+    }
+    untie %first_appeared;
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A s \s+ ([a-z]+) \z}xms) {
     # search the archive for the word
     # we're searching everything after the |
     #
@@ -1486,6 +1507,7 @@ elsif ($cmd =~ m{\A le \s+ (\S{6}) \s* \z}xms) {
 # some subset, some order
 my $order = 0;
 my $same_letters = 0;
+my $first_time = 0;
 my $prefix = '';
 my $pattern = '';
 my $limit = 0;
@@ -1559,6 +1581,10 @@ elsif ($cmd =~ m{\A w \s+ ([a-z]+)}xms) {
 }
 elsif ($cmd eq 'sl') {
     $same_letters = 1;
+    $cmd = '';
+}
+elsif ($cmd eq 'ft') {
+    $first_time = 1;
     $cmd = '';
 }
 
@@ -1694,6 +1720,25 @@ elsif ($same_letters) {
                           "@{$groups{$cs}}"));
     }
     $found_words = table({ cellpadding => 2 }, @rows);
+}
+elsif ($first_time) {
+    my %first_appeared;
+    tie %first_appeared, 'DB_File', 'first_appeared.dbm';
+    my @rows;
+    for my $w (@found) {
+        if ($first_appeared{$w} eq $date) {
+            my $disp_w = $w;
+            if ($is_pangram{$w}) {
+                $disp_w = color_pg(ucfirst $w);
+            }
+            else {
+                $disp_w = ucfirst $w;
+            }
+            push @rows, Tr(td({class => 'lt'}, $disp_w));
+        }
+    }
+    untie %first_appeared;
+    $found_words = ul(table({ cellpadding => 2 }, @rows));
 }
 else {
     for my $w (@words_found) {

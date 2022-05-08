@@ -56,7 +56,7 @@ sub arrows {
 #
 my (@puzzle_rows, @word_rows);
 open my $in, '<', 'nyt_puzzles.txt';
-my (%freq, %first);
+my %freq;
 while (my $line = <$in>) {
     chomp $line;
     my ($s, $t) = split /[|]/, $line;
@@ -86,18 +86,28 @@ while (my $line = <$in>) {
     # type eq 'word'
     for my $w (@words) {
         ++$freq{$w};
-        if (! $first{$w}) {
-            $first{$w} = $date;
-        }
     }
 }
 close $in;
+my $npuzzles = @puzzle_rows;
+my $nwords = keys %freq;
+my $s = read_file("../nytbee/help.html");
+$s =~ s{^\d+ \s+ puzzles \s+ with}
+       {$npuzzles puzzles with}xms;
+$s =~ s{^a \s+ total \s+ of \s+ \d+ \s+ different \s+ words}
+       {a total of $nwords different words}xms;
+write_file("../nytbee/help.html", $s);
+
+my %first_appeared;
+use DB_File;
+tie %first_appeared, 'DB_File', 'first_appeared.dbm';
+
 for my $w (keys %freq) {
     push @word_rows, {
         word   => $w,
         length => length($w),
         freq   => $freq{$w},
-        first  => $first{$w},
+        first  => $first_appeared{$w},
     };
 }
 

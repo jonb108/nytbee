@@ -58,6 +58,9 @@ h4 {
 .cmd {
     color: darkred;
 }
+.ind {
+    text-indent: .3in;
+}
 pre {
     margin-top: 0px;
     color: green;

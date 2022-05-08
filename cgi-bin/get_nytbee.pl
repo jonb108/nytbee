@@ -26,6 +26,7 @@ my ($day, $month, $year) = (localtime())[3 .. 5];
 ++$month;
 $year += 1900;
 my $cur_date = sprintf "%4d-%02d-%02d", $year, $month, $day;
+my $dt8 = sprintf "%04d%02d%02d", $year, $month, $day;
 my $gameData;
 SLEEP_LOOP:
 while (1) {
@@ -45,10 +46,17 @@ my ($validLetters) = $gameData =~ m{ "validLetters": \s* \[ ([^\]]*) \] }xms;
 my $seven = join '', sort $validLetters =~ m{"(.)"}xmsg;
 my ($center) = $gameData =~ m{ "centerLetter": \s* "(.)" }xms;
 
-# pangrams
+# pangrams and dates a word first appeared
 my @pangrams;
+my %first_appeared;
+use DB_File;
+tie %first_appeared, 'DB_File', 'first_appeared.dbm';
+
 WORD:
 for my $w (@words) {
+    if (! $first_appeare{$w}) {
+        $first_appeared{$w} = $dt8;
+    }
     if (length $w < 7) {
         next WORD;
     }
@@ -59,8 +67,7 @@ for my $w (@words) {
     }
 }
 
-my $dt = sprintf "%04d%02d%02d", $year, $month, $day;
-$puzzle{$dt} = "$seven $center @pangrams | @words";
+$puzzle{$dt8} = "$seven $center @pangrams | @words";
 open my $puzzle_out, '>', 'nyt_puzzles.txt';
 for my $dt (sort keys %puzzle) {
     print {$puzzle_out} "$dt => $puzzle{$dt}\n";
@@ -69,10 +76,10 @@ close $puzzle_out;
 untie %puzzle;
 
 # the various lists
-system("$bin/regen_list.pl");
+system("$bin/nytbee_list.pl");
 
 open my $outlog, '>>', 'beelog/' . ymd();
-print {$outlog} "new puzzle for $dt: @pangrams\n";
+print {$outlog} "new puzzle for $dt8: @pangrams\n";
 close $outlog;
 
 
