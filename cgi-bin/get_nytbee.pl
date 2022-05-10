@@ -54,7 +54,7 @@ tie %first_appeared, 'DB_File', 'first_appeared.dbm';
 
 WORD:
 for my $w (@words) {
-    if (! $first_appeare{$w}) {
+    if (! $first_appeared{$w}) {
         $first_appeared{$w} = $dt8;
     }
     if (length $w < 7) {
