@@ -466,7 +466,7 @@ my $today = my_today();
 my $new_puzzle = 0;
 
 # initial guess at what puzzle we are looking at
-$date = substr($q->path_info(), 1);       # no need for the leading /
+$date = uc substr($q->path_info(), 1);    # no need for the leading /
                                           # it is either yyyymmdd or CPx
 if (!$date || $date !~ m{\A \d{8} | CP\d+ \z}xms) {
     $date = $params{date};      # hidden field
@@ -619,13 +619,20 @@ elsif ($cmd =~ m{\A n \s* r \z}xms) {
 elsif (my ($cp_num) = $cmd =~ m{\A c \s* p \s* (\d+) \z}xms) {
     my $fname = "$comm_dir/$cp_num.txt";
     if (! -f $fname) {
-        $message = "$cp_num: No such Community Puzzle";
+        $message = "CP$cp_num: No such Community Puzzle";
         $cmd = 'nooop';
     }
     else {
-        $date = "CP$cp_num";
-        $new_puzzle = 1;
-        $cmd = '';
+        my $cp_href = do $fname;
+        if ($cp_href->{publish} ne 'yes') {
+            $message = "CP$cp_num: No such Community Puzzle";
+            $cmd = 'nooop';
+        }
+        else {
+            $date = "CP$cp_num";
+            $new_puzzle = 1;
+            $cmd = '';
+        }
     }
 }
 elsif ($cmd eq 't') {
@@ -673,14 +680,27 @@ my $show_date;
 my $clues_are_present = '';
 my $cp_href;
 
+sub no_puzzle {
+    my ($p) = @_;
+    print "$p: Sorry, no such puzzle.";
+    exit;
+}
+
 # we have a valid date. either d8 format or CP#
 if ($date =~ m{\A\d}xms) {
     # d8 get the puzzle data from NYT Puzzles
-    $show_date = date($date)->format("%B %e, %Y");
+    $show_date = date($date);
+    if (! $show_date) {
+        no_puzzle $date;
+    }
+    $show_date = $show_date->format("%B %e, %Y");
+    my $puzzle = $puzzle{$date};
+    if (! $puzzle) {
+        no_puzzle $show_date;
+    }
     if ($puzzle_has_clues{$date}) {
         $clues_are_present = " <span class=red2>*</span>";
     }
-    my $puzzle = $puzzle{$date};
 
     my ($s, $t) = split /[|]/, $puzzle;
     ($seven, $center, @pangrams) = split ' ', $s;
@@ -696,7 +716,13 @@ else {
     $show_date = $date;
     my ($n) = $date =~ m{(\d+)}xms;
     my $fname = "$comm_dir/$n.txt";
+    if (! -f $fname) {
+        no_puzzle $date;
+    }
     $cp_href = do $fname;
+    if ($cp_href->{publish} ne 'yes') {
+        no_puzzle $date;
+    }
     $seven = $cp_href->{seven};
     @seven = split //, $seven;
     $center = $cp_href->{center};
@@ -1273,30 +1299,23 @@ elsif ($cmd eq 'sc') {
 }
 elsif (my ($ncp) = $cmd =~ m{\A lcp \s*(\d*) \z}xms) {
     $ncp ||= 5;
-    my $s = `cd community_puzzles; ls -tr1 [0-9]*.txt|tail -$ncp`;
+    my $s = `cd community_puzzles; ls -tr1 [0-9]*.txt`;
     my @rows;
     my $title_row = Tr(th('&nbsp;'),
                        th(''),
                        th({ class => 'lt' }, 'Name'),
                        th({ class => 'lt' }, 'Seven'),
                        th('Center'),
-                       th('Words'),
-                       th('Points'),
-                       th('Pangrams'),
+                       th({ class => 'lt' }, 'Title'),
                     );
     my %is_in_list = map { $_->[0] => 1 } my_puzzles();
+    CP:
     for my $n (sort { $b <=> $a }
                $s =~ m{(\d+)}xmsg
     ) {
         my $href = do "community_puzzles/$n.txt";
-        my @words = @{$href->{words}};
-        my $nwords = @words;
-        my @pangrams = @{$href->{pangrams}};
-        my $npangrams = @pangrams;
-        my %is_pangram = map { $_ => 1 } @pangrams;
-        my $points = 0;
-        for my $w (@words) {
-            $points += word_score($w, $is_pangram{$w});
+        if ($href->{publish} ne 'yes') {
+            next CP;
         }
         my $cpn = "CP$n";
         push @rows, Tr(td({ class => 'rt' },
@@ -1308,10 +1327,11 @@ elsif (my ($ncp) = $cmd =~ m{\A lcp \s*(\d*) \z}xms) {
                        td({ class => 'lt' }, $href->{name}),
                        td({ class => 'lt' }, uc $href->{seven}),
                        td({ class => 'cn' }, uc $href->{center}),
-                       td($nwords),
-                       td($points),
-                       td($npangrams),
+                       td({ class => 'lt' }, $href->{title}),
                     );
+        if (@rows == $ncp) {
+            last CP;
+        }
     }
     if (@rows) {
         $message = table({ cellpadding => 3 }, $title_row, @rows);

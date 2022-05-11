@@ -84,23 +84,44 @@ print <<"EOH";
 <input type=hidden name=created value='$d8'>
 Words: $nwords, Points: $points<br>
 Pangrams: <span class=green>@pangrams</span><p>
-Finally, provide some information about yourself.
+<div style="width: 650px">
+Provide some information about yourself.
+Optionally, add a title and description for your puzzle.
+If you'd like, you can give contact information so
+puzzlers can thank you for your contribution (and ask why a given word
+was or was not included!).
+</div>
 <p>
 <table cellpadding=5>
 
 <tr>
 <th>Name</th>
-<td><input type=text name=name id=name value="$name" size=40></td>
+<td class=left><input type=text name=name id=name value="$name" size=40></td>
 </tr>
 
 <tr>
 <th>Location</th>
-<td><input type=text name=location id=location value="$location" size=40></td>
+<td class=left><input type=text name=location id=location value="$location" size=40></td>
+</tr>
+
+<tr>
+<th>Title</th>
+<td class=left><input type=text name=title id=title size=40></td>
+</tr>
+
+<tr>
+<th valign=top>Description</th>
+<td class=left><textarea name=desc id=desc rows=5 cols=32></textarea></td>
+</tr>
+
+<tr>
+<th>Ready to<br>Publish?</th>
+<td class=left valign=center><input type=checkbox name=publish id=publish value=yes></td>
 </tr>
 
 <tr>
 <th>&nbsp;</th>
-<td style="text-align: left"><button type=submit>Submit</button></td>
+<td class=left><button type=submit>Submit</button></td>
 </tr>
 
 </table>

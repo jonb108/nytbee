@@ -15,6 +15,12 @@ use Bee_DBH qw/
     add_update_person
 /;
 
+use File::Slurp qw/
+    edit_file
+    write_file
+    append_file
+/;
+
 use Data::Dumper;
 $Data::Dumper::Terse  = 1;
 $Data::Dumper::Indent = 0;
@@ -23,6 +29,8 @@ my $q = CGI->new();
 my $uuid = cgi_header($q);
 
 my %params = $q->Vars();
+$params{publish} |= '';   # since unchecked boxes are not sent...
+
 my $person_id = add_update_person($uuid, $params{name}, $params{location});
 $params{person_id} = $person_id;
 $params{uuid} = $uuid;
@@ -32,22 +40,11 @@ $params{words} = [ split ' ', $params{words} ];
 $params{pangrams} = [ split ' ', $params{pangrams} ];
 
 my $dir = 'community_puzzles';
-open my $in, '<', "$dir/last_num.txt";
-my $n = <$in>;
-close $in;
-chomp $n;
-++$n;
-open my $out, '>', "$dir/last_num.txt";
-print {$out} "$n\n";
-close $out;
+my $n;
+edit_file { $n = $_ = $_+1 } "$dir/last_num.txt";
+write_file "$dir/$n.txt", Dumper(\%params);
 
-open my $puz, '>', "community_puzzles/$n.txt";
-print {$puz} Dumper(\%params);
-close $puz;
-
-open my $logout, '>>', 'beelog/' . ymd();
-print {$logout} substr($uuid, 0, 11) . " creating CP$n\n";
-close $logout;
+append_file 'beelog/' . ymd(), substr($uuid, 0, 11) . " creating CP$n\n";
 
 #
 # now save the clues in the database
