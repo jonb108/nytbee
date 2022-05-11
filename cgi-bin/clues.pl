@@ -37,7 +37,8 @@ open my $out, '>>', 'beelog/' . ymd();
 print {$out} substr($uuid, 0, 11) . " asking for clues for puzzle with 7: $seven\n";
 close $out;
 
-my @other_words = split ' ', lc $q->param('other_words');
+my $other = lc $q->param('other_words');
+my @other_words = $other =~ m{([a-z]+)}xmsg;
 my $regex = qr{[^$seven]}xms;
 
 # do these extra words 'qualify'?
@@ -47,7 +48,7 @@ for my $w (@other_words) {
         || $w =~ $regex
         || index($w, $center) < 0
     ) {
-        push @not_okay, $w;
+        push @not_okay, ucfirst $w;
     }
 }
 if (@not_okay) {

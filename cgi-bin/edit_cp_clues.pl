@@ -31,7 +31,8 @@ my $person_id = $cp_href->{person_id};
 
 my $seven = $cp_href->{seven};
 my $center = $cp_href->{center};
-my @other_words = map { lc } split ' ', $q->param('other_words');
+my $other = lc $q->param('other_words');
+my @other_words = $other =~ m{([a-z]+)}xmsg;
 my $regex = qr{[^$seven]}xms;
 
 # do these extra words 'qualify'?
@@ -41,7 +42,7 @@ for my $w (@other_words) {
         || $w =~ $regex
         || index($w, $center) < 0
     ) {
-        push @not_okay, $w;
+        push @not_okay, ucfirst $w;
     }
 }
 if (@not_okay) {
@@ -92,13 +93,15 @@ function cycle(w) {
 </script>
 </head>
 <body>
-<h1>Editing CP$n<br> <span class=step_name>Clues</span></h1>
+<h1>Editing CP$n <span class=step_name>Clues</span></h1>
 Optionally, provide clues for each word.
 $cycle
 You can click on the words to get a dictionary definition.
 You may, instead, wish to give clues that are ambiguous, clever, wordplay &#128522; - like clues for a crossword.
 <p>
-<form name=form action=$log/cgi-bin/edit_cp_final.pl method=POST>
+<form name=form action=$log/cgi-bin/edit_cp_get_clues.pl method=POST>
+<button type=submit>Submit</button>
+<p>
 <input type=hidden name=CPn value='$n'>
 <input type=hidden name=seven value='$seven'>
 <input type=hidden name=center value='$center'>
@@ -130,7 +133,7 @@ for my $w (@ok_words) {
 }
 push @rows, Tr(td('&nbsp'),
                td({ class => 'lt' },
-                  '<button class=submit type=submit>Submit</button>')
+                  '<button type=submit>Submit</button>')
             );
 print table(@rows);
 print <<"EOH";

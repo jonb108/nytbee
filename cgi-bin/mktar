@@ -37,6 +37,7 @@ go \
 dump_dbm \
 edit_cp.pl \
 edit_cp_clues.pl \
+edit_cp_get_clues.pl \
 edit_cp_final.pl \
 cp_del_clues.pl \
 goo10k-47.txt \

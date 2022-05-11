@@ -69,13 +69,32 @@ print <<"EOH";
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
 </head>
 <body>
-Finished. &#128077;<br>
-You have created a Community Puzzle to share with the HiveMind.
+You have created Community Puzzle #$n.
+EOH
+if (! $params{publish}) {
+    print <<"EOH";
 <p>
-Your puzzle is #$n.<br>
-You will use the <span class=cmd>CP$n</span> command to open it.
+It is not yet ready to share with the HiveMind.
 <p>
-You can now close this window.
+To make it available enter 'YCP', choose this puzzle,<br>
+edit it, finalize the words, clues, and title/description<br>
+and then check 'Ready to Publish'.
+<p>
+You can close this window.
+EOH
+}
+else {
+    print <<"EOH";
+<p>
+You will use the <span class=cmd>CP$n</span> command to open it.<br>
+<p>
+You can also open it with this link which you can share:
+<ul>
+    <a href='$log/cgi-bin/nytbee.pl/CP$n'>$log/cgi-bin/nytbee.pl/CP$n</a>
+</ul>
+EOH
+}
+print <<'EOH';
 </body>
 </html>
 EOH

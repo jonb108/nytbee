@@ -4,6 +4,16 @@ use warnings;
 
 =comment
 
+-------
+TODO:
+update help.html about title, description, publish, #, I, lcp
+    add # command (# of words, etc for CP and alias for I for NYT)
+    update the I command - to show the title, description for CP
+        and show the #s for NYT
+edit CP - to change title, description, publish
+    edit_cp_clues.pl
+-------
+
 can redo nytbee_list.pl to generate all the files
     with a _single_ pass through nyt_puzzles.txt
 count puzzles and words and update help.html

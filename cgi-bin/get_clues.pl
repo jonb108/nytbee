@@ -111,7 +111,7 @@ was or was not included!).
 
 <tr>
 <th valign=top>Description</th>
-<td class=left><textarea name=desc id=desc rows=5 cols=32></textarea></td>
+<td class=left><textarea name=description id=description rows=5 cols=32></textarea></td>
 </tr>
 
 <tr>

@@ -1,79 +1,49 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-use CGI;
-my $q = CGI->new();
-print $q->header();
 
+use CGI;
 use BeeUtil qw/
-    my_today
+    cgi_header
     $log
+    ymd
 /;
 
-my %params = $q->Vars();
-
-my $CPn = $params{CPn};
-my $fname = "community_puzzles/$CPn.txt";
-my $href = do $fname;
-# and now replace $href->{words}
-#                 $href->{clues}
-#                 $href->{pangrams}
-#             and $href->{created}
-# all else is the same
-$href->{created}  = my_today->as_d8();
-$href->{words}    = [ split ' ', $params{words}    ];
-$href->{pangrams} = [ split ' ', $params{pangrams} ];
-
-# for clearing and inserting clues in bee_clue
-my $person_id = $href->{person_id};
-my $date = "CP$CPn";
-
+# we will save the name, location
 use Bee_DBH qw/
     $dbh
+    add_update_person
 /;
-my $sth_clear_clues = $dbh->prepare(<<'EOS');
 
-    DELETE
-      FROM bee_clue
-     WHERE person_id = ?
-       AND date = ?
-
-EOS
-$sth_clear_clues->execute($person_id, $date);
-
-my $sth_ins = $dbh->prepare(<<'EOS');
-
-    INSERT
-      INTO bee_clue
-           (person_id, date, word, clue)
-    VALUES (?, ?, ?, ?)
-
-EOS
-
-my %clues;
-CLUE:
-for my $k (grep { m! _clue \z!xms } keys %params) {
-    my $word = $k;
-    $word =~ s{_clue\z}{}xms;
-    my $clue = $params{$k};
-    $clue =~ s{"}{'}xmsg;       # double quote is troublesome
-                                # so just convert to single
-                                # use HTML::Entities?
-    if ($clue !~ m{\S}xms) {
-        # no clue
-        next CLUE;
-    }
-    $sth_ins->execute($person_id, $date, $word, ucfirst $clue);
-    $clues{$word} = $clue;
-}
-$href->{clues} = \%clues;
+use File::Slurp qw/
+    write_file
+    append_file
+/;
 
 use Data::Dumper;
 $Data::Dumper::Terse  = 1;
 $Data::Dumper::Indent = 0;
-open my $out, '>', $fname;
-print {$out} Dumper($href);
-close $out;
+
+my $q = CGI->new();
+my $uuid = cgi_header($q);
+
+my %params = $q->Vars();
+$params{publish} |= '';   # since unchecked boxes are not sent...
+
+my $n = $params{CPn};
+
+my $dir = 'community_puzzles';
+my $href = do "$dir/$n.txt";
+
+# save a possibly different name and location in the database
+add_update_person($uuid, $params{name}, $params{location});
+
+for my $f (qw/ name location title description publish /) {
+    $href->{$f} = $params{$f};
+}
+
+write_file "$dir/$n.txt", Dumper($href);
+append_file 'beelog/' . ymd(), substr($uuid, 0, 11) . " edited CP$n\n";
 
 print <<"EOH";
 <html>
@@ -81,8 +51,28 @@ print <<"EOH";
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
 </head>
 <body>
-Finished editing CP$CPn.
+You have edited your Community Puzzle #$n.
+EOH
+if (! $href->{publish}) {
+    print <<"EOH";
+<p>
+It is not yet ready to share with the HiveMind.
+<p>
 You can close this window.
+EOH
+}
+else {
+    print <<"EOH";
+<p>
+You will use the <span class=cmd>CP$n</span> command to open it.<br>
+<p>
+You can also open it with this link which you can share:
+<ul>
+    <a href='$log/cgi-bin/nytbee.pl/CP$n'>$log/cgi-bin/nytbee.pl/CP$n</a>
+</ul>
+EOH
+}
+print <<'EOH';
 </body>
 </html>
 EOH
