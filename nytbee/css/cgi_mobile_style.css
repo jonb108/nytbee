@@ -7,6 +7,10 @@ body {
     margin-top: .2in;
     width: 550px;
 }
+.description2 {
+    margin-top: .2in;
+    width: 700px;
+}
 .copied {
     font-size: 13pt;
     color: green;

@@ -12,6 +12,14 @@ update help.html about title, description, publish, #, I, lcp
         and show the #s for NYT
 edit CP - to change title, description, publish
     edit_cp_clues.pl
+
+Now that we have lots of community puzzles we are
+    accumulating lots of crappy puzzles.
+    Do we need to introduce a way of recommending a puzzle
+    and have a way of listing the puzzles in order of the
+    number of recommendations? :)
+
+    OR I can mark games as worthy...
 -------
 
 can redo nytbee_list.pl to generate all the files
@@ -403,7 +411,13 @@ sub cp_message {
         $mess .= "$cp_href->{title}";
     }
     if ($cp_href->{description}) {
-        $mess .= "<p>$cp_href->{description}";
+        my $s = $cp_href->{description};
+        $s =~ s{[<][^>]*[>]}{}xms;  # no HTML tags, please
+        $s =~ s{\n\n}{<p>}xms;
+        $s =~ s{[*](\S+)[*]}{<b>$1</b>}xms;
+        $s =~ s{[_](\S+)[_]}{<u>$1</u>}xms;
+        $s =~ s{(\S+@[a-z.]+)}{<a href="mailto:$1">$1</a>}xmsi;
+        $mess .= "<p>$s";
     }
     if ($mess) {
         $mess = "<div class=description>$mess</div>";
@@ -1322,8 +1336,12 @@ elsif ($cmd eq 'sc') {
     $message .= "<p> $more more word$pl to find";
     $cmd = '';
 }
-elsif (my ($ncp) = $cmd =~ m{\A lcp \s*(\d*) \z}xms) {
-    $ncp ||= 5;
+elsif (my ($pat) = $cmd =~ m{\A lcp \s*(\S*) \z}xms) {
+    my $max = 5;
+    if ($pat =~ m{\A (\d+) \z}xms) {
+        $max = $pat;
+        $pat = '';
+    }
     my $s = `cd community_puzzles; ls -tr1 [0-9]*.txt`;
     my @rows;
     my $title_row = Tr(th('&nbsp;'),
@@ -1342,6 +1360,9 @@ elsif (my ($ncp) = $cmd =~ m{\A lcp \s*(\d*) \z}xms) {
         if ($href->{publish} ne 'yes') {
             next CP;
         }
+        if ($pat && $href->{name} !~ m{$pat}xmsi) {
+            next CP;
+        }
         my $cpn = "CP$n";
         push @rows, Tr(td({ class => 'rt' },
                           qq!<span class=link onclick="new_date('$cpn');">!
@@ -1354,7 +1375,7 @@ elsif (my ($ncp) = $cmd =~ m{\A lcp \s*(\d*) \z}xms) {
                        td({ class => 'cn' }, uc $href->{center}),
                        td({ class => 'lt' }, $href->{title}),
                     );
-        if (@rows == $ncp) {
+        if (@rows >= $max) {
             last CP;
         }
     }

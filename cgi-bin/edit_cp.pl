@@ -39,11 +39,15 @@ print <<"EOH";
 </head>
 <body>
 <h1>Editing CP$n <span class=step_name>Words</span></h1>
-For the seven letters <span class=center>\U$seven\E</span> and center letter <span class=center>\U$center\E</span> we have identified the qualified words AND the words you chose before.
+<div class=description2>
+For the seven letters <span class=center>\U$seven\E</span> and
+center letter <span class=center>\U$center\E</span>
+we have identified the words you chose before AND the other
+qualified words.
 <p>
 Check the words you want to include in the puzzle and press Submit.  Make sure you include at least one pangram. They are colored <span class=red>red</span>.
-
 <p>
+</div>
 <form action=$log/cgi-bin/edit_cp_clues.pl method=POST>
 <input type=hidden name=CPn value=$n>
 <h2>Qualified words used in previous NYT Bee Puzzles:</h2>
@@ -78,7 +82,10 @@ while (my $line = <$in>) {
 close $in;
 print <<'EOH';
 <h2>More words (qualified but some are rare and esoteric):</h2>
+<div class=description2>
 Surprisingly, there are many common ordinary words that have not yet been used in any of the NYT puzzles.
+</div>
+<p>
 <button type=submit>Submit</button>
 <p>
 EOH

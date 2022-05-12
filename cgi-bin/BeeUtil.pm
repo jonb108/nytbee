@@ -6,6 +6,7 @@ our @EXPORT_OK = qw/
     ymd
     cgi_header
     uniq_chars
+    uniq_words
     error
     word_score
     trim
@@ -93,6 +94,11 @@ sub uniq_chars {
     my %seen;
     my @chars = sort grep { !$seen{$_}++; } split //, $word;
     return @chars;
+}
+
+sub uniq_words {
+    my %seen;
+    return grep { !$seen{$_}++ } @_;
 }
 
 sub error {

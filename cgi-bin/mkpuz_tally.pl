@@ -111,8 +111,10 @@ print <<"EOH";
 The pangramic word is: <span class=word>$Word</span>
 <p>
 $msg
+<div class=description2>
 For each of the 7 unique letters in the word we have done tallies of 'qualified' words.
 A qualified word is one that:
+<p>
 <ul>
 <li>includes the center letter
 <li>is at least 4 letters long
@@ -121,6 +123,7 @@ A qualified word is one that:
 <p>
 Use the tallies to decide which letter should be the center one.
 Then click on one of the center letters in the table below.
+</div>
 <p>
 <h2>Qualified words that have been used in the NYT Puzzle:</h2>
 <p>

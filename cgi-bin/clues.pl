@@ -10,6 +10,7 @@ use CGI::Carp qw/
 use BeeUtil qw/
     cgi_header
     uniq_chars
+    uniq_words
     error
     table
     Tr
@@ -38,7 +39,8 @@ print {$out} substr($uuid, 0, 11) . " asking for clues for puzzle with 7: $seven
 close $out;
 
 my $other = lc $q->param('other_words');
-my @other_words = $other =~ m{([a-z]+)}xmsg;
+my %seen;
+my @other_words = uniq_words $other =~ m{([a-z]+)}xmsg;
 my $regex = qr{[^$seven]}xms;
 
 # do these extra words 'qualify'?
@@ -56,7 +58,9 @@ if (@not_okay) {
         . join('', map { "$_<br>\n" } @not_okay)
         . "</ul>\n";
 }
-my @ok_words = sort $q->param('ok'), @other_words;
+my @ok_words = uniq_words $q->param('ok'), @other_words;
+@ok_words = sort @ok_words;
+
 # is there at least one pangram?
 my @pangrams;
 for my $w (@ok_words) {
@@ -112,9 +116,11 @@ $cycle_function
 <body>
 <h1>Creating a<br>Community Puzzle<br>Step <span class=red>4</span> <span class=step_name>Clues</span></h1>
 Optionally, provide clues for each word.
+<div class=description2>
 $prior_clues
 You can click on the words to get a dictionary definition.
 You may, instead, wish to give clues that are ambiguous, clever, wordplay &#128522; - like clues for a crossword.
+</div>
 <p>
 <form name=form action=$log/cgi-bin/get_clues.pl method=POST>
 <input type=hidden name=seven value='$seven'>

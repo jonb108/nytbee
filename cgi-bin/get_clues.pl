@@ -84,7 +84,7 @@ print <<"EOH";
 <input type=hidden name=created value='$d8'>
 Words: $nwords, Points: $points<br>
 Pangrams: <span class=green>@pangrams</span><p>
-<div style="width: 650px">
+<div class=description2>
 Provide some information about yourself.
 Optionally, add a title and description for your puzzle.
 If you'd like, you can give contact information so

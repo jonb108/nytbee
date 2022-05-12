@@ -57,8 +57,6 @@ if (! $href->{publish}) {
     print <<"EOH";
 <p>
 It is not yet ready to share with the HiveMind.
-<p>
-You can close this window.
 EOH
 }
 else {
@@ -73,6 +71,8 @@ You can also open it with this link which you can share:
 EOH
 }
 print <<'EOH';
+<p>
+You can close this window.
 </body>
 </html>
 EOH

@@ -79,8 +79,6 @@ It is not yet ready to share with the HiveMind.
 To make it available enter 'YCP', choose this puzzle,<br>
 edit it, finalize the words, clues, and title/description<br>
 and then check 'Ready to Publish'.
-<p>
-You can close this window.
 EOH
 }
 else {
@@ -95,6 +93,8 @@ You can also open it with this link which you can share:
 EOH
 }
 print <<'EOH';
+<p>
+You can close this window.
 </body>
 </html>
 EOH

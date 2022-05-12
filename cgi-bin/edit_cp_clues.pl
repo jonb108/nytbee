@@ -12,6 +12,7 @@ use CGI::Carp qw/
 
 use BeeUtil qw/
     uniq_chars
+    uniq_words
     error
     table
     Tr
@@ -32,7 +33,7 @@ my $person_id = $cp_href->{person_id};
 my $seven = $cp_href->{seven};
 my $center = $cp_href->{center};
 my $other = lc $q->param('other_words');
-my @other_words = $other =~ m{([a-z]+)}xmsg;
+my @other_words = uniq_words $other =~ m{([a-z]+)}xmsg;
 my $regex = qr{[^$seven]}xms;
 
 # do these extra words 'qualify'?
@@ -50,7 +51,8 @@ if (@not_okay) {
         . join('', map { "$_<br>\n" } @not_okay)
         . "</ul>\n";
 }
-my @ok_words = sort $q->param('ok'), @other_words;
+my @ok_words = uniq_words $q->param('ok'), @other_words;
+@ok_words = sort @ok_words;
 # is there at least one pangram?
 my @pangrams;
 for my $w (@ok_words) {
@@ -94,10 +96,12 @@ function cycle(w) {
 </head>
 <body>
 <h1>Editing CP$n <span class=step_name>Clues</span></h1>
+<div class=description2>
 Optionally, provide clues for each word.
 $cycle
 You can click on the words to get a dictionary definition.
 You may, instead, wish to give clues that are ambiguous, clever, wordplay &#128522; - like clues for a crossword.
+</div>
 <p>
 <form name=form action=$log/cgi-bin/edit_cp_get_clues.pl method=POST>
 <button type=submit>Submit</button>
