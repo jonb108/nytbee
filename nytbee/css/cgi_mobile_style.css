@@ -3,6 +3,10 @@ body {
     margin: .5in;
     font-size: 18pt;
 }
+.description {
+    margin-top: .2in;
+    width: 550px;
+}
 .copied {
     font-size: 13pt;
     color: green;

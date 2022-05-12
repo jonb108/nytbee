@@ -396,6 +396,20 @@ sub my_puzzles {
     keys %cur_puzzles;
 }
 
+sub cp_message {
+    my ($cp_href) = @_;
+    my $mess = '';
+    if ($cp_href->{title}) {
+        $mess .= "$cp_href->{title}";
+    }
+    if ($cp_href->{description}) {
+        $mess .= "<p>$cp_href->{description}";
+    }
+    if ($mess) {
+        $mess = "<div class=description>$mess</div>";
+    }
+    return $mess;
+}
 
 my $comm_dir = 'community_puzzles';
 my ($seven, $center, @pangrams);
@@ -640,6 +654,7 @@ elsif (my ($cp_num) = $cmd =~ m{\A c \s* p \s* (\d+) \z}xms) {
         }
         else {
             $date = "CP$cp_num";
+            $message = cp_message($cp_href);
             $new_puzzle = 1;
             $cmd = '';
         }
@@ -1898,6 +1913,7 @@ if ($cmd eq 'i') {
 <span class=pointer style='color: blue' onclick='clues_by(0)'>$cp_href->{name}</span>, $cp_href->{location}<br>
 EOH
         $message .= "<br>Community Puzzle #$n - $created<br>Created by $s";
+        $message .= cp_message($cp_href);
         $need_show_clue_form = 1;
     }
     else {
