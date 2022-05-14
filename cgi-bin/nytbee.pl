@@ -277,6 +277,10 @@ use Data::Dumper qw/
 /;
 $Data::Dumper::Indent = 0;
 $Data::Dumper::Terse  = 1;
+use File::Slurp qw/
+    append_file
+    write_file
+/;
 
 my $q = CGI->new();
 my $hive = $q->param('hive') || $q->cookie('hive') || 1;
@@ -405,7 +409,7 @@ sub my_puzzles {
 }
 
 sub cp_message {
-    my ($cp_href) = @_;
+    my ($cp_href, $n) = @_;
     my $mess = '';
     if ($cp_href->{title}) {
         $mess .= "$cp_href->{title}";
@@ -416,13 +420,21 @@ sub cp_message {
         $s =~ s{\n\n}{<p>}xms;
         $s =~ s{[*](\S+)[*]}{<b>$1</b>}xms;
         $s =~ s{[_](\S+)[_]}{<u>$1</u>}xms;
-        $s =~ s{(\S+@[a-z.]+)}{<a href="mailto:$1">$1</a>}xmsi;
+        $s =~ s{(\S+@[a-z.]+)}{<a href="mailto:$1?subject=CP$n">$1</a>}xmsi;
         $mess .= "<p>$s";
     }
     if ($mess) {
         $mess = "<div class=description>$mess</div>";
     }
     return $mess;
+}
+
+sub puzzle_class {
+    my ($n) = @_;
+    return $n < 25? 'Small'
+          :$n < 50? 'Medium'
+          :$n < 75? 'Large'
+          :         'Jumbo';
 }
 
 my $comm_dir = 'community_puzzles';
@@ -444,7 +456,7 @@ my $message = '';
 # This is Very confusing, hacky, kludgy, and messy.
 # Thorough testing is critical!
 #
-# content of $params{new_words}:
+# content of $params{new_words} => $cmd
 #
 # NR random puzzle
 # 2/23/19
@@ -464,12 +476,7 @@ my $cmd = lc($params{hidden_new_words} || $params{new_words});
     # even though it looks like we are typing upper case...
     #
 $cmd = trim($cmd);
-{
-open my $out, '>>', 'beelog/' . ymd();
-print {$out} substr($uuid, 0, 11) . " = $cmd\n";
-close $out;
-}
-
+append_file 'beelog/' . ymd(), substr($uuid, 0, 11) . " = $cmd\n";
 
 my $show_Heading    = exists $params{show_Heading}?
                              $params{show_Heading}: !$mobile;
@@ -503,9 +510,10 @@ my $date;
 my $today = my_today();
 my $new_puzzle = 0;
 
+my $path_info = uc substr $q->path_info(), 1;   # no need for the leading /
+                                                # it is either yyyymmdd or CPx
 # initial guess at what puzzle we are looking at
-$date = uc substr($q->path_info(), 1);    # no need for the leading /
-                                          # it is either yyyymmdd or CPx
+$date = $path_info;
 if (!$date || $date !~ m{\A \d{8} | CP\d+ \z}xms) {
     $date = $params{date};      # hidden field
 }
@@ -606,7 +614,7 @@ elsif ($cmd eq 'xa') {
 }
 elsif (my ($ncp) = $cmd =~ m{\A xcp \s* (\d+) \z}xms) {
     # did the current user create CP$ncp?
-    my $fname = "community_puzzles/$ncp.txt";
+    my $fname = "$comm_dir/$ncp.txt";
     if (! -f $fname) {
         $message = "CP$ncp: No such Community Puzzle";
     }
@@ -654,7 +662,7 @@ elsif ($cmd =~ m{\A n \s* r \z}xms) {
     $new_puzzle = 1;
     $cmd = '';
 }
-elsif (my ($cp_num) = $cmd =~ m{\A c \s* p \s* (\d+) \z}xms) {
+elsif (my ($cp_num) = $cmd =~ m{\A cp \s* (\d+) \z}xms) {
     my $fname = "$comm_dir/$cp_num.txt";
     if (! -f $fname) {
         $message = "CP$cp_num: No such Community Puzzle";
@@ -668,7 +676,7 @@ elsif (my ($cp_num) = $cmd =~ m{\A c \s* p \s* (\d+) \z}xms) {
         }
         else {
             $date = "CP$cp_num";
-            $message = cp_message($cp_href);
+            $message = cp_message($cp_href, $cp_num);
             $new_puzzle = 1;
             $cmd = '';
         }
@@ -713,6 +721,15 @@ elsif ($cmd ne '1' && $cmd ne '2'
         $message = "Illegal date: $new_date";
         $cmd = 'nooop';
     }
+}
+
+# hack... :(
+if (! $message && $path_info =~ m{cp(\d+)}xmsi) {
+    my $n = $1;
+    my $fname = "$comm_dir/$n.txt";
+    my $cp_href = do $fname;
+    $message .= cp_message($cp_href, $n);
+    $cmd = '';
 }
 
 my $show_date;
@@ -1342,7 +1359,10 @@ elsif (my ($pat) = $cmd =~ m{\A lcp \s*(\S*) \z}xms) {
         $max = $pat;
         $pat = '';
     }
-    my $s = `cd community_puzzles; ls -tr1 [0-9]*.txt`;
+    elsif ($pat) {
+        $max = 9999;
+    }
+    my $s = `cd $comm_dir; ls -tr1 [0-9]*.txt`;
     my @rows;
     my $title_row = Tr(th('&nbsp;'),
                        th(''),
@@ -1356,7 +1376,7 @@ elsif (my ($pat) = $cmd =~ m{\A lcp \s*(\S*) \z}xms) {
     for my $n (sort { $b <=> $a }
                $s =~ m{(\d+)}xmsg
     ) {
-        my $href = do "community_puzzles/$n.txt";
+        my $href = do "$comm_dir/$n.txt";
         if ($href->{publish} ne 'yes') {
             next CP;
         }
@@ -1385,12 +1405,12 @@ elsif (my ($pat) = $cmd =~ m{\A lcp \s*(\S*) \z}xms) {
     $cmd = '';
 }
 elsif ($cmd eq 'ycp') {
-    my $s = `cd community_puzzles; grep -l '$uuid' *.txt`;
+    my $s = `cd $comm_dir; grep -l '$uuid' *.txt`;
     my @nums = sort { $b <=> $a }
                $s =~ m{(\d+)}xmsg;
     my @rows;
     for my $n (@nums) {
-        my $href = do "community_puzzles/$n.txt";
+        my $href = do "$comm_dir/$n.txt";
         my @pangrams = map { ucfirst } @{$href->{pangrams}};
         push @rows, Tr(td("<a target=nytbee onclick='set_focus();'"
                         . " href='$log/cgi-bin/edit_cp.pl/$n'>CP$n</a>"),
@@ -1469,10 +1489,10 @@ elsif ($cmd eq 'f') {
               );
     }
     # also search the community puzzles
-    my $s = `cd community_puzzles; grep -l "'seven' => '$seven'" *.txt`;
+    my $s = `cd $comm_dir; grep -l "'seven' => '$seven'" *.txt`;
     for my $n ($s =~ m{(\d+)}xmsg) {
         my $cpn = "CP$n";
-        my $href = do "community_puzzles/$n.txt";
+        my $href = do "$comm_dir/$n.txt";
         my $cur =     $date eq $cpn? ' ' . red('*')
                  :$is_in_list{$cpn}? ' *'
                  :                     '';
@@ -1524,7 +1544,7 @@ elsif ($cmd =~ m{\A s \s+ ([a-z]+) \z}xms) {
                @dates
                ;
     # also search the community puzzles
-    my $s = qx!cd community_puzzles; grep -l "words.*=>.*'$word'" [0-9]*.txt!;
+    my $s = qx!cd $comm_dir; grep -l "words.*=>.*'$word'" [0-9]*.txt!;
     push @rows,
         map {
             my $cpn = "CP$_";
@@ -1651,6 +1671,58 @@ elsif ($cmd eq 'sl') {
 }
 elsif ($cmd eq 'ft') {
     $first_time = 1;
+    $cmd = '';
+}
+elsif (($uuid eq 'sahadev108!')
+       && (my ($mode, $cp_num)
+              = $cmd =~ m{\A ([+][+]|[-][-])cp(\d+) \z}xms)
+) {
+    my $fname = "$comm_dir/$cp_num.txt";
+    if (! -f $fname) {
+        $message = "No such community puzzle: CP$cp_num";
+    }
+    else {
+        my $cp_href = do $fname;
+        $cp_href->{recommended} = $mode eq '++'? 1: 0;
+        write_file $fname, Dumper($cp_href);
+        $message = 'Got it';
+    }
+    $cmd = '';
+}
+elsif ($cmd eq 'rcp') {
+    my $s = `cd $comm_dir; grep -l "'recommended' => 1" [0-9]*.txt`;
+    my @puzzles = sort {
+                      lc $a->{name} cmp lc $b->{name}
+                  }
+                  map {
+                      my $cp_href = do "$comm_dir/$_.txt";
+                      my $nwords = @{$cp_href->{words}};
+                      {
+                          n      => $_,
+                          name => $cp_href->{name},
+                          title => $cp_href->{title},
+                          clues => scalar(keys %{$cp_href->{clues}}),
+                          nwords => $nwords,
+                      }
+                  }
+                  $s =~ m{(\d+)}xmsg;
+    $message = Tr(
+                   th('&nbsp;'),
+                   th({class => 'lt'}, 'Name'),
+                   th({class => 'lt'}, 'Title'),
+                   th('Size'),
+                   th('Clues'),
+               );
+    for my $p (@puzzles) {
+        $message .= Tr(
+                        td({class => 'lt'}, qq!<span class=link onclick="new_date('cp$p->{n}')">CP$p->{n}</span>!),
+                        td({class => 'lt'}, $p->{name}), 
+                        td({class => 'lt'}, $p->{title}), 
+                        td(puzzle_class($p->{nwords})),
+                        td({class => 'cn'}, $p->{clues}? '<span style="color: green; font-size: 20pt">&check;</span>': ''),
+                    );
+    }
+    $message = table({ cellpadding => 3 }, $message);
     $cmd = '';
 }
 
@@ -1934,7 +2006,7 @@ if ($cmd eq 'i') {
 <span class=pointer style='color: blue' onclick='clues_by(0)'>$cp_href->{name}</span>, $cp_href->{location}<br>
 EOH
         $message .= "<br>Community Puzzle #$n - $created<br>Created by $s";
-        $message .= cp_message($cp_href);
+        $message .= cp_message($cp_href, $n);
         $need_show_clue_form = 1;
     }
     else {
