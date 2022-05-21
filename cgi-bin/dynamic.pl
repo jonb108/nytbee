@@ -123,7 +123,7 @@ my $new_form = '';
 # a single word?
 if ($words =~ m{\A \s* [a-z]+ \s* \z}xms) {
     ++$uuid_single{$uuid};
-    if ($uuid_single{$uuid} == 5) {
+    if ($uuid_single{$uuid} % 5 == 0) {
         $suggest = <<'EOH'
 <div class=suggest>
 You are entering single words instead of

@@ -6,37 +6,24 @@ use warnings;
 
 -------
 TODO:
-update help.html about title, description, publish, #, I, lcp
-    add # command (# of words, etc for CP and alias for I for NYT)
-    update the I command - to show the title, description for CP
-        and show the #s for NYT
-edit CP - to change title, description, publish
-    edit_cp_clues.pl
+Dez?  his work, history, puzzledom
+admin.pl
+update help.html about title, description, publish,
+ID ... explained in help
+add a video about new commands since other videos were made
+make Collapse the default and remove CO
+allow clicking on letters even if not mobile
+SC - mark other ranks aside from Great, Amazing, Genius, Queen Bee?
 
-Now that we have lots of community puzzles we are
-    accumulating lots of crappy puzzles.
-    Do we need to introduce a way of recommending a puzzle
-    and have a way of listing the puzzles in order of the
-    number of recommendations? :)
+Clues - have a <select> dropdown to choose an alternate format.
+    Let obtrusive.   And they can select-all and copy, yes?
 
-    OR I can mark games as worthy...
--------
-
-can redo nytbee_list.pl to generate all the files
-    with a _single_ pass through nyt_puzzles.txt
-count puzzles and words and update help.html
+Each clue is a haiku.
 
 when creating a puzzle
     somehow mark words that do NOT have s, re, ing?
 
-make Collapse the default and remove CO
-
-allow clicking on letters even if not mobile
-
 why is the response time of pangram haiku puzzles tapping faster?
-
-after creating a puzzle have a link to click on
-    and copy that link to clipboard
 
 does copy to clipboard work on phone?
 
@@ -325,9 +312,6 @@ my $focus = $mobile? '': 'set_focus();';
 # DB - which words in current puzzle are debuting?
 # DB abcd - when did abcd debut?
 # DB 4/5/19 - what words debuted on this date?
-# ID sahadev108! explained
-# comment in video section about new commands since
-#   videos were made
 # GAB GP GB4 'G Y' - give up and add to the found list
 # add Karen's site to list of projects
 # add comment about Shun's word analysis
@@ -431,10 +415,10 @@ sub cp_message {
 
 sub puzzle_class {
     my ($n) = @_;
-    return $n < 25? 'Small'
-          :$n < 50? 'Medium'
-          :$n < 75? 'Large'
-          :         'Jumbo';
+    return $n <= 25? 'Small'
+          :$n <= 50? 'Medium'
+          :$n <= 75? 'Large'
+          :          'Jumbo';
 }
 
 my $comm_dir = 'community_puzzles';
@@ -952,6 +936,7 @@ compute_score_and_rank();
 sub define {
     my ($word, $Dcmd, $fullword) = @_;
 
+    $focus = '' if $Dcmd eq 'd*';   # so it doesn't scroll to the bottom
     my $def = '';
     # a Community Puzzle clue
     if (! $fullword && exists $clue_for{$word}) {
@@ -978,7 +963,7 @@ sub define {
     }
 
     my ($html, @defs);
-
+    
     my $max = 10;   # without this D*TIME causes a fatal error! :(
 
     # merriam-webster
@@ -1724,6 +1709,7 @@ elsif ($cmd eq 'rcp') {
     }
     $message = table({ cellpadding => 3 }, $message);
     $cmd = '';
+    $focus = '';
 }
 
 # so we have dealt with the various commands.
@@ -2156,6 +2142,9 @@ my $rank_image = $show_RankImage?
 my $disp_nhints = "";
 if ($nhints) {
     $disp_nhints .= "<br>Hints: $nhints";
+    if ($rank == 9) {
+        $disp_nhints .= "<br>Ratio: " . sprintf("%.2f", $nhints/$score);
+    }
 }
 
 my $all_pangrams = 1;

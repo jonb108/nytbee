@@ -1,0 +1,41 @@
+ipstack.com
+login: jon.bjornstad@gmail.com
+password: *
+access key: ac1e43f492eddfe68736c4f4fb388e92
+curl http://api.ipstack.com/162.196.90.230?access_key=ac1e43f492eddfe68736c4f4fb388e92
+
+use JSON;
+my $json = `curl http://api.ipstack.com/162.196.90.230?access_key=ac1e43f492eddfe68736c4f4fb388e92`;
+use Data::Dumper;
+print Dumper decode_json($json);
+__END__
+$VAR1 = {
+          'longitude' => '-121.752868652344',
+          'country_name' => 'United States',
+          'location' => {
+                          'is_eu' => bless( do{\(my $o = 0)}, 'JSON::PP::Boolean' ),
+                          'calling_code' => '1',
+                          'country_flag' => 'https://assets.ipstack.com/flags/us.svg',
+                          'languages' => [
+                                           {
+                                             'name' => 'English',
+                                             'native' => 'English',
+                                             'code' => 'en'
+                                           }
+                                         ],
+                          'country_flag_emoji_unicode' => 'U+1F1FA U+1F1F8',
+                          'geoname_id' => 5341704,
+                          'country_flag_emoji' => "\x{1f1fa}\x{1f1f8}",
+                          'capital' => 'Washington D.C.'
+                        },
+          'region_code' => 'CA',
+          'region_name' => 'California',
+          'country_code' => 'US',
+          'ip' => '162.196.90.230',
+          'continent_code' => 'NA',
+          'zip' => '95616',
+          'city' => 'Davis',
+          'latitude' => '38.5489616394043',
+          'type' => 'ipv4',
+          'continent_name' => 'North America'
+        };

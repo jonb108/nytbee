@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+no warnings 'utf8';
 
 use BeeUtil qw/
     ymd
@@ -8,6 +9,14 @@ use BeeUtil qw/
 use Date::Simple qw/
     date
 /;
+use Encode qw/
+    encode_utf8
+/;
+use JSON qw/
+    decode_json
+/;
+my $access_key = 'ac1e43f492eddfe68736c4f4fb388e92';
+
 use CGI;
 use DB_File;
 my %uuid_ip;
@@ -87,13 +96,22 @@ for my $uid (sort keys %uid) {
             if ($uuid =~ m{\A $uid}xms) {
                 my $ip = $uuid_ip{$uuid};
                 $ip =~ s{[|].*}{}xms;
-                my $s = `curl -s https://freegeoip.app/csv/$ip`;
-                my ($country, $region, $city) = (split ',', $s)[2,4,5];
+                my $s = `curl -s http://api.ipstack.com/$ip?access_key=$access_key`;
+                $s = Encode::encode('ISO-8859-1', $s);
+                my $href = decode_json($s);
+                my $city = $href->{city};
+                my $region = $href->{region_name};
+                my $country = $href->{country_name};
                 my $ss = "$city, $region";
                 if ($country ne 'United States') {
                     $ss .= ", $country";
                 }
-                $uid_location{$uid} = $ss;
+                eval {
+                    $uid_location{$uid} = $ss;
+                };
+                if ($@) {
+                    $uid_location{$uid} = '??';
+                }
             }
         }
     }

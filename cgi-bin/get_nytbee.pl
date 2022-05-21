@@ -66,6 +66,7 @@ for my $w (@words) {
         push @pangrams, $w;
     }
 }
+untie %first_appeared;
 
 $puzzle{$dt8} = "$seven $center @pangrams | @words";
 open my $puzzle_out, '>', 'nyt_puzzles.txt';

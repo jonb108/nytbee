@@ -46,7 +46,8 @@ osx_usd_words-47.txt \
 word_pangram.pl \
 dynamic.pl \
 rand5.pl \
-admin.pl
+admin.pl \
+ipstack.txt
 
 # these will not change
 #JSON/PP.pm

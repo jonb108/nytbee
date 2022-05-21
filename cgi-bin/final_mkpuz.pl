@@ -75,10 +75,11 @@ if (! $params{publish}) {
     print <<"EOH";
 <p>
 It is not yet ready to share with the HiveMind.
-<p>
-To make it available enter 'YCP', choose this puzzle,<br>
-edit it, finalize the words, clues, and title/description<br>
+<div class=description>
+To make it available enter 'YCP', choose this puzzle,
+edit it, finalize the words, clues, and title/description
 and then check 'Ready to Publish'.
+</div>
 EOH
 }
 else {
