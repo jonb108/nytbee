@@ -16,7 +16,14 @@ allow clicking on letters even if not mobile
 SC - mark other ranks aside from Great, Amazing, Genius, Queen Bee?
 
 Clues - have a <select> dropdown to choose an alternate format.
-    Let obtrusive.   And they can select-all and copy, yes?
+    Less obtrusive.   And they can select-all and copy, yes?
+Have a comment that they shouldn't skip the clues.
+
+S/regex
+
+Have a way to leave a comment for the puzzle maker.
+    Like a forum.
+    Timestamped
 
 Each clue is a haiku.
 
@@ -372,6 +379,20 @@ tie %puzzle_has_clues, 'DB_File', 'nyt_puzzle_has_clues.dbm';
 # value is does the puzzle have any clues? - always 1
 # i.e. if the puzzle key is there then the puzzle has clues
 # you can ask 'exists' if you'd like
+#--------------
+
+
+###############
+my %osx_usd_words_47;
+tie %osx_usd_words_47, 'DB_File', 'osx_usd_words-47.dbm';
+# this is the large lexicon from OSX
+# it was purged of words of length < 4, proper names,
+# and words with more than 7 unique letters.
+# /usr/share/dict/words has 235,886 words
+# osx_usd_words-47.txt has 98,634 words
+# key is the word, value is just 1
+# we use this hash to check for donut words
+# and for 'missing' words.
 #--------------
 
 #
@@ -867,8 +888,14 @@ my @ranks = (
     { name => 'Queen Bee',  pct => 100, value => $max_score },
 );
 
-my (@found, $nhints, $ht_chosen, $tl_chosen,
-    $score_at_first_hint, $score, $rank_name, $rank);
+my (@found,     # includes valid puzzle words, lexicon+ words, donut- words
+    $nhints,
+    $ht_chosen,
+    $tl_chosen,
+    $score_at_first_hint,
+    $score,
+    $rank_name,
+    $rank);
 
 sub add_hints {
     my ($n) = @_;
@@ -894,11 +921,18 @@ else {
                                 # at the very beginning!
     @found     = ();
 }
-my %is_found = map { $_ => 1 } @found;
+my %is_found = map {
+                   my $x = $_;
+                   $x =~ s{[+-]\z}{}xms;
+                   $x => 1;
+               }
+               @found;
 
 sub compute_score_and_rank {
     $score = 0;
+    WORD:
     for my $w (@found) {
+        next WORD if $w =~ m{[+-] \z}xms;   # donut, lexicon
         $score += word_score($w, $is_pangram{$w});
     }
     RANK:
@@ -1046,7 +1080,7 @@ sub do_define {
         my @words = grep { !$is_found{$_} }
                     @ok_words;
         $message = define($words[ rand @words ], $Dcmd);
-        add_hints(-2);  # hack 
+        add_hints(-2) if $message;  # hack 
         $cmd = '';
     }
     elsif ($term =~ m{\A ([a-z])(\d+) \z}xms) {
@@ -1311,29 +1345,40 @@ elsif ($cmd eq 'sc') {
     }
     my $space = '&nbsp;' x 2;
     for my $w (@found) {
-        my $sc = word_score($w, $is_pangram{$w});
-        my $rank_name = '';
-        $tot += $sc;
-        if ($tot >= $ranks[$r]{value}) {
-            $rank_name = $ranks[$r]{name};
-            ++$r;
+        my $x = $w;
+        if ($x =~ s{([+-])\z}{}xms) {
+            push @rows, Tr(td(ucfirst $x),
+                           td(''),
+                           td(''),
+                           td({ class => 'lt' }, $1 eq '-'? 'Donut': 'Lexicon'),
+                        );
         }
-        my $s = ucfirst $w;
-        if ($is_pangram{$w}) {
-            $s = color_pg($s);
+        else {
+            my $sc = word_score($w, $is_pangram{$w});
+            my $rank_name = '';
+            $tot += $sc;
+            if ($tot >= $ranks[$r]{value}) {
+                $rank_name = $ranks[$r]{name};
+                ++$r;
+            }
+            my $s = ucfirst $w;
+            if ($is_pangram{$w}) {
+                $s = color_pg($s);
+            }
+            push @rows, Tr(td($s),
+                           td($space.$sc),
+                           td($space.$tot),
+                           td({ class => 'lt' }, $space.$rank_name),
+                          );
         }
-        push @rows, Tr(td($s),
-                       td($space.$sc),
-                       td($space.$tot),
-                       td({ class => 'lt' }, $space.$rank_name),
-                      );
         if ($tot == $score_at_first_hint) {
             # yes == above
             push @rows, Tr(td({ colspan => 3 }, '<hr>'));
         }
     }
     $message = table({ cellpadding => 2 }, @rows);
-    my $more = @ok_words - @found;
+    my $ndonut_lexicon = grep { m{[+-]\z}xms } @found;
+    my $more = @ok_words - (@found - $ndonut_lexicon);
     my $pl = $more == 1? '': 's';
     $message .= "<p> $more more word$pl to find";
     $cmd = '';
@@ -1574,7 +1619,7 @@ elsif ($cmd =~ m{\A le \s+ (\S{6}) \s* \z}xms) {
     }
 }
 
-# now to prepare the display the words we have found
+# now to prepare to display the words we have found
 # some subset, some order
 my $order = 0;
 my $same_letters = 0;
@@ -1583,18 +1628,21 @@ my $prefix = '';
 my $pattern = '';
 my $limit = 0;
 my @words_found;
+my @found_puzzle_words = grep { !m/[+-]\z/xms } @found;
 my $word_col = 0;
+my $order_found = 0;
 if ($cmd eq 'w') {
-    @words_found = @found;
+    @words_found = @found_puzzle_words;
+    $order_found = 1;
     $cmd = '';
 }
 elsif ($cmd eq '1w') {
     $word_col = 1;
-    @words_found = sort @found;
+    @words_found = sort @found_puzzle_words;
     $cmd = '';
 }
 elsif (($pattern) = $cmd =~ m{\A w \s* / \s* (.*) \z}xms) {
-    @words_found = grep { /$pattern/xms } sort @found;
+    @words_found = grep { /$pattern/xms } sort @found_puzzle_words;
     $cmd = '';
 }
 elsif ($cmd =~ m{\A w \s* ([<>]) \s* (\d*)\z}xms) {
@@ -1618,7 +1666,7 @@ elsif ($cmd =~ m{\A w \s* ([<>]) \s* (\d*)\z}xms) {
                    map {
                        [ $order * length, $_ ]
                    }
-                   @found;
+                   @found_puzzle_words;
     $cmd = '';
 }
 elsif ($cmd =~ m{\A w \s* (\d+) \z}xms) {
@@ -1629,14 +1677,14 @@ elsif ($cmd =~ m{\A w \s* (\d+) \z}xms) {
     if ($len < 4) {
         # makes no sense given all words are >= 4
         # silently ignore this
-        @words_found = sort @found;
+        @words_found = sort @found_puzzle_words;
     }
     else {
         @words_found = grep {
                            length == $len
                        }
                        sort
-                       @found;
+                       @found_puzzle_words;
     }
     $cmd = '';
 }
@@ -1647,7 +1695,7 @@ elsif ($cmd =~ m{\A w \s+ ([a-z]+)}xms) {
                        m{\A $prefix}xms
                    }
                    sort
-                   @found;
+                   @found_puzzle_words;
     $cmd = '';
 }
 elsif ($cmd eq 'sl') {
@@ -1729,13 +1777,23 @@ sub check_word {
     if (length $w < 4) {
         return 'too short';
     }
-    if (index($w, $center) < 0) {
-        return "does not contain: " . red(uc($center));
-    }
     if (my ($c) = $w =~ $letter_regex) {
         return "\U$c\E is not in \U$seven";
     }
+    if (index($w, $center) < 0) {
+        if ($osx_usd_words_47{$w}) {
+            # we'll keep the word but not
+            # count it for the score of the puzzle
+            return 'donut';
+        }
+        return "does not contain: " . red($Center);
+    }
     if (! exists $is_ok_word{$w}) {
+        if ($osx_usd_words_47{$w}) {
+            # we'll keep the word but not
+            # count it for the score of the puzzle
+            return 'lexicon';
+        }
         return "not in word list";
     }
     return '';
@@ -1743,22 +1801,35 @@ sub check_word {
 WORD:
 for my $w (@new_words) {
     next WORD if $w eq '1w';        # hack!
-    if (my $mess = check_word($w)) {
-        $not_okay_words .= "<span class=not_okay>"
-                        .  uc($w)
-                        .  "</span>: $mess<br>";
-    }
-    else {
+    my $mess = check_word($w);
+    if ($mess eq '' || $mess eq 'donut' || $mess eq 'lexicon') {
         $is_new_word{$w} = 1;
         if (! $is_found{$w}) {
-            push @found, $w;
             $is_found{$w} = 1;
+            if ($mess eq 'donut') {
+                $not_okay_words .= "<span class=not_okay>"
+                                .  uc($w)
+                                .  "</span>: missing <span class=red>$Center</span> but it IS a valid Donut word<br>";
+                $w .= '-';
+            }
+            elsif ($mess eq 'lexicon') {
+                $not_okay_words .= "<span class=not_okay>"
+                                .  uc($w)
+                                .  "</span>: not in word list but it IS in the large Lexicon<br>";
+                $w .= '+';
+            }
+            push @found, $w;
         }
         else {
             $not_okay_words .= "<span class=not_okay>"
                             .  uc($w)
                             .  "</span>: already found<br>";
         }
+    }
+    else {
+        $not_okay_words .= "<span class=not_okay>"
+                        .  uc($w)
+                        .  "</span>: $mess<br>";
     }
 }
 
@@ -1769,7 +1840,59 @@ compute_score_and_rank();
 
 if (! $prefix && ! $pattern && ! $limit && ! @words_found) {
     # the default when there are no restrictions
-    @words_found = sort @found;
+    @words_found = sort grep { !m/[+-]\z/xms } @found;
+}
+my $donut_lexicon = '';
+if ($show_WordList) {
+    my @donut;
+    my @lexicon;
+    for my $w (@found) {
+        if ($w =~ m{[-]\z}xms) {
+            my $x = $w;
+            $x =~ s{[-]\z}{}xms;
+            push @donut, ucfirst $x;
+        }
+        if ($w =~ m{[+]\z}xms) {
+            my $x = $w;
+            $x =~ s{[+]\z}{}xms;
+            push @lexicon, ucfirst $x;
+        }
+    }
+    if (!$order_found) {
+        @donut   = sort @donut;
+        @lexicon = sort @lexicon;
+    }
+    # highlight new words and perfect donuts
+    my @new_donut;
+    for my $w (@donut) {
+        my $nchars = uniq_chars(lc $w);
+        if ($nchars == 6) {
+            my $color = length $w == 6? 'purple': 'green';
+            push @new_donut, "<span class=$color>$w</span>";
+        }
+        elsif ($is_new_word{lc $w}) {
+            push @new_donut, "<span class=new_word>$w</span>";
+        }
+        else {
+            push @new_donut, $w;
+        }
+    }
+    @donut = @new_donut;
+    @lexicon = map {
+                   $is_new_word{lc $_}? "<span class=new_word>$_</span>": $_
+               } 
+               @lexicon;
+    if (@donut) {
+        my $ndonut = @donut;
+        $donut_lexicon = "Donut: <div class=found_words>@donut <span class=gray>$ndonut</span></div><br>";
+    }
+    if (@lexicon) {
+        my $nlexicon = @lexicon;
+        $donut_lexicon .= "Lexicon: <div class=found_words>@lexicon <span class=gray>$nlexicon</span></div><br>";
+    }
+    if ($donut_lexicon) {
+        $donut_lexicon = "<br>$donut_lexicon";
+    }
 }
 
 if ($not_okay_words) {
@@ -1879,8 +2002,8 @@ else {
         }
         $found_words .= "$w ";
     }
-    if (@found && @words_found == @found) {
-        my $nwords = @found;
+    if (@found && @words_found == @found_puzzle_words) {
+        my $nwords = @found_puzzle_words;
         $found_words .= " <span class=gray>$nwords</span>";
     }
 }
@@ -2445,6 +2568,7 @@ $message
 ><br>
 </form>
 $found_words
+$donut_lexicon
 <p>
 Score: $score $rank_image
 $disp_nhints$hint_table_list
