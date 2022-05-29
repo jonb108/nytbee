@@ -395,6 +395,14 @@ tie %osx_usd_words_47, 'DB_File', 'osx_usd_words-47.dbm';
 # and for 'missing' words.
 #--------------
 
+############
+my %first_appeared;
+tie %first_appeared, 'DB_File', 'first_appeared.dbm';
+# a hash with keys of all words that ever
+# appeared in an NYT puzzle.   value is the date (yyyymmdd)
+# of first appearance.
+#--------------
+
 #
 # returns an array of arrayrefs representing
 # the current list of puzzles.  each array ref has two elements:
@@ -806,7 +814,7 @@ else {
 }
 
 my %is_pangram = map { $_ => 1 } @pangrams;
-my %is_ok_word = map { $_ => 1 } @ok_words;
+my %is_ok_word = map { $_ => 1 } @ok_words;     # the curated accepted word list
 my @six;
 if ($params{six} && $date eq $params{date}) {
     @six = split ' ', $params{six};
@@ -1537,8 +1545,6 @@ elsif ($cmd eq 'f') {
 elsif ($cmd =~ m{\A ft \s+ ([a-z]+) \z}xms) {
     my $word = $1;
     # when did this word first appear?
-    my %first_appeared;
-    tie %first_appeared, 'DB_File', 'first_appeared.dbm';
     my $dt = $first_appeared{$word};
     if ($dt) {
         $message = qq!<span class=link onclick="new_date('$dt');">!
@@ -1546,7 +1552,6 @@ elsif ($cmd =~ m{\A ft \s+ ([a-z]+) \z}xms) {
                  . '</span>'
                  ;
     }
-    untie %first_appeared;
     $cmd = '';
 }
 elsif ($cmd =~ m{\A s \s+ ([a-z]+) \z}xms) {
@@ -1781,7 +1786,7 @@ sub check_word {
         return "\U$c\E is not in \U$seven";
     }
     if (index($w, $center) < 0) {
-        if ($osx_usd_words_47{$w}) {
+        if ($osx_usd_words_47{$w} || $first_appeared{$w}) {
             # we'll keep the word but not
             # count it for the score of the puzzle
             return 'donut';
