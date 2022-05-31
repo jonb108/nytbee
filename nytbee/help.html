@@ -61,6 +61,7 @@ And I have.  The complete source code for this project is on
 <a href=#clues>Clues for Puzzles</a><br>
 <a href=#create>Creating a Community Puzzle</a><br>
 <a href=#power>Power User Commands</a><br>
+<a href=#donut>Donut and Lexicon Words</a><br>
 <a href=#articles>Articles about the NYT Bee</a><br>
 <a href=#other>Other NYT Bee Projects</a><br>
 <a href=#without>Without a Subscription?</a><br>
@@ -289,7 +290,23 @@ It <i>is</i> just a game and they feel that games should be fun. &#128521;
 If I make it to the rank of Amazing all by myself I call it a very good day.
 And some days I consider it a success
 if the Hints total is less than the Score. &#128522;
+Note that with enough hints you can <i>always</i> make it to Queen Bee.
+For example, with the 5 letter word MAGMA you could ask
+for the hints V4MA and E2MA to get all 5 of the letters.
 <p>
+Once the rank of Amazing is reached the ratio of hints
+to total score is shown.  Here's an example of where I struggled
+to get to Queen Bee after I got to Genius &#128549;:
+<p>
+<img src=pics/amazing_ratio.jpg width=400><br>
+<img src=pics/genius_ratio.jpg width=435><br>
+<img src=pics/queen_bee_ratio.jpg width=620>
+<p>
+After you reach Queen Bee, if you'd like even more fun &#128522;
+and another kind
+of challenge you could clear the puzzle with <span class=cmd>C Y</span>
+and then play it again to see if you remember all the words, and,
+if not, how many fewer hints you needed to reach Queen Bee again.
 <a name=archival_and_community></a>
 <h2>Archival and Community Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -359,7 +376,7 @@ Choose your preferred format and then click on 'Ok'.  This will do two things:
 <li>Clear the format choices.
 <li>Copy the clues onto the system clipboard.
 </ol>
-Then, if you wish, you can Paste your clues into the HiveMind forum.
+Then, if you wish, you can Paste your clues into the HiveMind Forum.
 In this way your clues can benefit those
 people who are playing Spelling Bee with the NYT app or
 the standard NYT web application.
@@ -377,7 +394,7 @@ Note that in this display,
 if you've already found a word, that word is appended to the clue
 and the whole line is in gray rather than black.  This helps you
 focus on the clues for the words you have not yet found.
-The tradition in the HiveMind forum is that clues come in
+The tradition in the HiveMind Forum is that clues come in
 the word alphabetical order and <i>can</i> have the length shown as well.
 If you know this you have more information beyond the clue itself.
 <p>
@@ -389,7 +406,7 @@ If you leave all of the clue fields blank
 your clue offering is effectively deleted.
 <p>
 If you simply want to make clues for today's puzzle
-to copy/paste into the HiveMind forum there is this link:
+to copy/paste into the HiveMind Forum there is this link:
 <ul>
 <a target=nytbee href='https://logicalpoetry.com/mkclues'>logicalpoetry.com/mkclues</a>
 </ul>
@@ -566,6 +583,44 @@ This command also allows you to replicate your identity from one browser to anot
 Give up and show the words you have not yet found. <span class=cmd>G&nbsp;&nbsp;Y</span> means Give up and confirm Yes.  This just shows the words not yet found.  If you wish to actually have them entered append a P to the Y: <span class=cmd>G YP</span>.  That is P for paste or GYP for cheat or swindle.</td></tr>
 </table>
 </ul>
+<a name=donut></a>
+<h2>Donut and Lexicon Words
+<a class=top href=#toc><img src=pics/top.gif height=25></a>
+</h2>
+While searching searching for words that are in the 'allowed list'
+it often happens that you see a real word that does not contain the center
+letter.  These words are called 'Donut Words' because the 6 non-center letters
+form a circle (or torus) with a hole - like a donut or 
+<a target=_blank href='https://en.wikipedia.org/wiki/Doughnut'>doughnut</a>.
+This puzzle from May 27, 2022:
+<p style="margin-left: .2in">
+<img width=400 src=pics/donut.png>
+</p>
+had more than 50 (!) Donut Words including Again, Agar, Agrarian,
+<span class=purple>Arming</span>,
+<span class=green>Grammarian</span>,
+and <span class=purple>Margin</span>.  Another donut word is 'Anagram'
+which had never occurred in an NYT Spelling Bee before - how fun is that! &#128522;
+<p>
+Another type of word is one that IS a real valid actual proper qualified word
+containing the center letter but which for some mysterious, arbitrary,
+or irrational reason was not included in the 'allowed list'.
+These words are the subject of many many repetitous and lengthy
+discussions and debates in the HiveMind Forum.  One example is
+the word 'Urticaria' - see 
+<a target=_blank href='https://www.nytimes.com/2022/05/16/crosswords/spelling-bee-forum.html#commentsContainer'>the forum for May 16, 2022</a>.
+These words are called 'Lexicon Words' because they <b>are</b> to be found
+in the large lexicon of words in /usr/share/dict/words on OSX.
+This lexicon contains 235,886 words of which 98,634 of them have a
+length >= 4 and contain no more than 7 unique letters.
+<p>
+Donut Words are deemed acceptable if they occur in the large lexicon
+or have appeared before in an NYT Bee Puzzle.
+<p>
+You 'get credit' for finding these two types of words because they will be
+listed below the words you have found in the allowed list.  Like so:
+<p style="margin-left: .2in">
+<img src=pics/donut_lexicon.jpg width=750>
 <a name=articles></a>
 <h2>Articles about the NYT Spelling Bee
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -751,8 +806,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1482 puzzles with
-a total of 8689 different words!
+1484 puzzles with
+a total of 8691 different words!
 <p>
 Which puzzles from the large archive to play?
 You can get one at random with the <span class=cmd>NR</span> command or you could

@@ -37,6 +37,7 @@ if ($pi) {
 else {
     $ymd = ymd();
 }
+my $prev = (date($ymd)-1)->format("%Y-%m-%d");
 if (! open $log, '<', "beelog/$ymd") {
     print "cannot open log for $ymd\n";
     exit;
@@ -44,6 +45,7 @@ if (! open $log, '<', "beelog/$ymd") {
 my %uid;
 my %g_uid;
 my %p_uid;
+my %nr_uid;
 my $nlines = 0;
 my $ngrid = 0;
 my $n_single_grid = 0;
@@ -70,9 +72,15 @@ while (my $line = <$log>) {
     elsif ($line =~ m{\s=\s}xms) {
         ++$nprog;
         ++$p_uid{$uid};
+        if ($line =~ m{=\snr}xms) {
+            ++$nr_uid{$uid};
+        }
     }
 }
 print <<'EOH';
+<html>
+<head>
+<meta charset="UTF-8">
 <style>
 body {
     font-size: 18pt;
@@ -81,15 +89,30 @@ body {
 .red {
     color: red;
 }
+.green {
+    color: green;
+}
+a {
+    text-decoration: none;
+    color: blue;
+}
 </style>
+</head>
+<body>
 EOH
-print "$ymd<br>\n";
+print "$ymd";
+if (-f "beelog/$prev") {
+    print " <a href=https://logicalpoetry.com/cgi-bin/admin.pl/$prev>Previous</a>";
+}
+print "<br>\n";
 print "$nlines lines<br>\n";
 print "$nprog prog<br>\n";
 print "$ngrid grid<br>\n";
 print "$n_single_grid single grid<br>\n";
 print "$n_suggest grid suggestions<br>\n";
+print "-------------<br>\n";
 my @data;
+UID:
 for my $uid (sort keys %uid) {
     if (! exists $uid_location{$uid}) {
         for my $uuid (keys %uuid_ip) {
@@ -115,16 +138,69 @@ for my $uid (sort keys %uid) {
             }
         }
     }
-    push @data, [ $uid, $uid_location{$uid}, $g_uid{$uid}, $p_uid{$uid} ];
-}
-for my $d (sort { $a->[1] cmp $b->[1] } @data) {
-    my $loc = $d->[1];
-    if ($loc =~ m{,.*,}xms) {
-        $loc = "<span class=red>$loc</span>";
+    my $s = $uid_location{$uid};
+    if ($s =~ m{\A([^,]*),([^,]*),(.*)\z}xms) {
+        my ($city, $state, $country) = ($1, $2, $3);
+        if ($state !~ /\S/ || $city !~ /\S/) {
+            next UID;
+        }
+        if ($country =~ m{Canada}) {
+            if ($city =~ m{Montr.*al}xms) {
+                $city = 'Montreal';
+            }
+        }
+        elsif ($country =~ m{France}xms) {
+            if ($state =~ m{-de-France}xms) {
+                $state = 'Ile-de-France';
+            }
+            if ($state =~ m{Prov.*d'Azur}xms) {
+                $state = "Provence-Alpes-Cote d'Azur";
+            }
+        }
+        elsif ($country =~ m{Germany}xms) {
+            if ($city =~ m{Unterschlei.*heim}xms) {
+                $city = 'Unterschleissheim';
+            }
+        }
+        elsif ($country =~ m{Brazil}xms) {
+            if ($city =~ m{S.*Paulo}xms) {
+                $city = $state = 'Sao Paulo';
+            }
+        }
+        elsif ($country =~ m{Czechia}xms) {
+            if ($city =~ m{Olomouc}xms) {
+                $city = $state = 'Olomouc';
+            }
+        }
+        push @data, [ $city, $state, $country,
+                      $g_uid{$uid}, $p_uid{$uid}, $nr_uid{$uid} ];
     }
-    print "$loc => g $d->[2] p $d->[3]<br>\n";
+    else {
+        my ($city, $state) = split ',', $s;
+        if ($state !~ /\S/ || $city !~ /\S/) {
+            next UID;
+        }
+        push @data, [ $city, $state, '',
+                      $g_uid{$uid}, $p_uid{$uid}, $nr_uid{$uid} ];
+    }
 }
-my $prev = (date($ymd)-1)->format("%Y-%m-%d");
+my @non_us = grep { $_->[2] } @data;
+for my $d (sort { $a->[2] cmp $b->[2] } @non_us) {
+    print "<span class=green>$d->[2]</span>, $d->[0], $d->[1] => g $d->[3] p $d->[4]";
+    if ($d->[5]) {
+        print " <span class=red>nr $d->[5]</span>";
+    }
+    print "<br>\n";
+}
+print "-------------<br>\n";
+my @us = grep { !$_->[2] } @data;
+for my $d (sort { $a->[1] cmp $b->[1] } @us) {
+    print "<span class=green>$d->[1]</span>, $d->[0] => g $d->[3] p $d->[4]";
+    if ($d->[5]) {
+        print " <span class=red>nr $d->[5]</span>";
+    }
+    print "<br>\n";
+}
 if (-f "beelog/$prev") {
     print "<a href=https://logicalpoetry.com/cgi-bin/admin.pl/$prev>Previous</a><br>";
 }

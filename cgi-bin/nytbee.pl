@@ -1352,14 +1352,18 @@ elsif ($cmd eq 'sc') {
         push @rows, Tr(td({ colspan => 3 }, '<hr>'));
     }
     my $space = '&nbsp;' x 2;
+    FOUND:
     for my $w (@found) {
         my $x = $w;
         if ($x =~ s{([+-])\z}{}xms) {
             push @rows, Tr(td(ucfirst $x),
                            td(''),
                            td(''),
-                           td({ class => 'lt' }, $1 eq '-'? 'Donut': 'Lexicon'),
+                           td({ class => 'lt' },
+                              $space
+                              . ($1 eq '-'? 'Donut': 'Lexicon')),
                         );
+            next FOUND;
         }
         else {
             my $sc = word_score($w, $is_pangram{$w});
@@ -1893,7 +1897,7 @@ if ($show_WordList) {
     }
     if (@lexicon) {
         my $nlexicon = @lexicon;
-        $donut_lexicon .= "Lexicon: <div class=found_words>@lexicon <span class=gray>$nlexicon</span></div><br>";
+        $donut_lexicon .= "Lexicon: <div class=found_words>@lexicon <span class=gray>$nlexicon</span></div>";
     }
     if ($donut_lexicon) {
         $donut_lexicon = "<br>$donut_lexicon";
@@ -1996,19 +2000,22 @@ else {
     for my $w (@words_found) {
         my $lw = length($w);
         my $uw = ucfirst $w;
+        my $t = $w;
         if ($is_pangram{$w}) {
-            $w = color_pg($uw);
+            $t = color_pg($uw);
         }
         elsif ($is_new_word{$w}) {
-            $w = "<span class=new_word>$uw</span>";
+            $t = "<span class=new_word>$uw</span>";
         }
         else {
-            $w = $uw;
+            $t = $uw;
         }
-        $found_words .= "$w ";
+        $found_words .= "$t ";
     }
-    if (@found && @words_found == @found_puzzle_words) {
-        my $nwords = @found_puzzle_words;
+    # confusing ....
+#JON "@words_found >= @found_puzzle_words";
+    if (@words_found >= @found_puzzle_words) {
+        my $nwords = @words_found;
         $found_words .= " <span class=gray>$nwords</span>";
     }
 }
@@ -2270,7 +2277,7 @@ my $rank_image = $show_RankImage?
 my $disp_nhints = "";
 if ($nhints) {
     $disp_nhints .= "<br>Hints: $nhints";
-    if ($rank == 9) {
+    if ($rank >= 7) {
         $disp_nhints .= "<br>Ratio: " . sprintf("%.2f", $nhints/$score);
     }
 }
