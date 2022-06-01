@@ -659,10 +659,10 @@ elsif (my ($puz_num) = $cmd =~ m{\A p \s* ([1-9]\d*) \z}xms) {
             $date = $puz_id;
         }
         else {
+            # we have lower case cp
+            # but we need CP
             # CP\d+
-            # but we need lower case cp
-            # since we have ... have what???
-            $date = lc $puz_id;
+            $date = uc $puz_id;
         }
     }
     $cmd = '';
@@ -1356,10 +1356,10 @@ elsif ($cmd eq 'sc') {
     for my $w (@found) {
         my $x = $w;
         if ($x =~ s{([+-])\z}{}xms) {
-            push @rows, Tr(td(ucfirst $x),
+            push @rows, Tr(td({ class => 'gray' }, ucfirst $x),
                            td(''),
                            td(''),
-                           td({ class => 'lt' },
+                           td({ class => 'lt gray' },
                               $space
                               . ($1 eq '-'? 'Donut': 'Lexicon')),
                         );
@@ -2013,10 +2013,11 @@ else {
         $found_words .= "$t ";
     }
     # confusing ....
-#JON "@words_found >= @found_puzzle_words";
     if (@words_found >= @found_puzzle_words) {
         my $nwords = @words_found;
-        $found_words .= " <span class=gray>$nwords</span>";
+        if ($nwords) {
+            $found_words .= " <span class=gray>$nwords</span>";
+        }
     }
 }
 $found_words = "<div class=found_words>$found_words</div>";

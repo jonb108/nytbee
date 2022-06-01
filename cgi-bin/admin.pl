@@ -185,8 +185,16 @@ for my $uid (sort keys %uid) {
     }
 }
 my @non_us = grep { $_->[2] } @data;
-for my $d (sort { $a->[2] cmp $b->[2] } @non_us) {
-    print "<span class=green>$d->[2]</span>, $d->[0], $d->[1] => g $d->[3] p $d->[4]";
+for my $d (sort {
+               $a->[2] cmp $b->[2]
+               ||
+               $a->[1] cmp $b->[1]
+               ||
+               $a->[0] cmp $b->[0]
+           }
+           @non_us
+) {
+    print "<span class=green>$d->[2]</span>, $d->[1], $d->[0] => g $d->[3] p $d->[4]";
     if ($d->[5]) {
         print " <span class=red>nr $d->[5]</span>";
     }
@@ -194,7 +202,13 @@ for my $d (sort { $a->[2] cmp $b->[2] } @non_us) {
 }
 print "-------------<br>\n";
 my @us = grep { !$_->[2] } @data;
-for my $d (sort { $a->[1] cmp $b->[1] } @us) {
+for my $d (sort {
+               $a->[1] cmp $b->[1]
+               ||
+               $a->[0] cmp $b->[0]
+           }
+           @us
+) {
     print "<span class=green>$d->[1]</span>, $d->[0] => g $d->[3] p $d->[4]";
     if ($d->[5]) {
         print " <span class=red>nr $d->[5]</span>";

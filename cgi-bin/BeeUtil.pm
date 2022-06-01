@@ -139,7 +139,7 @@ sub trim {
 sub _attrs {
     my $href = shift;
     return ' ' . join ' ',
-           map { "$_=$href->{$_}" }
+           map { "$_='$href->{$_}'" }
            keys %$href;
 }
 sub table {
