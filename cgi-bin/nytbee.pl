@@ -1263,6 +1263,7 @@ elsif (my ($ev, $nlets, $term)
 }
 elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     my $percent = $1;
+    my $ndonut_lexicon = grep { m{[+-]\z}xms } @found;
     my $rows = '';
     for my $r (0 .. 9) {
         my $cols = td($ranks[$r]->{name});
@@ -1278,7 +1279,7 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
                       . ' more'
                       ;
                 if ($rank == 8) {
-                    my $m = @ok_words - @found;
+                    my $m = @ok_words - @found + $ndonut_lexicon;
                     my $pl = $m == 1? '': 's';
                     $more .= ", $m more word$pl";
                 }

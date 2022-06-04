@@ -171,6 +171,9 @@ for my $uid (sort keys %uid) {
             if ($city =~ m{Olomouc}xms) {
                 $city = $state = 'Olomouc';
             }
+            elsif ($city =~ m{Brand.*nad.*labem.*slav}xmsi) {
+                $city = 'Brandys nad Labem-Stara Boleslav';
+            }
         }
         push @data, [ $city, $state, $country,
                       $g_uid{$uid}, $p_uid{$uid}, $nr_uid{$uid} ];
