@@ -25,6 +25,17 @@ Have a way to leave a comment for the puzzle maker.
     Like a forum.
     Timestamped
 
+STatus or REmaining - to toggle showing line graphs
+    that start long and get shorter with each word entered
+    one for #words
+    one for score - with little marks for the different ranks
+    there's a similar thing on the NYTimes app (or webpage)
+        but it has the same lengths for each rank.
+        Mine would be linear and include Queen Bee.
+
+what about showing words not yet found
+    but only their length and the position of the center letter?
+
 Each clue is a haiku.
 
 when creating a puzzle
@@ -1540,7 +1551,7 @@ elsif ($cmd eq 'f') {
                  :$is_in_list{$cpn}? ' *'
                  :                     '';
         push @rows,
-            Tr(td(qq!<span class=link onclick="new_date('$cpn);">$cpn</span>!),
+            Tr(td(qq!<span class=link onclick="new_date('$cpn');">$cpn</span>!),
                td({ class => 'lt' }, uc $href->{center} . $cur),
               );
      }
@@ -2588,5 +2599,13 @@ Score: $score $rank_image
 $disp_nhints$hint_table_list
 $show_clue_form$add_clues_form
 </body>
+<script src="$log/nytbee/js/fastclick.js"></script>
+<script>
+if ('addEventListener' in document) {
+    document.addEventListener('DOMContentLoaded', function() {
+        FastClick.attach(document.body);
+    }, false);
+}
+</script>
 </html>
 EOH

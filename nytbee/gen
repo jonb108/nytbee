@@ -105,11 +105,12 @@ EOH
 }
 
 my $gray = '#d5d5d5';
+my $red  = '#ff0000';
 
 init();
 do_hex(              0,             0, 'C', 'lightblue');
 do_hex(              0, -1*(2*$w1+$s), 'D', $gray);
-do_hex(              0,  1*(2*$w1+$s), 'E', $gray);
+do_hex(              0,  1*(2*$w1+$s), 'E', $red);
 do_hex( 1*($w+$w2+$s1),   1*($w1+$s2), 'F', $gray);
 do_hex(-1*($w+$w2+$s1),  -1*($w1+$s2), 'G', $gray);
 do_hex(-1*($w+$w2+$s1),   1*($w1+$s2), 'H', $gray);

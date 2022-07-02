@@ -46,6 +46,8 @@ my %uid;
 my %g_uid;
 my %p_uid;
 my %nr_uid;
+my %dt_uid;
+my %cp_uid;
 my $nlines = 0;
 my $ngrid = 0;
 my $n_single_grid = 0;
@@ -74,6 +76,13 @@ while (my $line = <$log>) {
         ++$p_uid{$uid};
         if ($line =~ m{=\snr}xms) {
             ++$nr_uid{$uid};
+        }
+        elsif ($line =~ m{=\s\d.*\d}xms) {
+            # a dated puzzle
+            ++$dt_uid{$uid};
+        }
+        elsif ($line =~ m{=\s(cp\d+)}xms) {
+            $cp_uid{$uid} .= "$1 ";
         }
     }
 }
@@ -161,6 +170,9 @@ for my $uid (sort keys %uid) {
             if ($city =~ m{Unterschlei.*heim}xms) {
                 $city = 'Unterschleissheim';
             }
+            elsif ($state =~ m{Baden.*berg}xms) {
+                $state = 'Baden-Wurtemberg'
+            }
         }
         elsif ($country =~ m{Brazil}xms) {
             if ($city =~ m{S.*Paulo}xms) {
@@ -176,7 +188,7 @@ for my $uid (sort keys %uid) {
             }
         }
         push @data, [ $city, $state, $country,
-                      $g_uid{$uid}, $p_uid{$uid}, $nr_uid{$uid} ];
+                      $g_uid{$uid}, $p_uid{$uid}, $nr_uid{$uid}, $cp_uid{$uid}, $dt_uid{$uid} ];
     }
     else {
         my ($city, $state) = split ',', $s;
@@ -184,7 +196,7 @@ for my $uid (sort keys %uid) {
             next UID;
         }
         push @data, [ $city, $state, '',
-                      $g_uid{$uid}, $p_uid{$uid}, $nr_uid{$uid} ];
+                      $g_uid{$uid}, $p_uid{$uid}, $nr_uid{$uid}, $cp_uid{$uid}, $dt_uid{$uid}];
     }
 }
 my @non_us = grep { $_->[2] } @data;
@@ -215,6 +227,14 @@ for my $d (sort {
     print "<span class=green>$d->[1]</span>, $d->[0] => g $d->[3] p $d->[4]";
     if ($d->[5]) {
         print " <span class=red>nr $d->[5]</span>";
+    }
+    if ($d->[6]) {
+        # community puzzles
+        print " <span class=red>$d->[6]</span>";
+    }
+    if ($d->[7]) {
+        # dated puzzles
+        print " <span class=red>dt $d->[7]</span>";
     }
     print "<br>\n";
 }
