@@ -157,6 +157,19 @@ for my $uid (sort keys %uid) {
             if ($city =~ m{Montr.*al}xms) {
                 $city = 'Montreal';
             }
+            elsif ($city =~ m{Qu.*ec}xms) {
+                $city = $state = 'Quebec';
+            }
+        }
+        elsif ($country =~ m{Switzerland}xms) {
+            if ($state =~ m{Neuch}xms) {
+                $state = $city = 'Neuchatel';
+            }
+        }
+        elsif ($country =~ m{Iceland}xms) {
+            if ($city =~ m{Reykjav}xms) {
+                $city = 'Reykjavik';
+            }
         }
         elsif ($country =~ m{France}xms) {
             if ($state =~ m{-de-France}xms) {
