@@ -2,9 +2,9 @@
 use strict;
 use warnings;
 
-my $w = 70;
-my $s = 8;
-my $f = 28;
+my $w = 50;  # width of the hexagon side
+my $s = 13;  # space between hexagons
+my $f = 25;  # font size of letters
 
 my $w2 = $w/2;
 my $s2 = $s/2;
@@ -52,9 +52,9 @@ sub do_hex {
 <text
     x="$fx"
     y="$fy"
-    fill="black"
+    fill="white"
     onclick="add_let('$C')"
-    style="font-family: Arial; font-size: ${f}pt; cursor: pointer"
+    style="font-family: Arial; font-size: ${f}pt; cursor: pointer;"
 >$C</text>
 EOH
 }
@@ -104,15 +104,16 @@ EOH
     close $svg;
 }
 
-my $gray = '#d5d5d5';
-my $red  = '#ff0000';
+my $gray  = '#d5d5d5';
+my $red   = '#ff0000';
+my $green = '#22ff22';
 
 init();
-do_hex(              0,             0, 'C', 'lightblue');
+do_hex(              0,             0, 'X', 'lightblue');
 do_hex(              0, -1*(2*$w1+$s), 'D', $gray);
 do_hex(              0,  1*(2*$w1+$s), 'E', $red);
-do_hex( 1*($w+$w2+$s1),   1*($w1+$s2), 'F', $gray);
-do_hex(-1*($w+$w2+$s1),  -1*($w1+$s2), 'G', $gray);
+do_hex( 1*($w+$w2+$s1),   1*($w1+$s2), 'Z', $gray);
+do_hex(-1*($w+$w2+$s1),  -1*($w1+$s2), 'G', $green);
 do_hex(-1*($w+$w2+$s1),   1*($w1+$s2), 'H', $gray);
 do_hex( 1*($w+$w2+$s1),  -1*($w1+$s2), 'K', $gray);
 finis();

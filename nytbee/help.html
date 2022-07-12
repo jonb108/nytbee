@@ -62,6 +62,7 @@ And I have.  The complete source code for this project is on
 <a href=#create>Creating a Community Puzzle</a><br>
 <a href=#power>Power User Commands</a><br>
 <a href=#donut>Donut and Lexicon Words</a><br>
+<a href=#bingo>Bingo</a><br>
 <a href=#articles>Articles about the NYT Bee</a><br>
 <a href=#other>Other NYT Bee Projects</a><br>
 <a href=#without>Without a Subscription?</a><br>
@@ -159,7 +160,8 @@ There are also many commands you can enter in the text field:
 of the 7 letters  - Honeycomb to Flower to Inline Letters to Hex Letters.<p>
 <img height=150 src=pics/df_honeycomb.png><img height=150 src=pics/df_flower.png>&nbsp;&nbsp;<img height=70 src=pics/df_inline.png><img height=130 src=pics/df_hexlet.png>
 </td></tr>
-<tr><td><span class=cmd>I</span></td><td>Show <span class=cmd>I</span>nformation about the puzzle including numbers of words, points, and pangrams.
+<tr><td><span class=cmd>I</span></td><td>Show <span class=cmd>I</span>nformation about the puzzle including numbers of words, points, pangrams, and (maybe) <a href=#bingo>Bingo</a>.
+Note that a pangram is termed "perfect" if it is 7 letters long.
 <p>If the puzzle was <a href=#create>created</a> by the HiveMind community details from the creator are given.
 <p>
 If <a href=#clues>clues have been added</a> for a puzzle the authors are listed.  Click on an author name to see all of their clues.</td></tr>
@@ -604,7 +606,10 @@ which had never occurred in an NYT Spelling Bee before - how fun is that! &#1285
 <p>
 Another type of word is one that IS a real valid actual proper qualified word
 containing the center letter but which for some mysterious, arbitrary,
-or irrational reason was not included in the 'allowed list'.
+rational, or irrational reason was not included in the 'allowed list'.
+In the above puzzle the words WAIN and WANG are such valid words that
+were not included in the allowed list - because they are rare or obscure?
+<p>
 These words are the subject of many many repetitous and lengthy
 discussions and debates in the HiveMind Forum.  One example is
 the word 'Urticaria' - see 
@@ -617,10 +622,32 @@ length >= 4 and contain no more than 7 unique letters.
 Donut Words are deemed acceptable if they occur in the large lexicon
 or have appeared before in an NYT Bee Puzzle.
 <p>
-You 'get credit' for finding these two types of words because they will be
+You do 'get credit' for finding these two types of words because they will be
 listed below the words you have found in the allowed list.  Like so:
 <p style="margin-left: .2in">
 <img src=pics/donut_lexicon.jpg width=750>
+<p>
+Note that Arming, Grammarian, and Margin are pangram donut words because
+they use all 6 letters.  Arming and Margin are perfect donut words because
+they are 6 letters long.  
+<a name=bingo></a>
+<h2>Bingo
+<a class=top href=#toc><img src=pics/top.gif height=25></a>
+</h2>
+If each of the 7 letters in a puzzle is the first letter of at
+least one word in the
+list of allowed words then this is called a "Bingo".
+Not all puzzles are Bingo puzzles.
+The <span class=cmd>I</span> command will tell you if a puzzle is a Bingo.
+When you enter a word that completes a Bingo you get a congratulatory message.
+There are 3 levels of Bingo achievement:
+<ul>
+YES, you achieved a BINGO! &#128077;<br>
+In the FIRST 7 words you found! &#128077; &#128077;<br>
+Even better, they were found in ALPHABETICAL order! &#128077; &#128077; &#128077;
+</ul>
+Trying to achieve the 3rd level of Bingo is a little game
+with the game that some people enjoy.  It is much easier than QBABM!
 <a name=articles></a>
 <h2>Articles about the NYT Spelling Bee
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -806,8 +833,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1515 puzzles with
-a total of 8783 different words!
+1525 puzzles with
+a total of 8809 different words!
 <p>
 Which puzzles from the large archive to play?
 You can get one at random with the <span class=cmd>NR</span> command or you could

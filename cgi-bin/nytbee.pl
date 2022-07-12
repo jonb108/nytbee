@@ -19,6 +19,9 @@ Clues - have a <select> dropdown to choose an alternate format.
     Less obtrusive.   And they can select-all and copy, yes?
 Have a comment that they shouldn't skip the clues.
 
+BINGO - if a bingo is possible and the person HAS found 7 words
+    with the initial letter - give them some kind of credit
+
 S/regex
 
 Have a way to leave a comment for the puzzle maker.
@@ -331,7 +334,6 @@ my $focus = $mobile? '': 'set_focus();';
 # DB abcd - when did abcd debut?
 # DB 4/5/19 - what words debuted on this date?
 # GAB GP GB4 'G Y' - give up and add to the found list
-# add Karen's site to list of projects
 # add comment about Shun's word analysis
 #   sbsolver.com = linked to from shunn.net
 #   his hints are nice - but you need to switch
@@ -1839,6 +1841,34 @@ for my $w (@new_words) {
                                 .  "</span>: not in word list but it IS in the large Lexicon<br>";
                 $w .= '+';
             }
+            else {
+                # it's a valid word in the allowed list
+                # has this word completed a bingo?
+                # analyze before we add it to @found 
+                my %first_c;
+                for my $fw (@found) {
+                    ++$first_c{substr($fw, 0, 1)};
+                }
+                if (keys %first_c == 6
+                    && ! exists $first_c{substr($w, 0, 1)}
+                ) {
+                    $not_okay_words .= "YES, you achieved a BINGO! &#128077;<br>";
+                    if (@found == 6) {
+                        $not_okay_words .= "In the FIRST 7 words you found! &#128077; &#128077;<br>";
+                        my $in_order = 1;
+                        ORDER:
+                        for my $i (0 .. 4) {
+                            if ($found[$i] gt $found[$i+1]) {
+                                $in_order = 0;
+                                last ORDER;
+                            }
+                        }
+                        if ($in_order && $found[5] lt $w) {
+                            $not_okay_words .= "Even better, they were found in ALPHABETICAL order! &#128077; &#128077; &#128077;<br>";
+                        }
+                    }
+                }
+            }
             push @found, $w;
         }
         else {
@@ -2051,13 +2081,12 @@ for my $w (@ok_words) {
     if ($max_len < $l) {
         $max_len = $l;
     }
+    my $c1 = substr($w, 0, 1);
+    ++$first_char{$c1};
     if ($is_found{$w}) {
         # skip it
         next WORD;
     }
-    my $c1 = substr($w, 0, 1);
-    ++$first_char{$c1};
-    my $c2 = substr($w, 0, 2);
     ++$sums{$c1}{$l};
 
     # the summations:
@@ -2066,6 +2095,7 @@ for my $w (@ok_words) {
     ++$sums{1}{1};
 
     # and the two letter list
+    my $c2 = substr($w, 0, 2);
     ++$two_lets{$c2};
 }
 
