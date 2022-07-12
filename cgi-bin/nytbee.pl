@@ -1844,26 +1844,30 @@ for my $w (@new_words) {
             else {
                 # it's a valid word in the allowed list
                 # has this word completed a bingo?
-                # analyze before we add it to @found 
+                # analyze this before we add it to @found 
+
+                # ignore donut and lexicon words
+                my @found2 = grep { ! m{[+-]\z}xms } @found;
                 my %first_c;
-                for my $fw (@found) {
+                WORD:
+                for my $fw (@found2) {
                     ++$first_c{substr($fw, 0, 1)};
                 }
                 if (keys %first_c == 6
                     && ! exists $first_c{substr($w, 0, 1)}
                 ) {
                     $not_okay_words .= "YES, you achieved a BINGO! &#128077;<br>";
-                    if (@found == 6) {
+                    if (@found2 == 6) {
                         $not_okay_words .= "In the FIRST 7 words you found! &#128077; &#128077;<br>";
                         my $in_order = 1;
                         ORDER:
                         for my $i (0 .. 4) {
-                            if ($found[$i] gt $found[$i+1]) {
+                            if ($found2[$i] gt $found2[$i+1]) {
                                 $in_order = 0;
                                 last ORDER;
                             }
                         }
-                        if ($in_order && $found[5] lt $w) {
+                        if ($in_order && $found2[5] lt $w) {
                             $not_okay_words .= "Even better, they were found in ALPHABETICAL order! &#128077; &#128077; &#128077;<br>";
                         }
                     }
