@@ -47,7 +47,8 @@ word_pangram.pl \
 dynamic.pl \
 rand5.pl \
 admin.pl \
-ipstack.txt
+ipstack.txt \
+status.pl
 
 # these will not change
 #JSON/PP.pm

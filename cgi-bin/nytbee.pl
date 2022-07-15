@@ -15,6 +15,9 @@ make Collapse the default and remove CO
 allow clicking on letters even if not mobile
 SC - mark other ranks aside from Great, Amazing, Genius, Queen Bee?
 
+Create a site to report missing Lexicon words.
+    My program can add to it automatically. :)
+
 Clues - have a <select> dropdown to choose an alternate format.
     Less obtrusive.   And they can select-all and copy, yes?
 Have a comment that they shouldn't skip the clues.
@@ -512,6 +515,8 @@ my $show_RankImage  = exists $params{show_RankImage}?
                              $params{show_RankImage}: 1;
 my $show_ZeroRowCol = exists $params{show_ZeroRowCol}?
                              $params{show_ZeroRowCol}: !$mobile;
+my $show_GraphicStatus = exists $params{show_GraphicStatus}?
+                             $params{show_GraphicStatus}: 0;
 
 #
 # SO ... what puzzle is current?
@@ -1263,6 +1268,10 @@ elsif ($cmd eq 'im') {
 }
 elsif ($cmd eq 'co') {
     $show_ZeroRowCol = ! $show_ZeroRowCol;
+    $cmd = '';
+}
+elsif ($cmd eq 'st') {
+    $show_GraphicStatus = ! $show_GraphicStatus;
     $cmd = '';
 }
 # do we have a reveal command?
@@ -2550,6 +2559,140 @@ if ($tl_chosen && ($show_ZeroRowCol || $sums{1}{1} != 0)) {
 </div>
 EOH
 }
+
+sub graphic_status {
+    my $ind1 = 2;
+    my $ind2 = 28;
+    my $html = "";
+    my @color = qw/
+        8E008E
+        400098
+        00C0C0
+        008E00
+        FFFF00
+        FF8E00
+        FF0000
+        FF6599
+        CD66FF
+    /;
+
+    my $width = $ind2 + 7*($nwords-1) + 18;
+    $html = <<"EOH";
+    <style>
+    .glets, .bold_glets {
+        font-size: 16pt;
+        font-family: Courier New;
+    }
+    .bold_glets {
+        font-weight: bold;
+        font-size: 18pt;
+    }
+    </style>
+    <svg width=$width height=110>
+EOH
+    my $between = 22;
+    my $y = $between;
+    if ($bingo) {
+        my %first_found;
+        for my $w (grep { !m{[+-]\z}xms } @found) {
+            ++$first_found{uc substr($w, 0, 1)};
+        }
+        $html .= "<text x=$ind1 y=$y class=glets>b</text>\n";
+        my $x = $ind2;
+        for my $c (map { uc } @seven) {
+            my ($color, $class) = ('black', 'glets');
+            if ($first_found{$c}) {
+                ($color, $class) = ('#8E008E', 'bold_glets');
+            }
+            $html .= "<text x=$x y=$y class=$class fill=$color>$c</text>\n";
+            $x += 20;
+        }
+        $y += $between;
+    }
+
+    $html .= "<text x=$ind1 y=$y class=glets>p</text>\n";
+    my $x = $ind2;
+    $y -= 4;
+    my $npangrams_found = grep { $is_found{$_} } @pangrams;
+    for my $i (1 .. $npangrams_found) {
+        $html .= "<circle cx=$x cy=$y r=3 fill=#00C0C0></circle>\n";
+        $x += 7;
+    }
+    for my $i ($npangrams_found+1 .. $npangrams) {
+        $html .= "<circle cx=$x cy=$y r=1 fill=black></circle>\n";
+        $x += 7;
+    }
+    $y += 4;
+    $y += $between;
+
+    my $w_ind = $ind1-2;
+    $html .= "<text x=$w_ind y=$y class=glets>w</text>\n";
+    $x = $ind2;
+    $y -= 4;
+    my $nfound = grep { !m{[+-]\z}xms } @found;
+    for my $i (1 .. $nfound) {
+        $html .= "<circle cx=$x cy=$y r=3 fill=green></circle>\n";
+        $x += 7;
+    }
+    for my $i ($nfound+1 .. $nwords) {
+        $html .= "<circle cx=$x cy=$y r=1 fill=black></circle>\n";
+        $x += 7;
+    }
+    $y += 4;
+    $y += $between;
+
+    $html .= "<text x=$ind1 y=$y class=glets>s</text>\n";
+
+    # a black line from 0 to max_score
+    $y -=5; # centered on the S
+    my $max_x = $ind2 + ($nwords-1)*7;
+    my $x1 = $ind2;
+    $html .= "<line x1=$x1 y1=$y x2=$max_x y2=$y stroke=black stroke-width=1></line>\n";
+
+    # colored ranks between the percentages
+    # but only up to the score %
+    my @pct = (0, 2, 5, 9, 15, 25, 40, 50, 70, 100);
+    my $score_pct = ($score/$max_score)*100;
+    PCT:
+    for my $i (0 .. $#pct-1) {
+        my $x1 = $ind2 + ($pct[$i]/100)*($max_x - $ind2);
+        if ($score_pct < $pct[$i+1]) {
+            my $x2 = $ind2 + ($score_pct/100)*($max_x - $ind2);
+            $html .= "<line x1=$x1 y1=$y x2=$x2 y2=$y stroke='#$color[$i]' stroke-width=6></line>\n";
+            last PCT;
+        }
+        my $x2 = $ind2 + ($pct[$i+1]/100)*($max_x - $ind2);
+        $html .= "<line x1=$x1 y1=$y x2=$x2 y2=$y stroke='#$color[$i]' stroke-width=6></line>\n";
+    }
+
+    # vertical marks between ranks
+    my $y1 = $y-5;
+    my $y2 = $y+5;
+    for my $pct (@pct) {
+        my $x1 = $ind2 + ($pct/100)*($max_x - $ind2);
+        my $x2 = $x1;
+        $html .= "<line x1=$x1 y1=$y1 x2=$x2 y2=$y2 stroke=black stroke-width=1></line>\n";
+    }
+    $y += 4;
+    $y += $between;
+
+    # hints
+    if ($nhints > 0) {
+        $html .= "<text x=$ind1 y=$y class=glets>h</text>\n";
+        $x = $ind2;
+        $y -= 5;
+        for my $i (1 .. $nhints) {
+            $html .= "<circle cx=$x cy=$y r=1 fill=#400098></circle>\n";
+            $x += 7;
+        }
+    }
+
+    $html .= "</svg>\n";
+    return $html;
+}
+
+my $status = $show_GraphicStatus? graphic_status()
+            :                     "Score: $score $rank_image\n$disp_nhints";
 my $css = $mobile? 'mobile_': '';
 my $new_words_size = $mobile? 30: 40;
 my $enter_top  = 90 + ($show_Heading? 79: 0);
@@ -2615,6 +2758,7 @@ $heading
 <input type=hidden name=show_WordList value=$show_WordList>
 <input type=hidden name=show_RankImage value=$show_RankImage>
 <input type=hidden name=show_ZeroRowCol value=$show_ZeroRowCol>
+<input type=hidden name=show_GraphicStatus value=$show_GraphicStatus>
 $letters
 $message
 <input type=hidden name=hidden_new_words id=hidden_new_words>
@@ -2629,8 +2773,7 @@ $message
 $found_words
 $donut_lexicon
 <p>
-Score: $score $rank_image
-$disp_nhints$hint_table_list
+$status$hint_table_list
 $show_clue_form$add_clues_form
 </body>
 <script src="$log/nytbee/js/fastclick.js"></script>
