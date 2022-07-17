@@ -2560,9 +2560,13 @@ if ($tl_chosen && ($show_ZeroRowCol || $sums{1}{1} != 0)) {
 EOH
 }
 
-sub graphic_status {
+sub graphical_status {
     my $ind1 = 2;
     my $ind2 = 28;
+    my $between_lines = 22;
+    my $between_dots = 11;
+    my $dotr1 = 1;
+    my $dotr2 = 4;
     my $html = "";
     my @color = qw/
         8E008E
@@ -2575,8 +2579,10 @@ sub graphic_status {
         FF6599
         CD66FF
     /;
-
-    my $width = $ind2 + 7*($nwords-1) + 18;
+    my $width = $ind2 + $between_dots*($nwords-1) + 26;
+        # 26 extra to accomodate a plus sign + at the end of the hints
+    my $height = (($bingo? 1: 0) + ($nhints? 1: 0) + 3) * 23;
+               #    b                 h             pws
     $html = <<"EOH";
     <style>
     .glets, .bold_glets {
@@ -2588,10 +2594,9 @@ sub graphic_status {
         font-size: 18pt;
     }
     </style>
-    <svg width=$width height=110>
+    <svg width=$width height=$height>
 EOH
-    my $between = 22;
-    my $y = $between;
+    my $y = $between_lines;
     if ($bingo) {
         my %first_found;
         for my $w (grep { !m{[+-]\z}xms } @found) {
@@ -2607,7 +2612,7 @@ EOH
             $html .= "<text x=$x y=$y class=$class fill=$color>$c</text>\n";
             $x += 20;
         }
-        $y += $between;
+        $y += $between_lines;
     }
 
     $html .= "<text x=$ind1 y=$y class=glets>p</text>\n";
@@ -2615,15 +2620,15 @@ EOH
     $y -= 4;
     my $npangrams_found = grep { $is_found{$_} } @pangrams;
     for my $i (1 .. $npangrams_found) {
-        $html .= "<circle cx=$x cy=$y r=3 fill=#00C0C0></circle>\n";
-        $x += 7;
+        $html .= "<circle cx=$x cy=$y r=$dotr2 fill=#00C0C0></circle>\n";
+        $x += $between_dots;
     }
     for my $i ($npangrams_found+1 .. $npangrams) {
-        $html .= "<circle cx=$x cy=$y r=1 fill=black></circle>\n";
-        $x += 7;
+        $html .= "<circle cx=$x cy=$y r=$dotr1 fill=black></circle>\n";
+        $x += $between_dots;
     }
     $y += 4;
-    $y += $between;
+    $y += $between_lines;
 
     my $w_ind = $ind1-2;
     $html .= "<text x=$w_ind y=$y class=glets>w</text>\n";
@@ -2631,21 +2636,21 @@ EOH
     $y -= 4;
     my $nfound = grep { !m{[+-]\z}xms } @found;
     for my $i (1 .. $nfound) {
-        $html .= "<circle cx=$x cy=$y r=3 fill=green></circle>\n";
-        $x += 7;
+        $html .= "<circle cx=$x cy=$y r=$dotr2 fill=green></circle>\n";
+        $x += $between_dots;
     }
     for my $i ($nfound+1 .. $nwords) {
-        $html .= "<circle cx=$x cy=$y r=1 fill=black></circle>\n";
-        $x += 7;
+        $html .= "<circle cx=$x cy=$y r=$dotr1 fill=black></circle>\n";
+        $x += $between_dots;
     }
     $y += 4;
-    $y += $between;
+    $y += $between_lines;
 
     $html .= "<text x=$ind1 y=$y class=glets>s</text>\n";
 
     # a black line from 0 to max_score
     $y -=5; # centered on the S
-    my $max_x = $ind2 + ($nwords-1)*7;
+    my $max_x = $ind2 + ($nwords-1)*$between_dots;
     my $x1 = $ind2;
     $html .= "<line x1=$x1 y1=$y x2=$max_x y2=$y stroke=black stroke-width=1></line>\n";
 
@@ -2674,16 +2679,23 @@ EOH
         $html .= "<line x1=$x1 y1=$y1 x2=$x2 y2=$y2 stroke=black stroke-width=1></line>\n";
     }
     $y += 4;
-    $y += $between;
+    $y += $between_lines;
 
     # hints
     if ($nhints > 0) {
         $html .= "<text x=$ind1 y=$y class=glets>h</text>\n";
         $x = $ind2;
         $y -= 5;
+        HINT:
         for my $i (1 .. $nhints) {
-            $html .= "<circle cx=$x cy=$y r=1 fill=#400098></circle>\n";
-            $x += 7;
+            if ($i > $nwords) {
+                $html .= "<text x=$x y=$y class=glets>+</text>\n";
+                last HINT;
+            }
+            else {
+                $html .= "<circle cx=$x cy=$y r=$dotr1 fill=#400098></circle>\n";
+            }
+            $x += $between_dots;
         }
     }
 
@@ -2691,7 +2703,7 @@ EOH
     return $html;
 }
 
-my $status = $show_GraphicStatus? graphic_status()
+my $status = $show_GraphicStatus? graphical_status()
             :                     "Score: $score $rank_image\n$disp_nhints";
 my $css = $mobile? 'mobile_': '';
 my $new_words_size = $mobile? 30: 40;
