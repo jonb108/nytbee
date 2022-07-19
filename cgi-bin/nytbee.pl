@@ -1028,23 +1028,24 @@ sub define {
     my $max = 10;   # without this D*TIME causes a fatal error! :(
 
     # merriam-webster
-    $html = get_html "https://www.merriam-webster.com/dictionary/$word";
+    # commented out 7/19/22 - too many ads!
+    #$html = get_html "https://www.merriam-webster.com/dictionary/$word";
     # to catch an adequate definition for 'bought':
-    push @defs, 'MERRIAM-WEBSTER:' if $Dcmd eq 'd*'; 
-    push @defs, $html =~  m{meaning\s+of\s+$word\s+is\s+(.*?)[.]\s+How\s+to}xmsi;
-    push @defs, $html =~ m{dtText(.*?)\n}xmsg;
-    $#defs = $max if @defs > $max;
-    if ($Dcmd eq 'd*' || ! @defs || @defs < 3) {
+    #push @defs, 'MERRIAM-WEBSTER:' if $Dcmd eq 'd*'; 
+    #push @defs, $html =~  m{meaning\s+of\s+$word\s+is\s+(.*?)[.]\s+How\s+to}xmsi;
+    #push @defs, $html =~ m{dtText(.*?)\n}xmsg;
+    #$#defs = $max if @defs > $max;
+    #if ($Dcmd eq 'd*' || ! @defs || @defs < 3) {
         # some definitions (like 'from') use a different format
         # no clue why
-        push @defs, $html =~ m{"unText">(.*?)</span>}xmsg;
-        $#defs = $max if @defs > $max;
-    }
-    for my $d (@defs) {
-        $d = trim($d);
-        $d =~ s{<[^>]*>}{}xmsg;   # strip tags
-        $d =~ s{.*:\s+}{}xms;
-    }
+    #    push @defs, $html =~ m{"unText">(.*?)</span>}xmsg;
+    #    $#defs = $max if @defs > $max;
+    #}
+    #for my $d (@defs) {
+    #    $d = trim($d);
+    #    $d =~ s{<[^>]*>}{}xmsg;   # strip tags
+    #    $d =~ s{.*:\s+}{}xms;
+    #}
     if ($Dcmd eq 'd*' || ! @defs) {
         # oxford/lexico
         push @defs, 'OXFORD:' if $Dcmd eq 'd*';
