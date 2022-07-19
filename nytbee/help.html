@@ -57,13 +57,13 @@ And I have.  The complete source code for this project is on
 <a href=#hint_commands>Hint Commands</a><br>
 <a href=#table_list>The Hint Table and the Two Letter List</a><br>
 <a href=#hint>Hint Strategy</a><br>
+<a href=#bingo>Bingo</a><br>
+<a href=#gn4l>Genius No 4 Letter</a><br>
+<a href=#donut>Donut and Lexicon Words</a><br>
 <a href=#archival_and_community>Archival and Community Puzzles</a><br>
 <a href=#clues>Clues for Puzzles</a><br>
 <a href=#create>Creating a Community Puzzle</a><br>
 <a href=#power>Power User Commands</a><br>
-<a href=#donut>Donut and Lexicon Words</a><br>
-<a href=#bingo>Bingo</a><br>
-<a href=#gn4l>Genius No 4 Letter</a><br>
 <a href=#articles>Articles about the NYT Bee</a><br>
 <a href=#other>Other NYT Bee Projects</a><br>
 <a href=#without>Without a Subscription?</a><br>
@@ -170,6 +170,25 @@ If <a href=#clues>clues have been added</a> for a puzzle the authors are listed.
 <tr><td><span class=cmd>R</span></td><td>Show the rankings - from Beginner to ... Amazing to Genius to Queen Bee.  It also shows how many points are needed to get to the next rank.</td></tr>
 <tr><td><span class=cmd>W</span></td><td>Show the found words in the order they were found.</td></tr>
 <tr><td><span class=cmd>SC</span></td><td>Show how the score was tallied and how many words remain to be found.  A thin line shows where you first asked for a hint.</td></tr>
+<tr><td><span class=cmd>ST</span></td><td>Toggle the showing of puzzle <span class=cmd>st</span>atus: numeric or graphical. Default is numeric.<p>
+The numeric status looks like this:
+<p>
+<img src=pics/nstatus.png height=90>
+<p>
+The graphical status looks like this:
+<p>
+<img src=pics/gstatus.png height=150>
+<p>
+b - bingo<br>
+p - pangrams<br>
+w - words<br>
+s - score<br>
+h - hints<br>
+<p>
+The bingo line will appear only if the puzzle is a <a href=#bingo>Bingo</a>.
+If the number of hints exceeds the number of words
+the line of dots will be truncated and a <span style="font-size: 23pt">+</span> will be appended.
+<br><br></td></tr>
 <tr><td><span class=cmd>C&nbsp;&nbsp;Y</span></td><td>Clear the puzzle and start over. <span class=cmd>C&nbsp;&nbsp;Y</span> means Clear and confirm with Yes.</td></tr>
 </table>
 <a name=hint_commands></a>
@@ -199,9 +218,9 @@ No hints are tallied.
 This form of the <span class=cmd>D</span> command serves as a quick and fun way to browse a dictionary that is more pleasant somehow than the full merriam-webster.com site.  You can give multiple words on the command line.
 </td></tr>
 <tr><td><span class=cmd>D*&nbsp;&nbsp;...</span></td><td>The above <span class=cmd>D</span> commands give at most 3 definitions. <span class=cmd>D*</span> will give them <i>all</i> (to a max of 10) plus any <a href=#clues>clues</a>.<p></td></tr>
-<tr><td><span class=cmd>V2P</span></td><td>Reveal the first two letters of the pangrams.</td></tr>
+<tr><td><span class=cmd>V2P</span></td><td>Reveal the first two letters (and the length) of the pangrams.</td></tr>
 <tr><td><span class=cmd>V3B8</span></td><td>Reveal the first 3 letters of the words beginning with B of length 8.</td></tr>
-<tr><td><span class=cmd>V4GA</span></td><td>Reveal the first 4 letters of the words beginning with GA.</td></tr>
+<tr><td><span class=cmd>V4GA</span></td><td>Reveal the first 4 letters (and the length) of the words beginning with GA.</td></tr>
 <tr><td colspan=2>Using <span class=cmd>E</span> instead of <span class=cmd>V</span> reveals letters at the front and at the End of the word.  Commands that would reveal the entire word (like V4B4) are silently ignored (as are commands like V1B8 or V2GA).</td></tr>
 <tr><td colspan=2>Both define and reveal commands skip words that have already been found.<p></td></tr>
 <tr><td><span class=cmd>1</span></td><td>Show a random entry from the Hint Table.</td></tr>
@@ -292,6 +311,7 @@ It <i>is</i> just a game and they feel that games should be fun. &#128521;
 If I make it to the rank of Amazing all by myself I call it a very good day.
 And some days I consider it a success
 if the Hints total is less than the Score. &#128522;
+<p>
 Note that with enough hints you can <i>always</i> make it to Queen Bee.
 For example, with the 5 letter word MAGMA you could ask
 for the hints V4MA and E2MA to get all 5 of the letters.
@@ -309,6 +329,98 @@ and another kind
 of challenge you could clear the puzzle with <span class=cmd>C Y</span>
 and then play it again to see if you remember all the words, and,
 if not, how many fewer hints you need to reach Queen Bee again.
+<a name=bingo></a>
+<h2>Bingo
+<a class=top href=#toc><img src=pics/top.gif height=25></a>
+</h2>
+If each of the 7 letters in a puzzle is the first letter of at
+least one word in the
+list of allowed words then this is called a "Bingo".
+It is called "Bingo" in reference to the real <a target=_blank href='https://en.wikipedia.org/wiki/Bingo_(American_version)'>Bingo</a> game where
+you win if you complete a row, column, or diagonal.
+Not all puzzles are Bingo puzzles but there are many.
+In the first 1530 puzzles in the <a href=#nyt_archive>archive</a>
+650 were Bingo puzzles.
+The <span class=cmd>I</span> command will tell you if a puzzle is a Bingo as
+does the graphical status (see the command <span class=cmd>ST</span> ).
+When you enter a word that completes a Bingo you get a congratulatory message.
+There are 3 levels of Bingo achievement:
+<ul>
+1 - YES, you achieved a BINGO! &#128077;<br>
+2 - In the FIRST 7 words you found! &#128077; &#128077;<br>
+3 - Even better, they were found in ALPHABETICAL order! &#128077; &#128077; &#128077;
+</ul>
+Trying to achieve the 3rd level of Bingo is a little game
+within the game that some people enjoy.  It is much easier than QBABM!
+<a name=gn4l></a>
+<h2>Genius No 4 Letter
+<a class=top href=#toc><img src=pics/top.gif height=25></a>
+</h2>
+Another little game within the game is achieving the rank of Genius
+without any 4 letter words.  The abbreviation for this in the HiveMind forum
+is GN4L (genius no 4 letter).
+<p>
+Since 4 letter words are only valued at 1 point, attaining GN4L is almost always possible.
+In the first 1530 games in the <a hef=#nyt_archive>archive</a> there were
+only 8 games where GN4L was not possible.  It isn't easy, however,
+and here are a few commands to help:
+<p>
+<table cellpadding=3>
+<tr><td><span class=cmd>DR5</span></td><td>Define a random word not yet found that has 5 or more letters.</td></tr>
+<tr><td><span class=cmd>51</span></td><td>Show a random non-zero entry from the Hint Table where the length is 5 or more.</td></tr>
+<tr><td><span class=cmd>52</span></td><td>Show a random entry from the Two Letter List of words with a length of 5 or more.</td></tr>
+</table>
+<p>
+When you achieve GN4L you get a congratulatory message:
+<ul>
+Genius &#128077;&#128077;<br>
+And you did it without ANY 4 letter words! &#128522;
+</ul>
+<a name=donut></a>
+<h2>Donut and Lexicon Words
+<a class=top href=#toc><img src=pics/top.gif height=25></a>
+</h2>
+While searching searching for words that are in the 'allowed list'
+it often happens that you see a real word that does not contain the center
+letter.  These words are called 'Donut Words' because the 6 non-center letters
+form a circle (or torus) with a hole - like a donut or 
+<a target=_blank href='https://en.wikipedia.org/wiki/Doughnut'>doughnut</a>.
+This puzzle from May 27, 2022:
+<p style="margin-left: .2in">
+<img width=400 src=pics/donut.jpg>
+</p>
+had more than 50 (!) Donut Words including Again, Agar, Agrarian,
+<span class=purple>Arming</span>,
+<span class=green>Grammarian</span>,
+and <span class=purple>Margin</span>.  Another Donut Word is 'Anagram'
+which had never occurred in an NYT Spelling Bee before - how fun is that! &#128522;
+<p>
+Another type of word is one that IS a real valid actual proper qualified word
+containing the center letter but which for some mysterious, arbitrary,
+rational, or irrational reason was not included in the 'allowed list'.
+In the above puzzle the words WAIN and WANG are such valid words that
+were not included in the allowed list - because they are rare or obscure?
+<p>
+These words are the subject of many many repetitous and lengthy
+discussions and debates in the HiveMind Forum.  One example is
+the word 'Urticaria' - see 
+<a target=_blank href='https://www.nytimes.com/2022/05/16/crosswords/spelling-bee-forum.html#commentsContainer'>the forum for May 16, 2022</a>.
+These words are called 'Lexicon Words' because they <b>are</b> to be found
+in the large lexicon of words in /usr/share/dict/words on OSX.
+This lexicon contains 235,886 words of which 98,634 of them have a
+length >= 4 and contain no more than 7 unique letters.
+<p>
+Donut Words are deemed acceptable if they occur in the large lexicon
+or have appeared before in an NYT Bee Puzzle.
+<p>
+You do 'get credit' for finding these two types of words because they will be
+listed below the words you have found in the allowed list.  Like so:
+<p style="margin-left: .2in">
+<img src=pics/donut_lexicon.jpg width=750>
+<p>
+Note that Arming, Grammarian, and Margin are pangram donut words because
+they use all 6 letters.  Arming and Margin are perfect donut words because
+they are 6 letters long.  
 <a name=archival_and_community></a>
 <h2>Archival and Community Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -552,25 +664,6 @@ These commands are of more limited use.  Some of them were added just for the be
 </div>
 </td></tr>
 <tr><td><span class=cmd>R%</span></td><td>Show the rankings with the percentage of the maximum score.<br><br></td></tr>
-<tr><td><span class=cmd>ST</span></td><td>Toggle the showing of puzzle <span class=cmd>st</span>atus: numeric or graphical. Default is numeric.<p>
-The numeric status looks like this:
-<p>
-<img src=pics/nstatus.png height=90>
-<p>
-The graphical status looks like this:
-<p>
-<img src=pics/gstatus.png height=150>
-<p>
-b - bingo<br>
-p - pangrams<br>
-w - words<br>
-s - score<br>
-h - hints<br>
-<p>
-The bingo line will appear only if the puzzle is a <a href=#bingo>Bingo</a>.
-If the number of hints exceeds the number of words
-the line of dots will be truncated and a <span style="font-size: 23pt">+</span> will be appended.
-<br><br></td></tr>
 <tr><td colspan=2>Searching the Puzzles</td></tr>
 <tr><td><span class=cmd>CL</span></td><td>Find puzzles for which you have added clues.</td></tr>
 <tr><td><span class=cmd>F</span></td><td>Find puzzles that use the same seven letters as the current puzzle.</td></tr>
@@ -603,98 +696,6 @@ This command also allows you to replicate your identity from one browser to anot
 <tr><td><span class=cmd>G&nbsp;&nbsp;Y</span></td><td>
 Give up and show the words you have not yet found. <span class=cmd>G&nbsp;&nbsp;Y</span> means Give up and confirm Yes.  This just shows the words not yet found.  If you wish to actually have them entered append a P to the Y: <span class=cmd>G YP</span>.  That is P for paste or GYP for cheat or swindle.</td></tr>
 </table>
-<a name=donut></a>
-<h2>Donut and Lexicon Words
-<a class=top href=#toc><img src=pics/top.gif height=25></a>
-</h2>
-While searching searching for words that are in the 'allowed list'
-it often happens that you see a real word that does not contain the center
-letter.  These words are called 'Donut Words' because the 6 non-center letters
-form a circle (or torus) with a hole - like a donut or 
-<a target=_blank href='https://en.wikipedia.org/wiki/Doughnut'>doughnut</a>.
-This puzzle from May 27, 2022:
-<p style="margin-left: .2in">
-<img width=400 src=pics/donut.jpg>
-</p>
-had more than 50 (!) Donut Words including Again, Agar, Agrarian,
-<span class=purple>Arming</span>,
-<span class=green>Grammarian</span>,
-and <span class=purple>Margin</span>.  Another Donut Word is 'Anagram'
-which had never occurred in an NYT Spelling Bee before - how fun is that! &#128522;
-<p>
-Another type of word is one that IS a real valid actual proper qualified word
-containing the center letter but which for some mysterious, arbitrary,
-rational, or irrational reason was not included in the 'allowed list'.
-In the above puzzle the words WAIN and WANG are such valid words that
-were not included in the allowed list - because they are rare or obscure?
-<p>
-These words are the subject of many many repetitous and lengthy
-discussions and debates in the HiveMind Forum.  One example is
-the word 'Urticaria' - see 
-<a target=_blank href='https://www.nytimes.com/2022/05/16/crosswords/spelling-bee-forum.html#commentsContainer'>the forum for May 16, 2022</a>.
-These words are called 'Lexicon Words' because they <b>are</b> to be found
-in the large lexicon of words in /usr/share/dict/words on OSX.
-This lexicon contains 235,886 words of which 98,634 of them have a
-length >= 4 and contain no more than 7 unique letters.
-<p>
-Donut Words are deemed acceptable if they occur in the large lexicon
-or have appeared before in an NYT Bee Puzzle.
-<p>
-You do 'get credit' for finding these two types of words because they will be
-listed below the words you have found in the allowed list.  Like so:
-<p style="margin-left: .2in">
-<img src=pics/donut_lexicon.jpg width=750>
-<p>
-Note that Arming, Grammarian, and Margin are pangram donut words because
-they use all 6 letters.  Arming and Margin are perfect donut words because
-they are 6 letters long.  
-<a name=bingo></a>
-<h2>Bingo
-<a class=top href=#toc><img src=pics/top.gif height=25></a>
-</h2>
-If each of the 7 letters in a puzzle is the first letter of at
-least one word in the
-list of allowed words then this is called a "Bingo".
-It is called "Bingo" in reference to the real <a target=_blank href='https://en.wikipedia.org/wiki/Bingo_(American_version)'>Bingo</a> game where
-you win if you complete a row, column, or diagonal.
-Not all puzzles are Bingo puzzles but there are many.
-In the first 1530 puzzles in the <a href=#nyt_archive>archive</a>
-650 were Bingo puzzles.
-The <span class=cmd>I</span> command will tell you if a puzzle is a Bingo as
-does the graphical status (see the <a href=#power>Power User</a> command <span class=cmd>ST</span> ).
-When you enter a word that completes a Bingo you get a congratulatory message.
-There are 3 levels of Bingo achievement:
-<ul>
-1 - YES, you achieved a BINGO! &#128077;<br>
-2 - In the FIRST 7 words you found! &#128077; &#128077;<br>
-3 - Even better, they were found in ALPHABETICAL order! &#128077; &#128077; &#128077;
-</ul>
-Trying to achieve the 3rd level of Bingo is a little game
-within the game that some people enjoy.  It is much easier than QBABM!
-<a name=gn4l></a>
-<h2>Genius No 4 Letter
-<a class=top href=#toc><img src=pics/top.gif height=25></a>
-</h2>
-Another little game within the game is achieving the rank of Genius
-without any 4 letter words.  The abbreviation for this in the HiveMind forum
-is GN4L (genius no 4 letter).
-<p>
-Since 4 letter words are only valued at 1 point, attaining GN4L is almost always possible.
-In the first 1530 games in the <a hef=#nyt_archive>archive</a> there were
-only 8 games where GN4L was not possible.  It isn't easy, however,
-and here are a few commands to help:
-<p>
-<table cellpadding=3>
-<tr><td><span class=cmd>DR5</span></td><td>Define a random word not yet found that has 5 or more letters.</td></tr>
-<tr><td><span class=cmd>51</span></td><td>Show a random non-zero entry from the Hint Table where the length is 5 or more.</td></tr>
-<tr><td><span class=cmd>52</span></td><td>Show a random entry from the Two Letter List of words with a length of 5 or more.</td></tr>
-</table>
-<p>
-When you achieve GN4L you get a congratulatory message:
-<ul>
-Genius &#128077;&#128077;<br>
-And you did it without ANY 4 letter words! &#128522;
-</ul>
 <a name=articles></a>
 <h2>Articles about the NYT Spelling Bee
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
