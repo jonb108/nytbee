@@ -26,6 +26,7 @@ our @EXPORT_OK = qw/
     $cgi
     $cgi_dir
     get_html
+    $thumbs_up
 /;
 
 use Date::Simple qw/
@@ -35,6 +36,7 @@ use Date::Simple qw/
 our $log     = 'https://logicalpoetry.com';
 our $cgi     = 'https://logicalpoetry.com/cgi-bin';
 our $cgi_dir = '/home4/logical9/www/cgi-bin';
+our $thumbs_up = '&#128077;';
 
 #
 # handle the creation and maintenance of the uuid

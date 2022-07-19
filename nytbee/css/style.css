@@ -3,6 +3,10 @@ body {
     font-size: 18pt;
     font-family: Helvetica;
 }
+.nyt {
+    font-family: Times;
+    font-size: 45pt;
+}
 .long_string {
     color: green;
     margin-left: .5in;

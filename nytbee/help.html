@@ -7,7 +7,7 @@
 </head>
 <body>
 <h1><img height=70 src='pics/bee-logo.jpg'><br>The Spelling Bee Puzzle<br>of<br>
-<img height=70 src='pics/NewYorkTimes.png'>
+<span class=nyt>The New York Times</span>
 </h1>
 <a name=introduction></a>
 <h2>Introduction</h2>
@@ -63,12 +63,14 @@ And I have.  The complete source code for this project is on
 <a href=#power>Power User Commands</a><br>
 <a href=#donut>Donut and Lexicon Words</a><br>
 <a href=#bingo>Bingo</a><br>
+<a href=#gn4l>Genius No 4 Letter</a><br>
 <a href=#articles>Articles about the NYT Bee</a><br>
 <a href=#other>Other NYT Bee Projects</a><br>
 <a href=#without>Without a Subscription?</a><br>
 <a href=#same>Same 7 Letters</a><br>
 <a href=#nyt_archive>NYT Archival Puzzles</a><br>
-<a href=#known_issues>Known Issues</a>
+<a href=#known_issues>Known Issues</a><br>
+<a href=#acknowledgements>Acknowledgements</a>
 </div>
 <a name=videos></a>
 <h2>Videos
@@ -325,12 +327,12 @@ Commands to access the large NY Times <a href=#nyt_archive>Archive</a> of Spelli
 <tr><td><span class=cmd>P&lt;num&gt;</span></td><td>Move to puzzle #num in the list.</td></tr>
 <tr><td><span class=cmd>X</span></td><td>Remove the current puzzle from the list and move to the first in the list - or today. This clears the words you found in the removed puzzle so if you choose the puzzle again you will start afresh.</td></tr>
 <tr><td><span class=cmd>X&lt;nums&gt;</span></td><td>Remove the numbered puzzles from the list. You can give a range.  For example: <span class=cmd>X 2 4-6 9</span></td></tr>
-<tr><td><span class=cmd>XA</span></td><td>Remove all puzzles from the list and return to today's NYT puzzle.  The words you found in today's puzzle are preserved.</td></tr>
-<tr><td colspan=2><hr width=500></td></tr>
+<tr><td><span class=cmd>XA</span></td><td>Remove all puzzles from the list and return to today's NYT puzzle.  The words you found in today's puzzle are preserved.<br><br></td></tr>
+<tr><td colspan=2>Community Puzzles</td></tr>
 <tr><td><span class=cmd>LCP</span></td><td>List the 5 most recent Community Puzzles.  <span class=cmd>LCP 10</span> will list 10 puzzles.  <span class=cmd>LCP &lt;pattern&gt;</span> will show the puzzles created by people whose names match the pattern.  Click on the <span class=blue>CP##</span> to start solving the puzzle.</td></tr>
 <tr><td><span class=cmd>RCP</span></td><td>List community puzzles that I <span class=cmd>r</span>ecommend because I find them interesting, clever, or an unusual challenge.</td></tr>
 <tr><td><span class=cmd>CP&lt;num&gt;</span></td><td>New Community Puzzle #num.  This <i>plays</i> the puzzle.  To <i>create</i> a puzzle click <a target=nytbee3 href='https://logicalpoetry.com/nytbee/mkpuz.html'>here</a>.</td></tr>
-<tr><td><span class=cmd>YCP</span></td><td>List the Community Puzzles that you created.  Click on the <span style="color: blue">CP#</span> to edit the puzzle. You can change the words and the clues.</td></tr>
+<tr><td><span class=cmd>YCP</span></td><td>List the Community Puzzles that you created.  Click on the <span style="color: blue">CP#</span> to edit the puzzle. You can change the words, clues, title, and description.</td></tr>
 <tr><td><span class=cmd>XCP&lt;num&gt;</span></td><td>Delete Community Puzzle #num and revert to today's NYT puzzle. You can only delete puzzles that you created.  You would only do this if you deem the puzzle to be flawed in some way.</td></tr>
 </table>
 <p>
@@ -368,7 +370,7 @@ you some ideas.
 frequently occuring words
 like LOLL, NOON or TOOT) your clues will be offered and you can
 cycle through them.
-<li>If you want a multi-line clue put <br> at the end of lines.
+<li>If you want a multi-line clue put &lt;br&gt; at the end of lines.
 <li>On Apple's OSX emojis can be inserted into clues with control-command-space.
 </ul>
 When you have finished with your clues they are all presented in a nice format.
@@ -541,7 +543,7 @@ name@hello.com becomes <a href='mailto:name@hello.com'>name@hello.com<br>
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
 These commands are of more limited use.  Some of them were added just for the beauty of software Art.
-<ul>
+<p>
 <table cellpadding=3>
 <tr><td><span class=cmd>H&lt;num&gt</span></td><td>Directly change the 7 letter presentation instead of cycling around.
 <div class=toc style='margin-top: 3mm'>
@@ -552,7 +554,7 @@ These commands are of more limited use.  Some of them were added just for the be
 </div>
 </td></tr>
 <tr><td><span class=cmd>R%</span></td><td>Show the rankings with the percentage of the maximum score.<br><br></td></tr>
-<tr><td><span class=cmd>ST</span></td><td>Toggle the showing of puzzle status: numeric or graphical. Default is numeric.<p>
+<tr><td><span class=cmd>ST</span></td><td>Toggle the showing of puzzle <span class=cmd>st</span>atus: numeric or graphical. Default is numeric.<p>
 The numeric status looks like this:
 <p>
 <img src=pics/nstatus.png height=90>
@@ -567,9 +569,9 @@ w - words<br>
 s - score<br>
 h - hints<br>
 <p>
-The bingo line will appear only if the puzzle is a Bingo.
+The bingo line will appear only if the puzzle is a <a href=#bingo>Bingo</a>.
 If the number of hints exceeds the number of words
-the line of dots will be truncated.
+the line of dots will be truncated and a <span style="font-size: 23pt">+</span> will be appended.
 <br><br></td></tr>
 <tr><td colspan=2>Searching the Puzzles</td></tr>
 <tr><td><span class=cmd>CL</span></td><td>Find puzzles for which you have added clues.</td></tr>
@@ -603,7 +605,6 @@ This command also allows you to replicate your identity from one browser to anot
 <tr><td><span class=cmd>G&nbsp;&nbsp;Y</span></td><td>
 Give up and show the words you have not yet found. <span class=cmd>G&nbsp;&nbsp;Y</span> means Give up and confirm Yes.  This just shows the words not yet found.  If you wish to actually have them entered append a P to the Y: <span class=cmd>G YP</span>.  That is P for paste or GYP for cheat or swindle.</td></tr>
 </table>
-</ul>
 <a name=donut></a>
 <h2>Donut and Lexicon Words
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -658,18 +659,44 @@ least one word in the
 list of allowed words then this is called a "Bingo".
 It is called "Bingo" in reference to the real <a target=_blank href='https://en.wikipedia.org/wiki/Bingo_(American_version)'>Bingo</a> game where
 you win if you complete a row, column, or diagonal.
-Not all puzzles are Bingo puzzles.
+Not all puzzles are Bingo puzzles but there are many.
+In the first 1530 puzzles in the <a href=#nyt_archive>archive</a>
+650 were Bingo puzzles.
 The <span class=cmd>I</span> command will tell you if a puzzle is a Bingo as
-does the graphical status (see the <span class=cmd>ST</span>).
+does the graphical status (see the <a href=#power>Power User</a> command <span class=cmd>ST</span> ).
 When you enter a word that completes a Bingo you get a congratulatory message.
 There are 3 levels of Bingo achievement:
 <ul>
-YES, you achieved a BINGO! &#128077;<br>
-In the FIRST 7 words you found! &#128077; &#128077;<br>
-Even better, they were found in ALPHABETICAL order! &#128077; &#128077; &#128077;
+1 - YES, you achieved a BINGO! &#128077;<br>
+2 - In the FIRST 7 words you found! &#128077; &#128077;<br>
+3 - Even better, they were found in ALPHABETICAL order! &#128077; &#128077; &#128077;
 </ul>
 Trying to achieve the 3rd level of Bingo is a little game
 within the game that some people enjoy.  It is much easier than QBABM!
+<a name=gn4l></a>
+<h2>Genius No 4 Letter
+<a class=top href=#toc><img src=pics/top.gif height=25></a>
+</h2>
+Another little game within the game is achieving the rank of Genius
+without any 4 letter words.  The abbreviation for this in the HiveMind forum
+is GN4L (genius no 4 letter).
+<p>
+Since 4 letter words are only valued at 1 point, attaining GN4L is almost always possible.
+In the first 1530 games in the <a hef=#nyt_archive>archive</a> there were
+only 8 games where GN4L was not possible.  It isn't easy, however,
+and here are a few commands to help:
+<p>
+<table cellpadding=3>
+<tr><td><span class=cmd>DR5</span></td><td>Define a random word not yet found that has 5 or more letters.</td></tr>
+<tr><td><span class=cmd>51</span></td><td>Show a random non-zero entry from the Hint Table where the length is 5 or more.</td></tr>
+<tr><td><span class=cmd>52</span></td><td>Show a random entry from the Two Letter List of words with a length of 5 or more.</td></tr>
+</table>
+<p>
+When you achieve GN4L you get a congratulatory message:
+<ul>
+Genius &#128077;&#128077;<br>
+And you did it without ANY 4 letter words! &#128522;
+</ul>
 <a name=articles></a>
 <h2>Articles about the NYT Spelling Bee
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -789,9 +816,10 @@ Clever, but evil somehow.
 </h2>
 Is it illegal or unethical to play the NYT Spelling Bee puzzles without a subscription?
 <p>
-I <b>do</b> have a subscription to the Times.  It is a reliable,
-trusted, and curated source of information.
-Subscriptions help the many journalists stay focused on their story.
+I <b>do</b> have a <a target=_blank href='https://www.nytimes.com/subscription'>subscription</a> to the Times.  It is a reliable,
+trusted, and curated source of information in these troubled times.
+<a target=_blank href='https://www.nytimes.com/subscription'>Subscriptions</a>
+help the many journalists stay focused on their story.
 <p>
 When the puzzle page is loaded into the web browser
 the list of allowed words
@@ -864,8 +892,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1531 puzzles with
-a total of 8842 different words!
+1532 puzzles with
+a total of 8847 different words!
 <p>
 Which puzzles from the large archive to play?
 You can get one at random with the <span class=cmd>NR</span> command or you could
@@ -953,6 +981,36 @@ The software would need to be redesigned and possibly rewritten.
 <li>Finally, I know there are many unknown issues.  If you find them
 please <script>abcd('let me know');</script>.
 </ul>
+<a name=acknowledgements></a>
+<h2>Acknowledgements
+<a class=top href=#toc><img src=pics/top.gif height=25></a>
+</h2>
+<ol>
+<li>The first acknowledgement is, <i>of course</i>, to the New York Times
+and Sam Ezersky who creates the daily Spelling Bee puzzles
+(what a great gig he has!).  
+This enhanced version of the game is <i>not</i> endorsed by the Times.
+Acknowledgements are due, as well, to Frank Longo and Will Shortz whose genius
+created the Spelling Bee concept.
+I encourage everyone to 
+<a target=_blank href='https://www.nytimes.com/subscription'>subscribe</a>
+to the New York Times and the NYT Games.
+It is a reliable, trusted, and curated source of information in these
+troubled times.
+Your
+<a target=_blank href='https://www.nytimes.com/subscription'>subscription</a>
+helps the many journalists stay focused on their stories.
+<li>Many thanks to Dez for being the 'champion' of this software
+in the HiveMind forum.  His encouragment and many new ideas
+for enhancement have been a big help.
+<li>Thanks to Jack for his Scrabble/Anagramming wisdom and curiosity.
+<li>For many years I have been indebted to the Perl community and CPAN for 
+providing the excellent language
+and many modules to enable and empower my profession and this software.
+<li><a target=_blank href='https://github.com'>Github</a> is used for source code control.
+<li><a target=_blank href='https://hostmonster.com'>hostmonster.com</a> for
+their fast and solid hosting.
+</ol>
 <hr>
 <a name=footnote></a>
 &dagger; <span style="font-size: 15pt">The comment in the <a href=#videos>Videos</a> section was inspired by <a target=ives href='https://en.wikipedia.org/wiki/Charles_Ives'>Charles Ives</a> in the preface to his <a target=ives href='https://www.gutenberg.org/files/3673/3673-h/3673-h.htm'><u>Essays Before a Sonata</u></a> &ndash; a book of essays to accompany the monumental <a target=ives href='https://www.youtube.com/watch?v=cDNPpsUaVYo'>Concord Sonata</a></span>.

@@ -275,6 +275,7 @@ use BeeUtil qw/
     $log
     $cgi
     $cgi_dir
+    $thumbs_up
     get_html
 /;
 use Date::Simple qw/
@@ -731,7 +732,7 @@ elsif ($cmd eq 'n' || $cmd eq 'p') {
         }
     }
 }
-elsif ($cmd ne '1' && $cmd ne '2'
+elsif ($cmd ne '1' && $cmd ne '2' && $cmd ne '52' && $cmd ne '51'
        && $cmd =~ m{\A ([\d/-]+) \z}xms
 ) {
     my $new_date = $1;
@@ -1109,6 +1110,13 @@ sub do_define {
         add_hints(-2) if $message;  # hack 
         $cmd = '';
     }
+    elsif ($term eq 'r5') {
+        my @words = grep { !$is_found{$_} && length >= 5 }
+                    @ok_words;
+        $message = define($words[ rand @words ], $Dcmd);
+        add_hints(-2) if $message;  # hack 
+        $cmd = '';
+    }
     elsif ($term =~ m{\A ([a-z])(\d+) \z}xms) {
         my $let = $1;
         my $len = $2;
@@ -1236,7 +1244,7 @@ sub do_reveal {
         }
     }
     if (!$err && $message) {
-        $message = "\U$cmd\E:<ul>$message</ul>";
+        $message = "\U$cmd\E:" . ul($message);
     }
 }
 
@@ -1313,7 +1321,7 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     $message = ul(table({ cellpadding => 4}, $rows));
     $cmd = '';
 }
-elsif ($cmd =~ m{\A (d|d[*])(p|r|[a-z]\d+|[a-z][a-z]) \z}xms) {
+elsif ($cmd =~ m{\A (d|d[*])(p|r5?|[a-z]\d+|[a-z][a-z]) \z}xms) {
     my $Dcmd = $1;
     my $term = $2;
     do_define($Dcmd, $term);
@@ -1329,9 +1337,8 @@ elsif ($cmd =~ m{\A (d[*]) \s* ([a-z ]+) \z}xms
     my @words = split ' ', $words;
     for my $word (@words) {
         $message .= "\U$word:"
-                 .  "<ul>"
-                 .  define($word, $Dcmd, 1)
-                 .  "</ul><p>"
+                 .  ul(define($word, $Dcmd, 1))
+                 .  '<p>'
                  ;
     }
     $cmd = '';
@@ -1865,9 +1872,11 @@ for my $w (@new_words) {
                 if (keys %first_c == 6
                     && ! exists $first_c{substr($w, 0, 1)}
                 ) {
-                    $not_okay_words .= "YES, you achieved a BINGO! &#128077;<br>";
+                    $not_okay_words .= "YES, you achieved a BINGO! $thumbs_up<br>";
                     if (@found2 == 6) {
-                        $not_okay_words .= "In the FIRST 7 words you found! &#128077; &#128077;<br>";
+                        $not_okay_words .= 'In the FIRST 7 words you found! '
+                                        .  ($thumbs_up x 2)
+                                        . '<br>';
                         my $in_order = 1;
                         ORDER:
                         for my $i (0 .. 4) {
@@ -1877,7 +1886,9 @@ for my $w (@new_words) {
                             }
                         }
                         if ($in_order && $found2[5] lt $w) {
-                            $not_okay_words .= "Even better, they were found in ALPHABETICAL order! &#128077; &#128077; &#128077;<br>";
+                            $not_okay_words .= 'Even better, they were found in ALPHABETICAL order! '
+                                            .  ($thumbs_up x 3)
+                                            . '<br>';
                         }
                     }
                 }
@@ -1899,7 +1910,20 @@ for my $w (@new_words) {
 
 # now that we have added the new words...
 # ??? is this right???  why is it called twice?
+my $old_rank = $rank;
 compute_score_and_rank();
+if ($old_rank < $rank && $rank >= 7) {
+    $message = ul( $rank == 7? "Amazing "   .  $thumbs_up
+                  :$rank == 8? "Genius "    . ($thumbs_up x 2)
+                  :            "Queen Bee " . ($thumbs_up x 3)
+                 );
+    if ($rank == 8) {
+        my @four = grep { ! m{[+-]\z}xms && length == 4 } @found;
+        if (! @four) {
+            $message .= ul('And you did it without ANY 4 letter words! &#128522;');
+        }
+    }
+}
 
 
 if (! $prefix && ! $pattern && ! $limit && ! @words_found) {
@@ -1960,11 +1984,7 @@ if ($show_WordList) {
 }
 
 if ($not_okay_words) {
-    $message = <<"EOH";
-<ul>
-$not_okay_words
-</ul>
-EOH
+    $message .= ul($not_okay_words);
 }
 
 sub color_pg {
@@ -2016,7 +2036,7 @@ elsif ($order) {
 }
 elsif ($same_letters) {
     my %groups;
-    for my $w (@found) {
+    for my $w (grep { !m{[+-]\z}xms } @found) {
         my $chars = join '', uniq_chars($w);
         push @{$groups{$chars}}, ucfirst $w;
     }
@@ -2130,10 +2150,11 @@ my $bingo = keys %first_char == 7? ', Bingo': '';
 
 # now that #we have computed %sums and %two_lets
 # perhaps $cmd was not words to add after all...
-if ($cmd eq '1') {
+if ($cmd eq '1' || $cmd eq '51') {
+    my $start = $cmd eq '51'? 5: 4;
     # find a random non-zero entry in the hint table
     my @entries;
-    for my $l (4 .. $max_len) {
+    for my $l ($start .. $max_len) {
         for my $c (@seven) {
             if ($sums{$c}{$l}) {
                 push @entries, "\U$c$l-$sums{$c}{$l}";
@@ -2158,6 +2179,17 @@ elsif ($cmd eq '2') {
         # not Queen Bee yet
         add_hints(1);
         $message = $entries[ rand @entries ];
+    }
+}
+elsif ($cmd eq '52') {
+    my @words = grep { !$is_found{$_} && length > 4 }
+                @ok_words;
+    if (@words) {
+        add_hints(1);
+        my $word = $words[ rand @words ];
+        my $l2 = substr($word, 0, 2);
+        my $n = grep { m{\A $l2}xms } @words;
+        $message = "\U$l2-$n";
     }
 }
 
@@ -2565,8 +2597,8 @@ sub graphical_status {
     my $ind2 = 28;
     my $between_lines = 22;
     my $between_dots = 11;
-    my $dotr1 = 1;
-    my $dotr2 = 4;
+    my $dotr1 = 2;
+    my $dotr2 = 5;
     my $html = "";
     my @color = qw/
         8E008E
@@ -2579,6 +2611,8 @@ sub graphical_status {
         FF6599
         CD66FF
     /;
+    my $rainbow_width = 9;
+    my $mark_height = 7;
     my $width = $ind2 + $between_dots*($nwords-1) + 26;
         # 26 extra to accomodate a plus sign + at the end of the hints
     my $height = (($bingo? 1: 0) + ($nhints? 1: 0) + 3) * 23;
@@ -2586,12 +2620,12 @@ sub graphical_status {
     $html = <<"EOH";
     <style>
     .glets, .bold_glets {
-        font-size: 16pt;
+        font-size: 18pt;
         font-family: Courier New;
     }
     .bold_glets {
         font-weight: bold;
-        font-size: 18pt;
+        font-size: 20pt;
     }
     </style>
     <svg width=$width height=$height>
@@ -2663,16 +2697,16 @@ EOH
         my $x1 = $ind2 + ($pct[$i]/100)*($max_x - $ind2);
         if ($score_pct < $pct[$i+1]) {
             my $x2 = $ind2 + ($score_pct/100)*($max_x - $ind2);
-            $html .= "<line x1=$x1 y1=$y x2=$x2 y2=$y stroke='#$color[$i]' stroke-width=6></line>\n";
+            $html .= "<line x1=$x1 y1=$y x2=$x2 y2=$y stroke='#$color[$i]' stroke-width=$rainbow_width></line>\n";
             last PCT;
         }
         my $x2 = $ind2 + ($pct[$i+1]/100)*($max_x - $ind2);
-        $html .= "<line x1=$x1 y1=$y x2=$x2 y2=$y stroke='#$color[$i]' stroke-width=6></line>\n";
+        $html .= "<line x1=$x1 y1=$y x2=$x2 y2=$y stroke='#$color[$i]' stroke-width=$rainbow_width></line>\n";
     }
 
     # vertical marks between ranks
-    my $y1 = $y-5;
-    my $y2 = $y+5;
+    my $y1 = $y-$mark_height;
+    my $y2 = $y+$mark_height;
     for my $pct (@pct) {
         my $x1 = $ind2 + ($pct/100)*($max_x - $ind2);
         my $x2 = $x1;
