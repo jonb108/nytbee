@@ -6,6 +6,11 @@ use warnings;
 
 -------
 TODO:
+W>> - increasing score (length and pangram...)
+
+Max Bingo - could a word be very long, not a pangram
+    yet be the word of maximum score for that initial letter?
+
 Dez?  his work, history, puzzledom
 admin.pl
 update help.html about title, description, publish,
@@ -17,6 +22,7 @@ SC - mark other ranks aside from Great, Amazing, Genius, Queen Bee?
 
 Create a site to report missing Lexicon words.
     My program can add to it automatically. :)
+    Nah. nytbee.com has a start...
 
 Clues - have a <select> dropdown to choose an alternate format.
     Less obtrusive.   And they can select-all and copy, yes?
@@ -26,6 +32,7 @@ BINGO - if a bingo is possible and the person HAS found 7 words
     with the initial letter - give them some kind of credit
 
 S/regex
+    => regexp.pl
 
 Have a way to leave a comment for the puzzle maker.
     Like a forum.
@@ -1891,6 +1898,36 @@ for my $w (@new_words) {
                                             .  ($thumbs_up x 3)
                                             . '<br>';
                         }
+                        # min/max score??
+                        # consider pangram not just length!
+                        my %let_score;
+                        push @found2, $w;
+                        for my $w (@found2) {
+                            $let_score{substr($w, 0, 1)}
+                                = word_score($w, $is_pangram{$w});
+                        }
+                        my $max = 1;
+                        my $min = 1;
+                        for my $w (@ok_words) {
+                            my $c = substr($w, 0, 1);
+                            my $sc = word_score($w, $is_pangram{$w});
+                            if ($sc < $let_score{$c}) {
+                                $min = 0;
+                            }
+                            if ($sc > $let_score{$c}) {
+                                $max = 0;
+                            }
+                        }
+                        if ($min) {
+                            $not_okay_words .= 'AND with a MINIMUM score! '
+                                            .  ($thumbs_up x 4)
+                                            .  '<br>';
+                        }
+                        if ($max) {
+                            $not_okay_words .= 'AND with a MAXIMUM score! '
+                                            .  ($thumbs_up x 4)
+                                            .  '<br>';
+                        }
                     }
                 }
             }
@@ -2256,6 +2293,37 @@ EOH
 </form>
 EOH
     }
+    $cmd = '';
+}
+elsif ($cmd eq 'bt' && ! $bingo) {
+    $message = ul('Not a Bingo.');
+    $cmd = '';
+}
+elsif ($cmd eq 'bt') {
+    my %bingo_table;     # { let1 => { min => $min, max => $max, },
+                         #   let2 => ... }
+    for my $w (@ok_words) {
+        my $c = uc substr($w, 0, 1);
+        if (! exists $bingo_table{$c}) {
+            $bingo_table{$c}= { min => 99, max => 0 };
+        }
+        my $lc = length $w;
+        my $href = $bingo_table{$c};
+        if ($lc < $href->{min}) {
+            $href->{min} = $lc;
+        }
+        if ($lc > $href->{max}) {
+            $href->{max} = $lc;
+        }
+    }
+    my @rows;
+    my $sp = '&nbsp;' x 3;
+    for my $c (sort keys %bingo_table) {
+        push @rows, Tr(th({ style => 'text-align: center' }, $c),
+                       td($sp . $bingo_table{$c}{min}),
+                       td($sp . $bingo_table{$c}{max}));
+    }
+    $message = ul(table({ cellpadding => 2}, @rows));
     $cmd = '';
 }
 elsif ($cmd eq 'id') {

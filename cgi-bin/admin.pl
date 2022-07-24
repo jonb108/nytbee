@@ -5,6 +5,7 @@ no warnings 'utf8';
 
 use BeeUtil qw/
     ymd
+    JON
 /;
 use Date::Simple qw/
     date
@@ -130,7 +131,14 @@ for my $uid (sort keys %uid) {
                 $ip =~ s{[|].*}{}xms;
                 my $s = `curl -s http://api.ipstack.com/$ip?access_key=$access_key`;
                 $s = Encode::encode('ISO-8859-1', $s);
-                my $href = decode_json($s);
+                my $href;
+                eval {
+                    $href = decode_json($s);
+                };
+                if ($@) {
+                    JON "$uid and $s";
+                    next UID;
+                }
                 my $city = $href->{city};
                 my $region = $href->{region_name};
                 my $country = $href->{country_name};
