@@ -57,6 +57,7 @@ sub arrows {
 #
 my (@puzzle_rows, @word_rows);
 open my $in, '<', 'nyt_puzzles.txt';
+open my $bingo_file, '>', 'bingo_dates.txt';
 my %freq;
 while (my $line = <$in>) {
     chomp $line;
@@ -75,6 +76,7 @@ while (my $line = <$in>) {
             delete $init_let{$c1};
         }
     }
+    my $bingo = scalar(keys %init_let) == 0? 1: 0;
     push @puzzle_rows, {
         date      => $date,
         center    => uc $center,
@@ -82,14 +84,18 @@ while (my $line = <$in>) {
         four      => $four,
         nwords    => scalar(@words),
         score     => $score,
-        bingo     => scalar(keys %init_let) == 0? 1: 0,
+        bingo     => $bingo,
     };
+    if ($bingo) {
+        print {$bingo_file} "$date\n";
+    }
     # type eq 'word'
     for my $w (@words) {
         ++$freq{$w};
     }
 }
 close $in;
+close $bingo_file;
 my $npuzzles = @puzzle_rows;
 my $nwords = keys %freq;
 my $s = read_file("../nytbee/help.html");
