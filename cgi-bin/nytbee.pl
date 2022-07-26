@@ -1958,7 +1958,11 @@ if ($old_rank < $rank && $rank >= 7) {
     if ($rank == 8) {
         my @four = grep { ! m{[+-]\z}xms && length == 4 } @found;
         if (! @four) {
-            $message .= ul('And you did it without ANY 4 letter words! &#128522;');
+            $message .= ul('And you did it without ANY 4 letter words! '
+                           .  $thumbs_up);
+            if ($score == $ranks[8]{value}) {
+                $message .= ul("On the Nose! <span style='font-size: 24pt'>&#128067</span> $thumbs_up");
+            }
         }
     }
 }
