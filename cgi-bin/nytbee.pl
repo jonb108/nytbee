@@ -693,11 +693,20 @@ elsif (my ($puz_num) = $cmd =~ m{\A p \s* ([1-9]\d*) \z}xms) {
     }
     $cmd = '';
 }
-elsif ($cmd =~ m{\A n \s* r \z}xms) {
+elsif ($cmd eq 'nr') {
     # random date since $first
     my $ndays = $today - $first + 1;
     $date = $first + int(rand $ndays);
     $date = $date->as_d8();
+    $new_puzzle = 1;
+    $cmd = '';
+}
+elsif ($cmd eq 'nrb') {
+    open my $in, '<', 'bingo_dates.txt';
+    my @dates = <$in>;
+    close $in;
+    $date = $dates[ rand @dates ];
+    chomp $date;
     $new_puzzle = 1;
     $cmd = '';
 }
