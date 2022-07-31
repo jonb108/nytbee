@@ -49,6 +49,17 @@ my %p_uid;
 my %nr_uid;
 my %dt_uid;
 my %cp_uid;
+my %ht_uid;     # hints d(p|[a-z][a-z]|[a-z]\d+)
+                #       v\d+(p|[a-z][a-z]|[a-z]\d+)
+                #       e\d+(p|[a-z][a-z]|[a-z]\d+)
+                #       dr
+                #       dr5
+                #       1
+                #       2
+                #       51
+                #       52
+                #       ht
+                #       tl
 my $nlines = 0;
 my $ngrid = 0;
 my $n_single_grid = 0;
@@ -78,12 +89,20 @@ while (my $line = <$log>) {
         if ($line =~ m{=\snr}xms) {
             ++$nr_uid{$uid};
         }
-        elsif ($line =~ m{=\s\d.*\d}xms) {
+        elsif ($line =~ m{=\s(\d.*\d)}xms && $1 ne '51' && $1 ne '52') {
             # a dated puzzle
             ++$dt_uid{$uid};
         }
         elsif ($line =~ m{=\s(cp\d+)}xms) {
             $cp_uid{$uid} .= "$1 ";
+        }
+        elsif (   $line =~ m{=\sd   (p|[a-z][a-z]|[a-z]\d+|r|r5)\s*\z}xms
+               || $line =~ m{=\sv\d+(p|[a-z][a-z]|[a-z]\d+)          }xms
+               || $line =~ m{=\se\d+(p|[a-z][a-z]|[a-z]\d+)          }xms
+               || $line =~ m{=\sht\s*$                               }xms
+               || $line =~ m{=\stl\s*$                               }xms
+               ) {
+            ++$ht_uid{$uid};
         }
     }
 }
@@ -101,6 +120,9 @@ body {
 }
 .green {
     color: green;
+}
+.purple {
+    color: purple;
 }
 a {
     text-decoration: none;
@@ -136,7 +158,7 @@ for my $uid (sort keys %uid) {
                     $href = decode_json($s);
                 };
                 if ($@) {
-                    JON "$uid and $s";
+                    JON "lookup failure: $uid and $s";
                     next UID;
                 }
                 my $city = $href->{city};
@@ -169,9 +191,20 @@ for my $uid (sort keys %uid) {
                 $city = $state = 'Quebec';
             }
         }
+        elsif ($country =~ m{Sweden}xms) {
+            if ($state =~ m{sterg.*tland}xms) {
+                $state = 'Ostergotland';
+            }
+            if ($city =~ m{link.*ping}xmsi) {
+                $city = 'Linkoping';
+            }
+        }
         elsif ($country =~ m{Switzerland}xms) {
             if ($state =~ m{Neuch}xms) {
                 $state = $city = 'Neuchatel';
+            }
+            if ($city =~ m{\AZ.*rich\z}xmsi) {
+                $city = 'Zurich';
             }
         }
         elsif ($country =~ m{Iceland}xms) {
@@ -185,6 +218,9 @@ for my $uid (sort keys %uid) {
             }
             if ($state =~ m{Prov.*d'Azur}xms) {
                 $state = "Provence-Alpes-Cote d'Azur";
+            }
+            if ($state =~ m{Auvergne-Rh.*ne-Alpes}xms) {
+                $state = 'Auvergne-Rhone-Alpes';
             }
         }
         elsif ($country =~ m{Germany}xms) {
@@ -209,7 +245,7 @@ for my $uid (sort keys %uid) {
             }
         }
         push @data, [ $city, $state, $country,
-                      $g_uid{$uid}, $p_uid{$uid}, $nr_uid{$uid}, $cp_uid{$uid}, $dt_uid{$uid} ];
+                      $g_uid{$uid}, $p_uid{$uid}, $nr_uid{$uid}, $cp_uid{$uid}, $dt_uid{$uid}, $ht_uid{$uid} ];
     }
     else {
         my ($city, $state) = split ',', $s;
@@ -217,7 +253,7 @@ for my $uid (sort keys %uid) {
             next UID;
         }
         push @data, [ $city, $state, '',
-                      $g_uid{$uid}, $p_uid{$uid}, $nr_uid{$uid}, $cp_uid{$uid}, $dt_uid{$uid}];
+                      $g_uid{$uid}, $p_uid{$uid}, $nr_uid{$uid}, $cp_uid{$uid}, $dt_uid{$uid}, $ht_uid{$uid} ];
     }
 }
 my @non_us = grep { $_->[2] } @data;
@@ -231,6 +267,9 @@ for my $d (sort {
            @non_us
 ) {
     print "<span class=green>$d->[2]</span>, $d->[1], $d->[0] => g $d->[3] p $d->[4]";
+    if ($d->[8]) {
+        print " <span class=purple>h $d->[8]</span>";
+    }
     if ($d->[5]) {
         print " <span class=red>nr $d->[5]</span>";
     }
@@ -246,6 +285,9 @@ for my $d (sort {
            @us
 ) {
     print "<span class=green>$d->[1]</span>, $d->[0] => g $d->[3] p $d->[4]";
+    if ($d->[8]) {
+        print " <span class=purple>h $d->[8]</span>";
+    }
     if ($d->[5]) {
         print " <span class=red>nr $d->[5]</span>";
     }
