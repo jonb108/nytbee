@@ -1875,6 +1875,9 @@ for my $w (@new_words) {
                 $w .= '+';
             }
             else {
+                if ($is_pangram{$w}) {
+                    $not_okay_words .= "Pangram! $thumbs_up<br>";
+                }
                 # it's a valid word in the allowed list
                 # has this word completed a bingo?
                 # analyze this before we add it to @found 
@@ -1960,6 +1963,7 @@ for my $w (@new_words) {
 my $old_rank = $rank;
 compute_score_and_rank();
 if ($old_rank < $rank && $rank >= 7) {
+    append_file 'beelog/' . ymd(), substr($uuid, 0, 11) . " = rank$rank\n";
     $message = ul( $rank == 7? "Amazing "   .  $thumbs_up
                   :$rank == 8? "Genius "    . ($thumbs_up x 2)
                   :            "Queen Bee " . ($thumbs_up x 3)

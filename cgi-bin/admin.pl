@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+# SO hacky :(
 use strict;
 use warnings;
 no warnings 'utf8';
@@ -49,6 +50,7 @@ my %p_uid;
 my %nr_uid;
 my %dt_uid;
 my %cp_uid;
+my %rk_uid;     # rank achieved
 my %ht_uid;     # hints d(p|[a-z][a-z]|[a-z]\d+)
                 #       v\d+(p|[a-z][a-z]|[a-z]\d+)
                 #       e\d+(p|[a-z][a-z]|[a-z]\d+)
@@ -65,6 +67,10 @@ my $ngrid = 0;
 my $n_single_grid = 0;
 my $n_suggest = 0;
 my $nprog = 0;
+my @rank;
+$rank[7] = 'AM';
+$rank[8] = 'GN';
+$rank[9] = 'QB';
 LINE:
 while (my $line = <$log>) {
     if ($line =~ m{new\s+puzzle}xms) {
@@ -86,7 +92,10 @@ while (my $line = <$log>) {
     elsif ($line =~ m{\s=\s}xms) {
         ++$nprog;
         ++$p_uid{$uid};
-        if ($line =~ m{=\snr}xms) {
+        if ($line =~ m{=\srank(\d+)}xms) {
+            $rk_uid{$uid} .= "$rank[$1] ";
+        }
+        elsif ($line =~ m{=\snr}xms) {
             ++$nr_uid{$uid};
         }
         elsif ($line =~ m{=\s(\d.*\d)}xms && $1 ne '51' && $1 ne '52') {
@@ -178,7 +187,7 @@ for my $uid (sort keys %uid) {
         }
     }
     my $s = $uid_location{$uid};
-    if ($s =~ m{\A([^,]*),([^,]*),(.*)\z}xms) {
+    if ($s && $s =~ m{\A([^,]*),([^,]*),(.*)\z}xms) {
         my ($city, $state, $country) = ($1, $2, $3);
         if ($state !~ /\S/ || $city !~ /\S/) {
             next UID;
@@ -245,7 +254,7 @@ for my $uid (sort keys %uid) {
             }
         }
         push @data, [ $city, $state, $country,
-                      $g_uid{$uid}, $p_uid{$uid}, $nr_uid{$uid}, $cp_uid{$uid}, $dt_uid{$uid}, $ht_uid{$uid} ];
+                      $g_uid{$uid}, $p_uid{$uid}, $nr_uid{$uid}, $cp_uid{$uid}, $dt_uid{$uid}, $ht_uid{$uid}, $rk_uid{$uid} ];
     }
     else {
         my ($city, $state) = split ',', $s;
@@ -253,7 +262,7 @@ for my $uid (sort keys %uid) {
             next UID;
         }
         push @data, [ $city, $state, '',
-                      $g_uid{$uid}, $p_uid{$uid}, $nr_uid{$uid}, $cp_uid{$uid}, $dt_uid{$uid}, $ht_uid{$uid} ];
+                      $g_uid{$uid}, $p_uid{$uid}, $nr_uid{$uid}, $cp_uid{$uid}, $dt_uid{$uid}, $ht_uid{$uid}, $rk_uid{$uid} ];
     }
 }
 my @non_us = grep { $_->[2] } @data;
@@ -266,25 +275,13 @@ for my $d (sort {
            }
            @non_us
 ) {
-    print "<span class=green>$d->[2]</span>, $d->[1], $d->[0] => g $d->[3] p $d->[4]";
-    if ($d->[8]) {
-        print " <span class=purple>h $d->[8]</span>";
+    print "<span class=green>$d->[2]</span>, $d->[1], $d->[0] =>";
+    if ($d->[3]) {
+        print " g $d->[3]";
     }
-    if ($d->[5]) {
-        print " <span class=red>nr $d->[5]</span>";
+    if ($d->[4]) {
+        print " p $d->[4]";
     }
-    print "<br>\n";
-}
-print "-------------<br>\n";
-my @us = grep { !$_->[2] } @data;
-for my $d (sort {
-               $a->[1] cmp $b->[1]
-               ||
-               $a->[0] cmp $b->[0]
-           }
-           @us
-) {
-    print "<span class=green>$d->[1]</span>, $d->[0] => g $d->[3] p $d->[4]";
     if ($d->[8]) {
         print " <span class=purple>h $d->[8]</span>";
     }
@@ -298,6 +295,44 @@ for my $d (sort {
     if ($d->[7]) {
         # dated puzzles
         print " <span class=red>dt $d->[7]</span>";
+    }
+    if ($d->[9]) {
+        print " $d->[9]";
+    }
+    print "<br>\n";
+}
+print "-------------<br>\n";
+my @us = grep { !$_->[2] } @data;
+for my $d (sort {
+               $a->[1] cmp $b->[1]
+               ||
+               $a->[0] cmp $b->[0]
+           }
+           @us
+) {
+    print "<span class=green>$d->[1]</span>, $d->[0] =>";
+    if ($d->[3]) {
+        print " g $d->[3]";
+    }
+    if ($d->[4]) {
+        print " p $d->[4]";
+    }
+    if ($d->[8]) {
+        print " <span class=purple>h $d->[8]</span>";
+    }
+    if ($d->[5]) {
+        print " <span class=red>nr $d->[5]</span>";
+    }
+    if ($d->[6]) {
+        # community puzzles
+        print " <span class=red>$d->[6]</span>";
+    }
+    if ($d->[7]) {
+        # dated puzzles
+        print " <span class=red>dt $d->[7]</span>";
+    }
+    if ($d->[9]) {
+        print " $d->[9]";
     }
     print "<br>\n";
 }
