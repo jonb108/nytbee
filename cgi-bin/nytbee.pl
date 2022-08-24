@@ -8,6 +8,9 @@ use warnings;
 TODO:
 W>> - increasing score (length and pangram...)
 
+ST - on the nose?  not quite - a bit over
+8/23/22 - Dimwit Dominion Domino Midtown Minim Minion Motion Motto Timid Tomtit
+
 Max Bingo - could a word be very long, not a pangram
     yet be the word of maximum score for that initial letter?
 
@@ -1344,6 +1347,24 @@ elsif ($cmd =~ m{\A (d|d[*])(p|r5?|[a-z]\d+|[a-z][a-z]) \z}xms) {
     do_define($Dcmd, $term);
     $cmd = '';
 }
+elsif (my ($gt, $term) = $cmd =~ m{\A \s* [#] \s*([>]?)(\d*|[a-z]?) \s* \z}xms) {
+    my @words = grep { !$is_found{$_} }
+                @ok_words;
+    if (! $term) {
+        $message .= scalar(@words);
+    }
+    elsif ($term =~ m{\A\d+\z}xms) {
+        my $n = grep { $gt? length > $term: length == $term } @words;
+        $message .= $n . '<br>';
+            # not sure why we need the <br>
+    }
+    else {
+        my $n = grep { m{\A$term}xms } @words;
+        $message .= $n . '<br>';
+    }
+    $cmd = '';
+    add_hints(1);
+}
 elsif ($cmd =~ m{\A (d[*]) \s* ([a-z ]+) \z}xms
        ||
        $cmd =~ m{\A (d) \s+ ([a-z ]+) \z}xms
@@ -1857,6 +1878,14 @@ sub check_word {
 WORD:
 for my $w (@new_words) {
     next WORD if $w eq '1w';        # hack!
+    if (my ($xword) = $w =~ m{\A [-]([a-z]+)}xms) {
+        # remove the word from the found list
+        if ($is_found{$xword}) {
+            @found = grep { !m{\A $xword \b }xms  } @found;
+            delete $is_found{$xword};
+        }
+        next WORD;
+    }
     my $mess = check_word($w);
     if ($mess eq '' || $mess eq 'donut' || $mess eq 'lexicon') {
         $is_new_word{$w} = 1;
@@ -2324,13 +2353,14 @@ elsif ($cmd eq 'bt') {
         if (! exists $bingo_table{$c}) {
             $bingo_table{$c}= { min => 99, max => 0 };
         }
-        my $lc = length $w;
+        my $l = length $w;
+        my $sc = word_score($w, $is_pangram{$w});
         my $href = $bingo_table{$c};
-        if ($lc < $href->{min}) {
-            $href->{min} = $lc;
+        if ($sc < $href->{min}) {
+            $href->{min} = $l;
         }
-        if ($lc > $href->{max}) {
-            $href->{max} = $lc;
+        if ($sc > $href->{max}) {
+            $href->{max} = $l;
         }
     }
     my @rows;
