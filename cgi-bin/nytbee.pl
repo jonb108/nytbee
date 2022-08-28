@@ -11,6 +11,14 @@ W>> - increasing score (length and pangram...)
 ST - on the nose?  not quite - a bit over
 8/23/22 - Dimwit Dominion Domino Midtown Minim Minion Motion Motto Timid Tomtit
 
+first - check to see if new_words contains a command or not.
+    should be easy - this is the most common case...
+    the rest could even be a separate process - to 
+    reduce the compilation time?
+    how fast does Perl process 2,000 lines????
+    and don't create the hint table and two letter list
+    unless you need to!
+
 Max Bingo - could a word be very long, not a pangram
     yet be the word of maximum score for that initial letter?
 

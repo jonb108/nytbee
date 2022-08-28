@@ -48,6 +48,7 @@ dynamic.pl \
 rand5.pl \
 admin.pl \
 ipstack.txt \
+definitions.txt \
 status.pl
 
 # these will not change
