@@ -1050,6 +1050,19 @@ sub define {
         add_hints(3);
         return $def;
     }
+    if (! exists $definition_of{$word}) {
+        # put this in BeeUtil???
+        my $html = get_html("https://www.wordnik.com/words/$word");
+        my ($def) = $html =~ m{[<]meta\s content='$word:\ ([^']*)'}xms;
+        if (! $def) {
+            $def = "No definition";
+        }
+        $def =~ s{[<][^>]*[>]}{}xmsg;
+        $def =~ s{[&][#]39;}{'}xmsg;
+        $def =~ s{$word}{'*' x length($word)}xmsegi;
+        $def =~ s{[^[[:ascii]]]}{}xmsg;
+        eval { $definition_of{$word} = $def; };
+    }
     $def = $definition_of{$word} || 'No definition';
     if ($def ne 'No definition' && ! $fullword) {
         add_hints(3);
