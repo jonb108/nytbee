@@ -60,6 +60,10 @@ function define_ht(c, n) {
     hnw.value = 'D' + c + n;
     main.submit();
 }
+function def_word(word) {
+    hnw.value = 'D ' + word;
+    main.submit();
+}
 function clues_by(person_id) {
     document.getElementById('person_id').value = person_id;
     document.getElementById('clues_by').submit();
