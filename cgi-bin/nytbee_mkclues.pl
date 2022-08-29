@@ -180,7 +180,7 @@ for my $w (@words) {
         else {
             $clue = '';
         }
-        $word_td = td(qq!<a href="javascript:popup_define('$w',300,500)">$uw</a>!);
+        $word_td = td(qq!<a href="javascript:popup_define('$w',200,500)">$uw</a>!);
         $clue_td = td("<input type=text size=40 name=${w}_clue id=${w}_clue"
                  . qq! value="$clue">!)
     }

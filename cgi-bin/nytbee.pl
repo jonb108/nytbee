@@ -438,6 +438,12 @@ tie %first_appeared, 'DB_File', 'first_appeared.dbm';
 # of first appearance.
 #--------------
 
+############
+my %definition_of;
+tie %definition_of, 'DB_File', 'definition_of.dbm';
+# a hash with keys of the words in the NYTBee
+# value is a simple definition from worknik.com
+
 #
 # returns an array of arrayrefs representing
 # the current list of puzzles.  each array ref has two elements:
@@ -1010,11 +1016,7 @@ sub compute_score_and_rank {
 # to be ready for the 'r' command
 compute_score_and_rank();
 
-# the online dictionaries often give many different
-# definitions - let's just show 3 at the most.
-# that's enough.  or maybe just 1?
-# or all if Dcmd is d*.
-# Dcmd is d or d*
+# a simple definition
 #
 # fullword is true only if we have given the entire word
 # like 'd juice'
@@ -1022,9 +1024,8 @@ compute_score_and_rank();
 #
 # if fullword we don't tally hints and we don't mask the word
 sub define {
-    my ($word, $Dcmd, $fullword) = @_;
+    my ($word, $fullword) = @_;
 
-    $focus = '' if $Dcmd eq 'd*';   # so it doesn't scroll to the bottom
     my $def = '';
     # a Community Puzzle clue
     if (! $fullword && exists $clue_for{$word}) {
@@ -1032,7 +1033,7 @@ sub define {
             add_hints(3);
         }
         $def .= "<li style='list-style-type: circle'>$clue_for{$word}</li>\n";
-        return $def if $Dcmd eq 'd'; 
+        return $def;
     }
     # community contributed NYT Bee Puzzle clues
     elsif (! $fullword && exists $nyt_clues_for{$word}) {
@@ -1047,78 +1048,23 @@ sub define {
         }
         # just one word, perhaps several hints for that word
         add_hints(3);
-        return $def if $Dcmd eq 'd'; 
+        return $def;
     }
-
-    my ($html, @defs);
-    
-    my $max = 10;   # without this D*TIME causes a fatal error! :(
-
-    # merriam-webster
-    # commented out 7/19/22 - too many ads!
-    #$html = get_html "https://www.merriam-webster.com/dictionary/$word";
-    # to catch an adequate definition for 'bought':
-    #push @defs, 'MERRIAM-WEBSTER:' if $Dcmd eq 'd*'; 
-    #push @defs, $html =~  m{meaning\s+of\s+$word\s+is\s+(.*?)[.]\s+How\s+to}xmsi;
-    #push @defs, $html =~ m{dtText(.*?)\n}xmsg;
-    #$#defs = $max if @defs > $max;
-    #if ($Dcmd eq 'd*' || ! @defs || @defs < 3) {
-        # some definitions (like 'from') use a different format
-        # no clue why
-    #    push @defs, $html =~ m{"unText">(.*?)</span>}xmsg;
-    #    $#defs = $max if @defs > $max;
-    #}
-    #for my $d (@defs) {
-    #    $d = trim($d);
-    #    $d =~ s{<[^>]*>}{}xmsg;   # strip tags
-    #    $d =~ s{.*:\s+}{}xms;
-    #}
-    if ($Dcmd eq 'd*' || ! @defs) {
-        # oxford/lexico
-        push @defs, 'OXFORD:' if $Dcmd eq 'd*';
-        $html = get_html "https://www.lexico.com/en/definition/$word";
-        push @defs, $html =~ m{Lexical\s+data\s+-\s+en-us">(.*?)</span>}xmsg;
-        $#defs = $max if @defs > $max;
-    }
-    my $stars = '*' x length $word;
-    # sometimes the definition is duplicated so ...
-    my %seen;
-    my @tidied_defs;
-
-    DEF:
-    for my $d (@defs) {
-        $d =~ s{<[^>]*>}{}xmsg; # excise any tags
-        $d =~ s{[^[:print:]]}{}xmsg; # excise any non-printing chars
-        $d =~ s{$word}{$stars}xmsgi unless $fullword;    # hide the word
-        $d =~ s{\A ">}{}xms;    # stray chars from somewhere
-        $d =~ s{[^[:print:]]}{}xmsga;
-        if ($seen{$d}++) {
-            next DEF;
-        }
-        push @tidied_defs, $d;
-    }
-    if ($Dcmd eq 'd') {
-        @tidied_defs = splice @tidied_defs, 0, 3;
-    }
-    if (@tidied_defs && ! $fullword) {
+    $def = $definition_of{$word} || 'No definition';
+    if ($def ne 'No definition' && ! $fullword) {
         add_hints(3);
     }
-    $def .= join '',
-            map {
-                "<li>$_</li>\n";
-            }
-            @tidied_defs;
-    return $def;
+    return ucfirst $def;
 }
 
 sub do_define {
-    my ($Dcmd, $term) = @_;
+    my ($term) = @_;
 
     load_nyt_clues;
     my $line = "&mdash;" x 4;
     if ($term eq 'p') {
         for my $p (grep { !$is_found{$_} } @pangrams) {
-            my $def = define($p, $Dcmd, 0);
+            my $def = define($p);
             if ($def) {
                 $message .= ul($def) . '--';
             }
@@ -1134,14 +1080,14 @@ sub do_define {
         # a random word that has not yet been found
         my @words = grep { !$is_found{$_} }
                     @ok_words;
-        $message = define($words[ rand @words ], $Dcmd);
+        $message = define($words[ rand @words ]);
         add_hints(-2) if $message;  # hack 
         $cmd = '';
     }
     elsif ($term eq 'r5') {
         my @words = grep { !$is_found{$_} && length >= 5 }
                     @ok_words;
-        $message = define($words[ rand @words ], $Dcmd);
+        $message = define($words[ rand @words ]);
         add_hints(-2) if $message;  # hack 
         $cmd = '';
     }
@@ -1154,7 +1100,7 @@ sub do_define {
         else {
             $message = '';
             for my $w (get_words($let, $len)) {
-                my $def = define($w, $Dcmd, 0);
+                my $def = define($w);
                 if ($def) {
                     $message .= ul($def) .  '--';
                 }
@@ -1175,7 +1121,7 @@ sub do_define {
         else {
             $message = '';
             for my $w (get_words($lets)) {
-                my $def = define($w, $Dcmd, 0);
+                my $def = define($w);
                 if ($def) {
                     $message .= ul($def) . '--';
                 }
@@ -1349,20 +1295,19 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     $message = ul(table({ cellpadding => 4}, $rows));
     $cmd = '';
 }
-elsif ($cmd =~ m{\A (d|d[*])(p|r5?|[a-z]\d+|[a-z][a-z]) \z}xms) {
-    my $Dcmd = $1;
-    my $term = $2;
-    do_define($Dcmd, $term);
+elsif ($cmd =~ m{\A d(p|r5?|[a-z]\d+|[a-z][a-z]) \z}xms) {
+    my $term = $1;
+    do_define($term);
     $cmd = '';
 }
-elsif (my ($gt, $term) = $cmd =~ m{\A \s* [#] \s*([>]?)(\d*|[a-z]?) \s* \z}xms) {
+elsif (my ($gt, $item) = $cmd =~ m{\A \s* [#] \s*([>]?)(\d*|[a-z]?) \s* \z}xms) {
     my @words = grep { !$is_found{$_} }
                 @ok_words;
-    if (! $term) {
+    if (! $item) {
         $message .= scalar(@words);
     }
-    elsif ($term =~ m{\A\d+\z}xms) {
-        my $n = grep { $gt? length > $term: length == $term } @words;
+    elsif ($item =~ m{\A\d+\z}xms) {
+        my $n = grep { $gt? length > $item: length == $item } @words;
         $message .= $n . '<br>';
             # not sure why we need the <br>
     }
@@ -1378,12 +1323,11 @@ elsif ($cmd =~ m{\A (d[*]) \s* ([a-z ]+) \z}xms
        $cmd =~ m{\A (d) \s+ ([a-z ]+) \z}xms
 ) {
     # dictionary definitions of full words not clues
-    my $Dcmd = $1;
     my $words = $2;
     my @words = split ' ', $words;
     for my $word (@words) {
         $message .= "\U$word:"
-                 .  ul(define($word, $Dcmd, 1))
+                 .  ul(define($word, 1))
                  .  '<p>'
                  ;
     }
