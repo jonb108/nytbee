@@ -61,7 +61,8 @@ function define_ht(c, n) {
     main.submit();
 }
 function def_word(event, word) {
-    if (event.shiftKey) {
+    var nw_val = nw.value.toLowerCase();
+    if (event.shiftKey || nw_val === 'w') {
         nw.focus();
         window.open('https://wordnik.com/words/' + word, 'wordnik');
     }

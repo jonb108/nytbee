@@ -1987,12 +1987,12 @@ if ($show_WordList) {
         if ($w =~ m{[-]\z}xms) {
             my $x = $w;
             $x =~ s{[-]\z}{}xms;
-            push @donut, ucfirst $x;
+            push @donut, $x;
         }
         if ($w =~ m{[+]\z}xms) {
             my $x = $w;
             $x =~ s{[+]\z}{}xms;
-            push @lexicon, ucfirst $x;
+            push @lexicon, $x;
         }
     }
     if (!$order_found) {
@@ -2002,24 +2002,30 @@ if ($show_WordList) {
     # highlight new words and perfect donuts
     my @new_donut;
     for my $w (@donut) {
+        my $uw = ucfirst $w;
         my $nchars = uniq_chars(lc $w);
         my $s;
         if ($nchars == 6) {
             my $color = length $w == 6? 'purple': 'green';
-            $s = "<span class=$color>$w</span>";
+            $s = "<span class=$color>$uw</span>";
         }
         elsif ($is_new_word{lc $w}) {
-            $s = "<span class=new_word>$w</span>";
+            $s = "<span class=new_word>$uw</span>";
         }
         else {
-            $s = $w;
+            $s = $uw;
         }
         push @new_donut, def_word($s, $w);
     }
     @donut = @new_donut;
     @lexicon = map {
-                   my $s = $is_new_word{lc $_}? "<span class=new_word>$_</span>": $_;
-                   def_word($s, $_);
+                   my $w = $_;
+                   my $uw = ucfirst $w;
+                   my $s = $is_new_word{$w}?
+                               "<span class=new_word>$uw</span>"
+                          :    $uw
+                          ;
+                   def_word($s, $w);
                } 
                @lexicon;
     if (@donut) {
