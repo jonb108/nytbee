@@ -2003,20 +2003,23 @@ if ($show_WordList) {
     my @new_donut;
     for my $w (@donut) {
         my $nchars = uniq_chars(lc $w);
+        my $s;
         if ($nchars == 6) {
             my $color = length $w == 6? 'purple': 'green';
-            push @new_donut, "<span class=$color>$w</span>";
+            $s = "<span class=$color>$w</span>";
         }
         elsif ($is_new_word{lc $w}) {
-            push @new_donut, "<span class=new_word>$w</span>";
+            $s = "<span class=new_word>$w</span>";
         }
         else {
-            push @new_donut, $w;
+            $s = $w;
         }
+        push @new_donut, def_word($s, $w);
     }
     @donut = @new_donut;
     @lexicon = map {
-                   $is_new_word{lc $_}? "<span class=new_word>$_</span>": $_
+                   my $s = $is_new_word{lc $_}? "<span class=new_word>$_</span>": $_;
+                   def_word($s, $_);
                } 
                @lexicon;
     if (@donut) {
@@ -2042,6 +2045,11 @@ sub color_pg {
     return "<span class=$class>$pg</span>";
 }
 
+sub def_word {
+    my ($t, $w) = @_;
+    qq!<span style='cursor: pointer' onclick="def_word('$w')">$t</span>!;
+}
+
 # time to display the words we have found
 # in various orders and various subsets
 # which were set above.
@@ -2050,7 +2058,7 @@ sub color_pg {
 my $found_words = '';
 if ($word_col == 1) {
     my @rows = map {
-                   Tr(td({ class => 'lt' }, ucfirst))
+                   Tr(td({ class => 'lt' }, def_word(ucfirst, $_)))
                }
                @words_found;
     $found_words = ul(table(@rows));
@@ -2074,7 +2082,7 @@ elsif ($order) {
         }
         $prev_length = $lw;
         my $uw = ucfirst $w;
-        $words .= ($is_pangram{$w}? color_pg($uw): $uw) . ' ';
+        $words .= def_word(($is_pangram{$w}? color_pg($uw): $uw), $w) . ' ';
     }
     push @rows, Tr(td({ class => 'rt', valign => 'top' },
                       $prev_length),
@@ -2097,7 +2105,11 @@ elsif ($same_letters) {
         }
         push @rows, Tr(td({ valign => 'top', class => 'lt' }, $cs),
                        td({ class => 'lt', width => 550 },
-                          "@{$groups{$cs}}"));
+                          join ' ',
+                          map { def_word($_, lc) }
+                          @{$groups{$cs}}
+                       )
+                    );
     }
     $found_words = table({ cellpadding => 2 }, @rows);
 }
@@ -2114,7 +2126,7 @@ elsif ($first_time) {
             else {
                 $disp_w = ucfirst $w;
             }
-            push @rows, Tr(td({class => 'lt'}, $disp_w));
+            push @rows, Tr(td({class => 'lt'}, def_word($disp_w, $w)));
         }
     }
     untie %first_appeared;
@@ -2134,6 +2146,7 @@ else {
         else {
             $t = $uw;
         }
+        $t = def_word($t, $w);
         $found_words .= "$t ";
     }
     # confusing ....
@@ -2875,7 +2888,7 @@ $letter_styles
 </head>
 <body onload='init(); $focus'>
 $heading
-<form id=main name=form method=POST action='$cgi/nytbee.pl'>
+<form id=main name=form method=POST action='$cgi/nytbee2.pl'>
 <input type=hidden name=date value='$date'>
 <input type=hidden name=has_message value=$has_message>
 <input type=hidden name=six value='@six'>
@@ -2887,7 +2900,7 @@ $heading
 <input type=hidden name=show_ZeroRowCol value=$show_ZeroRowCol>
 <input type=hidden name=show_GraphicStatus value=$show_GraphicStatus>
 $letters
-$message
+<div style="width: 700px">$message</div>
 <input type=hidden name=hidden_new_words id=hidden_new_words>
 <input class=new_words
        type=text
