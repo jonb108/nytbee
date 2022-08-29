@@ -2906,7 +2906,7 @@ $heading
 <input type=hidden name=show_ZeroRowCol value=$show_ZeroRowCol>
 <input type=hidden name=show_GraphicStatus value=$show_GraphicStatus>
 $letters
-<div style="width: 700px">$message</div>
+<div style="width: 720px">$message</div>
 <input type=hidden name=hidden_new_words id=hidden_new_words>
 <input class=new_words
        type=text
