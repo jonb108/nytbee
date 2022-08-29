@@ -2888,7 +2888,7 @@ $letter_styles
 </head>
 <body onload='init(); $focus'>
 $heading
-<form id=main name=form method=POST action='$cgi/nytbee2.pl'>
+<form id=main name=form method=POST action='$cgi/nytbee.pl'>
 <input type=hidden name=date value='$date'>
 <input type=hidden name=has_message value=$has_message>
 <input type=hidden name=six value='@six'>
