@@ -2047,7 +2047,7 @@ sub color_pg {
 
 sub def_word {
     my ($t, $w) = @_;
-    qq!<span style='cursor: pointer' onclick="def_word('$w')">$t</span>!;
+    qq!<span style='cursor: pointer' onclick="def_word(event, '$w')">$t</span>!;
 }
 
 # time to display the words we have found

@@ -60,9 +60,15 @@ function define_ht(c, n) {
     hnw.value = 'D' + c + n;
     main.submit();
 }
-function def_word(word) {
-    hnw.value = 'D ' + word;
-    main.submit();
+function def_word(event, word) {
+    if (event.shiftKey) {
+        nw.focus();
+        window.open('https://wordnik.com/words/' + word, 'wordnik');
+    }
+    else {
+        hnw.value = 'D ' + word;
+        main.submit();
+    }
 }
 function clues_by(person_id) {
     document.getElementById('person_id').value = person_id;

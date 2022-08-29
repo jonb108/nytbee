@@ -18,6 +18,8 @@ my %puzzle;
 tie %puzzle, 'DB_File::Lock',
              "$bin/nyt_puzzles.dbm",
               O_CREAT|O_RDWR, 0666, $DB_HASH, 'write';
+my %definition_of;
+tie %definition_of, 'DB_File', 'definition_of.dbm';
 
 # It is now 3:00 a.m. EST.
 # Try to get the Spelling Bee words for today.
@@ -59,21 +61,21 @@ for my $w (@words) {
         $first_appeared{$w} = $dt8;
         # get definition from wordnik.com
         my $html = get_html("https://www.wordnik.com/words/$w");
-        my ($def) = $html =~ m{[<]meta\s content='$word:\ ([^']*)'}xms;
+        my ($def) = $html =~ m{[<]meta\s content='$w:\ ([^']*)'}xms;
         if (! $def) {
             $def = "No definition";
         }
         $def =~ s{[<][^>]*[>]}{}xmsg;
         $def =~ s{[&][#]39;}{'}xmsg;
-        $def =~ s{$word}{'*' x length($word)}xmsegi;
+        $def =~ s{$w}{'*' x length($w)}xmsegi;
         $def =~ s{[^[[:ascii:]]]}{}xmsg;
-        eval { $definition_of{$word} = $def; };
+        eval { $definition_of{$w} = $def; };
             # the above may fail due to wide character??
             # why?  we eliminated non-printable chars!
             # print => ascii - see if it helps
         if ($@) {
             open my $wide, '>>', 'wide.txt';
-            print {$wide} "$word: $def\n";
+            print {$wide} "$w: $def\n";
             close $wide;
         }
     }

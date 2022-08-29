@@ -147,6 +147,7 @@ The new mechanism looks like this:
 In the text field you enter words that satisfy the rules of the puzzle.
 You can enter more than one word.  Press Return to check that the words are
 acceptable.  Any error messages will appear above the text field.
+Words you have found will appear below the text field in alphabetical order.
 <p>
 Pressing Return when the text field is empty will clear any messages.
 If there are no messages to clear, the 6 outer letters will be permuted.
@@ -241,10 +242,10 @@ Most of us mere mortals need kind of some help to get to Amazing or Genius.
 <tr><td colspan=2><span class=cmd>D&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.
 You can ask for definitions of <i>any</i> word - not just the ones in the puzzle.
 No hints are tallied.
-This form of the <span class=cmd>D</span> command serves as a quick and fun way to browse a dictionary that is more pleasant somehow than a full web site.  You can give multiple words on the command line.
+This form of the <span class=cmd>D</span> command serves as a quick and fun way to browse a dictionary that is more pleasant somehow (less clutter and noise!) than a full web site.  You can give multiple words on the command line.
 </td></tr>
 <tr><td colspan=2>
-Definitions are from <a target=nytbee href='https://wordnik.com'>wordnik.com</a>.  The definitions are very brief because they're just a hint.  Complete definitions would cover multiple meanings and multiple parts of speech.
+Definitions are from <a target=nytbee href='https://wordnik.com'>wordnik.com</a>.  These definitions are very brief because they're just a hint.  Complete definitions would cover multiple meanings and multiple parts of speech.  Once a word is found and shown in the Found Word List you can click on it again to see the brief definition.  Furthermore, if you hold the SHIFT key down while clicking you will see the <i>complete definition</i> from wordnik.com in another window.
 <p>
 If there there is a <a href=#clues>clue</a> for a word it is shown
 instead of a dictionary definition.<br><br>
@@ -729,7 +730,7 @@ These commands are of more limited use.  Some of them were added just for the be
 <tr><td><span class=cmd>F</span></td><td>Find puzzles that use the same seven letters as the current puzzle.</td></tr>
 <tr><td><span class=cmd>S&nbsp;&nbsp;&lt;word&gt;</span></td><td>Search for puzzles which include the word.</td></tr>
 <tr><td colspan=2>The above 3 commands will search both NYT Puzzles and Community Puzzles.   You can click on the <span class=blue>date</span> or <span class=blue>CP#</span> link to start solving the puzzle.<br><br></td></tr>
-<tr><td colspan=2>Fun with the Word List</td></tr>
+<tr><td colspan=2>Fun with the Found Word List</td></tr>
 <tr><td><span class=cmd>W&gt;</span></td><td>Show the found words in order of increasing length.</td></tr>
 <tr><td><span class=cmd>W&gt;n</span></td><td>Show the found words of length greater than n.</td></tr>
 <tr><td><span class=cmd>W&lt;</span></td><td>Show the found words in order of decreasing length.</td></tr>
@@ -740,7 +741,7 @@ These commands are of more limited use.  Some of them were added just for the be
 <tr><td><span class=cmd>1W</span></td><td>Show the found words in a single column.  This may be more convenient if you wish to copy/paste the word list.</td></tr>
 <tr><td><span class=cmd>SL</span></td><td>Show the groups of found words that share the <span class=cmd>s</span>ame <span class=cmd>l</span>etters.</td></tr>
 <tr><td><span class=cmd>FT</span></td><td>Show the found words that are appearing for the <span class=cmd>f</span>irst <span class=cmd>t</span>ime in this puzzle.</td></tr>
-<tr><td colspan=2><p>However the Word Lists are shown note that you can click on each word to get a definition of that word.  This includes the Donut and Lexicon words.<br><br></td></tr>
+<tr><td colspan=2><p>However the Found Word List is shown you can click on each word to get a brief definition of that word.  This includes the Donut and Lexicon words.  Furthermore, if you hold the SHIFT key down while clicking you will see the <i>complete definition</i> at wordnik.com in another window.<br><br></td></tr>
 <tr><td><span class=cmd>FT&nbsp;&nbsp;&lt;word&gt;</span></td><td>Show the date on which the given word appeared for the <span class=cmd>f</span>irst <span class=cmd>t</span>ime.<br><br></td></tr>
 <tr><td colspan=2>If you are a minimalist:</td></tr>
 <tr><td><span class=cmd>HE</span></td><td>Toggle the showing of the <span class=cmd>he</span>ader.  Default is to show it.</td></tr>
@@ -952,7 +953,7 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1573 puzzles with
+1574 puzzles with
 a total of 8962 different words!
 <p>
 Which puzzles from the large archive to play?
