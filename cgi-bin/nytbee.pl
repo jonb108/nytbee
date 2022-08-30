@@ -1028,15 +1028,11 @@ sub define {
 
     my $def = '';
     # a Community Puzzle clue
-    if (! $fullword && exists $clue_for{$word}) {
-        if (! $fullword) {
-            add_hints(3);
-        }
+    if (exists $clue_for{$word}) {
         $def .= "<li style='list-style-type: circle'>$clue_for{$word}</li>\n";
-        return $def;
     }
     # community contributed NYT Bee Puzzle clues
-    elsif (! $fullword && exists $nyt_clues_for{$word}) {
+    if ((! $def || $fullword) && exists $nyt_clues_for{$word}) {
         for my $href (@{$nyt_clues_for{$word}}) {
             $def .= "<li style='list-style-type: circle'>"
                  .  "<span style='color:"
@@ -1046,26 +1042,43 @@ sub define {
                  .  "</li>\n"
                  ;
         }
-        # just one word, perhaps several hints for that word
-        add_hints(3);
-        return $def;
+        # just one word but perhaps several hints for that word
     }
     if (! exists $definition_of{$word}) {
         # put this in BeeUtil???
         my $html = get_html("https://www.wordnik.com/words/$word");
-        my ($def) = $html =~ m{[<]meta\s content='$word:\ ([^']*)'}xms;
-        if (! $def) {
-            $def = "No definition";
+        my ($def1) = $html =~ m{[<]meta\s content='$word:\ ([^']*)'}xms;
+        if ($def1) {
+            $def1 =~ s{[<][^>]*[>]}{}xmsg;
+            $def1 =~ s{[&][#]39;}{'}xmsg;
+            $def1 =~ s{$word}{'*' x length($word)}xmsegi;
+            $def1 =~ s{[^[[:ascii]]]}{}xmsg;
+            eval { $definition_of{$word} = $def1; };
+            if ($@) {
+                # try this:
+                $def1 =~ s{:.*}{.}xms;
+                eval { $definition_of{$word} = $def1; };
+            }
         }
-        $def =~ s{[<][^>]*[>]}{}xmsg;
-        $def =~ s{[&][#]39;}{'}xmsg;
-        $def =~ s{$word}{'*' x length($word)}xmsegi;
-        $def =~ s{[^[[:ascii]]]}{}xmsg;
-        eval { $definition_of{$word} = $def; };
     }
-    $def = $definition_of{$word} || 'No definition';
-    if ($def ne 'No definition' && ! $fullword) {
-        add_hints(3);
+    if ((!$def || $fullword) && exists $definition_of{$word}) {
+        my $s = $definition_of{$word};
+        if ($fullword) {
+            # undo an earlier masking
+            $s =~ s{[*]{2,}}{$word}xmsg;
+        }
+        if ($def) {
+            $def .= "<li>$s</li>";
+        }
+        else {
+            $def .= $s;
+        }
+    }
+    if (! $def) {
+        $def = 'No definition';
+    }
+    elsif (! $fullword) {
+        add_hints(3)
     }
     return ucfirst $def;
 }
@@ -1331,12 +1344,10 @@ elsif (my ($gt, $item) = $cmd =~ m{\A \s* [#] \s*([>]?)(\d*|[a-z]?) \s* \z}xms) 
     $cmd = '';
     add_hints(1);
 }
-elsif ($cmd =~ m{\A (d[*]) \s* ([a-z ]+) \z}xms
-       ||
-       $cmd =~ m{\A (d) \s+ ([a-z ]+) \z}xms
+elsif ($cmd =~ m{\A d \s+ ([a-z ]+) \z}xms
 ) {
     # dictionary definitions of full words not clues
-    my $words = $2;
+    my $words = $1;
     my @words = split ' ', $words;
     for my $word (@words) {
         $message .= "\U$word:"
