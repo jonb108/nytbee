@@ -11,6 +11,9 @@ W>> - increasing score (length and pangram...)
 ST - on the nose?  not quite - a bit over
 8/23/22 - Dimwit Dominion Domino Midtown Minim Minion Motion Motto Timid Tomtit
 
+for bee art not swiped from the NYT:
+https://www.dreamstime.com/illustration/queen-bee-black-white.html
+
 first - check to see if new_words contains a command or not.
     should be easy - this is the most common case...
     the rest could even be a separate process - to 
@@ -2917,7 +2920,7 @@ $heading
 <input type=hidden name=show_ZeroRowCol value=$show_ZeroRowCol>
 <input type=hidden name=show_GraphicStatus value=$show_GraphicStatus>
 $letters
-<div style="width: 720px">$message</div>
+<div style="width: 640px">$message</div>
 <input type=hidden name=hidden_new_words id=hidden_new_words>
 <input class=new_words
        type=text
