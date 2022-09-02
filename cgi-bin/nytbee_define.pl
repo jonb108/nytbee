@@ -30,16 +30,20 @@ print "Content-Type: text/html; charset=ISO-8859-1\n\n";
     print <<"EOH";
 <html>
 <head>
-<title>Definition of $Word</title>
+<title>$Word</title>
+<script src="https://logicalpoetry.com/nytbee/js/nytbee.js"></script>
 <style>
 body {
     font-family: Arial;
     margin: 5mm;
 }
+.cursor_pointer {
+    cursor: pointer;
+}
 </style>
 </head>
 <body>
-<h2>Definition of $Word</h2>
+<h2><span class=cursor_pointer onclick="full_def('$word');">$Word<span></h2>
 <ul>
 $definition_of{$word}
 </ul>

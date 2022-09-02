@@ -1353,7 +1353,7 @@ elsif ($cmd =~ m{\A d \s+ ([a-z ]+) \z}xms
     my $words = $1;
     my @words = split ' ', $words;
     for my $word (@words) {
-        $message .= "\U$word:"
+        $message .= qq!<span class=cursor_black onclick="full_def('$word');">\U$word\E</span>:!
                  .  ul(define($word, 1))
                  .  '<p>'
                  ;

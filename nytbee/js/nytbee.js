@@ -102,9 +102,12 @@ function show_copied(id) {
         el.innerHTML = "";
     }, 1000);
 }
+function full_def(word) {
+    window.open('https://wordnik.com/words/' + word, 'wordnik');
+}
 function popup_define(event, word, height, width) {
     var el = document.getElementById(word + '_clue');
-    if (event.shiftKey || el.value.toLowerCase() == 'w') {
+    if (event.shiftKey) {
         window.open('https://wordnik.com/words/' + word, 'wordnik');
     }
     else {

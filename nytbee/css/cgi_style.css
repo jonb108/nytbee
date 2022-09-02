@@ -71,8 +71,9 @@ a.help {
 .gray {
     color: lightgray;
 }
-.pointer {
+.cursor_black {
     cursor: pointer;
+    color: black;
 }
 .two_lets {
     margin-top: 0mm;
