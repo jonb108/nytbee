@@ -102,3 +102,18 @@ function show_copied(id) {
         el.innerHTML = "";
     }, 1000);
 }
+function popup_define(event, word, height, width) {
+    var el = document.getElementById(word + '_clue');
+    if (event.shiftKey || el.value.toLowerCase() == 'w') {
+        window.open('https://wordnik.com/words/' + word, 'wordnik');
+    }
+    else {
+        newwin = window.open(
+            "https://logicalpoetry.com/cgi-bin/nytbee_define.pl/"
+                + word, 'define',
+            'height=' + height + ',width=' + width +', scrollbars'
+        );
+        newwin.moveTo(800, 0);
+    }
+    el.focus();
+}

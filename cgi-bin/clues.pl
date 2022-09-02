@@ -100,16 +100,8 @@ print <<"EOH";
 <html>
 <head>
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
+<script src="$log/nytbee/js/nytbee.js"></script>
 <script>
-var newwin;
-function popup_define(word, height, width) {
-    document.getElementById(word + '_clue').focus();
-    newwin = window.open(
-        '$log/cgi-bin/nytbee_define.pl/' + word, 'define',
-        'height=' + height + ',width=' + width +', scrollbars'
-    );
-    newwin.moveTo(800, 0);
-}
 $cycle_function
 </script>
 </head>
@@ -137,7 +129,6 @@ for my $w (@ok_words) {
         if (ref $href_prior_clues_for->{$w} eq 'ARRAY') {
             # there is more than one prior clue
             $clue = $href_prior_clues_for->{$w}->[0];
-            $cycle_td = td(qq!<img class=cursor onclick='cycle("$w");' src='/nytbee/pics/cycle.jpg'>!);
         }
         else {
             $clue = $href_prior_clues_for->{$w};
@@ -146,7 +137,7 @@ for my $w (@ok_words) {
     else {
         $clue = '';
     }
-    $word_td = td(qq!<a href="javascript:popup_define('$w',200,500)">$uw</a>!);
+    $word_td = td(qq!<span class=cursor onclick="popup_define(event, '$w',200,500)">$uw</span>!);
     $clue_td = td("<input type=text size=40 name=${w}_clue id=${w}_clue"
              . qq! value="$clue">!);
     push @rows, Tr($word_td, $clue_td, $cycle_td);
@@ -169,3 +160,4 @@ you know that the answer words are composed of the seven letters.
 You're not trying to 'find' all words that can be made.
 
 =cut
+#!/usr/bin/perl

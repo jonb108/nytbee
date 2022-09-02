@@ -60,7 +60,8 @@ if ($all_words) {
     @found = @words;
 }
 else {
-    @found = split ' ', $q->param('found');
+    @found = grep { ! m{ [+-]\z }xms }
+             split ' ', $q->param('found');
 }
 
 my $nnf = @words - @found;
@@ -125,15 +126,6 @@ print <<"EOH";
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
 <script src="$log/nytbee/js/nytbee.js"></script>
 <script>
-var newwin;
-function popup_define(word, height, width) {
-    newwin = window.open(
-        "$cgi/nytbee_define.pl/" + word, 'define',
-        'height=' + height + ',width=' + width +', scrollbars'
-    );
-    newwin.moveTo(800, 0);
-    var el = document.getElementById(word + '_clue').focus();
-}
 var clues_for = $json;
 function cycle(w) {
     clues_for[w].cur = (clues_for[w].cur + 1) % clues_for[w].clues.length;
@@ -152,7 +144,8 @@ $nnf_disp
 You do not have to give clues for all of the words.  You can return
 here to update and revise your clues.
 <p>
-Clicking on the words will show a dictionary definition.
+Clicking on the words will show a brief dictionary definition.
+SHIFT-clicking on the words will give a <i>complete</i> dictionary definition.
 You may, instead, wish to give clues that are more
 ambiguous, clever, wordplay &#128522; - like clues for a crossword puzzle.
 $prior_clues
@@ -180,7 +173,7 @@ for my $w (@words) {
         else {
             $clue = '';
         }
-        $word_td = td(qq!<a href="javascript:popup_define('$w',200,500)">$uw</a>!);
+        $word_td = td(qq!<span class=cursor onclick="popup_define(event, '$w',200,500)">$uw</span>!);
         $clue_td = td("<input type=text size=40 name=${w}_clue id=${w}_clue"
                  . qq! value="$clue">!)
     }
