@@ -8,6 +8,13 @@ use warnings;
 TODO:
 W>> - increasing score (length and pangram...)
 
+status - like hive - preserved over sessions
+         default is graphics
+BT - a toggle preserved based on which game you're on
+     like HT or TL
+
+51, 52, DR5 - if no more 5+ letter words - say so
+
 ST - on the nose?  not quite - a bit over
 8/23/22 - Dimwit Dominion Domino Midtown Minim Minion Motion Motto Timid Tomtit
 
@@ -1064,7 +1071,7 @@ sub define {
             }
         }
     }
-    if ((!$def || $fullword) && exists $definition_of{$word}) {
+    if (exists $definition_of{$word}) {
         my $s = $definition_of{$word};
         if ($fullword) {
             # undo an earlier masking
@@ -1109,15 +1116,25 @@ sub do_define {
         # a random word that has not yet been found
         my @words = grep { !$is_found{$_} }
                     @ok_words;
-        $message = define($words[ rand @words ]);
-        add_hints(-2) if $message;  # hack 
+        if (! @words) {
+            $message = 'No more words.';
+        }
+        else {
+            $message = define($words[ rand @words ]);
+            add_hints(-2) if $message;  # hack 
+        }
         $cmd = '';
     }
     elsif ($term eq 'r5') {
         my @words = grep { !$is_found{$_} && length >= 5 }
                     @ok_words;
-        $message = define($words[ rand @words ]);
-        add_hints(-2) if $message;  # hack 
+        if (! @words) {
+            $message = 'No more 5+ letter words.';
+        }
+        else {
+            $message = define($words[ rand @words ]);
+            add_hints(-2) if $message;  # hack 
+        }
         $cmd = '';
     }
     elsif ($term =~ m{\A ([a-z])(\d+) \z}xms) {
@@ -1347,8 +1364,7 @@ elsif (my ($gt, $item) = $cmd =~ m{\A \s* [#] \s*([>]?)(\d*|[a-z]?) \s* \z}xms) 
     $cmd = '';
     add_hints(1);
 }
-elsif ($cmd =~ m{\A d \s+ ([a-z ]+) \z}xms
-) {
+elsif ($cmd =~ m{\A d \s+ ([a-z ]+) \z}xms) {
     # dictionary definitions of full words not clues
     my $words = $1;
     my @words = split ' ', $words;
@@ -2248,6 +2264,11 @@ if ($cmd eq '1' || $cmd eq '51') {
         add_hints(1);
         $message = $entries[ rand @entries ];
     }
+    else {
+        my $len = $cmd eq '1'? '': ' 5+ letter';
+        $message = "No more$len words.";
+    }
+    $cmd = '';
 }
 elsif ($cmd eq '2') {
     # random non-zero entry in %two_lets
@@ -2262,6 +2283,10 @@ elsif ($cmd eq '2') {
         add_hints(1);
         $message = $entries[ rand @entries ];
     }
+    else {
+        $message = 'No more words.';
+    }
+    $cmd = '';
 }
 elsif ($cmd eq '52') {
     my @words = grep { !$is_found{$_} && length > 4 }
@@ -2273,6 +2298,10 @@ elsif ($cmd eq '52') {
         my $n = grep { m{\A $l2}xms } @words;
         $message = "\U$l2-$n";
     }
+    else {
+        $message = "No more 5+ letter words.";
+    }
+    $cmd = '';
 }
 
 my $perfect = '';
