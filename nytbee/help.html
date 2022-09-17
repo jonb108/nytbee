@@ -93,6 +93,9 @@ can't stand either, the whole is respectfully dedicated. <a href=#footnotes><sup
 <tr><td></td><td class=rt>1:03:32</td></tr>
 </table>
 </ul>
+These videos were made in February 2022.  There have been several
+enhancements since then.  To learn about them all you need to
+read this entire document carefully. &#128540;
 <a name=how></a>
 <h2>How to Play
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -374,16 +377,18 @@ Achieving "Queen Bee All By Myself" (QBABM) is the ultimate goal but
 for most of us mere mortals it is rarely achieved.
 There <i>are</i> other fun ways to play:
 <ul>
-<li><a href=#gn4l>Genius No 4 Letter</a> (GN4L) - Find only 5+ letter words to reach the Genius level.  The commands <span class=cmd>51</span>, <span class=cmd>52</span>, and <span class=cmd>DR5</span> can help.
 <li>The Pangram Game - Get random games (with the command <span class=cmd>NR</span>) and find all of the pangrams.  The commands <span class=cmd>DP</span> and <span class=cmd>V1P</span> can help.  You can periodically clear
 your list of games with the <span class=cmd>XA</span> command.
+<li><a href=#gn4l>Genius No 4 Letter</a> (GN4L) - Find only 5+ letter words to reach the Genius level.  The commands <span class=cmd>51</span>, <span class=cmd>52</span>, and <span class=cmd>DR5</span> can help.  You can also try for GOTN (On the Nose).
 <li><a href=#bingo>Bingo</a> - Get random Bingo games (with the command <span class=cmd>NRB</span>) and try for the various levels of Bingo achievement.  The command <span class=cmd>BT</span> can help.
 <li>Don't worry about your hint total and just keep asking for hints
 (via the <span class=cmd>D</span>, <span class=cmd>V</span>, and <span class=cmd>E</span> commands) until you get to Queen Bee.   This is
 still an accomplishment!  Using brief definitions to find words
 is a way to challenge and enlarge your vocabulary.
+<li>You could do <i>all</i> of the above
+by resetting the puzzle between the games with the <span class=cmd>C Y</span> command.
 <li>Find all the words and get to Queen Bee however you want
-and then use the command <span class=cmd>C Y</span> to <i>reset</i> the game and see if you can
+and then reset the game (with <span class=cmd>C Y</span>) and see if you can
 remember the words.  If you keep doing this your <a href=#hint_ratio>hint ratio</a> should get lower and lower.
 <li>Find as many <a href='#donut'>Donut</a> words as you can.
 There is, of course, no 'official' list of
@@ -395,7 +400,7 @@ This will help everyone else
 who is playing the game with this software.  You can also copy and paste
 your clues into the NYT Spelling Bee forum to help the larger world-wide HiveMind.
 <li>Finally, you could <a href='#create'>create your own puzzle</a> and
-give it as a gift to one of your friends.  Their name could be one of the pangrams! &#128525;
+give it as a gift to one of your friends.  Their name could be one of the pangrams - or one of the words in the allowed list! &#128525;
 </ul>
 <a name=bingo></a>
 <h2>Bingo
@@ -441,7 +446,7 @@ If you enjoy Bingo games there is the command <span class=cmd>NRB</span> which w
 </h2>
 Another little game within the game is achieving the rank of Genius
 without any 4 letter words.  The abbreviation for this in the HiveMind forum
-is GN4L (genius no 4 letter).
+is GN4L (Genius No 4 Letter).
 <p>
 Since 4 letter words are only valued at 1 point, attaining GN4L is almost always possible.
 In the first 1530 games in the <a href=#nyt_archive>archive</a> there were
@@ -462,11 +467,14 @@ And you did it without ANY 4 letter words! &#128522;
 A minor (relatively easy) variation on GN4L is GOTN - Genius On the Nose.
 This is where your point total is <i>exactly</i> at the beginning
 of the Genius level.  Genius is 70% of the maximum point total (Queen Bee).
+The <span class=cmd>R</span> command will tell you the exact score
+for the Genius level.
 GOTN requires that you achieve GN4L at the same time.  There is
 this additional congratulatory message for GOTN:
 <ul>
 On the Nose! <span style='font-size: 24pt'>&#128067;</span> &#128522;
 </ul>
+As you get close to Genius you can consult the Hint Table to see if there is a 5+ letter word remaining that will get you to Genius exactly.  If not, you could <i>remove</i> a word with the <a href=#power>Power User</a> "minus" command - like this: <span class=red style='font-size: 25pt'>-</span>&lt;word&gt;.  This will adjust your score so you can then make the score exactly the Genius level. 
 <a name=donut></a>
 <h2>Donut and Lexicon Words
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -508,9 +516,8 @@ listed below the words you have found in the allowed list.  Like so:
 <p style="margin-left: .2in">
 <img src=pics/donut_lexicon.jpg width=750>
 <p>
-Note that Arming, Grammarian, and Margin are pangram donut words because
-they use all 6 letters.  Arming and Margin are perfect donut words because
-they are 6 letters long.  
+Note that Arming, Grammarian, and Margin are <i>pangram</i> donut words because
+they use all 6 letters.  Arming and Margin are <i>perfect</i> pangram donut words because they are 6 letters long.  
 <a name=archival_and_community></a>
 <h2>Archival and Community Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -756,7 +763,7 @@ These commands are of more limited use.  Some of them were added just for the be
 </div>
 </td></tr>
 <tr><td><span class=cmd>R%</span></td><td>Show the rankings with the percentage of the maximum score.<br><br></td></tr>
-<tr><td><span class=cmd>-&lt;word&gt;</span></td><td>Remove the word from the found list. (That's a dash or hyphen or - before the word.)<br>This might be used if you are trying for GOTN: <a href=#gn4l>Genius On the Nose</a>.<br><br></td></tr>
+<tr><td><span class=cmd>-&lt;word&gt;</span></td><td>Remove the word from the found list. (That's a dash or hyphen or - or minus sign before the word.) This might be used if you are trying for GOTN: <a href=#gn4l>Genius On the Nose</a>.<br><br></td></tr>
 <tr><td colspan=2>Instead of the full Hint Table</td></tr>
 <tr><td><span class=cmd>#</span></td><td>How many words remain to be found?</td></tr>
 <tr><td><span class=cmd>#B</span></td><td>How many words beginning with B remain to be found?</td></tr>
@@ -791,7 +798,17 @@ See <a href=#footnotes>the ** footnote</a> for mobile phones.<br><br></td></tr>
 <div class=long_string>963e4401-81eq-18ec-g81c-b1f85c942ex3<span></div>This command copies the long string to the system clipboard.  Save this string in a secure place.</td></tr>
 <tr><td><span class=cmd>ID</span>&nbsp;...</td><td>In case you inadvertently clear your Website Data (aka cookies) you can restore your identity with this command:
 <div class=long_string><span class=cmd>ID</span>&nbsp;&nbsp;<span class=green>963e4401-81eq-18ec-g81c-b1f85c942ex3</span></div> The long string of characters was retrieved from where you securely stored it.
-This command also allows you to replicate your identity from one browser to another (e.g. Safari to Chrome or desktop browser to mobile browser).<br><br></td></tr>
+This command also allows you to replicate your identity from one browser to another (e.g. Safari to Chrome or desktop browser to mobile browser).
+<p>
+The long string is computer generated and is guaranteed to be unique - but it
+is long!  A much easier way to establish your identity is to create a string
+that you know is (very likely) unique to you - like your name plus your birthday date. For
+example:
+<ul>
+    <span class=cmd>ID</span> <span class=green>GERTIE4/30</span>
+</ul>
+Now if your cookies were cleared you can easily re-establish your identity.
+</td></tr>
 <tr><td colspan=2>Finally, we have the Ultimate Hint:</td></tr>
 <tr><td><span class=cmd>G&nbsp;&nbsp;Y</span></td><td>
 Give up and show the words you have not yet found. <span class=cmd>G&nbsp;&nbsp;Y</span> means Give up and confirm Yes.  This just shows the words not yet found.  If you wish to actually have them entered append a P to the Y: <span class=cmd>G YP</span>.  That is P for paste or GYP for cheat or swindle.</td></tr>
@@ -1069,6 +1086,8 @@ is a way to restore your identity yourself.
 want to play today's puzzle separately they
 can use two different browsers (Safari, Chrome, Firefox, etc) OR
 simply reset the game with the <span class=cmd>C Y</span> command.
+They could also each reset their identity with the <span class=cmd>ID</span>
+<a href=#power>Power User</a> command.
 <li>There is some issue with copying to the clipboard on the
 Safari browser.
 <li>Finally, I know there are many unknown issues.  If you find them
