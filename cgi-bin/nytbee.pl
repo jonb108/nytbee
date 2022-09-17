@@ -546,6 +546,8 @@ my $show_Heading    = exists $params{show_Heading}?
                              $params{show_Heading}: !$mobile;
 my $show_WordList   = exists $params{show_WordList}?
                              $params{show_WordList}: 1;
+my $show_BingoTable = exists $params{show_BingoTable}?
+                             $params{show_BingoTable}: 0;
 my $show_RankImage  = exists $params{show_RankImage}?
                              $params{show_RankImage}: 1;
 my $show_ZeroRowCol = exists $params{show_ZeroRowCol}?
@@ -1288,6 +1290,10 @@ elsif ($cmd eq 'he') {
 }
 elsif ($cmd eq 'wl') {
     $show_WordList = ! $show_WordList;
+    $cmd = '';
+}
+elsif ($cmd eq 'bt') {
+    $show_BingoTable = ! $show_BingoTable;
     $cmd = '';
 }
 elsif ($cmd eq 'im') {
@@ -2070,7 +2076,39 @@ if ($show_WordList) {
         $donut_lexicon = "<br>$donut_lexicon";
     }
 }
-
+my $bingo_table = '';
+if ($show_BingoTable) {
+    # we unfortunately determine the bingo status twice
+    # once here and again below.
+    my %bingo_table;     # { let1 => { min => $min, max => $max, },
+                         #   let2 => ... }
+    for my $w (@ok_words) {
+        my $c = uc substr($w, 0, 1);
+        if (! exists $bingo_table{$c}) {
+            $bingo_table{$c}= { min => 99, max => 0 };
+        }
+        my $l = length $w;
+        my $sc = word_score($w, $is_pangram{$w});
+        my $href = $bingo_table{$c};
+        if ($sc < $href->{min}) {
+            $href->{min} = $l;
+        }
+        if ($sc > $href->{max}) {
+            $href->{max} = $l;
+        }
+    }
+    my @rows;
+    my $sp = '&nbsp;' x 3;
+    for my $c (sort keys %bingo_table) {
+        push @rows, Tr(th({ style => 'text-align: center' }, $c),
+                       td($sp . $bingo_table{$c}{min}),
+                       td($sp . $bingo_table{$c}{max}));
+    }
+    if (@rows == 7) {
+        # if not 7 it's not a bingo puzzle
+        $bingo_table = ul(table({ cellpadding => 2}, @rows)) . '<p>';
+    }
+}
 if ($not_okay_words) {
     $message .= ul($not_okay_words);
 }
@@ -2244,6 +2282,8 @@ for my $c (@seven) {
     }
 }
 
+# we unfortunately may have determined the bingo
+# status once before - see show_BingoTable above.
 my $bingo = keys %first_char == 7? ', Bingo': '';
 
 # now that #we have computed %sums and %two_lets
@@ -2366,38 +2406,6 @@ EOH
 </form>
 EOH
     }
-    $cmd = '';
-}
-elsif ($cmd eq 'bt' && ! $bingo) {
-    $message = ul('Not a Bingo.');
-    $cmd = '';
-}
-elsif ($cmd eq 'bt') {
-    my %bingo_table;     # { let1 => { min => $min, max => $max, },
-                         #   let2 => ... }
-    for my $w (@ok_words) {
-        my $c = uc substr($w, 0, 1);
-        if (! exists $bingo_table{$c}) {
-            $bingo_table{$c}= { min => 99, max => 0 };
-        }
-        my $l = length $w;
-        my $sc = word_score($w, $is_pangram{$w});
-        my $href = $bingo_table{$c};
-        if ($sc < $href->{min}) {
-            $href->{min} = $l;
-        }
-        if ($sc > $href->{max}) {
-            $href->{max} = $l;
-        }
-    }
-    my @rows;
-    my $sp = '&nbsp;' x 3;
-    for my $c (sort keys %bingo_table) {
-        push @rows, Tr(th({ style => 'text-align: center' }, $c),
-                       td($sp . $bingo_table{$c}{min}),
-                       td($sp . $bingo_table{$c}{max}));
-    }
-    $message = ul(table({ cellpadding => 2}, @rows));
     $cmd = '';
 }
 elsif ($cmd eq 'id') {
@@ -2945,6 +2953,7 @@ $heading
 <input type=hidden name=hive value=$hive>
 <input type=hidden name=show_Heading value=$show_Heading>
 <input type=hidden name=show_WordList value=$show_WordList>
+<input type=hidden name=show_BingoTable value=$show_BingoTable>
 <input type=hidden name=show_RankImage value=$show_RankImage>
 <input type=hidden name=show_ZeroRowCol value=$show_ZeroRowCol>
 <input type=hidden name=show_GraphicStatus value=$show_GraphicStatus>
@@ -2959,6 +2968,7 @@ $letters
        autocomplete=off
 ><br>
 </form>
+$bingo_table
 $found_words
 $donut_lexicon
 <p>
