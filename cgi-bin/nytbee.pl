@@ -2100,9 +2100,20 @@ if ($show_BingoTable) {
     my @rows;
     my $sp = '&nbsp;' x 3;
     for my $c (sort keys %bingo_table) {
+        my $min = $bingo_table{$c}{min};
+        my $max = $bingo_table{$c}{max};
         push @rows, Tr(th({ style => 'text-align: center' }, $c),
-                       td($sp . $bingo_table{$c}{min}),
-                       td($sp . $bingo_table{$c}{max}));
+                       td($sp
+                        . "<span class=pointer"
+                        . qq! onclick="define_ht('$c', $min);">!
+                        . $min
+                        . "</span>"),
+                       td($sp
+                        . "<span class=pointer"
+                        . qq! onclick="define_ht('$c', $max);">!
+                        . $max
+                        . "</span>"),
+                    );
     }
     if (@rows == 7) {
         # if not 7 it's not a bingo puzzle
