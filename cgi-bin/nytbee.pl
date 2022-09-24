@@ -540,7 +540,7 @@ my $cmd = lc($params{hidden_new_words} || $params{new_words});
     # even though it looks like we are typing upper case...
     #
 $cmd = trim($cmd);
-append_file 'beelog/' . ymd(), substr($uuid, 0, 11) . " = $cmd\n";
+append_file 'beelog/' . ymd(), substr($uuid, 0, 11) . " = $cmd\n" if $cmd;
 
 my $show_Heading    = exists $params{show_Heading}?
                              $params{show_Heading}: !$mobile;
@@ -2085,23 +2085,30 @@ if ($show_BingoTable) {
     for my $w (@ok_words) {
         my $c = uc substr($w, 0, 1);
         if (! exists $bingo_table{$c}) {
-            $bingo_table{$c}= { min => 99, max => 0 };
+            $bingo_table{$c}= {
+                min => 99,
+                max => 0,
+                minlen => 99,
+                maxlen => 0
+            };
         }
         my $l = length $w;
         my $sc = word_score($w, $is_pangram{$w});
         my $href = $bingo_table{$c};
         if ($sc < $href->{min}) {
-            $href->{min} = $l;
+            $href->{min} = $sc;
+            $href->{minlen} = $l;
         }
         if ($sc > $href->{max}) {
-            $href->{max} = $l;
+            $href->{max} = $sc;
+            $href->{maxlen} = $l;
         }
     }
     my @rows;
     my $sp = '&nbsp;' x 3;
     for my $c (sort keys %bingo_table) {
-        my $min = $bingo_table{$c}{min};
-        my $max = $bingo_table{$c}{max};
+        my $min = $bingo_table{$c}{minlen};
+        my $max = $bingo_table{$c}{maxlen};
         push @rows, Tr(th({ style => 'text-align: center' }, $c),
                        td($sp
                         . "<span class=pointer"
