@@ -320,6 +320,7 @@ $Data::Dumper::Terse  = 1;
 use File::Slurp qw/
     append_file
     write_file
+    read_file
 /;
 
 my $q = CGI->new();
@@ -398,20 +399,20 @@ tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
 my %cur_puzzles_store;
 tie %cur_puzzles_store, 'DB_File::Lock', 'cur_puzzles_store.dbm',
                         O_CREAT|O_RDWR, 0666, $DB_HASH, 'write';
-
 # key is the uuid ("session" id)
 # value is a Data::Dumper created *string* representing a hash
 #     whose keys are the $date (or cp#)
 #     and the value is:
 #     #hints all_pangrams_found ht_chosen tl_chosen rank words_found...
 #     as above
-#---------------
-my %cur_puzzles;        # the current puzzles for the _current_ user
+# the current puzzles for the _current_ user:
+my %cur_puzzles;
 my $s = $cur_puzzles_store{$uuid};
 if ($s) {
     %cur_puzzles = %{ eval $s };    # the key point #1 (see below for #2)
 }
 # otherwise this is a brand new user...
+#--------------
 
 ################
 # clues for NYT puzzles are stored in the mysql database
@@ -419,7 +420,6 @@ if ($s) {
 # see if there are any clues so ...
 my %puzzle_has_clues;
 tie %puzzle_has_clues, 'DB_File', 'nyt_puzzle_has_clues.dbm';
-
 # key is puzzle_date
 # value is does the puzzle have any clues? - always 1
 # i.e. if the puzzle key is there then the puzzle has clues
@@ -453,6 +453,18 @@ my %definition_of;
 tie %definition_of, 'DB_File', 'definition_of.dbm';
 # a hash with keys of the words in the NYTBee
 # value is a simple definition from worknik.com
+#--------------
+
+############
+my %message_for;
+tie %message_for, 'DB_File', 'message_for.dbm';
+# key is the uuid ("session" id)
+# value is "# date"
+# the number of the last message (in directory message/)
+# the user saw and the date they saw it
+#--------------
+
+
 
 #
 # returns an array of arrayrefs representing
@@ -514,7 +526,12 @@ my %nyt_clues_for;        # key is word,
 my %nyt_cluer_name_of;    # key is person_id
 my %nyt_cluer_color_for;  # key is person_id
 
-my $message = '';
+my $first = date('5/9/18');
+my $date;
+my $today = my_today();
+my $new_puzzle = 0;
+my $path_info = uc substr $q->path_info(), 1;   # no need for the leading /
+                                                # it is either yyyymmdd or CPx
 
 # Puzzle from which date are we dealing with?
 # This is Very confusing, hacky, kludgy, and messy.
@@ -541,6 +558,34 @@ my $cmd = lc($params{hidden_new_words} || $params{new_words});
     #
 $cmd = trim($cmd);
 append_file 'beelog/' . ymd(), substr($uuid, 0, 11) . " = $cmd\n" if $cmd;
+
+my $message = '';
+# is there a 'message of the day' that the user
+# has not yet seen?
+# disabled for now ...
+if (0 && ! $cmd) {
+    if ($message_for{$uuid}) {
+        my ($n, $date) = split ' ', $message_for{$uuid};
+        ++$n;
+        if (-f "messages/$n") {
+            # there IS another message the user should see
+            # but has at least one day passed since they saw
+            # the last message?
+            $date = date($date);
+            if ($date < $today) {
+                # yes.
+                $message = read_file("messages/$n");
+                $message_for{$uuid} = "$n " . $today->as_d8();
+            }
+        }
+    }
+    else {
+        # this user has seen no messages at all
+        # and needs to see the first message
+        $message_for{$uuid} = "1 " . $today->as_d8();
+        $message = read_file("messages/1");
+    }
+}
 
 my $show_Heading    = exists $params{show_Heading}?
                              $params{show_Heading}: !$mobile;
@@ -573,13 +618,6 @@ my $show_GraphicStatus = exists $params{show_GraphicStatus}?
 #
 # then there is the path_info - appended to nytbee.pl/ 
 # 
-my $first = date('5/9/18');
-my $date;
-my $today = my_today();
-my $new_puzzle = 0;
-
-my $path_info = uc substr $q->path_info(), 1;   # no need for the leading /
-                                                # it is either yyyymmdd or CPx
 # initial guess at what puzzle we are looking at
 $date = $path_info;
 if (!$date || $date !~ m{\A \d{8} | CP\d+ \z}xms) {
@@ -2592,7 +2630,7 @@ my $heading = $show_Heading? <<"EOH": '';
      <img width=53 src=$log/nytbee/pics/bee-logo.jpg onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
 </div>
 <div class=float-child3>
-    <span class=help><a target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html'>Help</a></span><br><span class=create_add>$create_add</span>
+    <span class=help><a target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span><br><span class=create_add>$create_add</span>
 </div>
 <br><br>
 EOH
@@ -2642,7 +2680,7 @@ EOH
 <span class='define cursor_black' onclick="rand_def();">Define</span>
 <span class=lets id=lets></span>
 <span class='delete cursor_black' onclick="del_let();">Delete</span>
-<a class='helplink cursor_black' target=_blank href='$log/nytbee/help.html'">Help</a>
+<a class='helplink cursor_black' target=_blank href='$log/nytbee/help.html#toc'">Help</a>
 EOH
     }
     else {
