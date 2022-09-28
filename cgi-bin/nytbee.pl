@@ -1074,11 +1074,11 @@ compute_score_and_rank();
 #
 # if fullword we don't tally hints and we don't mask the word
 sub define {
-    my ($word, $fullword) = @_;
+    my ($word, $fullword, $clue_plus) = @_;
 
     my $def = '';
     # a Community Puzzle clue
-    if (exists $clue_for{$word}) {
+    if (!$fullword && exists $clue_for{$word}) {
         $def .= "<li style='list-style-type: circle'>$clue_for{$word}</li>\n";
     }
     # community contributed NYT Bee Puzzle clues
@@ -1111,7 +1111,7 @@ sub define {
             }
         }
     }
-    if (exists $definition_of{$word}) {
+    if ((!$def || $clue_plus) && exists $definition_of{$word}) {
         my $s = $definition_of{$word};
         if ($fullword) {
             # undo an earlier masking
@@ -1134,13 +1134,13 @@ sub define {
 }
 
 sub do_define {
-    my ($term) = @_;
+    my ($term, $plus) = @_;
 
     load_nyt_clues;
     my $line = "&mdash;" x 4;
     if ($term eq 'p') {
         for my $p (grep { !$is_found{$_} } @pangrams) {
-            my $def = define($p);
+            my $def = define($p, 0, $plus);
             if ($def) {
                 $message .= ul($def) . '--';
             }
@@ -1160,7 +1160,7 @@ sub do_define {
             $message = 'No more words.';
         }
         else {
-            $message = define($words[ rand @words ]);
+            $message = define($words[ rand @words ], 0, $plus);
             add_hints(-2) if $message;  # hack 
         }
         $cmd = '';
@@ -1172,7 +1172,7 @@ sub do_define {
             $message = 'No more 5+ letter words.';
         }
         else {
-            $message = define($words[ rand @words ]);
+            $message = define($words[ rand @words ], 0, $plus);
             add_hints(-2) if $message;  # hack 
         }
         $cmd = '';
@@ -1186,7 +1186,7 @@ sub do_define {
         else {
             $message = '';
             for my $w (get_words($let, $len)) {
-                my $def = define($w);
+                my $def = define($w, 0, $plus);
                 if ($def) {
                     $message .= ul($def) .  '--';
                 }
@@ -1207,7 +1207,7 @@ sub do_define {
         else {
             $message = '';
             for my $w (get_words($lets)) {
-                my $def = define($w);
+                my $def = define($w, 0, $plus);
                 if ($def) {
                     $message .= ul($def) . '--';
                 }
@@ -1385,9 +1385,10 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     $message = ul(table({ cellpadding => 4}, $rows));
     $cmd = '';
 }
-elsif ($cmd =~ m{\A d(p|r5?|[a-z]\d+|[a-z][a-z]) \z}xms) {
-    my $term = $1;
-    do_define($term);
+elsif ($cmd =~ m{\A (d[+]?)(p|r5?|[a-z]\d+|[a-z][a-z]) \z}xms) {
+    my $Dcmd = $1;
+    my $term = $2;
+    do_define($term, $Dcmd eq 'd+');
     $cmd = '';
 }
 elsif (my ($gt, $item) = $cmd =~ m{\A \s* [#] \s*([>]?)(\d*|[a-z]?) \s* \z}xms) {
@@ -1414,7 +1415,7 @@ elsif ($cmd =~ m{\A d \s+ ([a-z ]+) \z}xms) {
     my @words = split ' ', $words;
     for my $word (@words) {
         $message .= qq!<span class=cursor_black onclick="full_def('$word');">\U$word\E</span>:!
-                 .  ul(define($word, 1))
+                 .  ul(define($word, 1, 0))
                  .  '<p>'
                  ;
     }
