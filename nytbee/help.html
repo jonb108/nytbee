@@ -245,7 +245,7 @@ Most of us mere mortals need kind of some help to get to Amazing or Genius.
 <tr><td><span class=cmd>DB8</span></td><td>Define the words beginning with B of length 8.</td></tr>
 <tr><td><span class=cmd>DGA</span></td><td>Define the words beginning with GA.</td></tr>
 <tr><td><span class=cmd>DR</span></td><td>Define a random word from the list of words not yet found.</td></tr>
-<tr><td colspan=2><span class=cmd>D&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.
+<tr><td colspan=2><span class=cmd>D&nbsp;&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.
 You can ask for definitions of <i>any</i> word - not just the ones in the puzzle.
 No hints are tallied.
 This form of the <span class=cmd>D</span> command serves as a quick and fun way to browse a dictionary that is more pleasant somehow (less clutter and noise!) than a full web site.  You can give multiple words on the command line.
@@ -254,7 +254,7 @@ This form of the <span class=cmd>D</span> command serves as a quick and fun way 
 Definitions are from <a target=nytbee href='https://wordnik.com'>wordnik.com</a>.  These definitions are very brief because they're just a hint.  Complete definitions would cover multiple meanings and multiple parts of speech.  Once a word is found and shown in the Found Word List you can click on it again to see the brief definition.  If you hold the SHIFT key down while clicking you will see the <i>complete</i> definition from wordnik.com in another window.  See <a href=#footnotes>the ** footnote</a> for mobile phones.
 <p>
 If there there is a <a href=#clues>clue</a> for a word it is shown
-instead of the dictionary definition.  To see <i>both</i> use the command D+ like so: D+P or D+B8<br><br>
+instead of the dictionary definition.
 </td></tr>
 <tr><td><span class=cmd>V2P</span></td><td>Reveal the first two letters (and the length) of the pangrams.</td></tr>
 <tr><td><span class=cmd>V3B8</span></td><td>Reveal the first 3 letters of the words beginning with B of length 8.</td></tr>
@@ -762,6 +762,14 @@ of the 7 letters  - Honeycomb to Flower to Inline Letters to Hex Letters.<p>
 3 = Inline Letters<br>
 4 = Hex Letters
 </div>
+</td></tr>
+<tr><td>
+<span class=cmd>D+</span></td>
+<td>
+When there are <a href=#clues>clues</a> for a word the <span class=cmd>D</span> command shows only the clue not
+the brief definition from wordnik.com.  To see <i>both</i> use the command 
+<span class=cmd>D+</span>
+like so: <span class=cmd>D+P</span> or <span class=cmd>D+B8</span>.
 </td></tr>
 <tr><td><span class=cmd>R%</span></td><td>Show the rankings with the percentage of the maximum score.<br><br></td></tr>
 <tr><td><span class=cmd>-&lt;word&gt;</span></td><td>Remove the word from the found list. (That's a dash or hyphen or - or minus sign before the word.) This might be used if you are trying for GOTN: <a href=#gn4l>Genius On the Nose</a>.<br><br></td></tr>
