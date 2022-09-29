@@ -2564,7 +2564,7 @@ my $image = '';
 if (7 <= $rank && $rank <= 9) {
     my $name = lc $ranks[$rank]->{name};
     $name =~ s{\s.*}{}xms;  # for queen bee
-    $image = "<img class=image_$name src=$log/nytbee/pics/$name.jpg>";
+    $image = "<img class=image_$name src=$log/nytbee/pics/$name.png>";
 }
 my $rank_image = $show_RankImage?
         "<span class='rank_name rank$rank'>$rank_name</span>$image"
