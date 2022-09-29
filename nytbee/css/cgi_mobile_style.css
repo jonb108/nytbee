@@ -177,15 +177,6 @@ input, .submit {
 .rank9 {
     font-weight: bold;
 }
-.image_amazing {
-    width: 75px;
-}
-.image_genius {
-    width: 125px;
-}
-.image_queen {
-    width: 175px;
-}
 .link {
     cursor: pointer;
     color: blue;
