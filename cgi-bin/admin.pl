@@ -23,11 +23,13 @@ use CGI;
 use DB_File;
 my %uuid_ip;
 tie %uuid_ip, 'DB_File', 'uuid_ip.dbm';
+# the above has keys of the uuid and value of 'ip address | details of browser'
+# the browser details are filled in when the uuid is first encountered
 my %uid_location;
 tie %uid_location, 'DB_File', 'uid_location.dbm';
 
 my $q = CGI->new();
-print $q->header(-charset => 'utf-8');
+print $q->header();
 my $pi = $q->path_info();
 $pi =~ s{\A /}{}xms;
 my $log;
@@ -44,29 +46,21 @@ if (! open $log, '<', "beelog/$ymd") {
     print "cannot open log for $ymd\n";
     exit;
 }
-my %uid;
-my %g_uid;
-my %p_uid;
-my %nr_uid;
-my %dt_uid;
-my %cp_uid;
-my %rk_uid;     # rank achieved
-my %ht_uid;     # hints d(p|[a-z][a-z]|[a-z]\d+)
-                #       v\d+(p|[a-z][a-z]|[a-z]\d+)
-                #       e\d+(p|[a-z][a-z]|[a-z]\d+)
-                #       dr
-                #       dr5
-                #       1
-                #       2
-                #       51
-                #       52
-                #       ht
-                #       tl
+my %data;
+    # a hash of hashes
+    # key $uid
+    # then grid, prog, nr, dt, cp, hint, rank, city, state, country
+    #      #     #     #   #   #   #     str   str   str    str
+    # city, state, country are filled in after
+    # processing the lines in the beelog/ file.
+
+# totals across uid
 my $nlines = 0;
 my $ngrid = 0;
 my $n_single_grid = 0;
 my $n_suggest = 0;
 my $nprog = 0;
+
 my @rank;
 $rank[7] = 'AM';
 $rank[8] = 'GN';
@@ -78,10 +72,9 @@ while (my $line = <$log>) {
     }
     ++$nlines;
     my ($uid) = $line =~ m{\A (\S+)}xms;
-    ++$uid{$uid};
     if ($line =~ m{dyntab}xms) {
         ++$ngrid;
-        ++$g_uid{$uid};
+        ++$data{$uid}{grid};
         if ($line =~ m{: \s+ [a-z]+ \s* \z}xms) {
             ++$n_single_grid;
         }
@@ -91,19 +84,20 @@ while (my $line = <$log>) {
     }
     elsif ($line =~ m{\s=\s}xms) {
         ++$nprog;
-        ++$p_uid{$uid};
+        ++$data{$uid}{prog};
+        my $href = $data{$uid};
         if ($line =~ m{=\srank(\d+)}xms) {
-            $rk_uid{$uid} .= "$rank[$1] ";
+            $href->{rank} .= "$rank[$1] ";
         }
         elsif ($line =~ m{=\snr}xms) {
-            ++$nr_uid{$uid};
+            ++$href->{nr};
         }
         elsif ($line =~ m{=\s(\d.*\d)}xms && $1 ne '51' && $1 ne '52') {
             # a dated puzzle
-            ++$dt_uid{$uid};
+            ++$href->{dt};
         }
         elsif ($line =~ m{=\s(cp\d+)}xms) {
-            $cp_uid{$uid} .= "$1 ";
+            $href->{cp} .= "$1 ";
         }
         elsif (   $line =~ m{=\sd   (p|[a-z][a-z]|[a-z]\d+|r|r5)\s*\z}xms
                || $line =~ m{=\sv\d+(p|[a-z][a-z]|[a-z]\d+)          }xms
@@ -111,14 +105,14 @@ while (my $line = <$log>) {
                || $line =~ m{=\sht\s*$                               }xms
                || $line =~ m{=\stl\s*$                               }xms
                ) {
-            ++$ht_uid{$uid};
+            ++$href->{hint};
         }
     }
 }
 print <<'EOH';
 <html>
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <style>
 body {
     font-size: 18pt;
@@ -142,37 +136,42 @@ a {
 <body>
 EOH
 print "$ymd";
-if (-f "beelog/$prev") {
-    print " <a href=https://logicalpoetry.com/cgi-bin/admin.pl/$prev>Previous</a>";
+sub prev {
+    if (-f "beelog/$prev") {
+        print " <a href=https://logicalpoetry.com/cgi-bin/admin.pl/$prev>Previous</a>";
+    }
+    print "<br>";
 }
-print "<br>\n";
+prev();
 print "$nlines lines<br>\n";
 print "$nprog prog<br>\n";
 print "$ngrid grid<br>\n";
 print "$n_single_grid single grid<br>\n";
 print "$n_suggest grid suggestions<br>\n";
 print "-------------<br>\n";
-my @data;
 UID:
-for my $uid (sort keys %uid) {
+for my $uid (keys %data) {
+    my $href = $data{$uid};
     if (! exists $uid_location{$uid}) {
         for my $uuid (keys %uuid_ip) {
+            # this is inefficient but we don't put the full
+            # uuid in the log... just 11 chars
             if ($uuid =~ m{\A $uid}xms) {
                 my $ip = $uuid_ip{$uuid};
                 $ip =~ s{[|].*}{}xms;
                 my $s = `curl -s http://api.ipstack.com/$ip?access_key=$access_key`;
                 $s = Encode::encode('ISO-8859-1', $s);
-                my $href;
+                my $hrf;
                 eval {
-                    $href = decode_json($s);
+                    $hrf = decode_json($s);
                 };
                 if ($@) {
                     JON "lookup failure: $uid and $s";
                     next UID;
                 }
-                my $city = $href->{city};
-                my $region = $href->{region_name};
-                my $country = $href->{country_name};
+                my $city = $hrf->{city};
+                my $region = $hrf->{region_name};
+                my $country = $hrf->{country_name};
                 my $ss = "$city, $region";
                 if ($country ne 'United States') {
                     $ss .= ", $country";
@@ -187,11 +186,13 @@ for my $uid (sort keys %uid) {
         }
     }
     my $s = $uid_location{$uid};
-    if ($s && $s =~ m{\A([^,]*),([^,]*),(.*)\z}xms) {
+    if ($s && $s =~ m{\A([^,]*),([^,]*),\s*(.*)\z}xms) {
+        # non-US
         my ($city, $state, $country) = ($1, $2, $3);
         if ($state !~ /\S/ || $city !~ /\S/) {
             next UID;
         }
+        # fix up UTF-8 chars or ...?  I don't understand
         if ($country =~ m{Canada}) {
             if ($city =~ m{Montr.*al}xms) {
                 $city = 'Montreal';
@@ -253,89 +254,93 @@ for my $uid (sort keys %uid) {
                 $city = 'Brandys nad Labem-Stara Boleslav';
             }
         }
-        push @data, [ $city, $state, $country,
-                      $g_uid{$uid}, $p_uid{$uid}, $nr_uid{$uid}, $cp_uid{$uid}, $dt_uid{$uid}, $ht_uid{$uid}, $rk_uid{$uid} ];
+        $href->{city} = $city;
+        $href->{state} = $state;
+        $href->{country} = $country;
     }
     else {
         my ($city, $state) = split ',', $s;
         if ($state !~ /\S/ || $city !~ /\S/) {
             next UID;
         }
-        push @data, [ $city, $state, '',
-                      $g_uid{$uid}, $p_uid{$uid}, $nr_uid{$uid}, $cp_uid{$uid}, $dt_uid{$uid}, $ht_uid{$uid}, $rk_uid{$uid} ];
+        $href->{city} = $city;
+        $href->{state} = $state;
+        $href->{country} = '';
     }
 }
-my @non_us = grep { $_->[2] } @data;
-for my $d (sort {
-               $a->[2] cmp $b->[2]
-               ||
-               $a->[1] cmp $b->[1]
-               ||
-               $a->[0] cmp $b->[0]
-           }
-           @non_us
-) {
-    print "<span class=green>$d->[2]</span>, $d->[1], $d->[0] =>";
-    if ($d->[3]) {
-        print " g $d->[3]";
+
+sub show_data {
+    my ($uid) = @_;
+    my $href = $data{$uid};
+    my $act = "https://logicalpoetry.com/cgi-bin/show_activity.pl/$ymd/$uid";
+    if ($href->{country}) {
+        print "<a class=green href=$act>$href->{country}</a>, $href->{state}, $href->{city}";
     }
-    if ($d->[4]) {
-        print " p $d->[4]";
+    else {
+        print "<a class=green href=$act>$href->{state}</a>, $href->{city}";
     }
-    if ($d->[8]) {
-        print " <span class=purple>h $d->[8]</span>";
+    if ($href->{grid}) {
+        print " g $href->{grid}";
     }
-    if ($d->[5]) {
-        print " <span class=red>nr $d->[5]</span>";
+    if ($href->{prog}) {
+        print " p $href->{prog}";
     }
-    if ($d->[6]) {
+    if ($href->{hint}) {
+        print " <span class=purple>h $href->{hint}</span>";
+    }
+    if ($href->{nr}) {
+        print " <span class=red>nr $href->{nr}</span>";
+    }
+    if ($href->{cp}) {
         # community puzzles
-        print " <span class=red>$d->[6]</span>";
+        print " <span class=red>$href->{cp}</span>";
     }
-    if ($d->[7]) {
+    if ($href->{dt}) {
         # dated puzzles
-        print " <span class=red>dt $d->[7]</span>";
+        print " <span class=red>dt $href->{dt}</span>";
     }
-    if ($d->[9]) {
-        print " $d->[9]";
+    if ($href->{rank}) {
+        print " $href->{rank}";
     }
     print "<br>\n";
+}
+my @non_us = grep { $data{$_}{country} } keys %data;
+for my $uid (
+    map {
+       $_->[0]
+    }
+    sort {
+       $a->[1] cmp $b->[1]
+       ||
+       $a->[2] cmp $b->[2]
+       ||
+       $a->[3] cmp $b->[3]
+    }
+    map {
+       my $href = $data{$_};
+       [ $_, $href->{country}, $href->{state}, $href->{city} ]
+    }
+    @non_us
+) {
+    show_data($uid);
 }
 print "-------------<br>\n";
-my @us = grep { !$_->[2] } @data;
-for my $d (sort {
-               $a->[1] cmp $b->[1]
-               ||
-               $a->[0] cmp $b->[0]
-           }
-           @us
+my @us = grep { !$data{$_}{country} } keys %data;
+for my $uid (
+    map {
+       $_->[0]
+    }
+    sort {
+       $a->[1] cmp $b->[1]
+       ||
+       $a->[2] cmp $b->[2]
+    }
+    map {
+       my $href = $data{$_};
+       [ $_, $href->{state}, $href->{city} ]
+    }
+    @us
 ) {
-    print "<span class=green>$d->[1]</span>, $d->[0] =>";
-    if ($d->[3]) {
-        print " g $d->[3]";
-    }
-    if ($d->[4]) {
-        print " p $d->[4]";
-    }
-    if ($d->[8]) {
-        print " <span class=purple>h $d->[8]</span>";
-    }
-    if ($d->[5]) {
-        print " <span class=red>nr $d->[5]</span>";
-    }
-    if ($d->[6]) {
-        # community puzzles
-        print " <span class=red>$d->[6]</span>";
-    }
-    if ($d->[7]) {
-        # dated puzzles
-        print " <span class=red>dt $d->[7]</span>";
-    }
-    if ($d->[9]) {
-        print " $d->[9]";
-    }
-    print "<br>\n";
+    show_data($uid);
 }
-if (-f "beelog/$prev") {
-    print "<a href=https://logicalpoetry.com/cgi-bin/admin.pl/$prev>Previous</a><br>";
-}
+prev();
