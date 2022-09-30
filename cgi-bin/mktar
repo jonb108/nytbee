@@ -50,6 +50,7 @@ admin.pl \
 show_activity.pl \
 ipstack.txt \
 definitions.txt \
+messages \
 status.pl
 
 # these will not change

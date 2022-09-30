@@ -563,7 +563,7 @@ my $message = '';
 # is there a 'message of the day' that the user
 # has not yet seen?
 # disabled for now ...
-if (0 && ! $cmd) {
+if (! $cmd) {
     if ($message_for{$uuid}) {
         my ($n, $date) = split ' ', $message_for{$uuid};
         ++$n;
@@ -2466,6 +2466,17 @@ EOH
 </form>
 EOH
     }
+    $cmd = '';
+}
+elsif ($cmd eq 'm') {
+    my ($n, $date);
+    if ($message_for{$uuid}) {
+        ($n, $date) = split ' ', $message_for{$uuid};
+    }
+    else {
+        $n = 1;
+    }
+    $message = read_file("messages/$n");
     $cmd = '';
 }
 elsif ($cmd eq 'id') {
