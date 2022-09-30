@@ -2416,9 +2416,6 @@ my $show_clue_form = '';
 if ($cmd eq 'i') {
     $message = "Words: $nwords, Points: $max_score, "
              . "Pangrams: $npangrams$perfect$bingo";
-    if (! $show_Heading) {
-        $message .= "<br>$show_date";
-    }
     if ($date =~ m{\A CP}xms) {
         my ($n) = $date =~ m{(\d+)}xms;
         my $created = date($cp_href->{created})->format("%B %e, %Y");
@@ -2430,6 +2427,9 @@ EOH
         $need_show_clue_form = 1;
     }
     else {
+        if (! $show_Heading) {
+            $message .= "<br>$show_date";
+        }
         load_nyt_clues;
         if (%nyt_cluer_name_of) {
             my @names;
