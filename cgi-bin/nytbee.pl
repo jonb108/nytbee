@@ -585,6 +585,7 @@ if (! $cmd) {
         $message_for{$uuid} = "1 " . $today->as_d8();
         $message = read_file("messages/1");
     }
+    $focus = '';
 }
 
 my $show_Heading    = exists $params{show_Heading}?
@@ -2468,15 +2469,26 @@ EOH
     }
     $cmd = '';
 }
-elsif ($cmd eq 'm') {
+elsif ($cmd =~ m{\A m(\d+)? \z}xms) {
     my ($n, $date);
-    if ($message_for{$uuid}) {
-        ($n, $date) = split ' ', $message_for{$uuid};
+    if ($1) {
+        $n = $1;
     }
     else {
-        $n = 1;
+        if ($message_for{$uuid}) {
+            ($n, $date) = split ' ', $message_for{$uuid};
+        }
+        else {
+            $n = 1;
+        }
     }
-    $message = read_file("messages/$n");
+    if (! -f "messages/$n") {
+        $message = "No such message of the day.";
+    }
+    else {
+        $message = read_file("messages/$n");
+        $focus = '';
+    }
     $cmd = '';
 }
 elsif ($cmd eq 'id') {
