@@ -576,6 +576,7 @@ if (! $cmd) {
                 # yes.
                 $message = read_file("messages/$n");
                 $message_for{$uuid} = "$n " . $today->as_d8();
+                $focus = '';
             }
         }
     }
@@ -584,8 +585,8 @@ if (! $cmd) {
         # and needs to see the first message
         $message_for{$uuid} = "1 " . $today->as_d8();
         $message = read_file("messages/1");
+        $focus = '';
     }
-    $focus = '';
 }
 
 my $show_Heading    = exists $params{show_Heading}?
