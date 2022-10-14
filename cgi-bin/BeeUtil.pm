@@ -134,6 +134,7 @@ sub word_score {
 
 sub trim {
     my ($s) = @_;
+    $s =~ s{\A [^a-z0-9#-]}{}xmsg;  # mobile H3 related?
     $s =~ s{\A \s* | \s* \z}{}xmsg;
     return $s;
 }

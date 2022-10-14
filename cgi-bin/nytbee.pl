@@ -2778,16 +2778,36 @@ elsif ($hive == 2) {        # flower
     }
 }
 elsif ($hive == 3) {    # hex letters
-    $letters = "<pre>\n  ";
-    for my $c (@seven_let) {
-        if ($c eq uc $center) {
-            $letters .= "<span class=red2>$c</span> ";
+    if ($mobile) {
+        $letters = "<div class=h3lets id=lets>&nbsp;</div>";
+        $letters .= "<table width=100%><tr>\n";
+        for my $c (@seven_let) {
+            my $class = $c eq uc $center? 'red2 biglet': 'biglet';
+            $letters .= "<td class='$class' width='14.28%'>"
+                     .  qq!<span onclick="add_let('$c')">$c</span>!
+                     .  "</td>";
         }
-        else {
-            $letters .="$c ";
-        }
+        $letters .= "</tr></table>\n";
+        $letters .= "<table style='width: 100%; margin-bottom: 10mm'><tr>"
+                 .  "<td class=h3cmd onclick='del_let()'>Delete</td>"
+                 .  "<td class='h3cmd'><a style='color: black' target=_blank href='$log/nytbee/help.html#toc'>Help</a></td>"
+                 .  "<td class=h3cmd onclick='rand_def()'>Define</td>"
+                 .  "<td class=h3cmd onclick='sub_lets()'>Enter</td>"
+                 .  "</tr></table>"
+                 ;
     }
-    $letters .= "</pre>";
+    else {
+        $letters = "<pre>\n  ";
+        for my $c (@seven_let) {
+            if ($c eq uc $center) {
+                $letters .= "<span class=red2>$c</span> ";
+            }
+            else {
+                $letters .="$c ";
+            }
+        }
+        $letters .= "</pre>";
+    }
 }
 if (! $show_Heading && ($hive == 1 || $hive == 2)) {
     for my $c (@coords) {

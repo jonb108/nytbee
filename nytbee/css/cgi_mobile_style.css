@@ -78,6 +78,16 @@ a.help {
     cursor: pointer;
     color: black;
 }
+.h3lets {
+    text-align: center;
+    font-size: 40pt;
+    color: green;
+    width: 100%;
+}
+.h3cmd {
+    text-align: center;
+    font-size: 30pt;
+}
 .two_lets {
     margin-top: 0mm;
     margin-left: 5mm;
@@ -232,4 +242,8 @@ input, .submit {
 }
 .dr {
     margin-left: .3in;
+}
+.biglet {
+    font-size: 80pt;
+    text-align: center;
 }
