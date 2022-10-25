@@ -2658,7 +2658,7 @@ my $heading = $show_Heading? <<"EOH": '';
      <img width=53 src=$log/nytbee/pics/bee-logo.png onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
 </div>
 <div class=float-child3>
-    <span class=help><a target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span><br><span class=create_add>$create_add</span>
+    <span class=help><a target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span>&nbsp;&nbsp;&nbsp;<span class=help><a target=_blank href='$log/nytbee/cmd_list.pdf'>Cmds</a><br><span class=create_add>$create_add</span>
 </div>
 <br><br>
 EOH
@@ -2708,7 +2708,7 @@ EOH
 <span class='define cursor_black' onclick="rand_def();">Define</span>
 <span class=lets id=lets></span>
 <span class='delete cursor_black' onclick="del_let();">Delete</span>
-<a class='helplink cursor_black' target=_blank href='$log/nytbee/help.html#toc'">Help</a>
+<span class='helplink cursor_black'><a class='cursor_black' target=_blank href='$log/nytbee/help.html#toc'">Help</a>&nbsp;&nbsp;&nbsp;<a class='cursor_black' target=_blank href='$log/nytbee/cmd_list.pdf'>Cmds</a></span>
 EOH
     }
     else {
