@@ -10,7 +10,7 @@ tie %definition_of, 'DB_File', 'definition_of.dbm';
 
 my $word = $ENV{PATH_INFO};
 $word =~ s{\A /}{}xms;
-my $Word = ucfirst $word;
+my $WORD = uc $word;
 
 if (! exists $definition_of{$word}) {
     my $html = get_html("https://www.wordnik.com/words/$word");
@@ -30,7 +30,7 @@ print "Content-Type: text/html; charset=ISO-8859-1\n\n";
     print <<"EOH";
 <html>
 <head>
-<title>$Word</title>
+<title>$WORD</title>
 <script src="https://logicalpoetry.com/nytbee/js/nytbee.js"></script>
 <style>
 body {
@@ -43,10 +43,11 @@ body {
 </style>
 </head>
 <body>
-<h2><span class=cursor_pointer onclick="full_def('$word');">$Word<span></h2>
-<ul>
+<span class=cursor_pointer onclick="full_def('$word');">$WORD:
+<ul style='margin-top: 0px'>
 $definition_of{$word}
 </ul>
+</span>
 </body>
 </html>
 EOH

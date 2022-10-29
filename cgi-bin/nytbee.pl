@@ -1416,8 +1416,9 @@ elsif ($cmd =~ m{\A d \s+ ([a-z ]+) \z}xms) {
     my $words = $1;
     my @words = split ' ', $words;
     for my $word (@words) {
-        $message .= qq!<br><span class=cursor_black onclick="full_def('$word');">\U$word\E</span>:!
+        $message .= qq!<br><span class=cursor_black onclick="full_def('$word');">\U$word:!
                  .  ul(define($word, 1, 0))
+                 .  '</span>'
                  ;
     }
     $message =~ s{\A <br>}{}xms;
