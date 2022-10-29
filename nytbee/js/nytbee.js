@@ -105,18 +105,12 @@ function show_copied(id) {
 function full_def(word) {
     window.open('https://wordnik.com/words/' + word, 'wordnik');
 }
-function popup_define(event, word, height, width) {
-    var el = document.getElementById(word + '_clue');
-    if (event.shiftKey) {
-        window.open('https://wordnik.com/words/' + word, 'wordnik');
-    }
-    else {
-        newwin = window.open(
-            "https://logicalpoetry.com/cgi-bin/nytbee_define.pl/"
-                + word, 'define',
-            'height=' + height + ',width=' + width +', scrollbars'
-        );
-        newwin.moveTo(800, 0);
-    }
-    el.focus();
+function popup_define(word, height, width) {
+    newwin = window.open(
+        "https://logicalpoetry.com/cgi-bin/nytbee_define.pl/"
+            + word, 'define',
+        'height=' + height + ',width=' + width +', scrollbars'
+    );
+    newwin.moveTo(800, 0);
+    document.getElementById(word + '_clue').focus();
 }
