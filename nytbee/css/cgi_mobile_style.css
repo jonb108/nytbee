@@ -247,3 +247,12 @@ input, .submit {
     font-size: 80pt;
     text-align: center;
 }
+.dlb_name {
+    vertical-align: top;
+    font-size: 14pt;
+}
+.dlb {
+    text-align: left;
+    font-size: 14pt;
+    width: 500px;
+}

@@ -298,6 +298,7 @@ use BeeUtil qw/
     td
     bold
     div
+    span
     word_score
     JON
     $log
@@ -438,6 +439,18 @@ tie %osx_usd_words_47, 'DB_File', 'osx_usd_words-47.dbm';
 # key is the word, value is just 1
 # we use this hash to check for donut words
 # and for 'missing' words.
+#--------------
+
+###############
+my %osx_usd_words_48;
+tie %osx_usd_words_48, 'DB_File', 'osx_usd_words-48.dbm';
+# this is the large lexicon from OSX
+# it was purged of words of length < 4, proper names,
+# and words with more than 8 unique letters.
+# /usr/share/dict/words has 235,886 words
+# osx_usd_words-48.txt has 140,194 words
+# key is the word, value is just 1
+# we use this hash to check for bonus words
 #--------------
 
 ############
@@ -1035,7 +1048,7 @@ else {
 }
 my %is_found = map {
                    my $x = $_;
-                   $x =~ s{[+-]\z}{}xms;
+                   $x =~ s{[*+-]\z}{}xms;
                    $x => 1;
                }
                @found;
@@ -1044,7 +1057,7 @@ sub compute_score_and_rank {
     $score = 0;
     WORD:
     for my $w (@found) {
-        next WORD if $w =~ m{[+-] \z}xms;   # donut, lexicon
+        next WORD if $w =~ m{[*+-] \z}xms;   # donut, lexicon
         $score += word_score($w, $is_pangram{$w});
     }
     RANK:
@@ -1274,7 +1287,7 @@ sub do_reveal {
     }
     elsif (my ($first, $len) = $term =~ m{\A ([a-z])(\d+)}xms) {
         if ($first =~ $letter_regex) {
-            $message = ul(red($cmd) . ": \U$first\E is not in \U$seven");
+            $message = ul(red(uc $cmd) . ": \U$first\E is not in \U$seven");
             $err = 1;
         }
         else {
@@ -1359,7 +1372,7 @@ elsif (my ($ev, $nlets, $term)
 }
 elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     my $percent = $1;
-    my $ndonut_lexicon = grep { m{[+-]\z}xms } @found;
+    my $ndonut_lexicon_bonus = grep { m{[*+-]\z}xms } @found;
     my $rows = '';
     for my $r (0 .. 9) {
         my $cols = td($ranks[$r]->{name});
@@ -1375,7 +1388,7 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
                       . ' more'
                       ;
                 if ($rank == 8) {
-                    my $m = @ok_words - @found + $ndonut_lexicon;
+                    my $m = @ok_words - @found + $ndonut_lexicon_bonus;
                     my $pl = $m == 1? '': 's';
                     $more .= ", $m more word$pl";
                 }
@@ -1466,13 +1479,18 @@ elsif ($cmd eq 'sc') {
     FOUND:
     for my $w (@found) {
         my $x = $w;
-        if ($x =~ s{([+-])\z}{}xms) {
+        if ($x =~ s{([*+-])\z}{}xms) {
             push @rows, Tr(td({ class => 'gray' }, ucfirst $x),
                            td(''),
                            td(''),
                            td({ class => 'lt gray' },
                               $space
-                              . ($1 eq '-'? 'Donut': 'Lexicon')),
+                              . {
+                                   '*' => 'Bonus',
+                                   '+' => 'Lexicon',
+                                   '-' => 'Donut',
+                                }->{$1}
+                             )
                         );
             next FOUND;
         }
@@ -1500,8 +1518,8 @@ elsif ($cmd eq 'sc') {
         }
     }
     $message = table({ cellpadding => 2 }, @rows);
-    my $ndonut_lexicon = grep { m{[+-]\z}xms } @found;
-    my $more = @ok_words - (@found - $ndonut_lexicon);
+    my $ndonut_lexicon_bonus = grep { m{[*+-]\z}xms } @found;
+    my $more = @ok_words - (@found - $ndonut_lexicon_bonus);
     my $pl = $more == 1? '': 's';
     $message .= "<p> $more more word$pl to find";
     $cmd = '';
@@ -1748,7 +1766,7 @@ my $prefix = '';
 my $pattern = '';
 my $limit = 0;
 my @words_found;
-my @found_puzzle_words = grep { !m/[+-]\z/xms } @found;
+my @found_puzzle_words = grep { !m/[*+-]\z/xms } @found;
 my $word_col = 0;
 my $order_found = 0;
 if ($cmd eq 'w') {
@@ -1894,8 +1912,19 @@ my $not_okay_words;
 my %is_new_word;
 sub check_word {
     my ($w) = @_;
-    if (length $w < 4) {
+    my $lw = length($w);
+    if ($lw < 4) {
         return 'too short';
+    }
+    if ($lw >= 6) {
+        my $s = $w;
+        $s =~ s{[$seven]}{}xmsg;
+        if (uniq_chars($s) == 1) {
+            # one extra letter not in the seven
+            if ($osx_usd_words_48{$w} || $first_appeared{$w}) {
+                return "bonus";
+            }
+        }
     }
     if (my ($c) = $w =~ $letter_regex) {
         return "\U$c\E is not in \U$seven";
@@ -1924,27 +1953,47 @@ for my $w (@new_words) {
     if (my ($xword) = $w =~ m{\A [-]([a-z]+)}xms) {
         # remove the word from the found list
         if ($is_found{$xword}) {
+            for my $w (@found) {
+                if (my ($char) = $w =~ m{\A $xword([*+-])}xms) {
+                    add_hints($char eq '-'? 1
+                             :$char eq '+'? 2
+                             :              3);
+                }
+            }
             @found = grep { !m{\A $xword \b }xms  } @found;
             delete $is_found{$xword};
         }
         next WORD;
     }
     my $mess = check_word($w);
-    if ($mess eq '' || $mess eq 'donut' || $mess eq 'lexicon') {
+    if (   $mess eq ''
+        || $mess eq 'donut'
+        || $mess eq 'lexicon'
+        || $mess eq 'bonus'
+    ) {
         $is_new_word{$w} = 1;
         if (! $is_found{$w}) {
             $is_found{$w} = 1;
             if ($mess eq 'donut') {
                 $not_okay_words .= "<span class=not_okay>"
                                 .  uc($w)
-                                .  "</span>: missing <span class=red>$Center</span> but it IS a valid Donut word<br>";
+                                .  "</span>: Donut word $thumbs_up -1 hint<br>";
                 $w .= '-';
+                add_hints(-1);
             }
             elsif ($mess eq 'lexicon') {
                 $not_okay_words .= "<span class=not_okay>"
                                 .  uc($w)
-                                .  "</span>: not in word list but it IS in the large Lexicon<br>";
+                                .  "</span>: Lexicon word $thumbs_up -2 hints<br>";
                 $w .= '+';
+                add_hints(-2);
+            }
+            elsif ($mess eq 'bonus') {
+                $not_okay_words .= "<span class=not_okay>"
+                                .  uc($w)
+                                .  "</span>: Bonus word $thumbs_up -3 hints<br>";
+                $w .= '*';
+                add_hints(-3);
             }
             else {
                 if ($is_pangram{$w}) {
@@ -1954,8 +2003,8 @@ for my $w (@new_words) {
                 # has this word completed a bingo?
                 # analyze this before we add it to @found 
 
-                # ignore donut and lexicon words
-                my @found2 = grep { ! m{[+-]\z}xms } @found;
+                # ignore donut, lexicon, and bonus words
+                my @found2 = grep { ! m{[*+-]\z}xms } @found;
                 my %first_c;
                 WORD:
                 for my $fw (@found2) {
@@ -2041,7 +2090,7 @@ if ($old_rank < $rank && $rank >= 7) {
                   :            "Queen Bee " . ($thumbs_up x 3)
                  );
     if ($rank == 8) {
-        my @four = grep { ! m{[+-]\z}xms && length == 4 } @found;
+        my @four = grep { ! m{[*+-]\z}xms && length == 4 } @found;
         if (! @four) {
             $message .= ul('And you did it without ANY 4 letter words! '
                            .  $thumbs_up);
@@ -2055,29 +2104,47 @@ if ($old_rank < $rank && $rank >= 7) {
 
 if (! $prefix && ! $pattern && ! $limit && ! @words_found) {
     # the default when there are no restrictions
-    @words_found = sort grep { !m/[+-]\z/xms } @found;
+    @words_found = sort grep { !m/[*+-]\z/xms } @found;
 }
-my $donut_lexicon = '';
+
+sub dlb_row {
+    my ($name, $aref, $count) = @_;
+    return Tr(td({ class => 'dlb_name' }, $name),
+              td({ class => 'dlb' },
+                 "@$aref "
+               . span({ class => 'gray' }, $count)));
+}
+my $donut_lexicon_bonus = '';
 if ($show_WordList) {
     my @donut;
     my @lexicon;
+    my @bonus;
     for my $w (@found) {
         if ($w =~ m{[-]\z}xms) {
             my $x = $w;
             $x =~ s{[-]\z}{}xms;
             push @donut, $x;
         }
-        if ($w =~ m{[+]\z}xms) {
+        elsif ($w =~ m{[+]\z}xms) {
             my $x = $w;
             $x =~ s{[+]\z}{}xms;
             push @lexicon, $x;
+        }
+        elsif ($w =~ m{[*]\z}xms) {
+            my $x = $w;
+            $x =~ s{[*]\z}{}xms;
+            push @bonus, $x;
         }
     }
     if (!$order_found) {
         @donut   = sort @donut;
         @lexicon = sort @lexicon;
+        @bonus   = sort @bonus;
     }
-    # highlight new words and perfect donuts
+    # highlight new words
+    # and perfect donut/bonus pangrams
+
+    # DONUT
     my @new_donut;
     for my $w (@donut) {
         my $uw = ucfirst $w;
@@ -2096,6 +2163,33 @@ if ($show_WordList) {
         push @new_donut, def_word($s, $w);
     }
     @donut = @new_donut;
+
+    # BONUS
+    my @new_bonus;
+    for my $w (@bonus) {
+
+        my $uw = ucfirst $w;
+        
+        # color the non-7 letters red
+        $uw =~ s{([^$seven])}{<span class=red>$1</span>}xmsgi;
+
+        my $nchars = uniq_chars(lc $w);
+        my $s;
+        if ($nchars == 8) {
+            my $color = length $w == 8? 'purple': 'green';
+            $s = "<span class=$color>$uw</span>";
+        }
+        elsif ($is_new_word{lc $w}) {
+            $s = "<span class=new_word>$uw</span>";
+        }
+        else {
+            $s = $uw;
+        }
+        push @new_bonus, def_word($s, $w);
+    }
+    @bonus = @new_bonus;
+
+    # LEXICON
     @lexicon = map {
                    my $w = $_;
                    my $uw = ucfirst $w;
@@ -2108,14 +2202,18 @@ if ($show_WordList) {
                @lexicon;
     if (@donut) {
         my $ndonut = @donut;
-        $donut_lexicon = "Donut: <div class=found_words>@donut <span class=gray>$ndonut</span></div><br>";
+        $donut_lexicon_bonus = dlb_row('Donut:', \@donut, $ndonut);
     }
     if (@lexicon) {
         my $nlexicon = @lexicon;
-        $donut_lexicon .= "Lexicon: <div class=found_words>@lexicon <span class=gray>$nlexicon</span></div>";
+        $donut_lexicon_bonus .= dlb_row('Lexicon:', \@lexicon, $nlexicon);
     }
-    if ($donut_lexicon) {
-        $donut_lexicon = "<br>$donut_lexicon";
+    if (@bonus) {
+        my $nbonus = @bonus;
+        $donut_lexicon_bonus .= dlb_row('Bonus:', \@bonus, $nbonus);
+    }
+    if ($donut_lexicon_bonus) {
+        $donut_lexicon_bonus = "<p>" . table($donut_lexicon_bonus);
     }
 }
 my $bingo_table = '';
@@ -2227,7 +2325,7 @@ elsif ($order) {
 }
 elsif ($same_letters) {
     my %groups;
-    for my $w (grep { !m{[+-]\z}xms } @found) {
+    for my $w (grep { !m{[*+-]\z}xms } @found) {
         my $chars = join '', uniq_chars($w);
         push @{$groups{$chars}}, ucfirst $w;
     }
@@ -2889,7 +2987,7 @@ EOH
     my $y = $between_lines;
     if ($bingo) {
         my %first_found;
-        for my $w (grep { !m{[+-]\z}xms } @found) {
+        for my $w (grep { !m{[*+-]\z}xms } @found) {
             ++$first_found{uc substr($w, 0, 1)};
         }
         $html .= "<text x=$ind1 y=$y class=glets>b</text>\n";
@@ -2924,7 +3022,7 @@ EOH
     $html .= "<text x=$w_ind y=$y class=glets>w</text>\n";
     $x = $ind2;
     $y -= 4;
-    my $nfound = grep { !m{[+-]\z}xms } @found;
+    my $nfound = grep { !m{[*+-]\z}xms } @found;
     for my $i (1 .. $nfound) {
         $html .= "<circle cx=$x cy=$y r=$dotr2 fill=green></circle>\n";
         $x += $between_dots;
@@ -3075,7 +3173,7 @@ $letters
 </form>
 $bingo_table
 $found_words
-$donut_lexicon
+$donut_lexicon_bonus
 <p>
 $status$hint_table_list
 $show_clue_form$add_clues_form

@@ -15,6 +15,7 @@ our @EXPORT_OK = qw/
     th
     td
     div
+    span
     ul
     bold
     slash_date
@@ -152,6 +153,10 @@ sub table {
 sub div {
     my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
     return "<div$attrs>@_</div>";
+}
+sub span {
+    my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
+    return "<span$attrs>@_</span>";
 }
 sub Tr {
     my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
