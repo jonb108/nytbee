@@ -919,6 +919,7 @@ else {
 }
 my $nwords = @ok_words;
 my $letter_regex = qr{([^$seven])}xms;  # see sub check_word
+my $no_def = qr{No\s+definition}xms;
 my $npangrams = @pangrams;
 
 # get ready for hive == 3 (seven straight letters)
@@ -1142,9 +1143,6 @@ sub define {
     if (! $def) {
         $def = 'No definition';
     }
-    elsif (! $fullword) {
-        add_hints(3)
-    }
     return ucfirst $def;
 }
 
@@ -1156,6 +1154,7 @@ sub do_define {
     if ($term eq 'p') {
         for my $p (grep { !$is_found{$_} } @pangrams) {
             my $def = define($p, 0, $plus);
+            add_hints(3) unless $def =~ $no_def;
             if ($def) {
                 $message .= ul($def) . '--';
             }
@@ -1176,11 +1175,11 @@ sub do_define {
         }
         else {
             $message = define($words[ rand @words ], 0, $plus);
-            add_hints(-2) if $message;  # hack 
+            add_hints(1) unless $message =~ $no_def;
         }
         $cmd = '';
     }
-    elsif ($term eq 'r5') {
+    elsif ($term eq '5') {
         my @words = grep { !$is_found{$_} && length >= 5 }
                     @ok_words;
         if (! @words) {
@@ -1188,7 +1187,7 @@ sub do_define {
         }
         else {
             $message = define($words[ rand @words ], 0, $plus);
-            add_hints(-2) if $message;  # hack 
+            add_hints(1) unless $message =~ $no_def;
         }
         $cmd = '';
     }
@@ -1202,6 +1201,7 @@ sub do_define {
             $message = '';
             for my $w (get_words($let, $len)) {
                 my $def = define($w, 0, $plus);
+                add_hints(3) unless $def =~ $no_def;
                 if ($def) {
                     $message .= ul($def) .  '--';
                 }
@@ -1223,6 +1223,7 @@ sub do_define {
             $message = '';
             for my $w (get_words($lets)) {
                 my $def = define($w, 0, $plus);
+                add_hints(3) unless $def =~ $no_def;
                 if ($def) {
                     $message .= ul($def) . '--';
                 }
@@ -1400,7 +1401,7 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     $message = ul(table({ cellpadding => 4}, $rows));
     $cmd = '';
 }
-elsif ($cmd =~ m{\A (d[+]?)(p|r5?|[a-z]\d+|[a-z][a-z]) \z}xms) {
+elsif ($cmd =~ m{\A (d[+]?)(p|r|5|[a-z]\d+|[a-z][a-z]) \z}xms) {
     my $Dcmd = $1;
     my $term = $2;
     do_define($term, $Dcmd eq 'd+');
@@ -2110,7 +2111,7 @@ if (! $prefix && ! $pattern && ! $limit && ! @words_found) {
 sub dlb_row {
     my ($name, $aref, $count) = @_;
     return Tr(td({ class => 'dlb_name' }, $name),
-              td({ class => 'dlb' },
+              td({ class => 'dlb mess' },
                  "@$aref "
                . span({ class => 'gray' }, $count)));
 }
@@ -2171,7 +2172,7 @@ if ($show_WordList) {
         my $uw = ucfirst $w;
         
         # color the non-7 letters red
-        $uw =~ s{([^$seven])}{<span class=red>$1</span>}xmsgi;
+        $uw =~ s{([^$seven])}{<span class=darkgray>$1</span>}xmsgi;
 
         my $nchars = uniq_chars(lc $w);
         my $s;
@@ -2807,7 +2808,7 @@ EOH
 <span class='define cursor_black' onclick="rand_def();">Define</span>
 <span class=lets id=lets></span>
 <span class='delete cursor_black' onclick="del_let();">Delete</span>
-<span class='helplink cursor_black'><a class='cursor_black' target=_blank href='$log/nytbee/help.html#toc'">Help</a>&nbsp;&nbsp;&nbsp;<a class='cursor_black' target=_blank href='$log/nytbee/cmd_list.pdf'>Cmds</a></span>
+<span class='helplink cursor_black'><a class='cursor_black' target=_blank href='$log/nytbee/help.html#toc'">Help</a>&nbsp;&nbsp;&nbsp;&nbsp;<a class='cursor_black' target=_blank href='$log/nytbee/cmd_list.pdf'>Cmds</a></span>
 EOH
     }
     else {

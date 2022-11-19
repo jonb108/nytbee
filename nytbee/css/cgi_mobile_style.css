@@ -71,6 +71,9 @@ a.help {
     font-size: 18pt;
     font-weight: normal;
 }
+.darkgray {
+    color: darkgray;
+}
 .gray {
     color: lightgray;
 }
