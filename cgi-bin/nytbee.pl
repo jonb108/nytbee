@@ -1025,7 +1025,7 @@ my (@found,     # includes valid puzzle words, lexicon+ words, donut- words
 
 sub add_hints {
     my ($n) = @_;
-    if ($score_at_first_hint < 0) {
+    if ($n > 0 && $score_at_first_hint < 0) {
         $score_at_first_hint = $score;
     }
     $nhints += $n;
