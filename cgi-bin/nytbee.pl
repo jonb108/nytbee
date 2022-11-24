@@ -477,6 +477,10 @@ tie %message_for, 'DB_File', 'message_for.dbm';
 # the user saw and the date they saw it
 #--------------
 
+sub log_it {
+    my ($msg) = @_;
+    append_file 'beelog/' . ymd(), substr($uuid, 0, 11) . " = $msg\n";
+}
 
 
 #
@@ -570,7 +574,7 @@ my $cmd = lc($params{hidden_new_words} || $params{new_words});
     # even though it looks like we are typing upper case...
     #
 $cmd = trim($cmd);
-append_file 'beelog/' . ymd(), substr($uuid, 0, 11) . " = $cmd\n" if $cmd;
+log_it($cmd) if $cmd;
 
 my $message = '';
 # is there a 'message of the day' that the user
@@ -1980,6 +1984,7 @@ for my $w (@new_words) {
                                 .  uc($w)
                                 .  "</span>: Donut word $thumbs_up -1 hint<br>";
                 $w .= '-';
+                log_it('*donut');
                 add_hints(-1);
             }
             elsif ($mess eq 'lexicon') {
@@ -1987,6 +1992,7 @@ for my $w (@new_words) {
                                 .  uc($w)
                                 .  "</span>: Lexicon word $thumbs_up -2 hints<br>";
                 $w .= '+';
+                log_it('*lexicon');
                 add_hints(-2);
             }
             elsif ($mess eq 'bonus') {
@@ -1994,6 +2000,7 @@ for my $w (@new_words) {
                                 .  uc($w)
                                 .  "</span>: Bonus word $thumbs_up -3 hints<br>";
                 $w .= '*';
+                log_it('*bonus');
                 add_hints(-3);
             }
             else {
@@ -2085,7 +2092,7 @@ for my $w (@new_words) {
 my $old_rank = $rank;
 compute_score_and_rank();
 if ($old_rank < $rank && $rank >= 7) {
-    append_file 'beelog/' . ymd(), substr($uuid, 0, 11) . " = rank$rank\n";
+    log_it("rank$rank");
     $message = ul( $rank == 7? "Amazing "   .  $thumbs_up
                   :$rank == 8? "Genius "    . ($thumbs_up x 2)
                   :            "Queen Bee " . ($thumbs_up x 3)

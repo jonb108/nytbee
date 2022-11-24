@@ -104,8 +104,12 @@ while (my $line = <$log>) {
                || $line =~ m{=\se\d+(p|[a-z][a-z]|[a-z]\d+)          }xms
                || $line =~ m{=\sht\s*$                               }xms
                || $line =~ m{=\stl\s*$                               }xms
+               || $line =~ m{=\sg\s+yp?\s*$                             }xms
                ) {
             ++$href->{hint};
+        }
+        elsif ($line =~ m{=\s[*](donut|lexicon|bonus)}xms) {
+            ++$href->{$1};
         }
     }
 }
@@ -129,6 +133,9 @@ body {
 }
 a {
     text-decoration: none;
+    color: blue;
+}
+.blue {
     color: blue;
 }
 </style>
@@ -287,6 +294,14 @@ sub show_data {
     }
     if ($href->{hint}) {
         print " <span class=purple>h $href->{hint}</span>";
+    }
+    if ($href->{donut} || $href->{lexicon} || $href->{bonus}) {
+        print " <span class=blue>"
+            . "D" . ($href->{donut}||'')
+            . "L" . ($href->{lexicon}||'')
+            . "B" . ($href->{bonus}||'')
+            . "</span>"
+            ;
     }
     if ($href->{nr}) {
         print " <span class=red>nr $href->{nr}</span>";
