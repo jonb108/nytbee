@@ -1156,7 +1156,9 @@ sub do_define {
     load_nyt_clues;
     my $line = "&mdash;" x 4;
     if ($term eq 'p') {
+        my $npangrams =  0;
         for my $p (grep { !$is_found{$_} } @pangrams) {
+            ++$npangrams;
             my $def = define($p, 0, $plus);
             add_hints(3) unless $def =~ $no_def;
             if ($def) {
@@ -1166,7 +1168,8 @@ sub do_define {
         $message =~ s{--\z}{}xms;
         $message =~ s{--}{$line<br>}xmsg;
         if ($message) {
-            $message = "Pangrams:$message";
+            my $pl = $npangrams == 1? '': 's';
+            $message = "Pangram$pl:$message";
         }
         $cmd = '';
     }
