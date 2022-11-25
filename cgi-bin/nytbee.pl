@@ -3081,18 +3081,19 @@ EOH
     $y += $between_lines;
 
     # hints
-    if ($nhints > 0) {
+    if ($nhints) {
         $html .= "<text x=$ind1 y=$y class=glets>h</text>\n";
         $x = $ind2;
         $y -= 5;
         HINT:
-        for my $i (1 .. $nhints) {
+        for my $i (1 .. abs($nhints)) {
             if ($i > $nwords) {
                 $html .= "<text x=$x y=$y class=glets>+</text>\n";
                 last HINT;
             }
             else {
-                $html .= "<circle cx=$x cy=$y r=$dotr1 fill=#400098></circle>\n";
+                my $color = $nhints > 0? 'black': 'red';
+                $html .= "<circle cx=$x cy=$y r=$dotr1 fill=$color></circle>\n";
             }
             $x += $between_dots;
         }
