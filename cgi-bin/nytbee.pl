@@ -2708,7 +2708,7 @@ my $rank_image = $show_RankImage?
        : $rank_name;
 
 my $disp_nhints = "";
-if ($nhints) {
+if ($nhints || $rank == 9) {
     $disp_nhints .= "<br>Hints: $nhints";
     if ($rank >= 7) {
         $disp_nhints .= "<br>Ratio: " . sprintf("%.2f", $nhints/$score);
