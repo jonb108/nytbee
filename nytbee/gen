@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 my $w = 50;  # width of the hexagon side
-my $s = 13;  # space between hexagons
+my $s = 4;  # space between hexagons
 my $f = 25;  # font size of letters
 
 my $w2 = $w/2;
@@ -52,7 +52,7 @@ sub do_hex {
 <text
     x="$fx"
     y="$fy"
-    fill="white"
+    fill="black"
     onclick="add_let('$C')"
     style="font-family: Arial; font-size: ${f}pt; cursor: pointer;"
 >$C</text>
@@ -72,6 +72,7 @@ body {
 .lets {
     font-family: Arial;
     font-size: 20pt;
+    color: black;
 }
 </style>
 <script>
@@ -109,11 +110,11 @@ my $red   = '#ff0000';
 my $green = '#22ff22';
 
 init();
-do_hex(              0,             0, 'X', 'lightblue');
-do_hex(              0, -1*(2*$w1+$s), 'D', $gray);
-do_hex(              0,  1*(2*$w1+$s), 'E', $red);
-do_hex( 1*($w+$w2+$s1),   1*($w1+$s2), 'Z', $gray);
-do_hex(-1*($w+$w2+$s1),  -1*($w1+$s2), 'G', $green);
-do_hex(-1*($w+$w2+$s1),   1*($w1+$s2), 'H', $gray);
-do_hex( 1*($w+$w2+$s1),  -1*($w1+$s2), 'K', $gray);
+do_hex(              0,             0, 'LET0', 'gold');
+do_hex(              0, -1*(2*$w1+$s), 'LET1', $gray);
+do_hex(              0,  1*(2*$w1+$s), 'LET2', $gray);
+do_hex( 1*($w+$w2+$s1),   1*($w1+$s2), 'LET3', $gray);
+do_hex(-1*($w+$w2+$s1),  -1*($w1+$s2), 'LET4', $gray);
+do_hex(-1*($w+$w2+$s1),   1*($w1+$s2), 'LET5', $gray);
+do_hex( 1*($w+$w2+$s1),  -1*($w1+$s2), 'LET6', $gray);
 finis();

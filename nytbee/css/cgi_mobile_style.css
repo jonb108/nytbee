@@ -47,9 +47,6 @@ a {
 input, textarea, button {
     font-size: 18pt;
 }
-.red {
-    color: red;
-}
 button, .word_td {
     background: lightgreen;
 }
@@ -71,8 +68,8 @@ a.help {
     font-size: 18pt;
     font-weight: normal;
 }
-.darkgray {
-    color: #899499;
+.red {
+    color: red;
 }
 .gray {
     color: lightgray;
