@@ -2,9 +2,11 @@
 use strict;
 use warnings;
 
-my $w = 50;  # width of the hexagon side
-my $s = 4;  # space between hexagons
-my $f = 25;  # font size of letters
+my $w = 35;  # width of the hexagon side
+my $s = 5;  # space between hexagons
+my $f = 16;  # font size of letters
+my $mobile = shift;
+my $fmt = "%.4f";
 
 my $w2 = $w/2;
 my $s2 = $s/2;
@@ -26,8 +28,8 @@ sub do_hex {
     my $Ox = $OX + $X;
     my $Oy = $OY + $Y;
 
-    my $fx = $Ox - $f*0.50;
-    my $fy = $Oy + $f*0.45;
+    my $fx = sprintf($fmt, $Ox - $f*0.50);
+    my $fy = sprintf($fmt, $Oy + $f*0.45);
 
     my @hex = (
         [ $Ox-$w,  $Oy ],
@@ -40,21 +42,24 @@ sub do_hex {
 
     my $points = '';
     for my $h (@hex) {
-        $points .= "$h->[0],$h->[1],";
+        $points .= sprintf("$fmt,$fmt,", $h->[0], $h->[1]);
     }
+    $points =~ s{,\z}{}xms;
+    my $onclick = $mobile? qq!onclick="add_let('$C')"\n    !: '';
+    my $cursor  = qq!style="cursor: !
+                . ($mobile? 'pointer': 'default')
+                . qq!"\n    !
+                ;
     print {$svg} <<"EOH";
 <polygon
-    onclick="add_let('$C')"
-    points="$points"
+    ${onclick}points="$points"
     fill="$color"
-    style="cursor: pointer;"
-></polygon>
+    $cursor></polygon>
 <text
     x="$fx"
     y="$fy"
     fill="black"
-    onclick="add_let('$C')"
-    style="font-family: Arial; font-size: ${f}pt; cursor: pointer;"
+    ${cursor}${onclick}class=lets
 >$C</text>
 EOH
 }
@@ -71,7 +76,8 @@ body {
 }
 .lets {
     font-family: Arial;
-    font-size: 20pt;
+    font-size: ${f}pt;
+    font-weight: bold;
     color: black;
 }
 </style>
@@ -105,7 +111,7 @@ EOH
     close $svg;
 }
 
-my $gray  = '#d5d5d5';
+my $gray  = '#e0e0e0';
 my $red   = '#ff0000';
 my $green = '#22ff22';
 

@@ -1,0 +1,13 @@
+my $seven = shift;
+my @seven = split //, $seven;
+print "@seven";
+open my $in, '<', 'svg.html';
+open my $out, '>', 'svg1.html';
+{
+    local $/;
+    my $s = <$in>;
+    close $in;
+    $s =~ s{LET(\d)}{$seven[$1]}xmsg;
+    print {$out} $s;
+}
+close $out;

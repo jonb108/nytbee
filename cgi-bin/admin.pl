@@ -286,17 +286,18 @@ sub show_data {
     else {
         print "<a class=green href=$act>$href->{state}</a>, $href->{city}";
     }
+    print " ";
     if ($href->{grid}) {
-        print " g $href->{grid}";
+        print "g$href->{grid}";
     }
     if ($href->{prog}) {
-        print " p $href->{prog}";
+        print "p$href->{prog} ";
     }
     if ($href->{hint}) {
-        print " <span class=purple>h $href->{hint}</span>";
+        print " <span class=purple>h$href->{hint}</span>";
     }
     if ($href->{donut} || $href->{lexicon} || $href->{bonus}) {
-        print " <span class=blue>"
+        print "<span class=blue>"
             . "D" . ($href->{donut}||'')
             . "L" . ($href->{lexicon}||'')
             . "B" . ($href->{bonus}||'')
@@ -304,7 +305,7 @@ sub show_data {
             ;
     }
     if ($href->{nr}) {
-        print " <span class=red>nr $href->{nr}</span>";
+        print "<span class=red>nr$href->{nr}</span>";
     }
     if ($href->{cp}) {
         # community puzzles
@@ -312,7 +313,7 @@ sub show_data {
     }
     if ($href->{dt}) {
         # dated puzzles
-        print " <span class=red>dt $href->{dt}</span>";
+        print "<span class=red>dt$href->{dt}</span>";
     }
     if ($href->{rank}) {
         print " $href->{rank}";
