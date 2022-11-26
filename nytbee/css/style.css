@@ -38,6 +38,9 @@ td, th {
     color: red;
     font-weight: bold;
 }
+.red1 {
+    color: red;
+}
 a {
     color: blue;
     text-decoration: none;
