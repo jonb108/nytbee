@@ -2182,7 +2182,7 @@ if ($show_WordList) {
         my $uw = ucfirst $w;
         
         # color the non-7 letters red
-        $uw =~ s{([^$seven])}{<span class=darkgray>$1</span>}xmsgi;
+        $uw =~ s{([^$seven])}{<span class=red1>$1</span>}xmsgi;
 
         my $nchars = uniq_chars(lc $w);
         my $s;
