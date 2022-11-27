@@ -481,7 +481,10 @@ sub log_it {
     my ($msg) = @_;
     append_file 'beelog/' . ymd(), substr($uuid, 0, 11) . " = $msg\n";
 }
-
+sub add_3word {
+    my ($type, $date, $w) = @_;
+    append_file("$type/$date",  "$w\n");
+}
 
 #
 # returns an array of arrayrefs representing
@@ -1986,24 +1989,27 @@ for my $w (@new_words) {
                 $not_okay_words .= "<span class=not_okay>"
                                 .  uc($w)
                                 .  "</span>: Donut word $thumbs_up -1 hint<br>";
-                $w .= '-';
+                add_3word('donut', $date, $w);
                 log_it('*donut');
+                $w .= '-';
                 add_hints(-1);
             }
             elsif ($mess eq 'lexicon') {
                 $not_okay_words .= "<span class=not_okay>"
                                 .  uc($w)
                                 .  "</span>: Lexicon word $thumbs_up -2 hints<br>";
-                $w .= '+';
+                add_3word('lexicon', $date, $w);
                 log_it('*lexicon');
+                $w .= '+';
                 add_hints(-2);
             }
             elsif ($mess eq 'bonus') {
                 $not_okay_words .= "<span class=not_okay>"
                                 .  uc($w)
                                 .  "</span>: Bonus word $thumbs_up -3 hints<br>";
-                $w .= '*';
+                add_3word('bonus', $date, $w);
                 log_it('*bonus');
+                $w .= '*';      # * in the found list marks bonus words
                 add_hints(-3);
             }
             else {
