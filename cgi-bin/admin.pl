@@ -36,12 +36,12 @@ my $log;
 my $ymd;
 if ($pi) {
     my $dt = date($pi);
-    $ymd = $dt->format("%Y-%m-%d");
+    $ymd = $dt->format("%Y%m%d");
 }
 else {
     $ymd = ymd();
 }
-my $prev = (date($ymd)-1)->format("%Y-%m-%d");
+my $prev = (date($ymd)-1)->format("%Y%m%d");
 if (! open $log, '<', "beelog/$ymd") {
     print "cannot open log for $ymd\n";
     exit;

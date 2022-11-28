@@ -324,6 +324,7 @@ use File::Slurp qw/
     read_file
 /;
 
+my $ymd = ymd();
 my $q = CGI->new();
 my $hive = $q->param('hive') || $q->cookie('hive') || 1;
 my $hive_cookie = $q->cookie(
@@ -479,7 +480,7 @@ tie %message_for, 'DB_File', 'message_for.dbm';
 
 sub log_it {
     my ($msg) = @_;
-    append_file 'beelog/' . ymd(), substr($uuid, 0, 11) . " = $msg\n";
+    append_file "beelog/$ymd", substr($uuid, 0, 11) . " = $msg\n";
 }
 sub add_3word {
     my ($type, $date, $w) = @_;
@@ -2294,6 +2295,9 @@ sub color_pg {
     return "<span class=$class>$pg</span>";
 }
 
+# two params
+# the first is the displayed word (perhaps colored with a span)
+# the second is the word itself plain
 sub def_word {
     my ($t, $w) = @_;
     qq!<span style='cursor: pointer' onclick="def_word(event, '$w')">$t</span>!;
@@ -2583,6 +2587,39 @@ EOH
 <input type=hidden name=format value=1>
 </form>
 EOH
+    }
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A ([dlb])w \z}xms) {
+    # still need to document it (red are words you found)
+    # if today's puzzle not before 2:00 a.m. East Coast time
+    # add to Cmds pdf, xlsx
+    my $let = uc $1;
+    if ($date eq $ymd && (localtime)[2] > 0) {
+        $message = "Sorry, you cannot do ${let}W for today's puzzle<br>before 2:00 a.m. East Coast time.";
+    }
+    else {
+        my $name = { qw/ D donut L lexicon B bonus / }->{$let};
+        open my $in, '<', "$name/$date";
+        my %words;
+        while (my $w = <$in>) {
+            chomp $w;
+            ++$words{$w};
+        }
+        close $in;
+        my $nwords = keys %words;
+        my $pl = $nwords == 1? '': 's';
+        $message = "$nwords " . ucfirst($name) . " word$pl:<br>\n";
+        my @rows;
+        for my $w (sort keys %words) {
+            my $dw = def_word($w, $w);
+            push @rows, Tr(td({ class => 'lt' },
+                              $is_found{$w}? span({ class => 'red' }, $dw)
+                             :               $dw),
+                           td({ class => 'rt' }, $words{$w}));
+        }
+        $message .= table(@rows);
+        $focus = '';
     }
     $cmd = '';
 }

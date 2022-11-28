@@ -202,7 +202,7 @@ sub get_html {
 
 sub ymd {
     my $today = my_today();
-    return $today->format("%Y-%m-%d");
+    return $today->format("%Y%m%d");
 }
 
 1;
