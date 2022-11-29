@@ -2523,6 +2523,14 @@ elsif ($cmd eq '52') {
     $cmd = '';
 }
 
+sub td_pangram {
+    my ($perfect) = @_;
+    td({ class => ($perfect? 'purple': 'green') . ' lt' },
+       ('&nbsp'x3)
+     . ($perfect? 'perfect ': '')
+     . 'pangram')
+}
+
 my $perfect = '';
 my $nperfect = 0;
 for my $p (keys %is_pangram) {
@@ -2590,11 +2598,20 @@ EOH
     }
     $cmd = '';
 }
-elsif ($cmd =~ m{\A ([dlb])w \z}xms) {
-    # still need to document it (red are words you found)
+elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
+    # still need to document it
     # if today's puzzle not before 2:00 a.m. East Coast time
     # add to Cmds pdf, xlsx
-    my $let = uc $1;
+    # second column of numbers is the # of people who found it
+    # DW, LW, BW - sort by the word
+    # NDW, NLW, NBW - sort by the numbers descending then the word
+    # pangram (green), perfect pangram (purple)
+    # word is red if you found it
+    # as usual you can click on each word to get definition and
+    # then on the definition to get full wordnik definition.
+    #
+    my $numeric = $1;
+    my $let = uc $2;
     if ($date eq $ymd && (localtime)[2] > 0) {
         $message = "Sorry, you cannot do ${let}W for today's puzzle<br>before 2:00 a.m. East Coast time.";
     }
@@ -2611,12 +2628,34 @@ elsif ($cmd =~ m{\A ([dlb])w \z}xms) {
         my $pl = $nwords == 1? '': 's';
         $message = "$nwords " . ucfirst($name) . " word$pl:<br>\n";
         my @rows;
-        for my $w (sort keys %words) {
+        my @words = $numeric? (sort {
+                                   $words{$b} <=> $words{$a}
+                                   ||
+                                   $a cmp $b
+                               }
+                               keys %words)
+                   :          (sort keys %words)
+                   ;
+        for my $w (@words) {
             my $dw = def_word($w, $w);
+            my $nuchars = uniq_chars($w);
+            my $lw = length $w;
+            my $pangram;
+            if ($let eq 'B' && $nuchars == 8) {
+                $pangram = td_pangram($lw == 8);
+            }
+            elsif ($let eq 'D' && $nuchars == 6) {
+                $pangram = td_pangram($lw == 6);
+            }
+            elsif ($let eq 'L' && $nuchars == 7) {
+                $pangram = td_pangram($lw == 7);
+            }
             push @rows, Tr(td({ class => 'lt' },
                               $is_found{$w}? span({ class => 'red' }, $dw)
                              :               $dw),
-                           td({ class => 'rt' }, $words{$w}));
+                           td({ class => 'rt' }, $words{$w}),
+                           $pangram,
+                        );
         }
         $message .= table(@rows);
         $focus = '';
