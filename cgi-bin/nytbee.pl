@@ -283,6 +283,7 @@ use CGI::Carp qw/
     fatalsToBrowser
 /;
 use BeeUtil qw/
+    extra_let
     ymd
     uniq_chars
     cgi_header
@@ -2133,6 +2134,7 @@ sub dlb_row {
                  "@$aref "
                . span({ class => 'gray' }, $count)));
 }
+
 my $donut_lexicon_bonus = '';
 if ($show_WordList) {
     my @donut;
@@ -2652,9 +2654,70 @@ elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
                 $pangram = td_pangram($lw == 7);
             }
             push @rows, Tr(td({ class => 'lt' },
-                              $is_found{$w}? span({ class => 'red' }, $dw)
+                              $is_found{$w}? span({ class => 'found_bonus' }, $dw)
                              :               $dw),
                            td({ class => 'rt' }, $words{$w}),
+                           $pangram,
+                        );
+        }
+        $message .= table(@rows);
+        $focus = '';
+    }
+    $cmd = '';
+}
+elsif ($cmd eq 'abw') {
+    if ($date eq $ymd && (localtime)[2] > 0) {
+        $message = "Sorry, you cannot do ABW for today's puzzle<br>before 2:00 a.m. East Coast time.";
+    }
+    else {
+        # a separate piece of code for the fancy ABW
+        # a bit of duplication
+        open my $in, '<', "bonus/$date";
+        my %words;
+        while (my $w = <$in>) {
+            chomp $w;
+            ++$words{$w};
+        }
+        close $in;
+        my $nwords = keys %words;
+        my $pl = $nwords == 1? '': 's';
+        $message = "$nwords Bonus word$pl:<br>\n";
+        # the above could be put into a sub and used below as well
+        # param would be donut/lexicon/bonus
+        # 3 return values
+        my @words_plus = sort {
+                             $a->[0] cmp $b->[0]
+                             ||
+                             $b->[1] <=> $a->[1]
+                             ||
+                             $a->[2] cmp $b->[2]
+                         }
+                         map {
+                             [
+                                extra_let($_, $seven),
+                                $words{$_},
+                                $_,
+                             ]
+                         }
+                         keys %words;
+        my @rows;
+        for my $aref (@words_plus) {
+            my $w = $aref->[2];
+            my $count = $aref->[1];
+            my $extra = $aref->[0];
+            my $w_extra = $w;
+            $w_extra =~ s{$extra}{<span class=red>$extra</span>}xmsg;
+            my $dw = def_word($w_extra, $w);
+            my $nuchars = uniq_chars($w);
+            my $lw = length $w;
+            my $pangram;
+            if ($nuchars == 8) {
+                $pangram = td_pangram($lw == 8);
+            } 
+            push @rows, Tr(td({ class => 'lt' },
+                              $is_found{$w}? span({ class => 'found_bonus' }, $dw)
+                             :               $dw),
+                           td({ class => 'rt' }, $count),
                            $pangram,
                         );
         }
