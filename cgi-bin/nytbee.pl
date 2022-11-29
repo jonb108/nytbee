@@ -1915,6 +1915,7 @@ elsif ($cmd eq 'rcp') {
 # what new words might we have instead?
 my @new_words;
 if ($cmd !~ m{\A [12] \z}xms) {
+    $cmd =~ s{\d}{}xmsg;    # for pasting a bunch of BW words
     @new_words = map {
                      lc
                  }
