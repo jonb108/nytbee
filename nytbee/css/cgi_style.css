@@ -157,6 +157,9 @@ input, .submit {
 .red2 {
     font-weight: bold;
 }
+.found_bonus {
+    color: skyblue;
+}
 .green {
     color: green;
 }

@@ -7,6 +7,7 @@ our @EXPORT_OK = qw/
     cgi_header
     uniq_chars
     uniq_words
+    extra_let
     error
     word_score
     trim
@@ -203,6 +204,12 @@ sub get_html {
 sub ymd {
     my $today = my_today();
     return $today->format("%Y%m%d");
+}
+
+sub extra_let {
+    my ($word, $seven) = @_;
+    $word =~ s{[$seven]}{}xmsg;
+    return substr($word, 0, 1);
 }
 
 1;
