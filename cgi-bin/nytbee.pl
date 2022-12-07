@@ -1915,8 +1915,10 @@ elsif ($cmd eq 'rcp') {
 # except for 1 and 2, that is.
 # what new words might we have instead?
 my @new_words;
-if ($cmd !~ m{\A [12] \z}xms) {
-    $cmd =~ s{\d}{}xmsg;    # for pasting a bunch of BW words
+if ($cmd ne '1' && $cmd ne '2' && $cmd ne '51' && $cmd ne '52') {
+    # special case ...
+    # for pasting a bunch of BW words along with numbers
+    $cmd =~ s{\d}{}xmsg;    
     @new_words = map {
                      lc
                  }
