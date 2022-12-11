@@ -104,6 +104,7 @@ function show_copied(id) {
 }
 function full_def(word) {
     window.open('https://wordnik.com/words/' + word, 'wordnik');
+    set_focus();
 }
 function popup_define(word, height, width) {
     newwin = window.open(

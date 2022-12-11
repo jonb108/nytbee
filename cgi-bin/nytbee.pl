@@ -1915,7 +1915,12 @@ elsif ($cmd eq 'rcp') {
 # except for 1 and 2, that is.
 # what new words might we have instead?
 my @new_words;
-if ($cmd ne '1' && $cmd ne '2' && $cmd ne '51' && $cmd ne '52') {
+if ($cmd ne '1'
+    && $cmd ne '2'
+    && $cmd ne '51'
+    && $cmd ne '52'
+    && $cmd !~ m{\A m\d* \z}xms
+) {
     # special case ...
     # for pasting a bunch of BW words along with numbers
     $cmd =~ s{\d}{}xmsg;    
