@@ -839,7 +839,10 @@ elsif ($cmd eq 'n' || $cmd eq 'p') {
         }
     }
 }
-elsif ($cmd ne '1' && $cmd ne '2' && $cmd ne '52' && $cmd ne '51'
+elsif (   $cmd ne '1'
+       && $cmd ne '2'
+       && $cmd ne '52'
+       && $cmd ne '51'
        && $cmd =~ m{\A ([\d/-]+) \z}xms
 ) {
     my $new_date = $1;
@@ -1911,16 +1914,18 @@ elsif ($cmd eq 'rcp') {
     $focus = '';
 }
 
-# so we have dealt with the various commands.
-# except for 1 and 2, that is.
+# so we have dealt with the various commands. (not really...)
+# except for 1, 2, and a few others.
 # what new words might we have instead?
 my @new_words;
-if ($cmd ne '1'
+if (   $cmd ne '1'
     && $cmd ne '2'
     && $cmd ne '51'
     && $cmd ne '52'
     && $cmd !~ m{\A m\d* \z}xms
 ) {
+    # what about $cmd eq 'i' or bw or ... ?
+    # turns out it's okay ... but sloppy.
     # special case ...
     # for pasting a bunch of BW words along with numbers
     $cmd =~ s{\d}{}xmsg;    
