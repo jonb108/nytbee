@@ -32,6 +32,7 @@ nytbee_get_clues.pl \
 nytbee_get_cluers.pl \
 nytbee_clues_by.pl \
 nytbee_define.pl \
+nytbee_cw.pl \
 mktar \
 go \
 dump_dbm \

@@ -1922,6 +1922,7 @@ if (   $cmd ne '1'
     && $cmd ne '2'
     && $cmd ne '51'
     && $cmd ne '52'
+    && $cmd !~ m{\A cw}xms
     && $cmd !~ m{\A m\d* \z}xms
 ) {
     # what about $cmd eq 'i' or bw or ... ?
@@ -2677,13 +2678,19 @@ elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
     }
     $cmd = '';
 }
-elsif ($cmd eq 'cw') {
+elsif ($date !~ m{\A CP}xms && $cmd =~ m{\A cw (\d*)}xms) {
+    # I'm confused why \d* and \d+ don't capture properly
+    # test it out
+    # order of evaluation of the &&? no.
+    my ($max) = $cmd =~ m{(\d+)}xms;
+    $max ||= 5;
     # Valid only when the current puzzle is an NYT puzzle.
     # For the day of the current puzzle
     # search the day's log and extra word files to identify
     # the top 5 (10?) locations in Donut, Lexicon, and Bonus words.
     # The C stands for Community or Competitive.
-    $message = 'CW is not yet implemented.  Coming soon.';
+    $message = `$cgi_dir/nytbee_cw.pl $date $max`;
+    $focus = '';
     $cmd = '';
 }
 elsif ($cmd eq 'abw') {
