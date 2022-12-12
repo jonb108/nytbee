@@ -340,7 +340,7 @@ each increases your 'hint total'.
 The number of hints are tallied like so:
 <p>
 <ul>
-<table cellpadding=3>
+<table cellpadding=5>
 <tr><th>Command</th><th align=left colspan=2>&nbsp;&nbsp;# hints</th></tr>
 <tr><td><span class=cmd>HT</span></td><td align=right>10</td></tr>
 <tr><td><span class=cmd>TL</span></td><td align=right>5</td></tr>
@@ -399,10 +399,6 @@ remember the words.  If you keep doing this your <a href=#hint_ratio>hint ratio<
 There is, of course, no 'official' list of
 these words but you can tell your friends about how many you found.
 You can also search for Lexicon and Bonus words and get Hint Credits.
-Accumulating hint credits is like having money in the bank.
-You can spend them wisely on 
-definitions, reveals, and showing the
-Hint Table and Two Letter List.
 <li>A different kind of activity is to find all the words in today's puzzle
 (however you wish, even with the <span class=cmd>G YP</span> command &#128522;) and
 then add some clever inventive <a href=#clues>clues</a>.
@@ -463,7 +459,7 @@ In the first 1530 games in the <a href=#nyt_archive>archive</a> there were
 only 8 games where GN4L was not possible.  It isn't easy, however,
 and here are a few commands to help:
 <p>
-<table cellpadding=3>
+<table cellpadding=5>
 <tr><td><span class=cmd>D5</span></td><td>Define a random word not yet found that has 5 or more letters.</td></tr>
 <tr><td><span class=cmd>51</span></td><td>Show a random non-zero entry from the Hint Table where the length is 5 or more.</td></tr>
 <tr><td><span class=cmd>52</span></td><td>Show a random entry from the Two Letter List of words with a length of 5 or more.</td></tr>
@@ -529,23 +525,26 @@ how often have you muttered the phrase "<span class=green>If I only had an E...<
 For this, there are <i>Bonus</i> words.  A Bonus word is at least 6
 letters long, uses some of the 7 letters
 (<i>not</i> necessarily including the center one),
-and <i>another</i> letter that is <i>not</i> one of the 7.
+and an <i>additional</i> letter that is <i>not</i> one of the 7.
 <p>
 In this puzzle from November 13, 2022:
 <p style="margin-left: .4in">
 <img src=pics/22-11-13.png width=300>
 <p>
-the words VICINIT<span class=red1>Y</span> and INCITE<span class=red1>M</span>ENT are Bonus words which use an extra Y and M respectively.
+the words VICINIT<span class=red1>Y</span> and INCITE<span class=red1>M</span>ENT are Bonus words which use an additional Y and M respectively.
 Bonus words must appear either in the large lexicon or in the list of previous
 NYT Puzzle words.
 A <span class=green>Bonus Pangram</span> is one that uses all 7 letters plus the extra one.
 A <span class=purple>Perfect Bonus Pangram</span> is exactly 8 letters long.
-The extra letter <i>can</i> be an <span class=red1 style="font-size: 20pt">S</span> (finally!).
+The additional letter <i>can</i> be an <span class=red1 style="font-size: 20pt">S</span> (finally!).
 <span class=red1>S</span>CIENCE is another Bonus word for the above puzzle. 
 Note that very few plurals occur in the large lexicon and that
 many words ending in ING and ED are absent as well.
+<p>
+It seems that Bonus words are often more colorful and intriguing
+than the typical boring "normal" words.
 <h3>Hint Credits</h3>
-These three types of words are
+These three types of words (the term 'Extra Words' seems a good one) are
 listed below the words you have found in the allowed list.  Like so:
 <p style="margin-left: .2in">
 <img src=pics/list3.png width=600>
@@ -566,9 +565,38 @@ In the above puzzle we have:
 When the puzzle status is graphical negative hints are colored
 in <span class=red1>red</span>.
 <p>
+Accumulating hint credits is like having money in the bank.
+You can spend them wisely on 
+definitions, reveals, and showing the
+Hint Table and Two Letter List.
+<p>
 Finally, note that the minus command (hyphen, dash, '-') which is
 used to remove words from the found list will add hints back if you
-remove a Donut, Lexicon, or Bonus word.
+remove an Extra word.
+<h3>Global Lists of Extra Words</h3>
+There is, of course, no "official" list of these Extra words.
+This makes it more fun, in a way.  More creative.
+Here are 7 commands to show the Extra words found by the
+<i>entire</i> global world-wide community.
+The words that <i>you</i> found are shown in
+<span class=found_bonus>sky blue</span>.
+<span class=green>Pangrams</span> and <span class=purple>Perfect Pangrams</span> are marked.
+<p>
+<table cellpadding=5>
+<tr><th class='cmd rt'>DW</th><td>Show all Donut words in alphabetic order.</td></tr>
+<tr><th class='cmd rt'>LW</th><td>Show all Lexicon words in alphabetic order.</td></tr>
+<tr><th class='cmd rt'>BW</th><td>Show all Bonus words in alphabetic order.</td></tr>
+<tr><th class='cmd rt'>NDW</th><td>Show all Donut words in order of how many different people found them.</td></tr>
+<tr><th class='cmd rt'>NLW</th><td>Show all Lexicon words in order of how many different people found them.</td></tr>
+<tr><th class='cmd rt'>NBW</th><td>Show all Bonus words in order of how many different people found them.</td></tr>
+<tr><th class='cmd rt'>ABW</th><td>Show all Bonus words in order of the additional letter.  Within that additional letter the sort is by the number of people who found the word and then alphabetically.</td></tr>
+</table>
+<p>
+Note that to remove temptation and prevent 'cheating' the above commands cannot be used on today's puzzle before 2:00 a.m. East Coast time.  If you're curious about yesterday's Extra words there is the <span class=cmd>-1</span> command.
+<p>
+<table cellpadding=5>
+<tr><th class='cmd rt' style="width: 15mm">CW</th><td>Community Words. Show the locations (only Country/State/City) of the 5 people who found the most Extra words.  The 'C' could also stand for Competitive. &#128522;</td></tr>
+</table>
 <a name=archival_and_community></a>
 <h2>Archival and Community Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -580,6 +608,7 @@ Commands to access the large NY Times <a href=#nyt_archive>Archive</a> of Spelli
 <tr><td><span class=cmd>&lt;date&gt;</span></td><td>New NYT puzzle from the given date.  You can enter dates in several ways: 10/20/19 or 9/23 (current year) or 15 (current month - but not 1 or 2 for the 1st or 2nd).  Dates must be on or after May 9, 2018.</td></tr>
 <tr><td><span class=cmd>T</span></td><td>Return to today's NYT puzzle.</td></tr>
 <tr><td><span class=cmd>L</span></td><td>List the current puzzles.  <span class=red>*</span> marks the current puzzle.  <span class=green>p</span> marks puzzles where all pangrams have been found.  You can click on the puzzle date to switch to that puzzle.</td></tr>
+<tr><td><span class=cmd>-1, -7</span></td><td>Move to yesterday's puzzle (-1) or the puzzle from a week ago (-7).</td></tr>
 <tr><td><span class=cmd>N</span></td><td>Move to the next puzzle in the list - wrapping from last to first.</td></tr>
 <tr><td><span class=cmd>P</span></td><td>Move to the previous puzzle in the list - wrapping from first to last.</td></tr>
 <tr><td><span class=cmd>P&lt;num&gt;</span></td><td>Move to puzzle #num in the list.</td></tr>
@@ -803,7 +832,7 @@ name@hello.com becomes <a href='mailto:name@hello.com'>name@hello.com<br>
 </h2>
 These commands are of more limited use.  Some of them were added just for the beauty of software Art.
 <p>
-<table cellpadding=3>
+<table cellpadding=5>
 <tr><td><span class=cmd>H</span></td><td>Cycle through different presentations
 of the 7 letters  - Honeycomb to Flower to Inline Letters to Hex Letters.<p>
 <img height=150 src=pics/df_honeycomb.png><img height=150 src=pics/df_flower.png>&nbsp;&nbsp;<img height=70 src=pics/df_inline.png><img height=130 src=pics/df_hexlet.png>
@@ -1074,7 +1103,7 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1677 puzzles with
+1679 puzzles with
 a total of 9198 different words!
 <p>
 Which puzzles from the large archive to play?

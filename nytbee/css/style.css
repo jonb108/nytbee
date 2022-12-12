@@ -41,6 +41,9 @@ td, th {
 .red1 {
     color: red;
 }
+.found_bonus {
+    color: skyblue;
+}
 a {
     color: blue;
     text-decoration: none;

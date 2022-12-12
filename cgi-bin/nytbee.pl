@@ -2677,6 +2677,15 @@ elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
     }
     $cmd = '';
 }
+elsif ($cmd eq 'cw') {
+    # Valid only when the current puzzle is an NYT puzzle.
+    # For the day of the current puzzle
+    # search the day's log and extra word files to identify
+    # the top 5 (10?) locations in Donut, Lexicon, and Bonus words.
+    # The C stands for Community or Competitive.
+    $message = 'CW is not yet implemented.  Coming soon.';
+    $cmd = '';
+}
 elsif ($cmd eq 'abw') {
     if ($date eq $ymd && (localtime)[2] > 0) {
         $message = "Sorry, you cannot do ABW for today's puzzle<br>before 2:00 a.m. East Coast time.";
