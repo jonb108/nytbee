@@ -598,7 +598,6 @@ if (! $cmd) {
                 # yes.
                 $message = read_file("messages/$n");
                 $message_for{$uuid} = "$n " . $today->as_d8();
-                $focus = '';
             }
         }
     }
@@ -607,7 +606,6 @@ if (! $cmd) {
         # and needs to see the first message
         $message_for{$uuid} = "1 " . $today->as_d8();
         $message = read_file("messages/1");
-        $focus = '';
     }
 }
 
@@ -1911,7 +1909,6 @@ elsif ($cmd eq 'rcp') {
     }
     $message = table({ cellpadding => 3 }, $message);
     $cmd = '';
-    $focus = '';
 }
 
 # so we have dealt with the various commands. (not really...)
@@ -2674,14 +2671,18 @@ elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
                         );
         }
         $message .= table(@rows);
-        $focus = '';
     }
     $cmd = '';
 }
-
-=comment
-
-elsif ($date !~ m{\A CP}xms && $cmd =~ m{\A cw (\d*)}xms) {
+elsif ($uuid eq 'sahadev108!'
+       && $date !~ m{\A CP}xms
+       && $cmd =~ m{\A cw (\d*)}xms
+) {
+    # The CW command documentation is commented out.
+    # If someone enters CW nothing will happen.
+    # Remove the sahadev108! condition above and it will
+    # be implemented again.
+    #
     # I'm confused why \d* and \d+ don't capture properly
     # test it out
     # order of evaluation of the &&? no.
@@ -2693,12 +2694,8 @@ elsif ($date !~ m{\A CP}xms && $cmd =~ m{\A cw (\d*)}xms) {
     # the top 5 (10?) locations in Donut, Lexicon, and Bonus words.
     # The C stands for Community or Competitive.
     $message = `$cgi_dir/nytbee_cw.pl $date $max`;
-    $focus = '';
     $cmd = '';
 }
-
-=cut
-
 elsif ($cmd eq 'abw') {
     if ($date eq $ymd && (localtime)[2] > 0) {
         $message = "Sorry, you cannot do ABW for today's puzzle<br>before 2:00 a.m. East Coast time.";
@@ -2756,7 +2753,6 @@ elsif ($cmd eq 'abw') {
                         );
         }
         $message .= table(@rows);
-        $focus = '';
     }
     $cmd = '';
 }
@@ -2778,7 +2774,6 @@ elsif ($cmd =~ m{\A m(\d+)? \z}xms) {
     }
     else {
         $message = read_file("messages/$n");
-        $focus = '';
     }
     $cmd = '';
 }

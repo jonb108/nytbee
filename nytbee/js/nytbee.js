@@ -77,7 +77,7 @@ function clues_by(person_id) {
     set_focus();
 }
 function set_focus() {
-    setTimeout(() => { console.log("World!"); }, 1000);
+    setTimeout(() => { window.scrollTo(0, 0); }, 20);
     nw.focus();
     return true;
 }
