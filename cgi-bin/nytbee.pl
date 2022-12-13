@@ -2678,6 +2678,9 @@ elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
     }
     $cmd = '';
 }
+
+=comment
+
 elsif ($date !~ m{\A CP}xms && $cmd =~ m{\A cw (\d*)}xms) {
     # I'm confused why \d* and \d+ don't capture properly
     # test it out
@@ -2693,6 +2696,9 @@ elsif ($date !~ m{\A CP}xms && $cmd =~ m{\A cw (\d*)}xms) {
     $focus = '';
     $cmd = '';
 }
+
+=cut
+
 elsif ($cmd eq 'abw') {
     if ($date eq $ymd && (localtime)[2] > 0) {
         $message = "Sorry, you cannot do ABW for today's puzzle<br>before 2:00 a.m. East Coast time.";
