@@ -212,4 +212,9 @@ sub extra_let {
     return substr($word, 0, 1);
 }
 
+sub screen_name {
+    my ($uid) = @_;
+    return `screen_name.pl $uid`;
+}
+
 1;

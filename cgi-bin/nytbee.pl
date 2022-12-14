@@ -325,6 +325,7 @@ use File::Slurp qw/
     read_file
 /;
 
+my $message = '';
 my $ymd = ymd();
 my $q = CGI->new();
 my $hive = $q->param('hive') || $q->cookie('hive') || 1;
@@ -348,6 +349,58 @@ if ($params{new_words} =~ m{\A \s* id \s+}xmsi) {
 my %uuid_ip;
 tie %uuid_ip, 'DB_File', 'uuid_ip.dbm';
 $uuid_ip{$uuid} = $ENV{REMOTE_ADDR} . '|' . $ENV{HTTP_USER_AGENT};
+
+#
+# a 'screen name' for privacy - rather than using
+# the ip address to derive location - country/state/city.
+#
+my %uuid_screen_name;
+tie %uuid_screen_name, 'DB_File', 'uuid_screen_name.dbm';
+sub name_taken {
+    my ($name) = @_;
+    for my $n (values %uuid_screen_name) {
+        if ($name eq $n) {
+            # already taken
+            return 1;
+        }
+    }
+    return 0;
+}
+my $screen_name;
+if (exists $uuid_screen_name{$uuid}) {
+    $screen_name = $uuid_screen_name{$uuid};
+}
+else {
+    my @base = qw/
+        Bee
+        Drone
+        Queen
+        Hive
+        Worker
+        Bumble
+        Honey
+        Apian
+        Buzz
+    /;
+    my @nums = 1 .. 9;
+    SCREEN_NAME:
+    while (1) {
+        $screen_name = $base[rand @base] . $nums[rand @nums];
+        if (name_taken($screen_name)) {
+            next SCREEN_NAME;
+        }
+        last SCREEN_NAME;
+    }
+    $uuid_screen_name{$uuid} = $screen_name;
+    my $url = 'https://logicalpoetry.com/nytbee/help.html#screen_names';
+    $message .= "<div class=red>"
+             . "Welcome.<br>"
+             . "You have been assigned a screen name of $screen_name.<br>"
+             . "You can change it with the SN command.<br>"
+             . "Read all about screen names <a target=_blank href='$url'>here</a>."
+             . "</div><p>"
+             ;
+}
 
 my $mobile = $ENV{HTTP_USER_AGENT} =~ m{iPhone|Android}xms;
 #$mobile = 1;
@@ -581,7 +634,6 @@ my $cmd = lc($params{hidden_new_words} || $params{new_words});
 $cmd = trim($cmd);
 log_it($cmd) if $cmd;
 
-my $message = '';
 # is there a 'message of the day' that the user
 # has not yet seen?
 # disabled for now ...
@@ -596,7 +648,7 @@ if (! $cmd) {
             $date = date($date);
             if ($date < $today) {
                 # yes.
-                $message = read_file("messages/$n");
+                $message .= read_file("messages/$n");
                 $message_for{$uuid} = "$n " . $today->as_d8();
             }
         }
@@ -605,7 +657,7 @@ if (! $cmd) {
         # this user has seen no messages at all
         # and needs to see the first message
         $message_for{$uuid} = "1 " . $today->as_d8();
-        $message = read_file("messages/1");
+        $message .= read_file("messages/1");
     }
 }
 
@@ -666,7 +718,7 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
         }
         elsif (my ($start, $end) = $t =~ m{(\d+)-(\d+)}xms) {
             if ($start > $end) {
-                $message = "Illegal range: $start-$end";
+                $message .= "Illegal range: $start-$end";
                 $cmd = '';
             }
             else {
@@ -674,7 +726,7 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
             }
         }
         else {
-            $message = "Illegal puzzle numbers: $nums";
+            $message .= "Illegal puzzle numbers: $nums";
             $cmd = '';
         }
     }
@@ -683,7 +735,7 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
         my $npuzzles = @puzzles;
         for my $n (@nums) {
             if ($n > $npuzzles) {
-                $message = "$n: There are only $npuzzles current puzzles";
+                $message .= "$n: There are only $npuzzles current puzzles";
                 $cmd = '';
             }
         }
@@ -744,18 +796,18 @@ elsif (my ($ncp) = $cmd =~ m{\A xcp \s* (\d+) \z}xms) {
     # did the current user create CP$ncp?
     my $fname = "$comm_dir/$ncp.txt";
     if (! -f $fname) {
-        $message = "CP$ncp: No such Community Puzzle";
+        $message .= "CP$ncp: No such Community Puzzle";
     }
     else {
         my $href = do $fname;
         if ($href->{uuid} ne $uuid) {
-            $message = ul(red("You did not create CP$ncp."));
+            $message .= ul(red("You did not create CP$ncp."));
         }
         else {
             unlink $fname;
             # and just in case it is in the current list...
             delete $cur_puzzles{"CP$ncp"};
-            $message = ul "Deleted CP$ncp";
+            $message .= ul "Deleted CP$ncp";
             $date = $today->as_d8();
             # and delete all clues
             system "$cgi_dir/cp_del_clues.pl $ncp";
@@ -766,7 +818,7 @@ elsif (my ($ncp) = $cmd =~ m{\A xcp \s* (\d+) \z}xms) {
 elsif (my ($puz_num) = $cmd =~ m{\A p \s* ([1-9]\d*) \z}xms) {
     my @puzzles = my_puzzles();
     if ($puz_num > @puzzles) {
-        $message = "Not that many puzzles";
+        $message .= "Not that many puzzles";
     }
     else {
         my $puz_id = $puzzles[$puz_num-1][0];
@@ -802,18 +854,18 @@ elsif ($cmd eq 'nrb') {
 elsif (my ($cp_num) = $cmd =~ m{\A cp \s* (\d+) \z}xms) {
     my $fname = "$comm_dir/$cp_num.txt";
     if (! -f $fname) {
-        $message = "CP$cp_num: No such Community Puzzle";
+        $message .= "CP$cp_num: No such Community Puzzle";
         $cmd = 'nooop';
     }
     else {
         my $cp_href = do $fname;
         if ($cp_href->{publish} ne 'yes') {
-            $message = "CP$cp_num: No such Community Puzzle";
+            $message .= "CP$cp_num: No such Community Puzzle";
             $cmd = 'nooop';
         }
         else {
             $date = "CP$cp_num";
-            $message = cp_message($cp_href, $cp_num);
+            $message .= cp_message($cp_href, $cp_num);
             $new_puzzle = 1;
             $cmd = '';
         }
@@ -853,12 +905,12 @@ elsif (   $cmd ne '1'
             $cmd = '';
         }
         else {
-            $message = "Illegal date: $new_date";
+            $message .= "Illegal date: $new_date";
             $cmd = 'nooop';
         }
     }
     else {
-        $message = "Illegal date: $new_date";
+        $message .= "Illegal date: $new_date";
         $cmd = 'nooop';
     }
 }
@@ -1160,6 +1212,7 @@ sub do_define {
     my ($term, $plus) = @_;
 
     load_nyt_clues;
+    my $msg = '';
     my $line = "&mdash;" x 4;
     if ($term eq 'p') {
         my $npangrams =  0;
@@ -1168,14 +1221,14 @@ sub do_define {
             my $def = define($p, 0, $plus);
             add_hints(3) unless $def =~ $no_def;
             if ($def) {
-                $message .= ul($def) . '--';
+                $msg .= ul($def) . '--';
             }
         }
-        $message =~ s{--\z}{}xms;
-        $message =~ s{--}{$line<br>}xmsg;
-        if ($message) {
+        $msg =~ s{--\z}{}xms;
+        $msg =~ s{--}{$line<br>}xmsg;
+        if ($msg) {
             my $pl = $npangrams == 1? '': 's';
-            $message = "Pangram$pl:$message";
+            $msg = "Pangram$pl:$msg";
         }
         $cmd = '';
     }
@@ -1184,11 +1237,11 @@ sub do_define {
         my @words = grep { !$is_found{$_} }
                     @ok_words;
         if (! @words) {
-            $message = 'No more words.';
+            $msg .= 'No more words.';
         }
         else {
-            $message = define($words[ rand @words ], 0, $plus);
-            add_hints(1) unless $message =~ $no_def;
+            $msg .= define($words[ rand @words ], 0, $plus);
+            add_hints(1) unless $msg =~ $no_def;
         }
         $cmd = '';
     }
@@ -1196,11 +1249,11 @@ sub do_define {
         my @words = grep { !$is_found{$_} && length >= 5 }
                     @ok_words;
         if (! @words) {
-            $message = 'No more 5+ letter words.';
+            $msg .= 'No more 5+ letter words.';
         }
         else {
-            $message = define($words[ rand @words ], 0, $plus);
-            add_hints(1) unless $message =~ $no_def;
+            $msg .= define($words[ rand @words ], 0, $plus);
+            add_hints(1) unless $msg =~ $no_def;
         }
         $cmd = '';
     }
@@ -1208,21 +1261,21 @@ sub do_define {
         my $let = $1;
         my $len = $2;
         if (index($seven, $let) < 0) {
-            $message = ul(red(uc $cmd) . ": \U$let\E is not in \U$seven");
+            $msg .= ul(red(uc $cmd) . ": \U$let\E is not in \U$seven");
         }
         else {
-            $message = '';
+            $msg = '';
             for my $w (get_words($let, $len)) {
                 my $def = define($w, 0, $plus);
                 add_hints(3) unless $def =~ $no_def;
                 if ($def) {
-                    $message .= ul($def) .  '--';
+                    $msg .= ul($def) .  '--';
                 }
             }
-            $message =~ s{--\z}{}xms;
-            $message =~ s{--}{$line<br>}xmsg;
-            if ($message) {
-                $message = "\U$term\E:<br>$message";
+            $msg =~ s{--\z}{}xms;
+            $msg =~ s{--}{$line<br>}xmsg;
+            if ($msg) {
+                $msg = "\U$term\E:<br>$msg";
             }
         }
         $cmd = '';
@@ -1230,25 +1283,26 @@ sub do_define {
     elsif ($term =~ m{\A ([a-z][a-z]) \z}xms) {
         my $lets = $1;
         if ($lets =~ $letter_regex) {
-            $message = ul(red(uc $cmd) . ": \U$1\E is not in \U$seven");
+            $msg .= ul(red(uc $cmd) . ": \U$1\E is not in \U$seven");
         }
         else {
-            $message = '';
+            $msg .= '';
             for my $w (get_words($lets)) {
                 my $def = define($w, 0, $plus);
                 add_hints(3) unless $def =~ $no_def;
                 if ($def) {
-                    $message .= ul($def) . '--';
+                    $msg .= ul($def) . '--';
                 }
             }
-            $message =~ s{--\z}{}xms;
-            $message =~ s{--}{$line<br>}xmsg;
-            if ($message) {
-                $message = "\U$term\E:<br>$message";
+            $msg =~ s{--\z}{}xms;
+            $msg =~ s{--}{$line<br>}xmsg;
+            if ($msg) {
+                $msg = "\U$term\E:<br>$msg";
             }
         }
         $cmd = '';
     }
+    $message = $msg;
 }
 
 sub reveal {
@@ -1294,14 +1348,15 @@ sub do_reveal {
     my ($ev, $nlets, $term) = @_;
     my $err = 0;
     my $end = $ev eq 'e';
+    my $msg = '';
     if ($term eq 'p') {
         for my $p (grep { ! $is_found{$_} } @pangrams) {
-            $message .= reveal($p, $nlets, $end);
+            $msg .= reveal($p, $nlets, $end);
         }
     }
     elsif (my ($first, $len) = $term =~ m{\A ([a-z])(\d+)}xms) {
         if ($first =~ $letter_regex) {
-            $message = ul(red(uc $cmd) . ": \U$first\E is not in \U$seven");
+            $msg .= ul(red(uc $cmd) . ": \U$first\E is not in \U$seven");
             $err = 1;
         }
         else {
@@ -1310,7 +1365,7 @@ sub do_reveal {
             }
             else {
                 for my $w (get_words($first, $len)) {
-                    $message .= reveal($w, $nlets, $end);
+                    $msg .= reveal($w, $nlets, $end);
                 }
             }
         }
@@ -1318,7 +1373,7 @@ sub do_reveal {
     else {
         # $term is two letters
         if ($term =~ $letter_regex) {
-            $message = ul(red(uc $cmd) . ": \U$1\E is not in \U$seven");
+            $msg .= ul(red(uc $cmd) . ": \U$1\E is not in \U$seven");
             $err = 1;
         }
         else {
@@ -1327,13 +1382,13 @@ sub do_reveal {
             }
             else {
                 for my $w (get_words($term)) {
-                    $message .= reveal($w, $nlets, $end);
+                    $msg .= reveal($w, $nlets, $end);
                 }
             }
         }
     }
-    if (!$err && $message) {
-        $message = "\U$cmd\E:" . ul($message);
+    if (!$err && $msg) {
+        $message .= "\U$cmd\E:" . ul($msg);
     }
 }
 
@@ -1411,7 +1466,7 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
         }
         $rows .= Tr($cols);
     }
-    $message = ul(table({ cellpadding => 4}, $rows));
+    $message .= ul(table({ cellpadding => 4}, $rows));
     $cmd = '';
 }
 elsif ($cmd =~ m{\A (d[+]?)(p|r|5|[a-z]\d+|[a-z][a-z]) \z}xms) {
@@ -1466,7 +1521,7 @@ elsif ($cmd =~ m{\A g \s+ yp? \z}xms) {
                  sort
                  @words;
         if (@words) {
-            $message = "<p class=mess>@words";
+            $message .= "<p class=mess>@words";
         }
         $cmd = '';
     }
@@ -1531,7 +1586,7 @@ elsif ($cmd eq 'sc') {
             push @rows, Tr(td({ colspan => 3 }, '<hr>'));
         }
     }
-    $message = table({ cellpadding => 2 }, @rows);
+    $message .= table({ cellpadding => 2 }, @rows);
     my $ndonut_lexicon_bonus = grep { m{[*+-]\z}xms } @found;
     my $more = @ok_words - (@found - $ndonut_lexicon_bonus);
     my $pl = $more == 1? '': 's';
@@ -1585,7 +1640,7 @@ elsif (my ($pat) = $cmd =~ m{\A lcp \s*(\S*) \z}xms) {
         }
     }
     if (@rows) {
-        $message = table({ cellpadding => 3 }, $title_row, @rows);
+        $message .= table({ cellpadding => 3 }, $title_row, @rows);
     }
     $cmd = '';
 }
@@ -1603,16 +1658,17 @@ elsif ($cmd eq 'ycp') {
                        td({ class => 'lt' }, @pangrams),
                     );
     }
-    $message = "Your Community Puzzles:<p>"
+    $message .= "Your Community Puzzles:<p>"
              . table({ cellpadding => 5 }, @rows);
     $cmd = '';
 }
 elsif ($cmd eq 'l') {
     my $n = 1;
+    my $msg = '';
     for my $p (my_puzzles()) {
         my $cur = $p->[0] eq $date? red('*'): '';
         my $pg  = $p->[1]? '&nbsp;&nbsp;<span class=green>p</span>': '';
-        $message .= Tr(
+        $msg .= Tr(
                        td($n),
                        td($cur),
                        td({ class => 'lt' }, 
@@ -1624,7 +1680,7 @@ elsif ($cmd eq 'l') {
                     );
         ++$n;
     }
-    $message = table({ cellpadding => 4}, $message);
+    $message .= table({ cellpadding => 4}, $msg);
     $cmd = '';
 }
 elsif ($cmd eq 'cl') {
@@ -1632,7 +1688,7 @@ elsif ($cmd eq 'cl') {
     my @dates = `$cgi_dir/nytbee_clue_dates.pl $uuid`;
     chomp @dates;
     if (!@dates) {
-        $message = '';
+        $message .= '';
     }
     else {
         $message
@@ -1686,7 +1742,7 @@ elsif ($cmd eq 'f') {
                td({ class => 'lt' }, uc $href->{center} . $cur),
               );
      }
-    $message = table({ cellpadding => 2}, @rows);
+    $message .= table({ cellpadding => 2}, @rows);
     $cmd = '';
 }
 elsif ($cmd =~ m{\A ft \s+ ([a-z]+) \z}xms) {
@@ -1694,7 +1750,7 @@ elsif ($cmd =~ m{\A ft \s+ ([a-z]+) \z}xms) {
     # when did this word first appear?
     my $dt = $first_appeared{$word};
     if ($dt) {
-        $message = qq!<span class=link onclick="new_date('$dt');">!
+        $message .= qq!<span class=link onclick="new_date('$dt');">!
                  . slash_date($dt)
                  . '</span>'
                  ;
@@ -1740,7 +1796,7 @@ elsif ($cmd =~ m{\A s \s+ ([a-z]+) \z}xms) {
         sort { $a <=> $b }  # needed for the 11 vs 9 thing
         $s =~ m{(\d+)}xmsg;
     if (@rows) {
-        $message = "\U$word\E:<br>" . table({ cellpadding => 2}, @rows);
+        $message .= "\U$word\E:<br>" . table({ cellpadding => 2}, @rows);
     }
     $cmd = '';
 }
@@ -1761,7 +1817,7 @@ elsif ($cmd =~ m{\A le \s+ (\S{6}) \s* \z}xms) {
     my $six = join '', sort @six;
     my $new = join '', sort @lets;
     if ($six ne $new) {
-        $message = "$new != $six";
+        $message .= "$new != $six";
         $cmd = '';
     }
     else {
@@ -1864,13 +1920,13 @@ elsif (($uuid eq 'sahadev108!')
 ) {
     my $fname = "$comm_dir/$cp_num.txt";
     if (! -f $fname) {
-        $message = "No such community puzzle: CP$cp_num";
+        $message .= "No such community puzzle: CP$cp_num";
     }
     else {
         my $cp_href = do $fname;
         $cp_href->{recommended} = $mode eq '++'? 1: 0;
         write_file $fname, Dumper($cp_href);
-        $message = 'Got it';
+        $message .= 'Got it';
     }
     $cmd = '';
 }
@@ -1891,7 +1947,8 @@ elsif ($cmd eq 'rcp') {
                       }
                   }
                   $s =~ m{(\d+)}xmsg;
-    $message = Tr(
+    my $msg = '';
+    $msg .= Tr(
                    th('&nbsp;'),
                    th({class => 'lt'}, 'Name'),
                    th({class => 'lt'}, 'Title'),
@@ -1899,7 +1956,7 @@ elsif ($cmd eq 'rcp') {
                    th('Clues'),
                );
     for my $p (@puzzles) {
-        $message .= Tr(
+        $msg .= Tr(
                         td({class => 'lt'}, qq!<span class=link onclick="new_date('cp$p->{n}')">CP$p->{n}</span>!),
                         td({class => 'lt'}, $p->{name}), 
                         td({class => 'lt'}, $p->{title}), 
@@ -1907,7 +1964,7 @@ elsif ($cmd eq 'rcp') {
                         td({class => 'cn'}, $p->{clues}? '<span style="color: green; font-size: 20pt">&check;</span>': ''),
                     );
     }
-    $message = table({ cellpadding => 3 }, $message);
+    $message .= table({ cellpadding => 3 }, $msg);
     $cmd = '';
 }
 
@@ -1919,8 +1976,11 @@ if (   $cmd ne '1'
     && $cmd ne '2'
     && $cmd ne '51'
     && $cmd ne '52'
+    && $cmd ne 'id'
+    && $cmd ne 'i'
     && $cmd !~ m{\A cw}xms
     && $cmd !~ m{\A m\d* \z}xms
+    && $cmd !~ m{\A sn\b }xms
 ) {
     # what about $cmd eq 'i' or bw or ... ?
     # turns out it's okay ... but sloppy.
@@ -2115,7 +2175,7 @@ my $old_rank = $rank;
 compute_score_and_rank();
 if ($old_rank < $rank && $rank >= 7) {
     log_it("rank$rank");
-    $message = ul( $rank == 7? "Amazing "   .  $thumbs_up
+    $message .= ul( $rank == 7? "Amazing "   .  $thumbs_up
                   :$rank == 8? "Genius "    . ($thumbs_up x 2)
                   :            "Queen Bee " . ($thumbs_up x 3)
                  );
@@ -2494,11 +2554,11 @@ if ($cmd eq '1' || $cmd eq '51') {
     if (@entries) {
         # not Queen Bee yet
         add_hints(1);
-        $message = $entries[ rand @entries ];
+        $message .= $entries[ rand @entries ];
     }
     else {
         my $len = $cmd eq '1'? '': ' 5+ letter';
-        $message = "No more$len words.";
+        $message .= "No more$len words.";
     }
     $cmd = '';
 }
@@ -2513,10 +2573,10 @@ elsif ($cmd eq '2') {
     if (@entries) {
         # not Queen Bee yet
         add_hints(1);
-        $message = $entries[ rand @entries ];
+        $message .= $entries[ rand @entries ];
     }
     else {
-        $message = 'No more words.';
+        $message .= 'No more words.';
     }
     $cmd = '';
 }
@@ -2528,10 +2588,10 @@ elsif ($cmd eq '52') {
         my $word = $words[ rand @words ];
         my $l2 = substr($word, 0, 2);
         my $n = grep { m{\A $l2}xms } @words;
-        $message = "\U$l2-$n";
+        $message .= "\U$l2-$n";
     }
     else {
-        $message = "No more 5+ letter words.";
+        $message .= "No more 5+ letter words.";
     }
     $cmd = '';
 }
@@ -2557,7 +2617,7 @@ if ($nperfect) {
 my $need_show_clue_form = 0;
 my $show_clue_form = '';
 if ($cmd eq 'i') {
-    $message = "Words: $nwords, Points: $max_score, "
+    $message .= "Words: $nwords, Points: $max_score, "
              . "Pangrams: $npangrams$perfect$bingo";
     if ($date =~ m{\A CP}xms) {
         my ($n) = $date =~ m{(\d+)}xms;
@@ -2626,7 +2686,7 @@ elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
     my $numeric = $1;
     my $let = uc $2;
     if ($date eq $ymd && (localtime)[2] > 0) {
-        $message = "Sorry, you cannot do ${let}W for today's puzzle<br>before 2:00 a.m. East Coast time.";
+        $message .= "Sorry, you cannot do ${let}W for today's puzzle<br>before 2:00 a.m. East Coast time.";
     }
     else {
         my $name = { qw/ D donut L lexicon B bonus / }->{$let};
@@ -2639,7 +2699,7 @@ elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
         close $in;
         my $nwords = keys %words;
         my $pl = $nwords == 1? '': 's';
-        $message = "$nwords " . ucfirst($name) . " word$pl:<br>\n";
+        $message .= "$nwords " . ucfirst($name) . " word$pl:<br>\n";
         my @rows;
         my @words = $numeric? (sort {
                                    $words{$b} <=> $words{$a}
@@ -2693,12 +2753,12 @@ elsif ($uuid eq 'sahadev108!'
     # search the day's log and extra word files to identify
     # the top 5 (10?) locations in Donut, Lexicon, and Bonus words.
     # The C stands for Community or Competitive.
-    $message = `$cgi_dir/nytbee_cw.pl $date $max`;
+    $message .= `$cgi_dir/nytbee_cw.pl $date $max`;
     $cmd = '';
 }
 elsif ($cmd eq 'abw') {
     if ($date eq $ymd && (localtime)[2] > 0) {
-        $message = "Sorry, you cannot do ABW for today's puzzle<br>before 2:00 a.m. East Coast time.";
+        $message .= "Sorry, you cannot do ABW for today's puzzle<br>before 2:00 a.m. East Coast time.";
     }
     else {
         # a separate piece of code for the fancy ABW
@@ -2712,7 +2772,7 @@ elsif ($cmd eq 'abw') {
         close $in;
         my $nwords = keys %words;
         my $pl = $nwords == 1? '': 's';
-        $message = "$nwords Bonus word$pl:<br>\n";
+        $message .= "$nwords Bonus word$pl:<br>\n";
         # the above could be put into a sub and used below as well
         # param would be donut/lexicon/bonus
         # 3 return values
@@ -2770,19 +2830,38 @@ elsif ($cmd =~ m{\A m(\d+)? \z}xms) {
         }
     }
     if (! -f "messages/$n") {
-        $message = "No such message of the day.";
+        $message .= "No such message of the day.";
     }
     else {
-        $message = read_file("messages/$n");
+        $message .= read_file("messages/$n");
     }
     $cmd = '';
 }
 elsif ($cmd eq 'id') {
     # show the $uuid so the user can save it
     # for later application with the 'ID ...' command
-    $message = $uuid . " <span id=uuid class=copied></span><script>copy_uuid_to_clipboard('$uuid');</script>";
+    $message .= $uuid . " <span id=uuid class=copied></span><script>copy_uuid_to_clipboard('$uuid');</script>";
                        # a clever invisible way to invoke
                        # javascript without a user click...
+    $cmd = '';
+}
+elsif ($cmd eq 'sn') {
+    $message .= $screen_name;
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A sn \s+ (.*) \z}xms) {
+    my $new_name = $1;
+    $new_name =~ s{([a-z])}{uc $1}xmse;
+    if ($new_name eq $screen_name) {
+        $message .= $new_name;
+    }
+    elsif (name_taken($new_name)) {
+        $message .= 'Sorry, that name is already taken.';   
+    }
+    else {
+        $uuid_screen_name{$uuid} = $new_name;
+        $message .= $new_name;
+    }
     $cmd = '';
 }
 

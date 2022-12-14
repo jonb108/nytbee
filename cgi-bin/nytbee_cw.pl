@@ -3,8 +3,8 @@ use warnings;
 use strict;
 use Data::Dumper;
 use DB_File;
-my %uid_location;   # hash key: uid, value: 
-tie %uid_location, 'DB_File', 'uid_location.dbm';
+my %uuid_screen_name;   # hash key: uid, value: 
+tie %uuid_screen_name, 'DB_File', 'uuid_screen_name.dbm';
 my $date = shift;
 my $max = shift || 5;
 my %words;  # hash of hash
@@ -89,7 +89,7 @@ for my $aref (sort {
     }
     ++$tot{$type};
     if ($tot{$type} <= $max) {
-        print "<tr><td>&nbsp;</td><td class='lt entry'>$uid_location{$uid}</td><td class=entry>$n</td></tr>\n";
+        print "<tr><td>&nbsp;</td><td class='lt entry'>$uuid_screen_name{$uid}</td><td class=entry>$n</td></tr>\n";
     }
 }
 print "</table>\n";

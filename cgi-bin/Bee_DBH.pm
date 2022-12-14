@@ -23,7 +23,7 @@ our $dbh = DBI->connect(
 #
 # see if person exists (based on uuid)
 # if not return undef
-# else return $uuid, $person_id, $name, $location
+# else return $person_id, $name, $location
 #
 sub get_person {
     my ($uuid) = @_;
