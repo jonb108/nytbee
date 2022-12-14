@@ -1972,11 +1972,14 @@ elsif ($cmd eq 'rcp') {
 # except for 1, 2, and a few others.
 # what new words might we have instead?
 my @new_words;
+# this is awkward --- needs refactoring!
 if (   $cmd ne '1'
     && $cmd ne '2'
     && $cmd ne '51'
     && $cmd ne '52'
     && $cmd ne 'id'
+    && $cmd !~ m{n?[dlb]w}xms
+    && $cmd ne 'abw'
     && $cmd ne 'i'
     && $cmd !~ m{\A cw}xms
     && $cmd !~ m{\A m\d* \z}xms
