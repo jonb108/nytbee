@@ -335,6 +335,7 @@ my $hive_cookie = $q->cookie(
     -expires => '+20y',
 );
 my $uuid = cgi_header($q, $hive_cookie);
+my $uuid11 = substr($uuid, 0, 11);
 my %params = $q->Vars();
 if ($params{new_words} =~ m{\A \s* id \s+}xmsi) {
     # we took care of this case in cgi_header
@@ -367,8 +368,8 @@ sub name_taken {
     return 0;
 }
 my $screen_name;
-if (exists $uuid_screen_name{$uuid}) {
-    $screen_name = $uuid_screen_name{$uuid};
+if (exists $uuid_screen_name{$uuid11}) {
+    $screen_name = $uuid_screen_name{$uuid11};
 }
 else {
     my @base = qw/
@@ -391,7 +392,7 @@ else {
         }
         last SCREEN_NAME;
     }
-    $uuid_screen_name{$uuid} = $screen_name;
+    $uuid_screen_name{$uuid11} = $screen_name;
     my $url = 'https://logicalpoetry.com/nytbee/help.html#screen_names';
     $message .= "<div class=red>"
              . "Welcome.<br>"
@@ -2737,8 +2738,7 @@ elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
     }
     $cmd = '';
 }
-elsif ($uuid eq 'sahadev108!'
-       && $date !~ m{\A CP}xms
+elsif ($date !~ m{\A CP}xms
        && $cmd =~ m{\A cw (\d*)}xms
 ) {
     # The CW command documentation is commented out.
