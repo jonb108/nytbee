@@ -382,7 +382,7 @@ else {
         Apian
         Buzz
     /;
-    my @nums = 1 .. 9;
+    my @nums = 1 .. 99;
     SCREEN_NAME:
     while (1) {
         $screen_name = $base[rand @base] . $nums[rand @nums];

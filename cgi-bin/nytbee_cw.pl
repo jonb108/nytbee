@@ -89,7 +89,7 @@ for my $aref (sort {
     }
     ++$tot{$type};
     if ($tot{$type} <= $max) {
-        print "<tr><td>&nbsp;</td><td class='lt entry'>$uuid_screen_name{$uid}</td><td class=entry>$n</td></tr>\n";
+        print "<tr><td>&nbsp;</td><td class='lt entry'>$uuid_screen_name{$uid}</td><td class=entry>&nbsp;&nbsp;$n</td></tr>\n";
     }
 }
 print "</table>\n";
