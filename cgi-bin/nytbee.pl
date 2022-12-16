@@ -877,6 +877,11 @@ elsif ($cmd eq 't') {
     $new_puzzle = 1;
     $cmd = '';
 }
+elsif ($cmd eq 'y') {
+    $date = ($today-1)->as_d8();
+    $new_puzzle = 1;
+    $cmd = '';
+}
 elsif ($cmd eq 'n' || $cmd eq 'p') {
     my @puzzles = my_puzzles();
     PUZ:
