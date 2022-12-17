@@ -64,7 +64,8 @@ function def_word(event, word) {
     var nw_val = nw.value.toLowerCase();
     if (event.shiftKey) {
         nw.focus();
-        window.open('https://wordnik.com/words/' + word, 'wordnik');
+        window.open('https://wordnik.com/words/' + word,
+                    'wordnik', 'width=1000');
     }
     else {
         hnw.value = 'D ' + word;
@@ -104,7 +105,8 @@ function show_copied(id) {
     }, 1000);
 }
 function full_def(word) {
-    window.open('https://wordnik.com/words/' + word, 'wordnik');
+    window.open('https://wordnik.com/words/' + word,
+                'wordnik', 'width=1000');
     set_focus();
 }
 function popup_define(word, height, width) {

@@ -2019,8 +2019,34 @@ sub check_word {
             }
         }
     }
-    if (my ($c) = $w =~ $letter_regex) {
-        return "\U$c\E is not in \U$seven";
+    if (my (@c) = $w =~ m{$letter_regex}g) {
+        #
+        # an attempt at a Bonus word failed.
+        # 
+        # some intense fun is happening here!
+        my %seen;
+        @c = sort
+             map { uc }
+             grep {
+                !$seen{$_}++;
+             }
+             @c;
+        my $lets;
+        my $verb;
+        if (@c == 1) {
+            $lets = $c[0];
+            $verb = 'is not';
+        }
+        elsif (@c == 2) {
+            $lets = "Neither $c[0] nor $c[1]";
+            $verb = 'are';
+        }
+        else {
+            my $last = pop @c;
+            $lets = "None of " . join(', ', @c) . ", or $last";
+            $verb = 'are';
+        }
+        return "$lets $verb in \U$seven";
     }
     if (index($w, $center) < 0) {
         if ($osx_usd_words_47{$w} || $first_appeared{$w}) {
@@ -2694,8 +2720,8 @@ elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
     #
     my $numeric = $1;
     my $let = uc $2;
-    if ($date eq $ymd && (localtime)[2] > 0) {
-        $message .= "Sorry, you cannot do ${let}W for today's puzzle<br>before 2:00 a.m. East Coast time.";
+    if ($date eq $ymd) {
+        $message .= "Sorry, you cannot do \U$cmd\E for today's puzzle.<br>You will need to wait until tomorrow.";
     }
     else {
         my $name = { qw/ D donut L lexicon B bonus / }->{$let};
@@ -2743,7 +2769,7 @@ elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
     }
     $cmd = '';
 }
-elsif ($date !~ m{\A CP}xms
+elsif ($date !~ m{\A CP}xmsi
        && $cmd =~ m{\A cw (\d*)}xms
 ) {
     # The CW command documentation is commented out.
@@ -2765,8 +2791,8 @@ elsif ($date !~ m{\A CP}xms
     $cmd = '';
 }
 elsif ($cmd eq 'abw') {
-    if ($date eq $ymd && (localtime)[2] > 0) {
-        $message .= "Sorry, you cannot do ABW for today's puzzle<br>before 2:00 a.m. East Coast time.";
+    if ($date eq $ymd) {
+        $message .= "Sorry, you cannot do ABW for today's puzzle.<br>You will need to wait until tomorrow.";
     }
     else {
         # a separate piece of code for the fancy ABW
@@ -2799,11 +2825,22 @@ elsif ($cmd eq 'abw') {
                              ]
                          }
                          keys %words;
+        my $ncenter = 0;
+        my @wlen;
         my @rows;
+        my $prev_let = '';
         for my $aref (@words_plus) {
             my $w = $aref->[2];
+            if (index($w, $center) >= 0) {
+                ++$ncenter;
+            }
+            ++$wlen[length $w];
             my $count = $aref->[1];
             my $extra = $aref->[0];
+            if ($extra ne $prev_let) {
+                push @rows, "<tr><td class=lt>" . uc $extra . "</td></tr>";
+                $prev_let = $extra;
+            }
             my $w_extra = $w;
             $w_extra =~ s{$extra}{<span class=red>$extra</span>}xmsg;
             my $dw = def_word($w_extra, $w);
@@ -2813,7 +2850,8 @@ elsif ($cmd eq 'abw') {
             if ($nuchars == 8) {
                 $pangram = td_pangram($lw == 8);
             } 
-            push @rows, Tr(td({ class => 'lt' },
+            push @rows, Tr(td(''),
+                           td({ class => 'lt' },
                               $is_found{$w}? span({ class => 'found_bonus' }, $dw)
                              :               $dw),
                            td({ class => 'rt' }, $count),
@@ -2821,6 +2859,14 @@ elsif ($cmd eq 'abw') {
                         );
         }
         $message .= table(@rows);
+        $message .= "<p>Tallies:<table cellpadding=4 style='margin-left: 5mm'>";
+        $message .= "<tr><td>$Center</td><td>$ncenter</td></tr>";
+        for my $i (6 .. $#wlen) {
+            if ($wlen[$i]) {
+                $message .= "<tr><td>$i</td><td>$wlen[$i]</td></tr>";
+            }
+        }
+        $message .= "</table>";
     }
     $cmd = '';
 }

@@ -132,7 +132,9 @@ The many advantages of this alternate way include:
 <li>The Hint Table and Two Letter List are <i>dynamic</i>.
 <li>You can play the large archive of NYT puzzles.
 <li>Dictionary definitions as hints - to enlarge and challenge your vocabulary.
-<li>Get 'credit' for finding <a href='#donut'>donut, lexicon, and bonus</a> words.
+<li>Get 'credit' for finding <a href='#donut'>donut, lexicon, and bonus</a> 
+words.  You can also see how many extra words others have found.
+This introduces a bit of fun Spelling Bee competition!
 <li>Create your <i>own</i> puzzle with clues and share it with the HiveMind.
 <li>Clerical assistance in <a href=#clues>creating clues for NYT Puzzles</a> to post in the HiveMind Forum or on FaceBook.
 Clues are shown with the <span class=cmd>D</span> command.
@@ -601,6 +603,10 @@ There is, of course, no "official" list of these Extra words.
 This makes it more fun, in a way.  More creative.
 Here are 7 commands to show the Extra words found by the
 <i>entire</i> global world-wide community.
+You cannot use these commands on the same day of the puzzle; otherwise, people
+could 'cheat' and use words found by others, yes?
+The command <span class=cmd>Y</span> is convenient here to go
+to yesterday's puzzle.
 The words that <i>you</i> found are shown in
 <span class=found_bonus>sky blue</span>.
 <span class=green>Pangrams</span> and <span class=purple>Perfect Pangrams</span> are marked.
@@ -612,21 +618,25 @@ The words that <i>you</i> found are shown in
 <tr><th class='cmd rt'>NDW</th><td>Show all Donut words in order of how many different people found them.</td></tr>
 <tr><th class='cmd rt'>NLW</th><td>Show all Lexicon words in order of how many different people found them.</td></tr>
 <tr><th class='cmd rt'>NBW</th><td>Show all Bonus words in order of how many different people found them.</td></tr>
-<tr><th class='cmd rt'>ABW</th><td>Show all Bonus words in order of the additional letter.  Within that additional letter the sort is by the number of people who found the word and then alphabetically.</td></tr>
+<tr><th class='cmd rt'>ABW</th><td>Show all Bonus words in order of the additional letter.  Within that additional letter the sort is by the number of people who found the word and then alphabetically. At the end are tallies of the number of words containing the center letter and also by length.</td></tr>
 </table>
+If you see a word you don't know you can click on it to see a brief definition
+(and then go back in the browser to see the list again) and, as usual, click on the brief definition to see a complete definition at wordnik.com.
 <p>
-Note that to remove temptation and prevent 'cheating' the above commands cannot be used on today's puzzle before 2:00 a.m. East Coast time.  If you're curious about yesterday's Extra words there is the <span class=cmd>-1</span> command.
+Note: These lists of words can change <i>after</i> the day of the puzzle.
+Furthermore, as a "very big cheat" you could select, copy, and paste all of the words into the text box to add to your collection.
 <p>
-
-<!--
-
+<h3>Competition</h3>
 <table cellpadding=5>
-<tr><th class='cmd rt' style="width: 15mm">CW</th><td>Community Words. Show the screen names of the 5 people who found the most Extra words.  The 'C' could also stand for Competitive. &#128522; CW 10 will show the top 10.
-<p>
-This is only for NYT puzzles.  And shows the words found <b>on</b> the day the puzzle was released.</td></tr>
+<tr><th class='cmd rt' style="width: 15mm">CW</th><td>Community Words.
+Show the <a href=#screen_names>screen names</a>
+of the 5 people who found the most
+Extra words for the current NYT puzzle.
+The 'C' could also stand for Competitive. &#128522;
+CW 10 will show the top 10.
+Note that this command only shows the counts of words that were found <b>on</b>
+the day the puzzle was released.</td></tr>
 </table>
-
--->
 <a name=archival_and_community></a>
 <h2>Archival and Community Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -996,6 +1006,8 @@ This raises all kinds of questions!
 <a target=nytbee href='http://ljkrakauer.com/LJK/20s/spellingbee.htm'>Excel Spreadsheet for the Hints Table</a> This updates the hint table as words are found and pasted in.
 <p>
 <a target=nytbee href='https://www.thegamebureau.com/beesheet'>Spelling Bee Hint Worksheet</a> A kind of spreadsheet you print out and, with a pen or pencil, fill in the words you have found.  This is further proof that there is an unmet need for the grid to be dynamic.
+<p>
+<a target=nytbee href='https://bumblewords.com'>bumblewords.com</a> A Javascript game.  Clean.  Not NYT Puzzles.  Cannot type - must click/tap.  It has a leaderboard.
 <h4>Class Projects</h4>
 <a target=nytbee href='rpi_hw.pdf'>Rensselaer Polytechnic Institute</a>
 Course assignment for CSCI-1200 Data Structures.
@@ -1134,7 +1146,7 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1682 puzzles with
+1684 puzzles with
 a total of 9209 different words!
 <p>
 Which puzzles from the large archive to play?

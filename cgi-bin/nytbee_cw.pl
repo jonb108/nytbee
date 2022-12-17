@@ -52,7 +52,10 @@ my %name = reverse @arr;
 my @counts;
 for my $u (keys %tally) {
     for my $e (@types) {
-        push @counts, [ $u, $order{$e}, scalar keys %{$tally{$u}{$e}} ];
+        my $n = scalar keys %{$tally{$u}{$e}};
+        if ($n) {
+            push @counts, [ $u, $order{$e}, $n ];
+        }
     }
 }
 my %tot;
@@ -64,10 +67,10 @@ print <<'EOH';
 }
 .head {
     font-weight: bold;
-    font-size: 16pt;
+    font-size: 18pt;
 }
 .entry {
-    font-size: 14pt;
+    font-size: 16pt;
 }
 </style>
 EOH
