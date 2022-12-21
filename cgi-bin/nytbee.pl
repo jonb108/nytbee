@@ -668,6 +668,8 @@ my $show_WordList   = exists $params{show_WordList}?
                              $params{show_WordList}: 1;
 my $show_BingoTable = exists $params{show_BingoTable}?
                              $params{show_BingoTable}: 0;
+my $bonus_mode      = exists $params{bonus_mode}?
+                             $params{bonus_mode}: 0;
 my $show_RankImage  = exists $params{show_RankImage}?
                              $params{show_RankImage}: 1;
 my $show_ZeroRowCol = exists $params{show_ZeroRowCol}?
@@ -1422,6 +1424,10 @@ elsif ($cmd eq 'wl') {
 }
 elsif ($cmd eq 'bt') {
     $show_BingoTable = ! $show_BingoTable;
+    $cmd = '';
+}
+elsif ($cmd eq 'bn') {
+    $bonus_mode = ! $bonus_mode;
     $cmd = '';
 }
 elsif ($cmd eq 'im') {
@@ -2772,12 +2778,7 @@ elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
 elsif ($date !~ m{\A CP}xmsi
        && $cmd =~ m{\A cw (\d*)}xms
 ) {
-    # The CW command documentation is commented out.
-    # If someone enters CW nothing will happen.
-    # Remove the sahadev108! condition above and it will
-    # be implemented again.
-    #
-    # I'm confused why \d* and \d+ don't capture properly
+    # I'm confused why \d* and \d+ above don't capture properly
     # test it out
     # order of evaluation of the &&? no.
     my ($max) = $cmd =~ m{(\d+)}xms;
@@ -3121,13 +3122,39 @@ elsif ($hive == 1) {        # bee hive honeycomb
       coords=' 94,163, 136,163, 157,200, 136,236,  94,236,  74,200,  94,163, '>
 </map>
 EOH
-        $letters .= <<"EOH";
+sub click_td {
+    my $l = uc shift;
+    # tried putting text-align: center in bonus_let style
+    # didn't work 
+    return td({ style => 'text-align: center'}, qq!<span class='bonus_let cursor_black' onclick="add_redlet('$l')">$l</span>!);
+}
+        if ($bonus_mode) {
+            my @blets = grep { !/[$seven]/ } 'a' .. 'z';
+            my $row1 = Tr(map { click_td($_) } @blets[0 .. 9]);
+            my $row2 = Tr(map { click_td($_) } @blets[10 .. 18]);
+            my $bonus_table = <<"EOH";
+<table cellpadding=0 cellspacing=10>
+$row1
+$row2
+</table>
+EOH
+            $letters .= <<"EOH";
+<span class=lets id=lets></span>
+<span class='enter cursor_black' onclick="sub_lets();">Enter</span>
+<span class='define' onclick="del_let();">Delete</span>
+</span>
+<span class=bonus_lets>$bonus_table</span>
+EOH
+        }
+        else {
+            $letters .= <<"EOH";
 <span class='enter cursor_black' onclick="sub_lets();">Enter</span>
 <span class='define cursor_black' onclick="rand_def();">Define</span>
 <span class=lets id=lets></span>
 <span class='delete cursor_black' onclick="del_let();">Delete</span>
 <span class='helplink cursor_black'><a class='cursor_black' target=_blank href='$log/nytbee/help.html#toc'">Help</a>&nbsp;&nbsp;&nbsp;&nbsp;<a class='cursor_black' target=_blank href='$log/nytbee/cmd_list.pdf'>Cmds</a></span>
 EOH
+        }
     }
     else {
         # non-mobile phone...
@@ -3418,6 +3445,7 @@ my $new_words_size = $mobile? 30: 40;
 my $enter_top  = 90 + ($show_Heading? 79: 0);
 my $define_top  = 90 + ($show_Heading? 79: 0);
 my $lets_top   = 135 + ($show_Heading? 79: 0);
+my $bonus_lets_top   = 185 + ($show_Heading? 79: 0);
 my $delete_top = 190 + ($show_Heading? 79: 0);
 my $help_top = 190 + ($show_Heading? 79: 0);
 print <<"EOH";
@@ -3437,29 +3465,44 @@ print <<"EOH";
 $letter_styles
 .enter {
     position: absolute;
-    left: 350;
+    left: 320;
     top: $enter_top;
 }
 .define {
     position: absolute;
-    left: 450;
+    left: 420;
     top: $define_top;
 }
 .lets {
     position: absolute;
-    left: 350;
+    left: 320;
     top: $lets_top;
     font-size: 24pt;
     color: green;
 }
+.bonus_lets {
+    position: absolute;
+    left: 310;
+    top: $bonus_lets_top;
+}
+.bonus_let {
+    font-size: 22pt;
+    font-weight: bold;
+    cursor: black;
+}
+.bonus_delete {
+    position: absolute;
+    left: 320;
+    top: $delete_top;
+}
 .delete {
     position: absolute;
-    left: 350;
+    left: 320;
     top: $delete_top;
 }
 .helplink {
     position: absolute;
-    left: 450;
+    left: 420;
     top: $help_top;
 }
 </style>
@@ -3477,6 +3520,7 @@ $heading
 <input type=hidden name=show_Heading value=$show_Heading>
 <input type=hidden name=show_WordList value=$show_WordList>
 <input type=hidden name=show_BingoTable value=$show_BingoTable>
+<input type=hidden name=bonus_mode value=$bonus_mode>
 <input type=hidden name=show_RankImage value=$show_RankImage>
 <input type=hidden name=show_ZeroRowCol value=$show_ZeroRowCol>
 <input type=hidden name=show_GraphicStatus value=$show_GraphicStatus>

@@ -12,10 +12,23 @@ function empty(s) {
     return s.trim().length === 0;
 }
 function add_let(c) {
-    lets.textContent += c;
+    lets.innerHTML += c;
 }
+function add_redlet(c) {
+    lets.innerHTML += '<span class=red>' + c + '</span>';
+}
+// hello => hell
+// hell<span class="red">o</span> => hell
 function del_let() {
-    lets.textContent = lets.textContent.slice(0, -1);
+    var s = lets.innerHTML;
+    var l = s.length;
+    if (s.substring(l-1) == '>') {
+        s = s.substring(0, l-26);
+    }
+    else {
+        s = s.substring(0, l-1);
+    }
+    lets.innerHTML = s;
 }
 function shuffle() {
     nw.value = '';
