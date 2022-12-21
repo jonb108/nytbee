@@ -1851,6 +1851,7 @@ my @words_found;
 my @found_puzzle_words = grep { !m/[*+-]\z/xms } @found;
 my $word_col = 0;
 my $order_found = 0;
+my $w_cmd = '';
 if ($cmd eq 'w') {
     @words_found = @found_puzzle_words;
     $order_found = 1;
@@ -1859,67 +1860,37 @@ if ($cmd eq 'w') {
 elsif ($cmd eq '1w') {
     $word_col = 1;
     @words_found = sort @found_puzzle_words;
+    $w_cmd = $cmd;
     $cmd = '';
 }
-elsif (($pattern) = $cmd =~ m{\A w \s* / \s* (.*) \z}xms) {
-    @words_found = grep { /$pattern/xms } sort @found_puzzle_words;
+elsif (($pattern) = $cmd =~ m{\A w \s* / \s* .* \z}xms) {
+    @words_found = restrict($cmd, \@found_puzzle_words);
+    $w_cmd = $cmd;
     $cmd = '';
 }
-elsif ($cmd =~ m{\A w \s* ([<>]) \s* (\d*)\z}xms) {
-    $order = $1 eq '>'? 1: -1;
-    $limit = $2;
-    # by increasing or decreasing length
-    # time for a schwarzian transform!
-    @words_found = grep {
-                       $limit? ($order == 1? length($_) > $limit
-                               :             length($_) < $limit)
-                      :        1
-                   }
-                   map {
-                       $_->[1]
-                   }
-                   sort {
-                       $a->[0] <=> $b->[0]
-                       ||
-                       $a->[1] cmp $b->[1]
-                   }
-                   map {
-                       [ $order * length, $_ ]
-                   }
-                   @found_puzzle_words;
+elsif ($cmd =~ m{\A w \s* ([<>]) \s* \d*\z}xms) {
+    @words_found = restrict($cmd, \@found_puzzle_words);
+    $w_cmd = $cmd;
     $cmd = '';
 }
-elsif ($cmd =~ m{\A w \s* (\d+) \z}xms) {
-    my $len = $1;    # words of a _given_ length
-    $prefix = 1;     # set this so that if there are no
-                     # words of length $len we will display
-                     # nothing instead of the whole list
-    if ($len < 4) {
-        # makes no sense given all words are >= 4
-        # silently ignore this
-        @words_found = sort @found_puzzle_words;
-    }
-    else {
-        @words_found = grep {
-                           length == $len
-                       }
-                       sort
-                       @found_puzzle_words;
-    }
+elsif ($cmd =~ m{\A w \s* \d+ \z}xms) {
+    @words_found = restrict($cmd, \@found_puzzle_words);
+    $w_cmd = $cmd;
     $cmd = '';
 }
 # must have space for W prefix command
-elsif ($cmd =~ m{\A w \s+ ([a-z]+)}xms) {
-    $prefix = $1;
-    @words_found = grep {
-                       m{\A $prefix}xms
-                   }
-                   sort
-                   @found_puzzle_words;
+elsif ($cmd =~ m{\A w \s+ [a-z]+}xms) {
+    @words_found = restrict($cmd, \@found_puzzle_words);
+    $w_cmd = $cmd;
     $cmd = '';
 }
 elsif ($cmd eq 'sl') {
     $same_letters = 1;
+    $cmd = '';
+}
+elsif ($cmd eq 'al') {
+    my @other = grep { !/[$seven]/ } 'a' .. 'z';
+    $message = "\U@other";
     $cmd = '';
 }
 elsif ($cmd eq 'ft') {
@@ -2239,13 +2210,86 @@ if (! $prefix && ! $pattern && ! $limit && ! @words_found) {
 }
 
 sub dlb_row {
-    my ($name, $aref, $count) = @_;
+    my ($name, $aref) = @_;
+    return '' unless @$aref;
     return Tr(td({ class => 'dlb_name' }, $name),
               td({ class => 'dlb mess' },
                  "@$aref "
-               . span({ class => 'gray' }, $count)));
+               . span({ class => 'gray' }, scalar(@$aref))));
 }
 
+sub one_col {
+    my ($name, $aref) = @_;
+    return '' unless @$aref;
+    local $" = "<br>\n";
+    return $name
+         . "<ul>\n@$aref</ul>\n"
+}
+
+sub restrict {
+    my ($w_cmd, $aref) = @_;
+
+    if ($w_cmd =~ m{\A w \s* / \s* (.*) \z}xms) {
+        my $pattern = $1;
+        return grep { m!$pattern!xms } @$aref;
+    }
+    elsif ($w_cmd =~ m{\A w \s* ([<>]) \s* (\d*)\z}xms) {
+        $order = $1 eq '>'? 1: -1;
+        $limit = $2;
+        # by increasing or decreasing length
+        # time for a schwarzian transform!
+        return grep {
+                   $limit? ($order == 1? length($_) > $limit
+                           :             length($_) < $limit)
+                  :        1
+               }
+               map {
+                   $_->[1]
+               }
+               sort {
+                   $a->[0] <=> $b->[0]
+                   ||
+                   $a->[1] cmp $b->[1]
+               }
+               map {
+                   [ $order * length, $_ ]
+               }
+               @$aref;
+    }
+    elsif ($w_cmd =~ m{\A w \s* (\d+) \z}xms) {
+        my $len = $1;    # words of a _given_ length
+        $prefix = 1;     # set this so that if there are no
+                         # words of length $len we will display
+                         # nothing instead of the whole list
+        if ($len < 4) {
+            # makes no sense given all words are >= 4
+            # silently ignore this
+            return sort @$aref;
+        }
+        else {
+            return grep {
+                       length == $len
+                   }
+                   sort
+                   @$aref;
+        }
+    }
+    elsif ($w_cmd =~ m{\A w \s+ ([a-z]+)}xms) {
+        $prefix = $1;
+        return grep {
+                   m{\A $prefix}xms
+               }
+               sort
+               @$aref;
+    }
+    # can't get here
+    return @$aref;
+}
+
+#
+# now to show the extra words
+# we may have a $w_cmd to limit the display
+#
 my $donut_lexicon_bonus = '';
 if ($show_WordList) {
     my @donut;
@@ -2272,6 +2316,11 @@ if ($show_WordList) {
         @donut   = sort @donut;
         @lexicon = sort @lexicon;
         @bonus   = sort @bonus;
+    }
+    if ($w_cmd) {
+        @donut   = restrict($w_cmd, \@donut);
+        @lexicon = restrict($w_cmd, \@lexicon);
+        @bonus   = restrict($w_cmd, \@bonus);
     }
     # highlight new words
     # and perfect donut/bonus pangrams
@@ -2332,20 +2381,21 @@ if ($show_WordList) {
                    def_word($s, $w);
                } 
                @lexicon;
-    if (@donut) {
-        my $ndonut = @donut;
-        $donut_lexicon_bonus = dlb_row('Donut:', \@donut, $ndonut);
+    if ($word_col) {
+        $donut_lexicon_bonus  = one_col('Donut:',  \@donut);
+        $donut_lexicon_bonus .= one_col('Lexicon', \@lexicon);
+        $donut_lexicon_bonus .= one_col('Bonus',   \@bonus);
+        if ($donut_lexicon_bonus) {
+            $donut_lexicon_bonus = "<br>$donut_lexicon_bonus";
+        }
     }
-    if (@lexicon) {
-        my $nlexicon = @lexicon;
-        $donut_lexicon_bonus .= dlb_row('Lexicon:', \@lexicon, $nlexicon);
-    }
-    if (@bonus) {
-        my $nbonus = @bonus;
-        $donut_lexicon_bonus .= dlb_row('Bonus:', \@bonus, $nbonus);
-    }
-    if ($donut_lexicon_bonus) {
-        $donut_lexicon_bonus = "<p>" . table($donut_lexicon_bonus);
+    else {
+        $donut_lexicon_bonus  = dlb_row('Donut:',   \@donut);
+        $donut_lexicon_bonus .= dlb_row('Lexicon:', \@lexicon);
+        $donut_lexicon_bonus .= dlb_row('Bonus:',   \@bonus);
+        if ($donut_lexicon_bonus) {
+            $donut_lexicon_bonus = "<p>" . table($donut_lexicon_bonus);
+        }
     }
 }
 my $bingo_table = '';
@@ -2451,11 +2501,13 @@ elsif ($order) {
         my $uw = ucfirst $w;
         $words .= def_word(($is_pangram{$w}? color_pg($uw): $uw), $w) . ' ';
     }
-    push @rows, Tr(td({ class => 'rt', valign => 'top' },
-                      $prev_length),
-                   td({ class => 'lt', width => 550 },
-                      $words)
-                  );
+    if ($words) {
+        push @rows, Tr(td({ class => 'rt', valign => 'top' },
+                          $prev_length),
+                       td({ class => 'lt', width => 550 },
+                          $words)
+                      );
+    }
     $found_words = table({ cellpadding => 3 }, @rows);
 }
 elsif ($same_letters) {
