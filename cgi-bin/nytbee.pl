@@ -1893,6 +1893,15 @@ elsif ($cmd eq 'al') {
     $message = "\U@other";
     $cmd = '';
 }
+elsif ($date !~ m{\A CP}xms && $cmd eq 'ac') {
+    if ($date < '20221222') {
+        $message = 'Activity monitoring began on December 22, 2022.';
+    }
+    else {
+        $message = `$cgi_dir/nytbee_activity.pl $date`;
+    }
+    $cmd = '';
+}
 elsif ($cmd eq 'ft') {
     $first_time = 1;
     $cmd = '';

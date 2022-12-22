@@ -161,7 +161,7 @@ You can change your screen name at any time
 with the command <span class=cmd>SN</span> like
 so:
 <ul>
-SN CHARLES
+SN CHARLIE
 </ul>
 The screen name can be <i>anything</i> you wish.
 Uniqueness is enforced.
@@ -201,7 +201,7 @@ Note that a pangram is termed "perfect" if it is 7 letters long.
 <p>If the puzzle was <a href=#create>created</a> by the HiveMind community details from the creator are given.
 <p>
 If <a href=#clues>clues have been added</a> for a puzzle the authors are listed.  Click on an author name to see all of their clues.</td></tr>
-<tr><td><span class=cmd>R</span></td><td>Show the rankings - from Beginner to ... Amazing to Genius to Queen Bee.  It also shows how many points are needed to get to the next rank.</td></tr>
+<tr><td><span class=cmd>R</span></td><td>Show the <span class=cmd>r</span>ankings - from Beginner to ... Amazing to Genius to Queen Bee.  It also shows how many points are needed to get to the next rank.</td></tr>
 <tr><td><span class=cmd>W</span></td><td>Show the found words in the order they were found.</td></tr>
 <tr><td><span class=cmd>SC</span></td><td>Show how the score was tallied and how many words remain to be found.  A thin line shows where you first asked for a hint.</td></tr>
 <tr><td><span class=cmd>M</span></td><td>Show the latest Message of the Day.  These messages will be shown periodically to give tips, tricks, and other information.</td></tr>
@@ -222,7 +222,7 @@ h - hints<br>
 <p>
 The bingo line will appear only if the puzzle is a <a href=#bingo>Bingo</a>.
 If the number of hints exceeds the number of words
-the line of dots will be truncated and a <span style="font-size: 23pt">+</span> will be appended.
+the line of dots will be truncated and a <span style="font-size: 23pt">+</span> will be appended.  If the hint count is negative the dots will be <span class=red1>red</span>.
 <br><br></td></tr>
 <tr><td><span class=cmd>C&nbsp;&nbsp;Y</span></td><td>Clear the puzzle and start over. <span class=cmd>C&nbsp;&nbsp;Y</span> means Clear and confirm with Yes.</td></tr>
 </table>
@@ -891,8 +891,9 @@ name@hello.com becomes <a href='mailto:name@hello.com'>name@hello.com<br>
 These commands are of more limited use.  Some of them were added just for the beauty of software Art.
 <p>
 <table cellpadding=5>
+<tr><td><span class=cmd>AC</td><td>Show a stacked bar graph of <span class=cmd>ac</span>tivity through the day.  <span style='color: green'>Green</span>: #words, <span class=red1>Red</span>: #commands, <span style='color: blue'>Blue</span>: #dynamic grid queries.  Monitoring began on December 22, 2022. </td></tr>
 <tr><td><span class=cmd>H</span></td><td>Cycle through different presentations
-of the 7 letters  - Honeycomb to Flower to Inline Letters to Hex Letters.<p>
+of the 7 letters  - <span class=cmd>H</span>oneycomb to Flower to Inline Letters to <span class=cmd>H</span>ex Letters.<p>
 <img height=150 src=pics/df_honeycomb.png><img height=150 src=pics/df_flower.png>&nbsp;&nbsp;<img height=70 src=pics/df_inline.png><img height=130 src=pics/df_hexlet.png>
 </td></tr>
 <tr><td><span class=cmd>H&lt;num&gt</span></td><td>Directly change the 7 letter presentation instead of cycling around.
@@ -911,7 +912,7 @@ the brief definition from wordnik.com.  To see <i>both</i> use the command
 <span class=cmd>D+</span>
 like so: <span class=cmd>D+P</span> or <span class=cmd>D+B8</span>.
 </td></tr>
-<tr><td><span class=cmd>R%</span></td><td>Show the rankings with the percentage of the maximum score.</td></tr>
+<tr><td><span class=cmd>R%</span></td><td>Show the <span class=cmd>r</span>ankings with the percentage of the maximum score.</td></tr>
 <tr><td><span class=cmd>-&lt;word&gt;</span></td><td>Remove the word from the found list. (That's a dash or hyphen or - or minus sign before the word.) This might be used if you are trying for GOTN: <a href=#gn4l>Genius On the Nose</a>.<br><br></td></tr>
 <tr><td colspan=2>Instead of the full Hint Table</td></tr>
 <tr><td><span class=cmd>#</span></td><td>How many words remain to be found?</td></tr>
@@ -1163,7 +1164,7 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1688 puzzles with
+1689 puzzles with
 a total of 9218 different words!
 <p>
 Which puzzles from the large archive to play?
