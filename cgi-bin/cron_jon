@@ -1,1 +1,2 @@
 0 1 * * * cd /home4/logical9/www/cgi-bin;./get_nytbee.pl
+0,10,20,30,40,50 * * * * cd /home4/logical9/www/cgi-bin;./nytbee_time.pl

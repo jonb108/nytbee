@@ -10,6 +10,7 @@ get_clues.pl \
 get_nytbee.pl \
 nyt_puzzles.txt \
 nytbee_list.pl \
+nytbee_time.pl \
 indexize \
 de_indexize \
 get_pangrams \
