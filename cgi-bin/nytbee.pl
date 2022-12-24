@@ -383,7 +383,7 @@ else {
         Apian
         Buzz
     /;
-    my @nums = 1 .. 999;
+    my @nums = 100 .. 999;
     SCREEN_NAME:
     while (1) {
         $screen_name = $base[rand @base] . $nums[rand @nums];
@@ -1973,7 +1973,7 @@ if (   $cmd ne '1'
     && $cmd !~ m{n?[dlb]w}xms
     && $cmd ne 'abw'
     && $cmd ne 'i'
-    && $cmd !~ m{\A cw}xms
+    && $cmd !~ m{\A cw\d* \z}xms
     && $cmd !~ m{\A m\d* \z}xms
     && $cmd !~ m{\A sn\b }xms
 ) {
@@ -2837,7 +2837,7 @@ elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
     $cmd = '';
 }
 elsif ($date !~ m{\A CP}xmsi
-       && $cmd =~ m{\A cw (\d*)}xms
+       && $cmd =~ m{\A cw (\d*) \z}xms
 ) {
     # I'm confused why \d* and \d+ above don't capture properly
     # test it out
