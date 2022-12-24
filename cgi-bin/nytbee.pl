@@ -355,52 +355,16 @@ $uuid_ip{$uuid} = $ENV{REMOTE_ADDR} . '|' . $ENV{HTTP_USER_AGENT};
 # a 'screen name' for privacy - rather than using
 # the ip address to derive location - country/state/city.
 #
-my %uuid_screen_name;
+# two dbm files
+# uuid_screen_name - key uuid11 value screen_name
+# screen_name_uuid - key screen_name value uuid11
+#
+my (%uuid_screen_name, %screen_name_uuid);
 tie %uuid_screen_name, 'DB_File', 'uuid_screen_name.dbm';
-sub name_taken {
-    my ($name) = @_;
-    for my $n (values %uuid_screen_name) {
-        if ($name eq $n) {
-            # already taken
-            return 1;
-        }
-    }
-    return 0;
-}
-my $screen_name;
+tie %screen_name_uuid, 'DB_File', 'screen_name_uuid.dbm';
+my $screen_name = '';
 if (exists $uuid_screen_name{$uuid11}) {
     $screen_name = $uuid_screen_name{$uuid11};
-}
-else {
-    my @base = qw/
-        Bee
-        Drone
-        Queen
-        Hive
-        Worker
-        Bumble
-        Honey
-        Apian
-        Buzz
-    /;
-    my @nums = 100 .. 999;
-    SCREEN_NAME:
-    while (1) {
-        $screen_name = $base[rand @base] . $nums[rand @nums];
-        if (name_taken($screen_name)) {
-            next SCREEN_NAME;
-        }
-        last SCREEN_NAME;
-    }
-    $uuid_screen_name{$uuid11} = $screen_name;
-    my $url = 'https://logicalpoetry.com/nytbee/help.html#screen_names';
-    $message .= "<div class=red>"
-             . "Welcome.<br>"
-             . "You have been assigned a screen name of $screen_name.<br>"
-             . "You can change it with the SN command.<br>"
-             . "Read all about screen names <a target=_blank href='$url'>here</a>."
-             . "</div><p>"
-             ;
 }
 
 my $mobile = $ENV{HTTP_USER_AGENT} =~ m{iPhone|Android}xms;
@@ -1987,6 +1951,42 @@ if (   $cmd ne '1'
                  }
                  split ' ', $cmd;
 }
+
+# they found a bonus, donut, or lexicon word
+# if they don't yet have a screen name
+# it's time to assign them one.
+sub check_screen_name {
+    if ($screen_name) {
+        return;
+    }
+    my @base = qw/
+        Bee
+        Drone
+        Queen
+        Hive
+        Worker
+        Bumble
+        Honey
+        Apian
+        Buzz
+    /;
+    my $name = $base[ rand @base ];
+    my $i = 1;
+    while (exists $screen_name_uuid{"$name$i"}) {
+        ++$i;
+    }
+    $screen_name = "$name$i";
+    $uuid_screen_name{$uuid11} = $screen_name;
+    $screen_name_uuid{$screen_name} = $uuid11;
+    my $url = 'https://logicalpoetry.com/nytbee/help.html#screen_names';
+    $message .= "<div class=red>"
+             . "You have been assigned a screen name of $screen_name.<br>"
+             . "You can change it with the SN command.<br>"
+             . "Read all about screen names <a target=_blank href='$url'>here</a>."
+             . "</div><p>"
+             ;
+}
+
 my $not_okay_words;
 my %is_new_word;
 sub check_word {
@@ -2076,6 +2076,9 @@ for my $w (@new_words) {
         || $mess eq 'lexicon'
         || $mess eq 'bonus'
     ) {
+        if ($mess ne '') {
+            check_screen_name();
+        }
         $is_new_word{$w} = 1;
         if (! $is_found{$w}) {
             $is_found{$w} = 1;
@@ -2962,21 +2965,32 @@ elsif ($cmd eq 'id') {
     $cmd = '';
 }
 elsif ($cmd eq 'sn') {
+    # they may not have one yet ...
     $message .= $screen_name;
     $cmd = '';
 }
-elsif ($cmd =~ m{\A sn \s+ (.*) \z}xms) {
+elsif ($cmd =~ m{\A sn \s+ (\S+) \z}xms) {
     my $new_name = $1;
     $new_name =~ s{([a-z])}{uc $1}xmse;
     if ($new_name eq $screen_name) {
-        $message .= $new_name;
-    }
-    elsif (name_taken($new_name)) {
-        $message .= 'Sorry, that name is already taken.';   
+        $message = $screen_name;
     }
     else {
-        $uuid_screen_name{$uuid} = $new_name;
-        $message .= $new_name;
+        if (exists $screen_name_uuid{$new_name}) {
+            $message .= "Sorry, $new_name is already taken.";
+        }
+        else {
+            # they're actually changing it
+            if ($screen_name) {
+                # return the old one for reuse
+                delete $uuid_screen_name{$uuid11};
+                delete $screen_name_uuid{$screen_name};
+            }
+            $screen_name = $new_name;
+            $uuid_screen_name{$uuid11} = $screen_name;
+            $screen_name_uuid{$screen_name} = $uuid11;
+            $message .= $screen_name;
+        }
     }
     $cmd = '';
 }
