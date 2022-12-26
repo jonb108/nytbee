@@ -1827,7 +1827,7 @@ elsif ($cmd eq '1w') {
     $w_cmd = $cmd;
     $cmd = '';
 }
-elsif (($pattern) = $cmd =~ m{\A w \s* / \s* .* \z}xms) {
+elsif (($pattern) = $cmd =~ m{\A w!? \s* / \s* .* \z}xms) {
     @words_found = restrict($cmd, \@found_puzzle_words);
     $w_cmd = $cmd;
     $cmd = '';
@@ -2241,9 +2241,15 @@ sub one_col {
 sub restrict {
     my ($w_cmd, $aref) = @_;
 
-    if ($w_cmd =~ m{\A w \s* / \s* (.*) \z}xms) {
-        my $pattern = $1;
-        return grep { m!$pattern!xms } @$aref;
+    if ($w_cmd =~ m{\A (w!?) \s* / \s* (.*) \z}xms) {
+        my $not = $1 eq 'w!';
+        my $pattern = $2;
+        if ($not) {
+            return grep { ! m!$pattern!xms } @$aref;
+        }
+        else {
+            return grep { m!$pattern!xms } @$aref;
+        }
     }
     elsif ($w_cmd =~ m{\A w \s* ([<>]) \s* (\d*)\z}xms) {
         $order = $1 eq '>'? 1: -1;
