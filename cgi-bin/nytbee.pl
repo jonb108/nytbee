@@ -2970,8 +2970,9 @@ elsif ($cmd eq 'sn') {
     $cmd = '';
 }
 elsif ($cmd =~ m{\A sn \s+ (\S+) \z}xms) {
-    my $new_name = $1;
-    $new_name =~ s{([a-z])}{uc $1}xmse;
+    my $new_name = lc $1;
+    $new_name =~ s{_([a-z])}{uc $1}xmsge;
+    $new_name = ucfirst $new_name;
     if ($new_name eq $screen_name) {
         $message = $screen_name;
     }
