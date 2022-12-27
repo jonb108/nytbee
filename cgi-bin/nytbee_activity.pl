@@ -26,6 +26,7 @@ while (my $line = <$in>) {
                   |getting[ ]clues
                   |creating[ ]CP
                   |asking[ ]for[ ]clues
+                  |edited[ ]CP
                  }xms
     ) {
         next LINE;

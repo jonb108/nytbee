@@ -2845,20 +2845,23 @@ elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
     }
     $cmd = '';
 }
-elsif ($date !~ m{\A CP}xmsi
-       && $cmd =~ m{\A cw (\d*) \z}xms
-) {
-    # I'm confused why \d* and \d+ above don't capture properly
-    # test it out
-    # order of evaluation of the &&? no.
-    my ($max) = $cmd =~ m{(\d+)}xms;
-    $max ||= 5;
-    # Valid only when the current puzzle is an NYT puzzle.
-    # For the day of the current puzzle
-    # search the day's log and extra word files to identify
-    # the top 5 (10?) locations in Donut, Lexicon, and Bonus words.
-    # The C stands for Community or Competitive.
-    $message .= `$cgi_dir/nytbee_cw.pl $date $max`;
+elsif ($cmd =~ m{\A cw (\d*) \z}xms) {
+    if ($date =~ m{\A cp}xmsi) {
+        $message = 'Sorry, CW is only for NYT puzzles.';
+    }
+    else {
+        # I'm confused why \d* and \d+ above don't capture properly
+        # test it out
+        # order of evaluation of the &&? no.
+        my ($max) = $cmd =~ m{(\d+)}xms;
+        $max ||= 5;
+        # Valid only when the current puzzle is an NYT puzzle.
+        # For the day of the current puzzle
+        # search the day's log and extra word files to identify
+        # the top 5 (10?) locations in Donut, Lexicon, and Bonus words.
+        # The C stands for Community or Competitive.
+        $message .= `$cgi_dir/nytbee_cw.pl $date $max`;
+    }
     $cmd = '';
 }
 elsif ($cmd eq 'abw') {
