@@ -1937,7 +1937,7 @@ if (   $cmd ne '1'
     && $cmd !~ m{\A n?[dlb]w \z}xms
     && $cmd ne 'abw'
     && $cmd ne 'i'
-    && $cmd !~ m{\A cw\d* \z}xms
+    && $cmd !~ m{\A cw\s*\d* \z}xms
     && $cmd !~ m{\A m\d* \z}xms
     && $cmd !~ m{\A sn\b }xms
 ) {
@@ -2845,7 +2845,7 @@ elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
     }
     $cmd = '';
 }
-elsif ($cmd =~ m{\A cw (\d*) \z}xms) {
+elsif ($cmd =~ m{\A cw \s* (\d*) \z}xms) {
     if ($date =~ m{\A cp}xmsi) {
         $message = 'Sorry, CW is only for NYT puzzles.';
     }
