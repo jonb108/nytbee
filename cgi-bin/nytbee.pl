@@ -1934,7 +1934,7 @@ if (   $cmd ne '1'
     && $cmd ne '51'
     && $cmd ne '52'
     && $cmd ne 'id'
-    && $cmd !~ m{n?[dlb]w}xms
+    && $cmd !~ m{\A n?[dlb]w \z}xms
     && $cmd ne 'abw'
     && $cmd ne 'i'
     && $cmd !~ m{\A cw\d* \z}xms
