@@ -60,7 +60,7 @@ if ($all_words) {
     @found = @words;
 }
 else {
-    @found = grep { ! m{ [+-]\z }xms }
+    @found = grep { ! m{ [+*-]\z }xms }
              split ' ', $q->param('found');
 }
 

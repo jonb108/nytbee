@@ -1,0 +1,21 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+my $sn = shift or die "usage: free_sn name\n";
+use DB_File;
+my %uuid_screen_name;
+tie %uuid_screen_name, 'DB_File', 'uuid_screen_name.dbm';
+my %screen_name_uuid;
+tie %screen_name_uuid, 'DB_File', 'screen_name_uuid.dbm';
+my $uuid = $screen_name_uuid{$sn};
+if ($uuid) {
+    print "$uuid\n";
+    print "Clear it? ";
+    my $ans = <STDIN>;
+    if ($ans =~ m{\A Y}xms) {
+        delete $screen_name_uuid{$sn};
+        delete $uuid_screen_name{$uuid};
+        print "Cleared.\n";
+    }
+}
