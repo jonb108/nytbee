@@ -1940,6 +1940,7 @@ if (   $cmd ne '1'
     && $cmd !~ m{\A cw\s*\d* \z}xms
     && $cmd !~ m{\A m\d* \z}xms
     && $cmd !~ m{\A sn\b }xms
+    && $cmd !~ m{\A ([+][+]|[-][-])cp }xms
 ) {
     # what about $cmd eq 'i' or bw or ... ?
     # turns out it's okay ... but sloppy.
@@ -3225,8 +3226,9 @@ $row2
 EOH
             $letters .= <<"EOH";
 <span class=lets id=lets></span>
-<span class='enter cursor_black' onclick="sub_lets();">Enter</span>
+<span class='enter' onclick="sub_lets();">Enter</span>
 <span class='define' onclick="del_let();">Delete</span>
+<span class='standings' onclick="standings();">Standings</span>
 </span>
 <span class=bonus_lets>$bonus_table</span>
 EOH
@@ -3556,6 +3558,11 @@ $letter_styles
 .define {
     position: absolute;
     left: 420;
+    top: $define_top;
+}
+.standings {
+    position: absolute;
+    left: 520;
     top: $define_top;
 }
 .lets {

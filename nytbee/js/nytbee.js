@@ -42,6 +42,10 @@ function rand_def() {
     hnw.value = 'DR';
     main.submit();
 }
+function standings() {
+    hnw.value = 'CW';
+    main.submit();
+}
 function check_name_location() {
     var name = document.getElementById('name');
     if (empty(name.value)) {
