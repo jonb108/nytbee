@@ -51,8 +51,8 @@ And I have.  The complete source code for this project is on
 <a href=#videos>Videos</a><br>
 <a href=#how>How to Play</a><br>
 <a href=#advantages>Advantages</a><br>
-<a href=#screen_names>Screen Names</a><br>
 <a href=#words>Words and Commands</a><br>
+<a href=#screen_names>Screen Names and Your Identity</a><br>
 <a href=#mobile>Playing on a Mobile Phone</a><br>
 <a href=#hint_commands>Hint Commands</a><br>
 <a href=#table_list>The Hint Table and the Two Letter List</a><br>
@@ -149,41 +149,6 @@ Clues are shown with the <span class=cmd>D</span> command.
 (usually with a different center letter).
 <li>An easy and clean 'dictionary browser'.
 </ul>
-<a name=screen_names></a>
-<h2>Screen Names
-<a class=top href=#toc><img src=pics/top.gif height=25></a>
-</h2>
-There is no need to register or login to this game.
-ALL are welcome.
-There is a need, however, for <i>some</i> form of identification.
-To address this need you will be assigned a random 'screen name'.
-For fun, the randomly assigned name is composed of one of these Bee related words:
-<ul>
-Hive Bee Queen Worker Drone Honey Bumble Apian Buzz
-</ul>
-plus a random digit from 1 to 99.
-<p>
-You can change your screen name at any time
-with the command <span class=cmd>SN</span> like
-so:
-<ul>
-SN CHARLIE
-</ul>
-The screen name can be <i>anything</i> you wish.
-Uniqueness is enforced.
-The name is entered in ALL CAPS but is transformed like so:
-<ul>
-BEE_THE_ONE
-</ul>
-becomes:
-<ul>
-BeeTheOne
-</ul>
-<p>
-Screen names are shown with the 
-<span class=cmd>CW</span>
-command which
-shows the <a href=#competition>competition</a> for Extra Words.
 <a name=words></a>
 <h2>Words and Commands
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -239,14 +204,88 @@ the line of dots will be truncated and a <span style="font-size: 23pt">+</span> 
 <br><br></td></tr>
 <tr><td><span class=cmd>C&nbsp;&nbsp;Y</span></td><td>Clear the puzzle and start over. <span class=cmd>C&nbsp;&nbsp;Y</span> means Clear and confirm with Yes.</td></tr>
 </table>
+<a name=screen_names></a>
+<h2>Screen Names and Your Identity
+<a class=top href=#toc><img src=pics/top.gif height=25></a>
+</h2>
+There is no need to register or login to this game.  This is nice.
+ALL are welcome.
+It is helpful, however, to have <i>some</i> form of identification.
+To address this need there are <b>screen names</b> and an
+<b>identity</b> string - both of which are assigned to you.
+The screen name is your unique <i>public</i>-facing name.
+The identity string is <i>private</i>, secret, and unique.
+<h3>Screen Name</h3>
+For fun, the randomly assigned screen name is composed of
+one of these Bee related words:
+<ul>
+Hive Bee Queen Worker Drone Honey Bumble Apian Buzz
+</ul>
+plus a random digit from 1 to 99.
+<p>
+Screen names are shown with the 
+<span class=cmd>CW</span>
+command which
+shows the fun <a href=#competition>competition</a> for Extra Words.
+<p>
+You can change your screen name at any time
+with the command <span class=cmd>SN</span> like
+so:
+<ul>
+SN CHARLIE
+</ul>
+The screen name can be <i>anything</i> you wish.
+Uniqueness is enforced.
+The name is entered in ALL CAPS but is transformed like so:
+<ul>
+BEE_THE_ONE
+</ul>
+becomes:
+<ul>
+BeeTheOne
+</ul>
+<h3>Identity String</h3>
+The identity string is generated to be unique.  It is a long string
+of characters like this:
+<div class=long_string>963e4401-81eq-18ec-g81c-b1f85c942ex3<span></div>
+<p>
+This string is saved in your web browser data (aka cookies) so that if you
+leave and return later your words and games are remembered.  Nice.
+<p>
+The unfortunate issue with this mechanism is that if you:
+<ul>
+<li>clear your web data and browser history,
+<li>use a different browser, or
+<li>use incognito/private pages
+</ul>
+a <i>new</i> identity string will be generated for you - and you will not see
+your words and games. &#128542;
+<p>
+A better way to establish your identity is to create a string
+that you know is (very likely) unique to you - like your name plus your birthday date and enter it with the <span class=cmd>ID</span> command. For
+example:
+<ul>
+    <span class=cmd>ID</span> <span class=green>GERTIE4/30</span>
+</ul>
+Now if your web data and browser history is cleared
+or you use a different browser
+you can easily re-establish your identity by <b>RE</b>-entering the above
+<span class=cmd>ID</span> command.
+<p>
+The <span class=cmd>ID</span> command can be used if you mostly
+play on your computer with a keyboard but also want to play on
+your mobile phone when you are out and about.
+Enter your <span class=cmd>ID</span>
+command in both places and you will see your words and games in
+both places.  Nice!
 <a name=mobile></a>
 <h2>Playing on a Mobile Phone
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
 While it is easiest to play on a computer with a keyboard
 it is <i>also</i> easy to play on a mobile phone.  I have an iPhone and
-using the Safari browser with the text enlarged (with the aA icon) to 150%
-and holding the phone horizontally 
+using the Safari browser with the text enlarged (with the <span style="font-size: 12pt">A</span>A icon) to 150%
+and holding the phone horizontally, 
 this is what the screen looks like:
 <p>
 <img src=pics/nytbee_iPhone.png width=800 border=1>
@@ -437,8 +476,11 @@ remember the words.  If you keep doing this your <a href=#hint_ratio>hint ratio<
 There is, of course, no 'official' list of
 these words but you can tell your friends about how many you found.
 You can also search for Lexicon and Bonus words and get Hint Credits.
+Searching for these 'Extra' words is, for me, a more creative and fun
+way to spend WordPlay time that is much more diverting than simply
+finding hidden words that someone else has chosen. &#128540;
 <li>A different kind of activity is to find all the words in today's puzzle
-(however you wish, even with the <span class=cmd>G YP</span> command &#128522;) and
+(however you wish, even with the <span class=cmd>G YP</span> command &#128556;) and
 then add some clever inventive <a href=#clues>clues</a>.
 This will help everyone else
 who is playing the game with this software.  You can also copy and paste
@@ -543,6 +585,16 @@ they use all 6 letters.  <span class=purple>Arming</span> and <span class=purple
 <p>
 Donut Words are deemed acceptable if they occur in the large lexicon
 or have appeared before in an NYT Bee Puzzle.
+<p>
+If you try to find Donut (or Lexicon) words by typing words that you don't know
+and suspect <i>may</i> be a valid word you may be pleasantly surprised
+that it is indeed an acceptable word.  For example:
+<br>
+<img width=430 src=pics/teet.png>
+<br>
+So now you are probably wondering what TEET means, right?
+You can click on the red <span style="color: red">TEET</span>
+and a definition will be shown.  Nice!
 <h3>Lexicon</h3>
 Another type of word is one that IS a real valid actual proper qualified word
 containing the center letter but which for some mysterious, arbitrary,
@@ -572,8 +624,6 @@ In this puzzle from November 13, 2022:
 the words VICINIT<span class=red1>Y</span> and INCITE<span class=red1>M</span>ENT are Bonus words which use an additional Y and M respectively.
 Bonus words must appear either in the large lexicon or in the list of previous
 NYT Puzzle words.
-A <span class=green>Bonus Pangram</span> is one that uses all 7 letters plus the extra one.
-A <span class=purple>Perfect Bonus Pangram</span> is exactly 8 letters long.
 The additional letter <i>can</i> be an <span class=red1 style="font-size: 20pt">S</span> (finally!).
 <span class=red1>S</span>CIENCE is another Bonus word for the above puzzle. 
 Note that very few plurals occur in the large lexicon and that
@@ -583,6 +633,11 @@ The <span class=cmd>AL</span> command will show the 19 additional letters.
 <p>
 It seems that Bonus words are often more colorful and intriguing
 than the typical boring "normal" words.
+<p>
+A <span class=green>Bonus Pangram</span> is one that uses all 7 letters plus the extra one.
+A <span class=purple>Perfect Bonus Pangram</span> is exactly 8 letters long.
+There is yet <span style="color: magenta"><i>another</i></span> type of Bonus Pangram &ndash; which I will leave
+undocumented so you can have the pleasure of discovering it on your own.
 <p>
 Searching for Bonus words on a mobile phone is somewhat awkward.
 The additional letter is (of course!) not in the 7 displayed letters
@@ -594,7 +649,8 @@ When it is toggled ON the display will look like this:
 <img src=pics/teenage.png width=800 border=1>
 <p>
 The 19 (26-7=19) additional letters are put in a table.
-Tap on them to append to the word.
+Tap on them to append to the word.  There is also now the 'Standings'
+link which will issue the <span class=cmd>CW</span> command for you.
 <h3>Hint Credits</h3>
 These three types of words (the term 'Extra Words' seems a good one) are
 listed below the words you have found in the allowed list.  Like so:
@@ -958,7 +1014,7 @@ like so: <span class=cmd>D+P</span> or <span class=cmd>D+B8</span>.
 <tr><td><span class=cmd>WL</span></td><td>Toggle the showing of the list of found words.  Default is to show the <span class=cmd>w</span>ord <span class=cmd>l</span>ist.</td></tr>
 <tr><td><span class=cmd>IM</span></td><td>Toggle the showing of the <span class=cmd>im</span>age for the ranks of Amazing, Genius, and Queen Bee.  Default is to show it.</td></tr>
 <tr><td><span class=cmd>CO</span></td><td>Toggle the <span class=cmd>co</span>llapsing of the <a href=#table_list>Hint Table</a>.  Default is to <i>not</i> include columns and rows that have no entries.<br><br></td></tr>
-<tr><td colspan=2>Preserving your Identity</td></tr>
+<tr><td colspan=2>Preserving Your Identity</td></tr>
 <tr><td><span class=cmd>ID</span></td><td>Show the long string of characters that constitute your 'identity' to the program.  It will look something like this:
 <div class=long_string>963e4401-81eq-18ec-g81c-b1f85c942ex3<span></div>This command copies the long string to the system clipboard.  Save this string in a secure place.</td></tr>
 <tr><td><span class=cmd>ID</span>&nbsp;...</td><td>In case you inadvertently clear your Website Data (aka cookies) you can restore your identity with this command:
@@ -966,7 +1022,8 @@ like so: <span class=cmd>D+P</span> or <span class=cmd>D+B8</span>.
 This command also allows you to replicate your identity from one browser to another (e.g. Safari to Chrome or desktop browser to mobile browser).
 <p>
 The long string is computer generated and is guaranteed to be unique - but it
-is long!  A much easier way to establish your identity is to create a string
+is long!  
+A much easier way to establish your identity is to create a string
 that you know is (very likely) unique to you - like your name plus your birthday date. For
 example:
 <ul>
@@ -976,7 +1033,7 @@ Now if your cookies were cleared you can easily re-establish your identity.
 </td></tr>
 <tr><td colspan=2>Finally, we have the Ultimate Hint:</td></tr>
 <tr><td><span class=cmd>G&nbsp;&nbsp;Y</span></td><td>
-Give up and show the words you have not yet found. <span class=cmd>G&nbsp;&nbsp;Y</span> means Give up and confirm Yes.  This just shows the words not yet found.  If you wish to actually have them entered append a P to the Y: <span class=cmd>G YP</span>.  That is P for paste or GYP for cheat or swindle.</td></tr>
+Give up and show the words you have not yet found. <span class=cmd>G&nbsp;&nbsp;Y</span> means Give up and confirm Yes.  This just shows the words not yet found.  If you wish to actually have them entered append a P to the Y: <span class=cmd>G YP</span>.  That is P for paste or GYP for cheat or swindle. &#128556;</td></tr>
 </table>
 <a name=articles></a>
 <h2>Articles about the NYT Spelling Bee
@@ -1179,8 +1236,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1707 puzzles with
-a total of 9283 different words!
+1712 puzzles with
+a total of 9286 different words!
 <p>
 Which puzzles from the large archive to play?
 You can get one at random with the <span class=cmd>NR</span> command or you could

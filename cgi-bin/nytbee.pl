@@ -1988,6 +1988,24 @@ sub check_screen_name {
              ;
 }
 
+sub pangram_check {
+    my ($w, $n, $seven) = @_;
+    my $type = $n == 6? 'Donut'
+              :$n == 7? 'Lexicon'
+              :         'Bonus';
+    my $nu_chars = uniq_chars($w);
+    my $p = '<span class=purple>Perfect</span>';
+    if ($n == $nu_chars) {
+        my $perfect = length($w) == $n? $p: '';
+        return "This is also a $perfect Pangram $type word! &#128522;";
+    }
+    elsif ($n == 8 && $nu_chars == 7) {
+        my $perfect = length($w) == 7? $p: '';
+        return "This is also a $perfect <span style='color: magenta'>Special</span> Pangram $type word! &#128513;";
+    }
+    return '';
+}
+
 my $not_okay_words;
 my %is_new_word;
 sub check_word {
@@ -2069,6 +2087,11 @@ for my $w (@new_words) {
             @found = grep { !m{\A $xword \b }xms  } @found;
             delete $is_found{$xword};
         }
+        else {
+            $not_okay_words = "<span class=not_okay>"
+                            . uc($xword)
+                            . "</span>: not a found word";
+        }
         next WORD;
     }
     my $mess = check_word($w);
@@ -2085,8 +2108,9 @@ for my $w (@new_words) {
             $is_found{$w} = 1;
             if ($mess eq 'donut') {
                 $not_okay_words .= "<span class=not_okay>"
-                                .  uc($w)
-                                .  "</span>: Donut word $thumbs_up -1 hint<br>";
+                                .  def_word(uc($w), $w)
+                                .  "</span>: Donut word $thumbs_up -1 hint<br>"
+                                .  pangram_check($w, 6);
                 add_3word('donut', $date, $w);
                 log_it('*donut');
                 $w .= '-';
@@ -2094,8 +2118,9 @@ for my $w (@new_words) {
             }
             elsif ($mess eq 'lexicon') {
                 $not_okay_words .= "<span class=not_okay>"
-                                .  uc($w)
-                                .  "</span>: Lexicon word $thumbs_up -2 hints<br>";
+                                .  def_word(uc($w), $w)
+                                .  "</span>: Lexicon word $thumbs_up -2 hints<br>"
+                                .  pangram_check($w, 7);
                 add_3word('lexicon', $date, $w);
                 log_it('*lexicon');
                 $w .= '+';
@@ -2103,8 +2128,9 @@ for my $w (@new_words) {
             }
             elsif ($mess eq 'bonus') {
                 $not_okay_words .= "<span class=not_okay>"
-                                .  uc($w)
-                                .  "</span>: Bonus word $thumbs_up -3 hints<br>";
+                                .  def_word(uc($w), $w)
+                                .  "</span>: Bonus word $thumbs_up -3 hints<br>"
+                                .  pangram_check($w, 8, $seven);
                 add_3word('bonus', $date, $w);
                 log_it('*bonus');
                 $w .= '*';      # * in the found list marks bonus words
