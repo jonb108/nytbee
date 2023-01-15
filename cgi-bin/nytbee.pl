@@ -1997,11 +1997,11 @@ sub pangram_check {
     my $p = '<span class=purple>Perfect</span>';
     if ($n == $nu_chars) {
         my $perfect = length($w) == $n? $p: '';
-        return "This is also a $perfect Pangram $type word! &#128522;";
+        return "This is also a $perfect Pangram $type word! &#128522;<br>";
     }
     elsif ($n == 8 && $nu_chars == 7) {
         my $perfect = length($w) == 7? $p: '';
-        return "This is also a $perfect <span style='color: magenta'>Special</span> Pangram $type word! &#128513;";
+        return "This is also a $perfect <span style='color: magenta'>Special</span> Pangram $type word! &#128513;<br>";
     }
     return '';
 }
