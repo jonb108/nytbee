@@ -1011,7 +1011,7 @@ like so: <span class=cmd>D+P</span> or <span class=cmd>D+B8</span>.
 <tr><td><span class=cmd>Wn</span></td><td>Show the found words of length n.</td></tr>
 <tr><td><span class=cmd>W&nbsp;&nbsp;&lt;prefix&gt;</span></td><td>Show the found words that start with &lt;prefix&gt;.</td></tr>
 <tr><td><span class=cmd>W/&lt;pattern&gt;</span></td><td>Show the found words that match the pattern.<br>For example, W/OO will show the found words that contain OO - like OOZE, LOOT, or TATTOO. For <i>Super</i> Power Users: The pattern is a <a target=nytbee href='https://perldoc.perl.org/perlrequick'>Perl Regular Expression</a> with the /x flag.</td></tr>
-<tr><td><span class=cmd>W!/&lt;pattern&gt;</span></td><td>Show the found words that do NOT match the pattern.</td></tr>
+<tr><td><span class=cmd>W!/&lt;pattern&gt;</span></td><td>Show the found words that do NOT match the pattern.  This can be used to see the words that do <i>not</i> end in ING or ED by entering this command: <span style="color: red; margin-left: .2in; font-family: Courier">W!/(ING|ED)$</span></td></tr>
 <tr><td><span class=cmd>1W</span></td><td>Show the found words in a single column.  This may be more convenient if you wish to copy/paste the word list.</td></tr>
 <tr><td><span class=cmd>SL</span></td><td>Show the groups of found words that share the <span class=cmd>s</span>ame <span class=cmd>l</span>etters.</td></tr>
 <tr><td><span class=cmd>FT</span></td><td>Show the found words that are appearing for the <span class=cmd>f</span>irst <span class=cmd>t</span>ime in this puzzle.</td></tr>
@@ -1245,8 +1245,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1713 puzzles with
-a total of 9286 different words!
+1715 puzzles with
+a total of 9301 different words!
 <p>
 Which puzzles from the large archive to play?
 You can get one at random with the <span class=cmd>NR</span> command or you could
