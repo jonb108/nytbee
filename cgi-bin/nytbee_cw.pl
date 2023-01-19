@@ -5,7 +5,16 @@ use Data::Dumper;
 use DB_File;
 my %uuid_screen_name;   # hash key: uid, value: 
 tie %uuid_screen_name, 'DB_File', 'uuid_screen_name.dbm';
+use Date::Simple qw/
+    date
+    today
+/;
+use BeeUtil qw/
+    my_today
+/;
+my $today = my_today();
 my $date = shift;
+my $date_obj = date($date);
 my $max = shift || 5;
 my %words;  # hash of hash
             # keys: donut/lexicon/bonus, word = value: 1
@@ -74,6 +83,9 @@ print <<'EOH';
 }
 </style>
 EOH
+if ($date_obj ne today()) {
+    print "Final results for " . $date_obj->format("%D") . ":<p>\n";
+}
 print "<table cellpadding=0>\n";
 for my $aref (sort {
                   $a->[1] <=> $b->[1]

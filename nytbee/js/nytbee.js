@@ -39,10 +39,6 @@ function sub_lets() {
     main.submit();
 }
 function rand_def() {
-    hnw.value = 'DR';
-    main.submit();
-}
-function rand_plus_def() {
     hnw.value = 'D+R';
     main.submit();
 }

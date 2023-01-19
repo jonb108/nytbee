@@ -326,7 +326,6 @@ use File::Slurp qw/
 /;
 
 my $message = '';
-my $rand_def = 'rand_def()';    # hack :(
 my $ymd = ymd();
 my $q = CGI->new();
 my $hive = $q->param('hive') || $q->cookie('hive') || 1;
@@ -1001,7 +1000,6 @@ if ($cmd eq 'nooop') {
 # perhaps have the colors in nytbee_get_clues.pl or nytbee_get_cluers.pl?
 sub load_nyt_clues {
     if ($puzzle_has_clues{$date}) {
-        $rand_def = 'rand_plus_def()';
         %nyt_clues_for
             = %{ eval get_html "$log/cgi-bin/nytbee_get_clues.pl/$date" };
         %nyt_cluer_name_of
@@ -1393,7 +1391,12 @@ elsif ($cmd eq 'bt') {
     $cmd = '';
 }
 elsif ($cmd eq 'bn') {
-    $bonus_mode = ! $bonus_mode;
+    if (! $mobile) {
+        $message = 'The command BN only makes sense when playing on a mobile phone.';
+    }
+    else {
+        $bonus_mode = ! $bonus_mode;
+    }
     $cmd = '';
 }
 elsif ($cmd eq 'im') {
@@ -2273,11 +2276,18 @@ sub restrict {
     if ($w_cmd =~ m{\A (w!?) \s* / \s* (.*) \z}xms) {
         my $not = $1 eq 'w!';
         my $pattern = $2;
-        if ($not) {
-            return grep { ! m!$pattern!xms } @$aref;
+        my $regex;
+        eval {
+            $regex = qr($pattern);
+        };
+        if ($@) {
+            $message = "Illegal pattern: $pattern";
+        }
+        elsif ($not) {
+            return grep { ! m!$regex!xms } @$aref;
         }
         else {
-            return grep { m!$pattern!xms } @$aref;
+            return grep { m!$regex!xms } @$aref;
         }
     }
     elsif ($w_cmd =~ m{\A w \s* ([<>]) \s* (\d*)\z}xms) {
@@ -2615,12 +2625,9 @@ else {
         $t = def_word($t, $w);
         $found_words .= "$t ";
     }
-    # confusing ....
-    if (@words_found >= @found_puzzle_words) {
-        my $nwords = @words_found;
-        if ($nwords) {
-            $found_words .= " <span class=gray>$nwords</span>";
-        }
+    my $nwords = @words_found;
+    if ($nwords) {
+        $found_words .= " <span class=gray>$nwords</span>";
     }
 }
 $found_words = "<div class=found_words>$found_words</div>";
@@ -3264,7 +3271,7 @@ EOH
         else {
             $letters .= <<"EOH";
 <span class='enter cursor_black' onclick="sub_lets();">Enter</span>
-<span class='define cursor_black' onclick="$rand_def;">Define</span>
+<span class='define cursor_black' onclick="rand_def();">Define</span>
 <span class=lets id=lets></span>
 <span class='delete cursor_black' onclick="del_let();">Delete</span>
 <span class='helplink cursor_black'><a class='cursor_black' target=_blank href='$log/nytbee/help.html#toc'">Help</a>&nbsp;&nbsp;&nbsp;&nbsp;<a class='cursor_black' target=_blank href='$log/nytbee/cmd_list.pdf'>Cmds</a></span>
@@ -3351,7 +3358,7 @@ elsif ($hive == 3) {    # hex letters
         $letters .= "<table style='width: 100%; margin-bottom: 10mm'><tr>"
                  .  "<td class=h3cmd onclick='del_let()'>Delete</td>"
                  .  "<td class='h3cmd'><a style='color: black' target=_blank href='$log/nytbee/help.html#toc'>Help</a></td>"
-                 .  "<td class=h3cmd onclick='$rand_def;'>Define</td>"
+                 .  "<td class=h3cmd onclick='rand_def();'>Define</td>"
                  .  "<td class=h3cmd onclick='sub_lets()'>Enter</td>"
                  .  "</tr></table>"
                  ;
