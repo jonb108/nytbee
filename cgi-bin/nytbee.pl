@@ -3014,7 +3014,7 @@ elsif ($cmd eq 'sn') {
     $message .= $screen_name;
     $cmd = '';
 }
-elsif ($cmd =~ m{\A sn \s+ (\S+) \z}xms) {
+elsif ($cmd =~ m{\A sn \s+ (.*) \z}xms) {
     my $new_name = lc $1;
     $new_name =~ s{_([a-z])}{uc $1}xmsge;
     $new_name = ucfirst $new_name;
