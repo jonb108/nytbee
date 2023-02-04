@@ -337,7 +337,7 @@ my $hive_cookie = $q->cookie(
 my $uuid = cgi_header($q, $hive_cookie);
 my $uuid11 = substr($uuid, 0, 11);
 my %params = $q->Vars();
-if ($params{new_words} =~ m{\A \s* id \s+}xmsi) {
+if ($params{new_words} =~ m{\A \s* idk? \s+}xmsi) {
     # we took care of this case in cgi_header
     $params{new_words} = '';
 }
@@ -2992,10 +2992,13 @@ elsif ($cmd eq 'ow') {
             ++$words{$w};
         }
         close $in;
-        my @words = grep { $words{$_} == 1 && $is_found{$_} }
+        my @words = map {
+                        ucfirst
+                    }
+                    grep { $words{$_} == 1 && $is_found{$_} }
                     sort keys %words;
         my $nwords = @words;
-        $message .= "<td class=lt>@words <span class=gray>$nwords</span></td>";
+        $message .= "<td class='lt found_words'>@words <span class=gray>$nwords</span></td>";
         $message .= '</tr>';
     }
     $message .= '</table>';
