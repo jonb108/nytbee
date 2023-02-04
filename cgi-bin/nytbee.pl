@@ -2980,6 +2980,26 @@ elsif ($cmd eq 'abw') {
     }
     $cmd = '';
 }
+elsif ($cmd eq 'ow') {
+    $cmd = '';
+    $message = 'These words were found only by you:<br><br><table>';
+    for my $type (qw/ donut lexicon bonus /) {
+        $message .= "<tr><td class=rt valign=top>\u$type:</td>";
+        open my $in, '<', "$type/$date" or die "no $type/$date";
+        my %words;
+        while (my $w = <$in>) {
+            chomp $w;
+            ++$words{$w};
+        }
+        close $in;
+        my @words = grep { $words{$_} == 1 && $is_found{$_} }
+                    sort keys %words;
+        my $nwords = @words;
+        $message .= "<td class=lt>@words <span class=gray>$nwords</span></td>";
+        $message .= '</tr>';
+    }
+    $message .= '</table>';
+}
 elsif ($cmd =~ m{\A m(\d+)? \z}xms) {
     my ($n, $date);
     if ($1) {
@@ -3412,6 +3432,9 @@ if ($tl_chosen && ($show_ZeroRowCol || $sums{1}{1} != 0)) {
     </div>
 </div>
 EOH
+}
+if ($bonus_mode) {
+    $hint_table_list = '';
 }
 
 sub graphical_status {
