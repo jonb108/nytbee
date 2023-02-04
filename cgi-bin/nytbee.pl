@@ -1391,12 +1391,7 @@ elsif ($cmd eq 'bt') {
     $cmd = '';
 }
 elsif ($cmd eq 'bn') {
-    if (! $mobile) {
-        $message = 'The command BN only makes sense when playing on a mobile phone.';
-    }
-    else {
-        $bonus_mode = ! $bonus_mode;
-    }
+    $bonus_mode = ! $bonus_mode;
     $cmd = '';
 }
 elsif ($cmd eq 'im') {
@@ -2447,8 +2442,10 @@ if ($show_WordList) {
         }
     }
     else {
-        $donut_lexicon_bonus  = dlb_row('Donut:',   \@donut);
-        $donut_lexicon_bonus .= dlb_row('Lexicon:', \@lexicon);
+        $donut_lexicon_bonus  = dlb_row('Donut:',   \@donut)
+            unless $bonus_mode;
+        $donut_lexicon_bonus .= dlb_row('Lexicon:', \@lexicon)
+            unless $bonus_mode;
         $donut_lexicon_bonus .= dlb_row('Bonus:',   \@bonus);
         if ($donut_lexicon_bonus) {
             $donut_lexicon_bonus = "<p>" . table($donut_lexicon_bonus);
@@ -2631,6 +2628,9 @@ else {
     }
 }
 $found_words = "<div class=found_words>$found_words</div>";
+if ($bonus_mode) {
+    $found_words = '';
+}
 if (! $show_WordList) {
     $found_words = '';
 }
@@ -3562,6 +3562,9 @@ EOH
 
 my $status = $show_GraphicStatus? graphical_status()
             :                     "Score: $score $rank_image\n$disp_nhints";
+if ($bonus_mode) {
+    $status = '';
+}
 my $css = $mobile? 'mobile_': '';
 my $new_words_size = $mobile? 30: 40;
 my $enter_top  = 90 + ($show_Heading? 79: 0);
