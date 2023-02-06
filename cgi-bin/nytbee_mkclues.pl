@@ -124,7 +124,7 @@ print <<"EOH";
 <html>
 <head>
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
-<script src="$log/nytbee/js/nytbee.js"></script>
+<script src="$log/nytbee/js/nytbee1.js"></script>
 <script>
 var clues_for = $json;
 function cycle(w) {

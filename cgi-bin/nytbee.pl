@@ -3663,7 +3663,7 @@ $letter_styles
 }
 </style>
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_${css}style.css'/>
-<script src="$log/nytbee/js/nytbee.js"></script>
+<script src="$log/nytbee/js/nytbee1.js"></script>
 </head>
 <body onload='init(); $focus'>
 $heading

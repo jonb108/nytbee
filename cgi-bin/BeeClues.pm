@@ -96,7 +96,7 @@ body {
     font-weight: normal;
 }
 </style>
-<script src="$log/nytbee/js/nytbee.js"></script>
+<script src="$log/nytbee/js/nytbee1.js"></script>
 <script>
 function set_format(n) {
     document.getElementById('format').value = n;
