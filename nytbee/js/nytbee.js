@@ -70,11 +70,11 @@ function add_clues() {
     document.getElementById('add_clues').submit();
 }
 function define_tl(two_let) {
-    hnw.value = 'D' + two_let;
+    hnw.value = 'D+' + two_let;
     main.submit();
 }
 function define_ht(c, n) {
-    hnw.value = 'D' + c + n;
+    hnw.value = 'D+' + c + n;
     main.submit();
 }
 function def_word(event, word) {
