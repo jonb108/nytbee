@@ -349,7 +349,7 @@ if ($params{new_words} =~ m{\A \s* idk? \s+}xmsi) {
 #
 my %uuid_ip;
 tie %uuid_ip, 'DB_File', 'uuid_ip.dbm';
-$uuid_ip{$uuid} = $ENV{REMOTE_ADDR} . '|' . $ENV{HTTP_USER_AGENT};
+$uuid_ip{$uuid} = $ENV{REMOTE_ADDR};
 
 #
 # a 'screen name' for privacy - rather than using

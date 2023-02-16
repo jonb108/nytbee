@@ -161,7 +161,7 @@ for my $uid (keys %data) {
     my $href = $data{$uid};
     if (! exists $uid_location{$uid}) {
         for my $uuid (keys %uuid_ip) {
-            # this is inefficient but we don't put the full
+            # this is very inefficient but we don't put the full
             # uuid in the log... just 11 chars
             if ($uuid =~ m{\A $uid}xms) {
                 my $ip = $uuid_ip{$uuid};
@@ -280,6 +280,7 @@ sub show_data {
     my ($uid) = @_;
     my $href = $data{$uid};
     my $act = "https://logicalpoetry.com/cgi-bin/show_activity.pl/$ymd/$uid";
+    print "$uid => ";   # new
     if ($href->{country}) {
         print "<a class=green href=$act>$href->{country}</a>, $href->{state}, $href->{city}";
     }
