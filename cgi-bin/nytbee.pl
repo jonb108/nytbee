@@ -1854,7 +1854,19 @@ elsif ($cmd eq 'sl') {
 }
 elsif ($cmd eq 'al') {
     my @other = grep { !/[$seven]/ } 'a' .. 'z';
-    $message = "\U@other";
+    my @bonus = grep { m{[*]\z}xms } @found;
+    chop @bonus;    # the *
+    my $all = join '', @bonus;
+    $all =~ s{[$seven]}{}xmsg;
+    for my $o (@other) {
+        if (index($all, $o) >= 0) {
+            $message .= "<span class=green>\u$o</span>";
+        }
+        else {
+            $message .= uc $o;
+        }
+        $message .= ' ';
+    }
     $cmd = '';
 }
 elsif ($date !~ m{\A CP}xms && $cmd eq 'ac') {
@@ -2980,6 +2992,37 @@ elsif ($cmd eq 'abw') {
     }
     $cmd = '';
 }
+elsif ($cmd eq 'boa') {
+    $cmd = '';
+    my %bwords_with;
+    for my $l (grep { !/[$seven]/ } 'a' .. 'z') {
+        $bwords_with{$l} = [];
+    }
+    my @bonus = grep { m{[*]\z}xms } @found;
+    chop @bonus;    # the *
+    for my $bw (@bonus) {
+        my $x = $bw;
+        $x =~ s{[$seven]}{}xmsg;
+        $bw = ucfirst $bw;
+        $bw =~ s{([^$seven])}{<span class=red1>$1</span>}xmsgi;
+        push @{$bwords_with{substr($x, 0, 1)}}, $bw;
+    }
+    $message = "<table>\n";
+    my $boa_score = 0;
+    for my $l (sort keys %bwords_with) {
+        my @words = @{$bwords_with{$l}};
+        if (@words) {
+            ++$boa_score;
+        }
+        $message .= "<tr><td valign=top style='text-align: center'>\u$l&nbsp;</td>"
+                 . "<td class='lt mess'>"
+                 . (join ' ', @words)
+                 . '</td></tr>';
+    }
+    $message .= "</table>\n";
+    $message .= "<br>$boa_score";
+    $message = "<ul>$message</ul>";
+}
 elsif ($cmd eq 'ow') {
     $cmd = '';
     $message = 'These words were found only by you:<br><br><table>';
@@ -3267,15 +3310,29 @@ elsif ($hive == 1) {        # bee hive honeycomb
 </map>
 EOH
 sub click_td {
-    my $l = uc shift;
+    my ($l, $color) = @_;
+    $color = $color? 'green': '';
     # tried putting text-align: center in bonus_let style
     # didn't work 
-    return td({ style => 'text-align: center'}, qq!<span class='bonus_let cursor_black' onclick="add_redlet('$l')">$l</span>!);
+    # this is messy.  better to use a class instead of a style...
+    # it works, yes, but clean it up.
+    return td({ style => "text-align: center;"},
+               "<span class='bonus_let cursor_black $color'"
+             . qq! onclick="add_redlet('$l')">$l</span>!);
 }
         if ($bonus_mode) {
             my @blets = grep { !/[$seven]/ } 'a' .. 'z';
-            my $row1 = Tr(map { click_td($_) } @blets[0 .. 9]);
-            my $row2 = Tr(map { click_td($_) } @blets[10 .. 18]);
+            # determine which additional letters have
+            # been used in a Bonus word
+            my %used_in_bonus;
+            for my $b (grep { m{[*]\z}xms } @found) {
+                $b =~ s{[$seven]}{}xmsg;
+                $used_in_bonus{substr($b, 0, 1)}++;
+            }
+            my $row1 = Tr(map { click_td(uc, $used_in_bonus{$_}) }
+                          @blets[0 .. 9]);
+            my $row2 = Tr(map { click_td(uc, $used_in_bonus{$_}) }
+                          @blets[10 .. 18]);
             my $bonus_table = <<"EOH";
 <table cellpadding=0 cellspacing=10>
 $row1
