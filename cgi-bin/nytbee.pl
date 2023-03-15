@@ -2998,7 +2998,7 @@ elsif ($cmd eq 'boa') {
     for my $l (grep { !/[$seven]/ } 'a' .. 'z') {
         $bwords_with{$l} = [];
     }
-    my @bonus = grep { m{[*]\z}xms } @found;
+    my @bonus = sort grep { m{[*]\z}xms } @found;
     chop @bonus;    # the *
     for my $bw (@bonus) {
         my $x = $bw;
@@ -3022,6 +3022,23 @@ elsif ($cmd eq 'boa') {
     $message .= "</table>\n";
     $message .= "<br>$boa_score";
     $message = "<ul>$message</ul>";
+}
+# an undocumented cheat for Donut words
+elsif ($cmd eq 'ddd') {
+    my $donut_letters = $seven;
+    $donut_letters =~ s{$center}{}xms;
+    $cmd = '';
+    $message = join '',
+               map { "$_<br>\n" }
+               `egrep -i '^[$donut_letters]{4,}\$' osx_usd_words-47.txt`;
+}
+# an undocumented cheat for Bonus words
+elsif ($cmd =~ m{\Abb([a-z]\z)}xmsi) {
+    my $let = $1;
+    $cmd = '';
+    $message = join '',
+               map { "$_<br>\n" }
+               `egrep -i '^[$seven$let]{6,}\$' osx_usd_words-48.txt | grep $let`;
 }
 elsif ($cmd eq 'ow') {
     $cmd = '';
