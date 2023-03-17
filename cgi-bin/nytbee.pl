@@ -3024,7 +3024,7 @@ elsif ($cmd eq 'boa') {
     $message = "<ul>$message</ul>";
 }
 # an undocumented cheat for Donut words
-elsif ($cmd eq 'ddd') {
+elsif ($cmd eq 'xdd') {
     my $donut_letters = $seven;
     $donut_letters =~ s{$center}{}xms;
     $cmd = '';
