@@ -3033,7 +3033,7 @@ elsif ($cmd eq 'xdd') {
                `egrep -i '^[$donut_letters]{4,}\$' osx_usd_words-47.txt`;
 }
 # an undocumented cheat for Bonus words
-elsif ($cmd =~ m{\Abb([a-z]\z)}xmsi) {
+elsif ($cmd =~ m{\Abb([a-z])\z}xmsi) {
     my $let = $1;
     $cmd = '';
     $message = join '',
