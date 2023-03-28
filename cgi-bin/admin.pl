@@ -280,7 +280,7 @@ sub show_data {
     my ($uid) = @_;
     my $href = $data{$uid};
     my $act = "https://logicalpoetry.com/cgi-bin/show_activity.pl/$ymd/$uid";
-    print "$uid => ";   # new
+    #print "$uid => ";   # new
     if ($href->{country}) {
         print "<a class=green href=$act>$href->{country}</a>, $href->{state}, $href->{city}";
     }

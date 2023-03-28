@@ -1852,23 +1852,6 @@ elsif ($cmd eq 'sl') {
     $same_letters = 1;
     $cmd = '';
 }
-elsif ($cmd eq 'al') {
-    my @other = grep { !/[$seven]/ } 'a' .. 'z';
-    my @bonus = grep { m{[*]\z}xms } @found;
-    chop @bonus;    # the *
-    my $all = join '', @bonus;
-    $all =~ s{[$seven]}{}xmsg;
-    for my $o (@other) {
-        if (index($all, $o) >= 0) {
-            $message .= "<span class=green>\u$o</span>";
-        }
-        else {
-            $message .= uc $o;
-        }
-        $message .= ' ';
-    }
-    $cmd = '';
-}
 elsif ($date !~ m{\A CP}xms && $cmd eq 'ac') {
     if ($date < '20221222') {
         $message = 'Activity monitoring began on December 22, 2022.';
@@ -2461,6 +2444,24 @@ if ($show_WordList) {
         $donut_lexicon_bonus .= dlb_row('Bonus:',   \@bonus);
         if ($donut_lexicon_bonus) {
             $donut_lexicon_bonus = "<p>" . table($donut_lexicon_bonus);
+            if ($bonus_mode && ! $mobile) {
+                my @other = grep { !/[$seven]/ } 'a' .. 'z';
+                my @bonus = grep { m{[*]\z}xms } @found;
+                chop @bonus;    # the *
+                my $all = join '', @bonus;
+                $all =~ s{[$seven]}{}xmsg;
+                my $s;
+                for my $o (@other) {
+                    if (index($all, $o) >= 0) {
+                        $s .= "<span class=green>\u$o</span>";
+                    }
+                    else {
+                        $s .= uc $o;
+                    }
+                    $s .= ' ';
+                }
+                $donut_lexicon_bonus = "$s<p>$donut_lexicon_bonus";    
+            }
         }
     }
 }
