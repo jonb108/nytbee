@@ -2443,25 +2443,26 @@ if ($show_WordList) {
             unless $bonus_mode;
         $donut_lexicon_bonus .= dlb_row('Bonus:',   \@bonus);
         if ($donut_lexicon_bonus) {
-            $donut_lexicon_bonus = "<p>" . table($donut_lexicon_bonus);
-            if ($bonus_mode && ! $mobile) {
-                my @other = grep { !/[$seven]/ } 'a' .. 'z';
-                my @bonus = grep { m{[*]\z}xms } @found;
-                chop @bonus;    # the *
-                my $all = join '', @bonus;
-                $all =~ s{[$seven]}{}xmsg;
-                my $s;
-                for my $o (@other) {
-                    if (index($all, $o) >= 0) {
-                        $s .= "<span class=green>\u$o</span>";
-                    }
-                    else {
-                        $s .= uc $o;
-                    }
-                    $s .= ' ';
+            # convert rows to a table...
+            $donut_lexicon_bonus = '<p>' . table($donut_lexicon_bonus);
+        }
+        if ($bonus_mode && ! $mobile) {
+            my @other = grep { !/[$seven]/ } 'a' .. 'z';
+            my @bonus = grep { m{[*]\z}xms } @found;
+            chop @bonus;    # the *
+            my $all = join '', @bonus;
+            $all =~ s{[$seven]}{}xmsg;
+            my $lets = '<p>';
+            for my $o (@other) {
+                if (index($all, $o) >= 0) {
+                    $lets .= "<span class=green>\u$o</span>";
                 }
-                $donut_lexicon_bonus = "$s<p>$donut_lexicon_bonus";    
+                else {
+                    $lets .= uc $o;
+                }
+                $lets .= ' ';
             }
+            $donut_lexicon_bonus = "$lets$donut_lexicon_bonus";
         }
     }
 }
@@ -2909,7 +2910,7 @@ elsif ($cmd =~ m{\A cw \s* (\d*) \z}xms) {
         # search the day's log and extra word files to identify
         # the top 5 (10?) locations in Donut, Lexicon, and Bonus words.
         # The C stands for Community or Competitive.
-        $message .= `$cgi_dir/nytbee_cw.pl $date $max`;
+        $message .= `$cgi_dir/nytbee_cw.pl $date $max $seven`;
     }
     $cmd = '';
 }

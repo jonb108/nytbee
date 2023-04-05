@@ -491,6 +491,9 @@ Searching for these &#8220;Extra&#8221; words is, for me,
 a more creative and fun
 way to spend WordPlay time that is much more diverting than simply
 finding hidden words that someone else has chosen. &#128540;
+The <span class=cmd>CW</span> command will show you how other
+people are doing with the Extra words and introduces a bit of
+<a href=#competition>fun competition</a>.
 Another little game is to try to maximize your <a href=#boa>BOA Score</a>.
 <li>A different kind of activity is to find all the words in today&#8217;s puzzle
 (however you wish, even with the <span class=cmd>G YP</span> command &#128556;) and
@@ -769,6 +772,8 @@ Furthermore, as a &#8220;very big cheat&#8221; you could select, copy, and paste
 Two commands that show how you are doing with respect to others:
 <p>
 <table cellpadding=5>
+<tr><th class='cmd rt'>OW</th><td>This tells you which
+Extra words were found <b><span class=cmd>O</span>nly By You</b>.</td></tr>
 <tr><th class='cmd rt' style="width: 15mm">CW</th><td>Community Words.
 Show the <a href=#screen_names>screen names</a>
 of the 5 people who found the most
@@ -779,9 +784,9 @@ Note that this command only shows the counts of words that were found <b>on</b>
 the day the puzzle was released.  This command <i>can</i> be
 entered throughout the day of the puzzle.
 <span class=cmd>CW</span> introduces
-a fun competitive drive to try to find more and more words.</td></tr>
-<tr><th class='cmd rt'>OW</th><td>This tells you which
-Extra words were found <b><span class=cmd>O</span>nly By You</b>.</td></tr>
+a fun competitive drive to try to find more and more words.
+Note that CW also shows OW and BOA scores.
+</td></tr>
 </table>
 <a name=archival_and_community></a>
 <h2>Archival and Community Puzzles
@@ -1138,25 +1143,24 @@ Again, doesn't use NYT words.  It also generates new games.
 <p>
 <a target=nytbee href='https://seanrayment.me/projects/nytimes-spelling-bee-clone/'>Cloning the NYT Bee</a> Written in node.js and other modern tools.  Only two games to play.  No hint table.  Choose &#8220;live demo&#8221; at the bottom.
 <p>
+<a target=nytbee href='https://bumblewords.com'>bumblewords.com</a> A Javascript game.  Clean.  Not NYT Puzzles.  Cannot type - must click/tap.  It has a leaderboard.
+<p>
 <a target=nytbee href='https://www.youtube.com/watch?v=E3qIxYZtqbw'>A sequence of 7 videos</a> The functionality of the NYT Spelling Bee is (sort of) replicated in Javascript/HTML/CSS.  The entire process is explained in great (<i>excruciating</i>) detail.
 <h4>A Dynamic Hints Table</h4>
-<a target=nytbee href='https://worker-bee.io'>worker-bee.io</a> A dynamic Hint Table in Javascript - pretty but somewhat
-fragile as it doesn&#8217;t have the full word list.
-This site was very popular with the HiveMind.  On July 4, 2022 it was
-shutdown because the developer (Karen Lao) had received a
-cease-and-desist letter (email) from the New York Times.  The NYT claimed 
-that she had violated their copyright, trademark, and intellectual property.
-This raises all kinds of questions!
+<a target=nytbee href='https://worker-bee.io'>worker-bee.io</a> No longer active. This was a dynamic Hint Table in Javascript - pretty but somewhat
+fragile as it didn&#8217;t have the full word list.
 <p>
-<a target=nytbee href='https://beesquared.ga'>beesquared.ga</a> Yet another dynamic Hint Table in Javascript.  They tried to address the issues that caused the NYT to shutdown worker-bee.io.   Time will tell what its (and this site&#8217;s!) fate will be.
+<a target=nytbee href='https://beesquared.ga'>beesquared.ga</a> Yet another dynamic Hint Table in Javascript similar to worker-bee.io.
+<p>
+<a target=_blank href='https://spellingbee.tips/hints'>Spelling Bee Tips</a> Clues and definitions and incremental revealing.  Can paste words from NYT puzzle.  Pretty fancy but awkward to use.  Where do the clues and definitions come from?
+<p>
+<a target=_blank href='https://apps.apple.com/us/app/honeycomb-hints/id6446508329'>Honeycomb Hints</a> An iOS app.  You upload a screenshot of your found words and the app extracts them and updates the Hint Table.  How are the words deduced from the image?  OCR?  Impressive - but troublesome to use.  It doesn't verify the words are in the "allowed list" or are even qualified.
 <p>
 <a target=nytbee href='https://spelling-bee-assistant.app/'>Spelling Bee Assistant</a> An extension for the Chrome browser that interacts with the NY Times Spelling Bee site.  Provides dynamic counts.  No hints or definitions.
 <p>
 <a target=nytbee href='http://ljkrakauer.com/LJK/20s/spellingbee.htm'>Excel Spreadsheet for the Hints Table</a> This updates the hint table as words are found and pasted in.
 <p>
 <a target=nytbee href='https://www.thegamebureau.com/beesheet'>Spelling Bee Hint Worksheet</a> A kind of spreadsheet you print out and, with a pen or pencil, fill in the words you have found.  This is further proof that there is an unmet need for the grid to be dynamic.
-<p>
-<a target=nytbee href='https://bumblewords.com'>bumblewords.com</a> A Javascript game.  Clean.  Not NYT Puzzles.  Cannot type - must click/tap.  It has a leaderboard.
 <h4>Class Projects</h4>
 <a target=nytbee href='rpi_hw.pdf'>Rensselaer Polytechnic Institute</a>
 Course assignment for CSCI-1200 Data Structures.
@@ -1205,8 +1209,8 @@ They have definitions &ndash; grabbed from somewhere &ndash; but not one for BIK
 <li><a target=nytbee href='https://walkthroughs.net/nyt-spelling-bee-feb-13-2022-answers/'>walkthroughs.net</a> Just the answers.  It started on 1/28/22.
 </ol>
 <h4>Code <i>Stolen</i> from the NY Times &#128127; &#128561;</h4>
-<a target=nytbee href='https://nytimes-spellingbee.com'>nytimes-spellingbee.com</a> You can play it.  The interface is nearly <i>identical</i> to the NY Times - but no hint table.
-It is even &#8220;branded&#8221; with the NYT logo.  What?
+<a target=nytbee href='https://nytimes-spellingbee.com'>nytimes-spellingbee.com</a> No longer active. You could play it.  The interface was nearly <i>identical</i> to the NY Times - but no hint table.
+It was even &#8220;branded&#8221; with the NYT logo.  What?
 Yikes!  They <b>stole</b> the Javascript/CSS/HTML from nytimes.com and embedded
 it in an iframe.  How did they get around the need to subscribe?
 Clever, but evil somehow.
@@ -1296,8 +1300,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1785 puzzles with
-a total of 9440 different words!
+1793 puzzles with
+a total of 9456 different words!
 <p>
 Which puzzles from the large archive to play?
 You can get one at random with the <span class=cmd>NR</span> command or you could

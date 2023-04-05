@@ -67,7 +67,7 @@ while (my $line = <$in>) {
 }
 close $in;
 print "<h2>More words (qualified but some are rare and esoteric):</h2>\n";
-print "<div class=description2>Surprisingly, there are many common ordinary words that have not yet been used in any of the NYT puzzles.</div><p>\n";
+print "<div class=description2>Surprisingly, there are many common ordinary words that have not yet been used in any of the NYT puzzles.  This is likely due to the letter S not being allowed in NYT puzzles or the prohibition against E and R appearing together.</div><p>\n";
 open my $in2, '<', 'other-words.txt';
 LINE:
 while (my $line = <$in2>) {

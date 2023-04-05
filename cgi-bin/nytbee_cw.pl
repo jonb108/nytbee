@@ -11,23 +11,33 @@ use Date::Simple qw/
 /;
 use BeeUtil qw/
     my_today
+    JON
 /;
 my $today = my_today();
 my $date = shift;
 my $date_obj = date($date);
-my $max = shift || 5;
+my $max = shift;
+my $seven = shift;
 my %words;  # hash of hash
-            # keys: donut/lexicon/bonus, word = value: 1
+            # keys: donut/lexicon/bonus, word
+            # value: count of how many times the word was found
+            #       Note - if someone deletes a word
+            #              with the minus (- dash) prefix
+            #              and then re-adds the word
+            #              the count will be off...
+            #              this will be rare
+ 
 my %tally;  # hash of hash of hash
-            # keys: uid, donut/lexicon/bonus, word = value: 1
+            # keys: uid, donut/lexicon/bonus, word
+            # value: 1
 my @types = qw/ donut lexicon bonus /;
-for my $e (@types) {
-    open my $ef, '<', "$e/$date";
-    while (my $w = <$ef>) {
+for my $t (@types) {
+    open my $tf, '<', "$t/$date";
+    while (my $w = <$tf>) {
         chomp $w;
-        $words{$e}{$w} = 1;
+        ++$words{$t}{$w};
     }
-    close $ef;
+    close $tf;
 }
 open my $log, '<', "beelog/$date";
 LINE:
@@ -50,20 +60,47 @@ while (my $line = <$log>) {
         }
     }
 }
+# we have all the information we need
+# about who found what words.
+# next figure out BOA values for each person
+my %boa_score;   # key: uuid
+                 # value: boa score
+for my $u (keys %tally) {
+    my %boa_lets;
+    for my $b (keys %{$tally{$u}{bonus}}) {
+        $b =~ s{[$seven]}{}xmsg;
+        $boa_lets{substr($b, 0, 1)}++;
+    }
+    $boa_score{$u} = scalar(keys %boa_lets);
+}
+# and OW values for each
+my %only;   # keys: uuid, type
+            # value: ow score for the person for the type
+for my $u (keys %tally) {
+    for my $t (@types) {
+        for my $w (keys %{$tally{$u}{$t}}) {
+            if ($words{$t}{$w} == 1) {
+if ($u eq 'sahadev108!') { JON "$t $w"}
+                $only{$u}{$t}++;
+            }
+        }
+    }
+}
 my @arr = qw/
     bonus   1
     donut   2
     lexicon 3
 /;
 my %order = @arr;
-# how to get key-value from a hash?
 my %name = reverse @arr;
+    # this hash happens to be one-to-one...
+    # so it is reversible
 my @counts;
 for my $u (keys %tally) {
-    for my $e (@types) {
-        my $n = scalar keys %{$tally{$u}{$e}};
+    for my $t (@types) {
+        my $n = scalar keys %{$tally{$u}{$t}};
         if ($n) {
-            push @counts, [ $u, $order{$e}, $n ];
+            push @counts, [ $u, $order{$t}, $n ];
         }
     }
 }
@@ -83,9 +120,10 @@ print <<'EOH';
 }
 </style>
 EOH
-if ($date_obj ne today()) {
+if ($date_obj ne $today) {
     print "Final results for " . $date_obj->format("%D") . ":<p>\n";
 }
+my $sp = '&nbsp;' x 2;
 print "<table cellpadding=0>\n";
 for my $aref (sort {
                   $a->[1] <=> $b->[1]
@@ -100,11 +138,24 @@ for my $aref (sort {
         print "<tr><td colspan=3 class='lt head'>"
             . ucfirst $name{$type}
             . "</td></tr>\n";
+        if ($type == 1) {
+            print "<tr>"
+                . ("<td>&nbsp;</td>" x 2)
+                . "<td>#</td>"
+                . "<td>${sp}ow</td>"
+                . "<td>${sp}boa</td>"
+                . "</tr>\n";
+        }
         $prev = $type;
     }
     ++$tot{$type};
     if ($tot{$type} <= $max) {
-        print "<tr><td>&nbsp;</td><td class='lt entry'>$uuid_screen_name{$uid}</td><td class=entry>&nbsp;&nbsp;$n</td></tr>\n";
+        print "<tr><td>&nbsp;</td><td class='lt entry'>$uuid_screen_name{$uid}</td><td class=entry>$sp$n</td>";
+        print "<td class=entry>$only{$uid}{$name{$type}}</td>";
+        if ($type == 1) {
+            print "<td class=entry>$boa_score{$uid}</td>";
+        }
+        print "</tr>\n";
     }
 }
 print "</table>\n";
