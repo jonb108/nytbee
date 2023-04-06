@@ -55,6 +55,9 @@ show_activity.pl \
 ipstack.txt \
 definitions.txt \
 messages \
+mkforum \
+show_forum.pl \
+get_post.pl \
 status.pl
 
 # these will not change
