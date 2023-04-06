@@ -634,6 +634,8 @@ my $show_BingoTable = exists $params{show_BingoTable}?
                              $params{show_BingoTable}: 0;
 my $bonus_mode      = exists $params{bonus_mode}?
                              $params{bonus_mode}: 0;
+my $forum_mode      = exists $params{forum_mode}?
+                             $params{forum_mode}: 0;
 my $show_RankImage  = exists $params{show_RankImage}?
                              $params{show_RankImage}: 1;
 my $show_ZeroRowCol = exists $params{show_ZeroRowCol}?
@@ -668,6 +670,14 @@ if (! $date) {
     # today
     $date = $today->as_d8();
     $new_puzzle = 1;
+}
+
+if (my $post = $params{forum_post}) {
+    $post =~ s{\A \s*|\s* \z}{}xmsg;
+    $post =~ s{\n\n}{<p>}xmsg;
+    $post =~ s{\n}{<br>}xmsg;
+    $post =~ s{"}{&#34;}xmsg;
+    system(qq!$cgi_dir/get_post.pl $date "$screen_name" '$post'!);
 }
 
 # Remove a set of current puzzles.
@@ -1394,6 +1404,10 @@ elsif ($cmd eq 'bn') {
     $bonus_mode = ! $bonus_mode;
     $cmd = '';
 }
+elsif ($cmd eq 'f') {
+    $forum_mode = ! $forum_mode;
+    $cmd = '';
+}
 elsif ($cmd eq 'im') {
     $show_RankImage = ! $show_RankImage;
     $cmd = '';
@@ -1682,7 +1696,7 @@ elsif ($cmd eq 'cl') {
     }
     $cmd = '';
 }
-elsif ($cmd eq 'f') {
+elsif ($cmd eq 'f7') {
     # look for same 7
     my %is_in_list = map { $_->[0] => 1 } my_puzzles();
     my @puz;
@@ -3675,6 +3689,15 @@ my $lets_top   = 135 + ($show_Heading? 79: 0);
 my $bonus_lets_top   = 185 + ($show_Heading? 79: 0);
 my $delete_top = 190 + ($show_Heading? 79: 0);
 my $help_top = 190 + ($show_Heading? 79: 0);
+my $forum_html = '';
+if ($forum_mode) {
+    $forum_html = `$cgi_dir/show_forum.pl $date`;
+    $bingo_table =
+    $found_words =
+    $donut_lexicon_bonus =
+    $status =
+    $hint_table_list = '';
+}
 print <<"EOH";
 <html>
 <head>
@@ -3753,6 +3776,7 @@ $heading
 <input type=hidden name=show_WordList value=$show_WordList>
 <input type=hidden name=show_BingoTable value=$show_BingoTable>
 <input type=hidden name=bonus_mode value=$bonus_mode>
+<input type=hidden name=forum_mode value=$forum_mode>
 <input type=hidden name=show_RankImage value=$show_RankImage>
 <input type=hidden name=show_ZeroRowCol value=$show_ZeroRowCol>
 <input type=hidden name=show_GraphicStatus value=$show_GraphicStatus>
@@ -3765,15 +3789,17 @@ $letters
        id=new_words
        name=new_words
        autocomplete=off
-><br>
-</form>
+>
+<p>
 $bingo_table
 $found_words
 $donut_lexicon_bonus
 <p>
 $status$hint_table_list
-$show_clue_form$add_clues_form
+$forum_html
+</form>
 </body>
+$show_clue_form$add_clues_form
 <script src="$log/nytbee/js/fastclick.js"></script>
 <script>
 if ('addEventListener' in document) {

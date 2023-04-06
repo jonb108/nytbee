@@ -1,0 +1,10 @@
+drop table if exists forum;
+create table forum (
+    id int(11) primary key auto_increment,
+    m_time char(4),
+    m_date char(8),
+    p_date char(8),
+    screen_name varchar(50),
+    message text,
+    flagged char(1)
+);
