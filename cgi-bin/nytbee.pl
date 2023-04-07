@@ -3405,7 +3405,7 @@ EOH
 <span class='define cursor_black' onclick="rand_def();">Define</span>
 <span class=lets id=lets></span>
 <span class='delete cursor_black' onclick="del_let();">Delete</span>
-<span class='helplink cursor_black'><a class='cursor_black' target=_blank href='$log/nytbee/help.html#toc'">Help</a>&nbsp;&nbsp;&nbsp;&nbsp;<a class='cursor_black' target=_blank href='$log/nytbee/cmd_list.pdf'>Cmds</a></span>
+<span class='helplink cursor_black'><a class='cursor_black' target=_blank href='$log/nytbee/help.html#toc'">Help</a>&nbsp;&nbsp;&nbsp;&nbsp;<a class='cursor_black' onclick='forum();'>Forum</a></span>
 EOH
         }
     }
@@ -3780,7 +3780,7 @@ $letter_styles
 }
 </style>
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_${css}style.css'/>
-<script src="$log/nytbee/js/nytbee1.js"></script>
+<script src="$log/nytbee/js/nytbee2.js"></script>
 </head>
 <body onload='init(); $focus'>
 $heading

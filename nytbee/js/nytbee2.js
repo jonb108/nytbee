@@ -42,6 +42,10 @@ function rand_def() {
     hnw.value = 'D+R';
     main.submit();
 }
+function forum() {
+    hnw.value = 'F';
+    main.submit();
+}
 function standings() {
     hnw.value = 'CW';
     main.submit();
