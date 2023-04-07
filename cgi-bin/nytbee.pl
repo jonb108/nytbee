@@ -685,7 +685,7 @@ if (my $post = $params{forum_post}) {
     $post =~ s{\n\n}{<p>}xmsg;
     $post =~ s{\n}{<br>}xmsg;
     $post =~ s{"}{&#34;}xmsg;
-    system(qq!$cgi_dir/get_post.pl $date "$screen_name" '$post'!);
+    system(qq!$cgi_dir/get_post.pl $date "$screen_name" "$post"!);
 }
 
 # Remove a set of current puzzles.

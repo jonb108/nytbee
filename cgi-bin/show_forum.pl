@@ -85,7 +85,7 @@ while (my $href = $get_msgs_sth->fetchrow_hashref()) {
     my $msg = $href->{message};
     $msg =~ s{(https?://\S+)}{<a target=_blank href='$1'>$1</a>}xmsg;
     my $flag = $href->{flagged}? "<span class=flagged>Flagged</span>"
-              :                  "<span id=msg$id class=flag onclick='flag($id);'>Flag</span>";
+              :                  "<span id=msg$id class='flag cursor_black' onclick='flag($id);'>Flag</span>";
     print <<"EOH";
 <span class=stamp>$href->{screen_name}&nbsp;&nbsp;$t</span> $flag<br>
 $msg
