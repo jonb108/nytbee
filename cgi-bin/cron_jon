@@ -1,2 +1,4 @@
+SHELL=/bin/sh
 0 1 * * * cd /home4/logical9/www/cgi-bin;./get_nytbee.pl
-0,10,20,30,40,50 * * * * cd /home4/logical9/www/cgi-bin;./nytbee_time.pl
+* * * * * cd /home4/logical9/www/cgi-bin; date >/tmp/jon
+0,3,10,18,20,26,30,40,50 * * * * cd /home4/logical9/www/cgi-bin;./nytbee_time.pl >/tmp/jon 2>&1

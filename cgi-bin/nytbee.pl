@@ -650,6 +650,8 @@ my $show_ZeroRowCol = exists $params{show_ZeroRowCol}?
 my $show_GraphicStatus = exists $params{show_GraphicStatus}?
                              $params{show_GraphicStatus}: 0;
 
+my $forum_post_to_edit = 0;
+
 #
 # SO ... what puzzle is current?
 # we need to set the variable $date.
@@ -679,13 +681,16 @@ if (! $date) {
     $new_puzzle = 1;
 }
 
-if (my $post = $params{forum_post}) {
+my $post = $params{forum_post};
+if ($cmd eq '' && $post) {
     check_screen_name();
     $post =~ s{\A \s*|\s* \z}{}xmsg;
     $post =~ s{\n\n}{<p>}xmsg;
     $post =~ s{\n}{<br>}xmsg;
     $post =~ s{"}{&#34;}xmsg;
-    system(qq!$cgi_dir/get_post.pl $date "$screen_name" "$post"!);
+    if ($post) {    # is anything there?
+        system(qq!$cgi_dir/get_post.pl $date "$screen_name" "$post"!);
+    }
 }
 
 # Remove a set of current puzzles.
@@ -1414,6 +1419,14 @@ elsif ($cmd eq 'bt') {
 }
 elsif ($cmd eq 'bn') {
     $bonus_mode = ! $bonus_mode;
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A fx \s* (\d+) \z}xms) {
+    system("$cgi_dir/del_post.pl $1 '$screen_name'");
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A fe \s* (\d+) \z}xms) {
+    $forum_post_to_edit = $1;
     $cmd = '';
 }
 elsif ($cmd eq 'f') {
@@ -2819,9 +2832,6 @@ EOH
     else {
         if (! $show_Heading) {
             $message .= "<br>$show_date";
-            if (my $nm = $num_msgs{$date}) {
-                $message .= " <span class=red>$nm</span>";
-            }
         }
         load_nyt_clues;
         if (%nyt_cluer_name_of) {
@@ -3291,7 +3301,7 @@ my $add_clues_form = '';
 if ($date =~ m{\A \d}xms) {
     my $add_edit = index($puzzle_has_clues{$date}, $uuid) >= 0? 'Edit': 'Add';
     $create_add
-        .= "<br><span class=link onclick='add_clues();'>$add_edit Clues</span>";
+        .= "&nbsp;&nbsp;<span class=link onclick='add_clues();'>$add_edit Clues</span>";
     $add_clues_form = <<"EOH";
 <form target=_blank
       id=add_clues
@@ -3309,13 +3319,13 @@ EOH
 
 my $heading = $show_Heading? <<"EOH": '';
 <div class=float-child1>
-    <a target=_blank onclick="set_focus();" href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date$clues_are_present$num_msgs
+    <a target=_blank onclick="set_focus();" href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date$clues_are_present
 </div>
 <div class=float-child2>
      <img width=53 src=$log/nytbee/pics/bee-logo.png onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
 </div>
 <div class=float-child3>
-    <span class=help><a target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span>&nbsp;&nbsp;&nbsp;<span class=help><a target=_blank href='$log/nytbee/cmd_list.pdf'>Cmds</a><br><span class=create_add>$create_add</span>
+    <div style="text-align: center"><span class=help><a target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span>&nbsp;&nbsp;<span class=help><a target=_blank href='$log/nytbee/cmd_list.pdf'>Cmds</a><br><span class=create_add>$create_add</span><br><a class=cursor onclick="forum();">Forum</a> $num_msgs</div>
 </div>
 <br><br>
 EOH
@@ -3405,7 +3415,7 @@ EOH
 <span class='define cursor_black' onclick="rand_def();">Define</span>
 <span class=lets id=lets></span>
 <span class='delete cursor_black' onclick="del_let();">Delete</span>
-<span class='helplink cursor_black'><a class='cursor_black' target=_blank href='$log/nytbee/help.html#toc'">Help</a>&nbsp;&nbsp;&nbsp;&nbsp;<a class='cursor_black' onclick='forum();'>Forum</a></span>
+<span class='helplink cursor_black'><a class='cursor_black' target=_blank href='$log/nytbee/help.html#toc'">Help</a>&nbsp;&nbsp;&nbsp;&nbsp;<a class='cursor_black' onclick='forum();'>Forum</a>$num_msgs</span>
 EOH
         }
     }
@@ -3709,7 +3719,7 @@ my $delete_top = 190 + ($show_Heading? 79: 0);
 my $help_top = 190 + ($show_Heading? 79: 0);
 my $forum_html = '';
 if ($forum_mode) {
-    $forum_html = `$cgi_dir/show_forum.pl $date`;
+    $forum_html = `$cgi_dir/show_forum.pl $date "$screen_name" $forum_post_to_edit`;
     $bingo_table =
     $found_words =
     $donut_lexicon_bonus =

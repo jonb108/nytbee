@@ -139,3 +139,13 @@ function popup_define(word, height, width) {
     newwin.moveTo(800, 0);
     document.getElementById(word + '_clue').focus();
 }
+function del_post(i) {
+    if (confirm('Deleting your post. Are you sure?')) {
+        hnw.value = 'FX' + i;
+        main.submit();
+    }
+}
+function edit_post(i) {
+    hnw.value = 'FE' + i;
+    main.submit();
+}

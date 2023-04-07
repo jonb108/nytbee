@@ -135,22 +135,22 @@ for my $aref (sort {
 ) {
     my ($uid, $type, $n) = @$aref;
     if ($type ne $prev) {
-        print "<tr><td colspan=3 class='lt head'>"
+        my $colspan = ($type != 1)? 3: 2;
+        print "<tr><td colspan=$colspan class='lt head'>"
             . ucfirst $name{$type}
-            . "</td></tr>\n";
+            . "</td>";
         if ($type == 1) {
-            print "<tr>"
-                . ("<td>&nbsp;</td>" x 2)
-                . "<td>#</td>"
+            print "<td>#</td>"
                 . "<td>${sp}ow</td>"
                 . "<td>${sp}boa</td>"
-                . "</tr>\n";
+                ;
         }
+        print "</tr>\n";
         $prev = $type;
     }
     ++$tot{$type};
     if ($tot{$type} <= $max) {
-        print "<tr><td>&nbsp;</td><td class='lt entry'>$uuid_screen_name{$uid}</td><td class=entry>$sp$n</td>";
+        print "<tr><td>&nbsp;&nbsp;</td><td class='lt entry'>$uuid_screen_name{$uid}</td><td class=entry>$sp$n</td>";
         print "<td class=entry>$only{$uid}{$name{$type}}</td>";
         if ($type == 1) {
             print "<td class=entry>$boa_score{$uid}</td>";

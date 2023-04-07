@@ -6,6 +6,7 @@ use Bee_DBH qw/
 /;
 use BeeUtil qw/
     $log
+    $cgi_dir
 /;
 use Time::Simple qw/
     get_time
@@ -13,8 +14,27 @@ use Time::Simple qw/
 use Date::Simple qw/
     date
 /;
-my $p_date = shift;
-print <<'EOH';
+my ($p_date, $screen_name, $post_to_edit) = @ARGV;
+my $post_text = '';
+if ($post_to_edit) {
+    my $get_sth = $dbh->prepare(<<"EOS");
+
+        SELECT *
+          FROM forum
+         WHERE id = ?
+
+EOS
+    $get_sth->execute($post_to_edit);
+    my $href = $get_sth->fetchrow_hashref();
+    if ($href && $href->{screen_name} eq $screen_name) {
+        system(qq!$cgi_dir/del_post.pl $post_to_edit "$screen_name"!);
+        $post_text = $href->{message};
+        $post_text =~ s{<br>}{\n}xmsg;
+    }
+}
+my $pics = '../nytbee/pics';
+my $height = 'height=20';
+print <<"EOH";
 <script>
 // prepare for an Ajax call:
 var xmlhttp = false;
@@ -29,7 +49,7 @@ else
 function getIt() {
     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
         var resp = xmlhttp.responseText;
-        document.getElementById(resp).innerHTML = '<span class=red>Flagged</span>';
+        document.getElementById(resp).innerHTML = '<img src=$pics/redflag.png $height>';
     }
 }
 
@@ -53,19 +73,16 @@ function flag(i) {
 }
 .flag {
     color: #dddddd;
-    float: right;
 }
 .flagged {
     color: red;
-    float: right;
 }
 .stamp {
     color: #999999;
 }
 </style>
 Please share:<br>
-<textarea rows=3 cols=40 name=forum_post>
-</textarea><br>
+<textarea rows=3 cols=40 name=forum_post id=forum_post>$post_text</textarea><br>
 <button style="font-size: 14pt">Submit</button>
 <div class=post>
 EOH
@@ -84,13 +101,21 @@ while (my $href = $get_msgs_sth->fetchrow_hashref()) {
     my $id = $href->{id};
     my $msg = $href->{message};
     $msg =~ s{(https?://\S+)}{<a target=_blank href='$1'>$1</a>}xmsg;
-    my $flag = $href->{flagged}? "<span class=flagged>Flagged</span>"
-              :                  "<span id=msg$id class='flag cursor_black' onclick='flag($id);'>Flag</span>";
+    my $flag = $href->{flagged}? "<span class=flagged><img src=$pics/redflag.png $height></span>"
+              :                  "<span id=msg$id class='cursor_black flag' onclick='flag($id);'><img src=$pics/flag.png $height></span>";
+    my ($e, $x) = ('', '');
+    if ($href->{screen_name} eq $screen_name) {
+        $e = "<span class=cursor_black onclick='edit_post($href->{id});'><img src=$pics/pencil.png $height></span> ";
+        $x = "<span class=cursor_black onclick='del_post($href->{id});'><img src=../nytbee/pics/trashcan.png height=20></span> ";
+    }
     print <<"EOH";
-<span class=stamp>$href->{screen_name}&nbsp;&nbsp;$t</span> $flag<br>
+<span class=stamp>$href->{screen_name}&nbsp;&nbsp;$t</span> <span style='float: right'>$e$x$flag</span><br>
 $msg
 <br>
 <hr class="hr">
 EOH
 }
 print "</div>\n";
+if ($post_text) {
+    print "<script>setTimeout(() => { document.getElementById('forum_post').focus(); }, 20 );</script>\n";
+}
