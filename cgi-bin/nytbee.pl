@@ -362,6 +362,13 @@ $uuid_ip{$uuid} = $ENV{REMOTE_ADDR};
 my (%uuid_screen_name, %screen_name_uuid);
 tie %uuid_screen_name, 'DB_File', 'uuid_screen_name.dbm';
 tie %screen_name_uuid, 'DB_File', 'screen_name_uuid.dbm';
+
+#
+# how many msgs in the forum for the puzzle?
+#
+my %num_msgs;
+tie %num_msgs, 'DB_File', 'num_msgs.dbm';
+
 my $screen_name = '';
 if (exists $uuid_screen_name{$uuid11}) {
     $screen_name = $uuid_screen_name{$uuid11};
@@ -909,6 +916,7 @@ if (! $message && $path_info =~ m{cp(\d+)}xmsi) {
 
 my $show_date;
 my $clues_are_present = '';
+my $num_msgs = '';
 my $cp_href;
 
 sub no_puzzle {
@@ -961,6 +969,9 @@ else {
     @pangrams = @{$cp_href->{pangrams}};
     @ok_words = @{$cp_href->{words}};
     %clue_for = %{$cp_href->{clues}};
+}
+if (my $nm = $num_msgs{$date}) {
+    $num_msgs = " <span class=red>$nm</span>";
 }
 my $nwords = @ok_words;
 my $letter_regex = qr{([^$seven])}xms;  # see sub check_word
@@ -1657,7 +1668,7 @@ elsif ($cmd eq 'l') {
     my $n = 1;
     my $msg = '';
     for my $p (my_puzzles()) {
-        my $cur = $p->[0] eq $date? red('*'): '';
+        my $cur = $p->[0] eq $date? '*': '';
         my $pg  = $p->[1]? '&nbsp;&nbsp;<span class=green>p</span>': '';
         $msg .= Tr(
                        td($n),
@@ -2808,6 +2819,9 @@ EOH
     else {
         if (! $show_Heading) {
             $message .= "<br>$show_date";
+            if (my $nm = $num_msgs{$date}) {
+                $message .= " <span class=red>$nm</span>";
+            }
         }
         load_nyt_clues;
         if (%nyt_cluer_name_of) {
@@ -3295,7 +3309,7 @@ EOH
 
 my $heading = $show_Heading? <<"EOH": '';
 <div class=float-child1>
-    <a target=_blank onclick="set_focus();" href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date$clues_are_present
+    <a target=_blank onclick="set_focus();" href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date$clues_are_present$num_msgs
 </div>
 <div class=float-child2>
      <img width=53 src=$log/nytbee/pics/bee-logo.png onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>

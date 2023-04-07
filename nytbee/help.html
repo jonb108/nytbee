@@ -53,6 +53,7 @@ And I have.  The complete source code for this project is on
 <a href=#how>How to Play</a><br>
 <a href=#advantages>Advantages</a><br>
 <a href=#words>Words and Commands</a><br>
+<a href=#forum>Discussion Forum</a><br>
 <a href=#screen_names>Screen Names and Your Identity</a><br>
 <a href=#mobile>Playing on a Mobile Phone</a><br>
 <a href=#hint_commands>Hint Commands</a><br>
@@ -136,6 +137,8 @@ The many advantages of this alternate way include:
 <li>Get &#8220;credit&#8221; for finding <a href='#donut'>donut, lexicon, and bonus</a> 
 words.  You can also see how many extra words others have found.
 This introduces a bit of fun Spelling Bee <a href=#competition>competition</a>!
+<li>There is a <a href=#forum>Discussion Forum</a> built in to the software
+so it is easy to access.
 <li>Create your <i>own</i> puzzle with clues and share it with the HiveMind.
 <li>Clerical assistance in <a href=#clues>creating clues for NYT Puzzles</a> to post in the HiveMind Forum or on FaceBook.
 Clues are shown with the <span class=cmd>D</span> command.
@@ -205,6 +208,59 @@ the line of dots will be truncated and a <span style="font-size: 23pt">+</span> 
 <br><br></td></tr>
 <tr><td><span class=cmd>C&nbsp;&nbsp;Y</span></td><td>Clear the puzzle and start over. <span class=cmd>C&nbsp;&nbsp;Y</span> means Clear and confirm with Yes.</td></tr>
 </table>
+<a name=forum></a>
+<h2>Discussion Forum
+<a class=top href=#toc><img src=pics/top.gif height=25></a>
+</h2>
+We are social beings.  We like to share.
+The HiveMind Forum of the New York Times is a very active community
+of people who enjoy the challenge of the daily puzzle and
+also enjoy discussing it.  Yes, it is full of complaints and bragging
+but that's okay! &#128522;  There is also a great deal of poetry
+and clues and analysis and all kinds of clever literary fun.
+<p>
+This enhanced Bee has a discussion forum as well.   It is
+<u>built in</u> to the software which makes it easy to use.
+It is simple but sufficient.
+The command <span class=cmd>F</span> toggles Forum Mode on and off.
+When it is <b>on</b> the screen looks like this:
+<p>
+<img src=pics/forum1.png width=700><br>
+The word lists, status, and hint table are not shown.
+Instead, there is a text area where you can share your
+thoughts.  When you have finished composing your message
+press the Submit button.   Your message will appear below
+along with your <a href=#screen_names>screen name</a> and the time.
+Messages are shown in reverse chronological order.
+<p>
+<img src=pics/forum2.png width=700>
+<p>
+If you see a message that you feel is inappropriate in some way you
+can click the <span style='color: #dddddd; font-size: 19pt'>Flag</span> and the authorities will be notified. &#128522;
+<p>
+If there are messages in the forum for a puzzle the
+number of messages will be shown 
+<span class=red1>in red</span> at the top after the date
+like so:
+<p>
+<img src=pics/forum3.png width=500>
+<p>
+Messages are associated with the puzzle itself and persist.
+The forum is a good place to give praise and thanks to
+the creator of a <a href=#create>Community Puzzle</a>.
+<p>
+Two things to note about composing your message:
+<ul>
+<li>On OSX you can enter emojis with control-command-space.
+<li>Within a message you can enter URLs beginning with 'http'.
+These will be transformed into links that open in a new window.
+</ul>
+<p>
+Remember that the <span class=cmd>F</span> command is a <u>toggle</u>.
+After viewing the current messages and posting your own you
+can toggle back to the normal display.  Even while you are in
+Forum Mode you can still enter any command and also any new words
+that you have found.
 <a name=screen_names></a>
 <h2>Screen Names and Your Identity
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -228,6 +284,7 @@ Screen names are shown with the
 <span class=cmd>CW</span>
 command which
 shows the fun <a href=#competition>competition</a> for Extra Words.
+They are also used when you post a message to the <a href=#forum>Forum</a>.
 <p>
 You can change your screen name at any time
 with the command <span class=cmd>SN</span> like
@@ -235,7 +292,7 @@ so:
 <ul>
 SN CHARLIE
 </ul>
-<i>Before</i> changing your screen name, however, you should
+<b>However</b>, <i>before</i> changing your screen name, however, you should
 use the ID command (see below) to set your identity string.
 <p>
 The screen name can be <i>anything</i> you wish.
@@ -800,7 +857,7 @@ Commands to access the large NY Times <a href=#nyt_archive>Archive</a> of Spelli
 <tr><td><span class=cmd>T</span></td><td>Return to today&#8217;s NYT puzzle.</td></tr>
 <tr><td><span class=cmd>Y</span></td><td>Move to yesterday&#8217;s NYT puzzle.</td></tr>
 <tr><td><span class=cmd>-1, -7</span></td><td>Move to yesterday&#8217;s puzzle (-1) or the puzzle from a week ago (-7).</td></tr>
-<tr><td><span class=cmd>L</span></td><td>List the current puzzles.  <span class=red>*</span> marks the current puzzle.  <span class=green>p</span> marks puzzles where all pangrams have been found.  You can click on the puzzle date to switch to that puzzle.</td></tr>
+<tr><td><span class=cmd>L</span></td><td>List the current puzzles.  * marks the current puzzle.  <span class=green>p</span> marks puzzles where all pangrams have been found.  You can click on the puzzle date to switch to that puzzle.</td></tr>
 <tr><td><span class=cmd>N</span></td><td>Move to the next puzzle in the list - wrapping from last to first.</td></tr>
 <tr><td><span class=cmd>P</span></td><td>Move to the previous puzzle in the list - wrapping from first to last.</td></tr>
 <tr><td><span class=cmd>P&lt;num&gt;</span></td><td>Move to puzzle #num in the list.</td></tr>
@@ -1360,8 +1417,6 @@ It has limitations and weaknesses.  Here are the known issues:
 <li>The software was not designed for high volume.
 If the usage becomes high the response time would suffer.
 The software would need to be redesigned and possibly rewritten.
-<li>There is no forum for discussion about this new mechanism.
-The NYT HiveMind Forum or a FaceBook group page could serve this purpose.
 <li>Since you do not need to register and login (which is nice), your identity
 is preserved in a &#8220;cookie&#8221; (aka website data)
 within your web browser.  As long as you
@@ -1395,9 +1450,9 @@ please <script>abcd('let me know');</script>.
 </h2>
 <ol>
 <li>The first acknowledgement is, <i>of course</i>, to the New York Times
-and Sam Ezersky who creates the daily Spelling Bee puzzles
-(what a great gig he has!).  
-This enhanced version of the game is <i>not</i> endorsed by the Times.
+and Sam Ezersky who creates the daily Spelling Bee puzzles.
+What a great gig he has!  
+This enhanced version of the game is <b><i>not</i></b> endorsed by the Times.
 Acknowledgements are due, as well, to Frank Longo and Will Shortz whose genius
 created the Spelling Bee concept.
 I encourage everyone to 

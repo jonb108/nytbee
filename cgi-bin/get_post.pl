@@ -1,9 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-my ($p_date, $screen_name, $message) = @ARGV;
 
-$message =~ s{--NEWLINE--}{<br>}xmsg;
 use Time::Simple qw/
     get_time
 /;
@@ -13,6 +11,12 @@ use Date::Simple qw/
 use Bee_DBH qw/
     $dbh
 /;
+use DB_File;
+# key: date/cp#
+# value: number of messages in the forum for this puzzle
+my %num_msgs;
+tie %num_msgs, 'DB_File', 'num_msgs.dbm';
+
 my $ins_sth = $dbh->prepare(<<'EOS');
 
     INSERT
@@ -27,9 +31,10 @@ my $ins_sth = $dbh->prepare(<<'EOS');
              '');
 
 EOS
+my ($p_date, $screen_name, $message) = @ARGV;
 my $now = get_time();
-$now->{minutes} -= 60;      # :(
-    # probably a bug around midnight ...
+$now->{minutes} -= 60;
 $ins_sth->execute($screen_name,
-                  today()->as_d8(), $now,
+                  today()->as_d8(), $now->t24,
                   $p_date, $message);
+++$num_msgs{$p_date};
