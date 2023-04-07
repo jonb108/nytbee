@@ -57,6 +57,7 @@ definitions.txt \
 messages \
 mkforum \
 show_forum.pl \
+forum_flag.pl \
 get_post.pl \
 status.pl
 

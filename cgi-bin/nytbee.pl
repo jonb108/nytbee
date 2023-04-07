@@ -673,6 +673,7 @@ if (! $date) {
 }
 
 if (my $post = $params{forum_post}) {
+    check_screen_name();
     $post =~ s{\A \s*|\s* \z}{}xmsg;
     $post =~ s{\n\n}{<p>}xmsg;
     $post =~ s{\n}{<br>}xmsg;
@@ -3110,7 +3111,10 @@ elsif ($cmd eq 'id') {
 }
 elsif ($cmd eq 'sn') {
     # they may not have one yet ...
-    $message .= $screen_name;
+    check_screen_name();
+    if (! $message) {
+        $message .= $screen_name;
+    }
     $cmd = '';
 }
 elsif ($cmd =~ m{\A sn \s+ (.*) \z}xms) {

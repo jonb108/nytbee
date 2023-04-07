@@ -15,6 +15,32 @@ use Date::Simple qw/
 /;
 my $p_date = shift;
 print <<'EOH';
+<script>
+// prepare for an Ajax call:
+var xmlhttp = false;
+var ua = navigator.userAgent.toLowerCase();
+if (!window.ActiveXObject)
+    xmlhttp = new XMLHttpRequest();
+else if (ua.indexOf('msie 5') == -1)
+    xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+else
+    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+
+function getIt() {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        var resp = xmlhttp.responseText;
+        document.getElementById(resp).innerHTML = '<span class=red>Flagged</span>';
+    }
+}
+
+function flag(i) {
+    var url = 'https://logicalpoetry.com/cgi-bin/forum_flag.pl?id=' + i;
+    xmlhttp.open('GET', url, true);
+    xmlhttp.onreadystatechange = getIt;
+    xmlhttp.send(null);
+    return true;
+}
+</script>
 <style>
 .hr {
     margin-left: 0px;
@@ -26,7 +52,7 @@ print <<'EOH';
     width: 600px;
 }
 .flag {
-    color: #eeeeee;
+    color: #dddddd;
     float: right;
 }
 .flagged {
@@ -34,7 +60,7 @@ print <<'EOH';
     float: right;
 }
 .stamp {
-    color: #aaaaaa;
+    color: #999999;
 }
 </style>
 Please share:<br>
@@ -55,8 +81,9 @@ while (my $href = $get_msgs_sth->fetchrow_hashref()) {
     if ($href->{p_date} ne $href->{m_date}) {
         $t .= ' ' . date($href->{m_date})->format("%D");
     }
+    my $id = $href->{id};
     my $flag = $href->{flagged}? "<span class=flagged>Flagged</span>"
-              :                  "<span class=flag>Flag</span>";
+              :                  "<span id=msg$id class=flag onclick='flag($id);'>Flag</span>";
     print <<"EOH";
 <span class=stamp>$href->{screen_name}&nbsp;&nbsp;$t</span> $flag<br>
 $href->{message}
