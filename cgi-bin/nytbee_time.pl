@@ -4,7 +4,6 @@ use warnings;
 use File::Slurp qw/
     append_file
 /;
-print "in time.pl...\n";
 my ($min, $hour, $day, $month, $year) = (localtime(time() - 60*60))[1 .. 5];
 ++$month;
 $year += 1900;

@@ -80,7 +80,6 @@ for my $u (keys %tally) {
     for my $t (@types) {
         for my $w (keys %{$tally{$u}{$t}}) {
             if ($words{$t}{$w} == 1) {
-if ($u eq 'sahadev108!') { JON "$t $w"}
                 $only{$u}{$t}++;
             }
         }
@@ -125,6 +124,7 @@ if ($date_obj ne $today) {
 }
 my $sp = '&nbsp;' x 2;
 print "<table cellpadding=0>\n";
+# Is this correct??? No.
 for my $aref (sort {
                   $a->[1] <=> $b->[1]
                   ||

@@ -1,0 +1,3 @@
+#!/bin/bash
+perl -p -i -e 's{nytbee2.pl}{nytbee.pl}g' nytbee2.pl
+mv nytbee2.pl nytbee.pl

@@ -39,6 +39,8 @@ nytbee_cw.pl \
 mktar \
 go \
 dump_dbm \
+set_dbm \
+del_dbm \
 edit_cp.pl \
 edit_cp_clues.pl \
 edit_cp_get_clues.pl \
@@ -58,7 +60,10 @@ messages \
 mkforum \
 show_forum.pl \
 forum_flag.pl \
+fmod.pl \
 get_post.pl \
+ini \
+fin \
 status.pl
 
 # these will not change

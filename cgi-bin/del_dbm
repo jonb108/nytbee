@@ -1,0 +1,14 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+my ($hash_file, $key) = @ARGV;
+sub oops {
+    die "usage: del_dbm file.dbm key\n";
+}
+oops unless @ARGV == 2;
+oops unless $hash_file && $hash_file =~ m{\S+[.]dbm \z}xms;
+oops unless $key;
+use DB_File;
+my %hash;
+tie %hash, 'DB_File', $hash_file;
+delete $hash{$key};

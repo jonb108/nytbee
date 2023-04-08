@@ -3729,6 +3729,7 @@ if ($forum_mode) {
 print <<"EOH";
 <html>
 <head>
+<meta charset='UTF-8'>
 <title>Spelling Bee - $show_date</title>
 <style>
 .img {
