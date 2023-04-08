@@ -14,6 +14,9 @@ use Time::Simple qw/
 use Date::Simple qw/
     date
 /;
+use DB_File;
+my %num_msgs;
+tie %num_msgs, 'DB_File', 'num_msgs.dbm';
 my ($p_date, $screen_name, $post_to_edit) = @ARGV;
 my $post_text = '';
 if ($post_to_edit) {
@@ -28,6 +31,7 @@ EOS
     my $href = $get_sth->fetchrow_hashref();
     if ($href && $href->{screen_name} eq $screen_name) {
         system(qq!$cgi_dir/del_post.pl $post_to_edit "$screen_name"!);
+        --$num_msgs{$p_date};
         $post_text = $href->{message};
         $post_text =~ s{<br>}{\n}xmsg;
     }
