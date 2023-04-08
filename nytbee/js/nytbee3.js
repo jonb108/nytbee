@@ -139,13 +139,15 @@ function popup_define(word, height, width) {
     newwin.moveTo(800, 0);
     document.getElementById(word + '_clue').focus();
 }
-function del_post(i) {
+function del_post(id) {
+    document.getElementById('x' + id).style.pointerEvents = "none";
     if (confirm('Deleting your post. Are you sure?')) {
-        hnw.value = 'FX' + i;
+        hnw.value = 'FX' + id;
         main.submit();
     }
 }
-function edit_post(i) {
-    hnw.value = 'FE' + i;
+function edit_post(id) {
+    document.getElementById('e' + id).style.pointerEvents = "none";
+    hnw.value = 'FE' + id;
     main.submit();
 }

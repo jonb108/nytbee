@@ -921,7 +921,6 @@ if (! $message && $path_info =~ m{cp(\d+)}xmsi) {
 
 my $show_date;
 my $clues_are_present = '';
-my $num_msgs = '';
 my $cp_href;
 
 sub no_puzzle {
@@ -974,9 +973,6 @@ else {
     @pangrams = @{$cp_href->{pangrams}};
     @ok_words = @{$cp_href->{words}};
     %clue_for = %{$cp_href->{clues}};
-}
-if (my $nm = $num_msgs{$date}) {
-    $num_msgs = " <span class=red>$nm</span>";
 }
 my $nwords = @ok_words;
 my $letter_regex = qr{([^$seven])}xms;  # see sub check_word
@@ -1422,7 +1418,9 @@ elsif ($cmd eq 'bn') {
     $cmd = '';
 }
 elsif ($cmd =~ m{\A fx \s* (\d+) \z}xms) {
-    system("$cgi_dir/del_post.pl $1 '$screen_name'");
+    my $id = $1;
+    system("$cgi_dir/del_post.pl $id '$screen_name'");
+    --$num_msgs{$date};
     $cmd = '';
 }
 elsif ($cmd =~ m{\A fe \s* (\d+) \z}xms) {
@@ -3316,6 +3314,10 @@ EOH
 
 # now to display everything
 # cgi-bin/style.css?
+my $num_msgs = '';
+if (my $nm = $num_msgs{$date}) {
+    $num_msgs = " <span class=red>$nm</span>";
+}
 
 my $heading = $show_Heading? <<"EOH": '';
 <div class=float-child1>
@@ -3791,7 +3793,7 @@ $letter_styles
 }
 </style>
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_${css}style.css'/>
-<script src="$log/nytbee/js/nytbee2.js"></script>
+<script src="$log/nytbee/js/nytbee3.js"></script>
 </head>
 <body onload='init(); $focus'>
 $heading

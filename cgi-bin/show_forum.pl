@@ -60,6 +60,9 @@ function flag(i) {
     xmlhttp.send(null);
     return true;
 }
+function disable_span(id) {
+    document.getElementById(id).disabled = true;
+}
 </script>
 <style>
 .hr {
@@ -83,7 +86,7 @@ function flag(i) {
 </style>
 Please share:<br>
 <textarea rows=3 cols=40 name=forum_post id=forum_post>$post_text</textarea><br>
-<button style="font-size: 14pt">Submit</button>
+<button id=post_it onclick="document.getElementById('post_it').style.pointerEvents = 'none';" style="font-size: 14pt">Submit</button>
 <div class=post>
 EOH
 my $get_msgs_sth = $dbh->prepare(<<'EOS');
@@ -105,8 +108,8 @@ while (my $href = $get_msgs_sth->fetchrow_hashref()) {
               :                  "<span id=msg$id class='cursor_black flag' onclick='flag($id);'><img src=$pics/flag.png $height></span>";
     my ($e, $x) = ('', '');
     if ($href->{screen_name} eq $screen_name) {
-        $e = "<span class=cursor_black onclick='edit_post($href->{id});'><img src=$pics/pencil.png $height></span> ";
-        $x = "<span class=cursor_black onclick='del_post($href->{id});'><img src=../nytbee/pics/trashcan.png height=20></span> ";
+        $e = "<span class=cursor_black id=e$id onclick='edit_post($id);'><img src=$pics/pencil.png $height></span> ";
+        $x = "<span class=cursor_black id=x$id onclick='del_post($id);'><img src=../nytbee/pics/trashcan.png height=20></span> ";
     }
     print <<"EOH";
 <span class=stamp>$href->{screen_name}&nbsp;&nbsp;$t</span> <span style='float: right'>$e$x$flag</span><br>
