@@ -64,7 +64,8 @@ fmod.pl \
 get_post.pl \
 ini \
 fin \
-status.pl
+status.pl \
+buddy.txt
 
 # these will not change
 #JSON/PP.pm

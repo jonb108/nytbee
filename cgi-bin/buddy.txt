@@ -1,0 +1,71 @@
+So you play the NYT Bee in one window (or on the app).
+
+In another browser window you have the buddy up.
+
+You play a word.
+In the buddy window it receives a message that you played it.
+Nice.
+Even if you have TWO buddies up in different browsers.
+
+On the phone you need to have the buddy in a browser not in the app.
+The app has just one window.   Can't have buddy and bee active
+on the phone at the same time.
+
+https://www.nytimes.com/interactive/2023/upshot/spelling-bee-buddy.html
+is the address of the buddy.   You need to log in.
+
+Before I think the whole game was downloaded and did not do any server round trips.   Now it has to tell the server after every word is played so it can notify any buddies that have registered as wanting to know.
+
+My Bee has the grid and two letter list on the same page.
+And each word(s) entered DOES get sent to the server and the entire
+page is refreshed.
+
+From the Bee in the app you can go to the Buddy to get a clue
+but then you have to go back back to the Bee to enter it.
+To get to the Buddy you go through the static grid and two letter list
+and scroll down to a link to the buddy and scroll down down
+to see the dynamic grid.
+
+Cannot select/copy anything on the buddy page.   How does
+that work?  CAN select/copy on the app buddy page.
+
+By Neil Berg, Matthew Conlen,
+Josh Katz (https://www.nytimes.com/by/josh-katz),
+    graphics editor
+    different: Joshua Katz - princeton professor = married one of his students
+        fired for misconduct
+        https://www.nytimes.com/2022/07/01/style/solveig-gold-joshua-katz-princeton-professor.html
+    another musician Badflower
+Aaron Krolik (https://www.nytimes.com/by/aaron-krolik), 
+    http://www.aaronbkrolik.com
+        keybase...
+Eve Washington (https://www.nytimes.com/by/eve-washington),
+    https://twitter.com/EveSuane
+    @evesuane
+and 
+Eden Weingart (https://www.nytimes.com/by/eden-weingart)
+    https://twitter.com/edenweingart
+    https://edenweingart.com
+    hello@edenweingart.com
+    https://edenweingart.com/Food-and-Climate-Change
+
+Matthew Conlen - https://mathisonian.com/
+@mathisonian on Twitter DM him
+matthew@convexdesign.co.uk
+mpconlen@gmail.com
+github@mathisonian.com
+https://github.com/mathisonian
+Our World In Data
+https://ourworldindata.org/team
+matt.conlen@ourworldindata.com
+Seattle
+
+Neil Berg
+neil@nytimes.com
+neil.berg14@gmail.com
+443-745-2698
+https://neilberg.dev/about/
+https://github.com/newsdev/about-int
+https://github.com/neil-berg
+Los Angeles
+
