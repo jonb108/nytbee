@@ -3407,6 +3407,7 @@ EOH
 <span class='enter' onclick="sub_lets();">Enter</span>
 <span class='define' onclick="del_let();">Delete</span>
 <span class='standings' onclick="standings();">Standings</span>
+<span class='bonus2' onclick="toggle_bonus();">Bonus</span>
 </span>
 <span class=bonus_lets>$bonus_table</span>
 EOH
@@ -3415,9 +3416,12 @@ EOH
             $letters .= <<"EOH";
 <span class='enter cursor_black' onclick="sub_lets();">Enter</span>
 <span class='define cursor_black' onclick="rand_def();">Define</span>
+<span class='bonus cursor_black' onclick="toggle_bonus();">Bonus</span>
 <span class=lets id=lets></span>
 <span class='delete cursor_black' onclick="del_let();">Delete</span>
-<span class='helplink cursor_black'><a class='cursor_black' target=_blank href='$log/nytbee/help.html#toc'">Help</a>&nbsp;&nbsp;&nbsp;&nbsp;<a class='cursor_black' onclick='forum();'>Forum</a>$num_msgs</span>
+<span class='helplink cursor_black'>
+<a class='cursor_black' target=_blank href='$log/nytbee/help.html#toc'">Help</a></span>
+<span class='forum cursor_black' onclick='forum();'>Forum $num_msgs</span>
 EOH
         }
     }
@@ -3715,6 +3719,7 @@ my $css = $mobile? 'mobile_': '';
 my $new_words_size = $mobile? 30: 40;
 my $enter_top  = 90 + ($show_Heading? 79: 0);
 my $define_top  = 90 + ($show_Heading? 79: 0);
+my $bonus_top  = 45 + ($show_Heading? 79: 0);
 my $lets_top   = 135 + ($show_Heading? 79: 0);
 my $bonus_lets_top   = 185 + ($show_Heading? 79: 0);
 my $delete_top = 190 + ($show_Heading? 79: 0);
@@ -3754,10 +3759,25 @@ $letter_styles
     left: 420;
     top: $define_top;
 }
+.bonus {
+    position: absolute;
+    left: 520;
+    top: $define_top;
+}
+.forum {
+    position: absolute;
+    left: 520;
+    top: $help_top;
+}
 .standings {
     position: absolute;
     left: 520;
     top: $define_top;
+}
+.bonus2 {
+    position: absolute;
+    left: 520;
+    top: $bonus_top;
 }
 .lets {
     position: absolute;
@@ -3793,7 +3813,7 @@ $letter_styles
 }
 </style>
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_${css}style.css'/>
-<script src="$log/nytbee/js/nytbee3.js"></script>
+<script src="$log/nytbee/js/nytbee4.js"></script>
 </head>
 <body onload='init(); $focus'>
 $heading

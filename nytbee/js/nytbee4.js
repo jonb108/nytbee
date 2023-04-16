@@ -81,6 +81,10 @@ function define_ht(c, n) {
     hnw.value = 'D+' + c + n;
     main.submit();
 }
+function toggle_bonus() {
+    hnw.value = 'BN';
+    main.submit();
+}
 function def_word(event, word) {
     var nw_val = nw.value.toLowerCase();
     if (event.shiftKey) {
