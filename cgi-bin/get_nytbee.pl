@@ -137,6 +137,8 @@ unlink "$bee/goo10k-7-nyt.txt",
        "$bee/osx_usd_words-7-nyt-goo.txt",
        $tmp
        ;
+# remove the LM time limits
+unlink "$bee/end_time_for.dbm";
 
 # add any new words to nyt-words.txt
 # and remove them from other-words.txt

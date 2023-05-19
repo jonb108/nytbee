@@ -2,9 +2,9 @@
 <html lang=en>
 <head>
 <meta charset='UTF-8'>
-<title>The Spelling Bee Puzzle of New York Times</title>
+<title>The ENHANCED NYT Spelling Bee Puzzle</title>
 <link rel='stylesheet' type='text/css' href='css/style.css'/>
-<script src='js/nytbee3.js'></script>
+<script src='js/nytbee5.js'></script>
 </head>
 <body>
 <h1><img height=70 src='pics/bee-logo.png'><br>The Spelling Bee Puzzle<br>of<br>
@@ -366,7 +366,7 @@ using the Safari browser with the text enlarged (with the <span style="font-size
 and holding the phone horizontally, 
 this is what the screen looks like:
 <p>
-<img src=pics/nytbee_iPhone.png width=800 border=1>
+<img src=pics/nytbee_iPhone.jpg width=800 border=1>
 <p>
 In this mobile mode the heading has been toggled off.
 You have 6 command words to the right of the hexagon letters:
@@ -379,7 +379,7 @@ and <span class=cmd>Forum</span>.
 <p>
 Tapping on letters will copy them to the area on the right:
 <p>
-<img src=pics/kitchen.png width=800 border=1>
+<img src=pics/kitchen.jpg width=800 border=1>
 <p>
 Tap on <span class=cmd>Enter</span> to submit the word.
 <br>
@@ -407,7 +407,7 @@ If you are adept at texting with your thumbs you may prefer using the <span clas
 </h2>
 It is <i>not</i> easy to find <i>all</i> the words in a puzzle
 and reach the stratospheric height of the Queen Bee rank.
-Most of us mere mortals need kind of some help to get to Amazing or Genius.
+Most of us mere mortals need some kind of help to get to Amazing or Genius.
 <p>
 <table cellpadding=5>
 <tr><td><span class=cmd>HT</span></td><td>Show the Hint Table.</td></tr>
@@ -753,14 +753,15 @@ The command <span class=cmd>BN</span> can help with this.
 When it is toggled ON you are in Bonus Mode and 
 the mobile display will look like this:
 <p>
-<img src=pics/teenage.png width=800 border=1>
+<img src=pics/teenage.jpg width=800 border=1>
 <p>
 The 19 (26-7=19) additional letters are put in a table.
 Tap on them to append to the word.
 If a Bonus word has been found using a letter it will be <span class=green>green</span>.
 There is also now the &#8220;Standings&#8221;
 link which will issue the <span class=cmd>CW</span> command for you (see <a href=#competition>below</a>).
-And there is a Bonus link to toggle OUT of Bonus Mode.
+There is also a &#8220;Bonus&#8221; link to toggle OUT of Bonus Mode.
+And an &#8220;Own&#8221; link to issue the <span class=cmd>OW</span> command to show what words only you have found.
 <p>
 The <span class=cmd>BN</span> command is also useful when you are <i>not</i>
 on a mobile phone because
@@ -1106,7 +1107,20 @@ name@hello.com becomes <a href='mailto:name@hello.com'>name@hello.com<br>
 These commands are of more limited use.  Some of them were added just for the beauty of software Art.
 <p>
 <table cellpadding=5>
-<tr><td><span class=cmd>AC</td><td>Show a stacked bar graph of <span class=cmd>ac</span>tivity through the day.  <span style='color: green'>Green</span>: #words, <span class=red1>Red</span>: #commands, <span style='color: blue'>Blue</span>: #dynamic grid queries.  Monitoring began on December 22, 2022. </td></tr>
+<tr><td><span class=cmd>LG</span></td><td>Show a time-stamped <span class=cmd>l</span>o<span class=cmd>g</span> of your activity today.</td><tr>
+<tr><td><span class=cmd>LM #mins</span></td><td>Set a <span class=cmd>l</span>i<span class=cmd>m</span>it of how much longer you want to play.<br>
+<span class=cmd>LM 10</span> will allow you to play for 10 more minutes.<br>
+<span class=cmd>LM</span> without a number will show how much time remains.<br>
+When the time has expired this message will be shown:<br>
+<ul>
+Your self-imposed time limit has arrived. &#128542;<br>
+Tomorrow is another day. &#128522;
+</ul>
+Each day begins afresh.<br>
+This command may prove helpful for those who feel that they
+are spending too much time on this silly game.
+</td><tr>
+<tr><td><span class=cmd>AC</span></td><td>Show a stacked bar graph of <i>everyone's</i> <span class=cmd>ac</span>tivity through the day.  <span style='color: green'>Green</span>: #words, <span class=red1>Red</span>: #commands, <span style='color: blue'>Blue</span>: #dynamic grid queries.  The X-axis is hours since midnight, U.S. Pacific Time.  Monitoring began on December 22, 2022. </td></tr>
 <tr><td><span class=cmd>H</span></td><td>Cycle through different presentations
 of the 7 letters  - <span class=cmd>H</span>oneycomb to Flower to Inline Letters to <span class=cmd>H</span>ex Letters.<p>
 <img height=150 src=pics/df_honeycomb.png><img height=150 src=pics/df_flower.png>&nbsp;&nbsp;<img height=70 src=pics/df_inline.png><img height=130 src=pics/df_hexlet.png>
@@ -1204,6 +1218,16 @@ The NY Times Spelling Bee concept has been a fertile source of challenge for
 many clever software engineers.
 <p>
 <h4>Games You Can Play</h4>
+<a target=nytbee href='https://bee.ignoble.dev'>bee.ignoble.dev {} Bee</a> 
+- Generates a daily puzzle (not NYT) from the <a target=_blank href='http://aspell.net'>English Aspell Dictionary</a>.  There are puzzles going back to
+5/17/2020.  Puzzles on Sunday have fewer than 41 words.  The number of
+words increases through the week until Friday puzzles have more than
+120 words.  Saturday puzzles have more than 120 words excluding the letters s and d.
+Can sort the found words in 3 ways.
+It has a "spoiler" mechanism to reveal all words.
+I found a bug in the scoring: Some 4 letter words score more than 4!??
+It keeps a tally of how many words of each length you need and have found.
+<p>
 <a target=nytbee href='https://swilliams.io/fun/hex/'>swilliams.io.fun/hex</a>
 - A Javascript implementation.  Fast.  Clean code.
 Uses a file of 1,500 pangramic words and a file of 10,000
@@ -1358,7 +1382,7 @@ have occurred on 5 different dates:
 </table>
 </ul>
 <p>
-The <span class=cmd>F</span> command finds other dates that use the
+The <span class=cmd>F7</span> command finds other dates that use the
 same 7 letters as in the current puzzle.
 These other puzzles usually (but not always)
 have a different center letter.
@@ -1374,8 +1398,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1804 puzzles with
-a total of 9491 different words!
+1837 puzzles with
+a total of 9566 different words!
 <p>
 Which puzzles from the large archive to play?
 You can get one at random with the <span class=cmd>NR</span> command or you could

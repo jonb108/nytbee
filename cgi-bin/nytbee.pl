@@ -337,6 +337,30 @@ my $hive_cookie = $q->cookie(
 my $uuid = cgi_header($q, $hive_cookie);
 my $uuid11 = substr($uuid, 0, 11);
 my %params = $q->Vars();
+
+############
+my %end_time_for;
+tie %end_time_for, 'DB_File', 'end_time_for.dbm';
+# key is the uuid ("session" id)
+# value is # of minutes past midnight
+# after which THEY decided they don't want
+# to play any more.
+#--------------
+
+sub now_secs {
+    my ($second, $minute, $hour) = (localtime)[0 .. 2];
+    return 60*60*$hour + 60*$minute + $second;
+}
+
+if (exists $end_time_for{$uuid11}) {
+    # is their time up?
+    if (now_secs() >= $end_time_for{$uuid11}) {
+        $message = "Your self-imposed time limit has arrived. &#128542;<br>"
+                 . "Tomorrow is another day. &#128522;";
+        $params{new_words} = '';
+        $params{hidden_new_words} = '';
+    }
+}
 if ($params{new_words} =~ m{\A \s* idk? \s+}xmsi) {
     # we took care of this case in cgi_header
     $params{new_words} = '';
@@ -1638,7 +1662,7 @@ elsif (my ($pat) = $cmd =~ m{\A lcp \s*(\S*) \z}xms) {
         }
         my $cpn = "CP$n";
         push @rows, Tr(td({ class => 'rt' },
-                          qq!<span class=link onclick="new_date('$cpn');">!
+                          qq!<span class=link onclick="issue_cmd('$cpn');">!
                           . "$cpn</span>"),
                        td(     $date eq $cpn? red('*')
                           :$is_in_list{$cpn}? '*'
@@ -1685,7 +1709,7 @@ elsif ($cmd eq 'l') {
                        td($n),
                        td($cur),
                        td({ class => 'lt' }, 
-                      qq!<span class=link onclick="new_date('$p->[0]');">!
+                      qq!<span class=link onclick="issue_cmd('$p->[0]');">!
                           . slash_date($p->[0])
                           . "<span>"),
                       td({ class => 'lt' }, $ranks[$p->[2]]->{name}),
@@ -1708,7 +1732,7 @@ elsif ($cmd eq 'cl') {
             = 'Puzzles you clued:<br>'
             . table(
                   map {
-                      Tr(td(qq!<span class=link onclick="new_date('$_');">!
+                      Tr(td(qq!<span class=link onclick="issue_cmd('$_');">!
                            .slash_date($_)
                            .'</span>'),
                          td($is_in_list{$_}? ($_ eq $date? red('*'): '*'): ''),
@@ -1737,7 +1761,7 @@ elsif ($cmd eq 'f7') {
     for my $p (sort { $a->[0] cmp $b->[0] } @puz) {
         my $date = $p->[0];
         push @rows,
-            Tr(td(qq!<span class=link onclick="new_date('$date');">!
+            Tr(td(qq!<span class=link onclick="issue_cmd('$date');">!
                   . slash_date($date) . "</span>"),
                td({ class => 'lt' }, $p->[1])
               );
@@ -1751,7 +1775,7 @@ elsif ($cmd eq 'f7') {
                  :$is_in_list{$cpn}? ' *'
                  :                     '';
         push @rows,
-            Tr(td(qq!<span class=link onclick="new_date('$cpn');">$cpn</span>!),
+            Tr(td(qq!<span class=link onclick="issue_cmd('$cpn');">$cpn</span>!),
                td({ class => 'lt' }, uc $href->{center} . $cur),
               );
      }
@@ -1763,7 +1787,7 @@ elsif ($cmd =~ m{\A ft \s+ ([a-z]+) \z}xms) {
     # when did this word first appear?
     my $dt = $first_appeared{$word};
     if ($dt) {
-        $message .= qq!<span class=link onclick="new_date('$dt');">!
+        $message .= qq!<span class=link onclick="issue_cmd('$dt');">!
                  . slash_date($dt)
                  . '</span>'
                  ;
@@ -1784,7 +1808,7 @@ elsif ($cmd =~ m{\A s \s+ ([a-z]+) \z}xms) {
         }
     }
     my @rows = map {
-                   Tr(td(qq!<span class=link onclick="new_date('$_');">!
+                   Tr(td(qq!<span class=link onclick="issue_cmd('$_');">!
                          . slash_date($_) . "</span>"),
                       td(     $date eq $_? ' ' . red('*')
                          :$is_in_list{$_}? ' *'
@@ -1799,7 +1823,7 @@ elsif ($cmd =~ m{\A s \s+ ([a-z]+) \z}xms) {
     push @rows,
         map {
             my $cpn = "CP$_";
-            Tr(td(qq!<span class=link onclick="new_date('$cpn');">!
+            Tr(td(qq!<span class=link onclick="issue_cmd('$cpn');">!
                   . "$cpn</span>"),
                td(     $date eq $cpn? ' ' . red('*')
                   :$is_in_list{$cpn}? ' *'
@@ -1889,6 +1913,35 @@ elsif ($cmd eq 'sl') {
     $same_letters = 1;
     $cmd = '';
 }
+elsif ($cmd =~ m{\A lm \s*(\d*) \z}xms) {
+    my $mins_more = $1;
+    my $now = now_secs();
+    my $end = $end_time_for{$uuid11};
+    if ($end) {
+        if (! $mins_more) {
+            # they want to know how much more time they have
+            my $n = $end - $now;
+            my $m = int($n / 60);
+            my $s = $n % 60;
+            $message = sprintf "%d:%02d left", $m, $s;
+        }
+        else {
+            $message = "You already set a time limit for today.";
+        }
+    }
+    elsif ($mins_more) {
+        $end_time_for{$uuid11} = $now + 60*$mins_more;
+    }
+    else {
+        $message = "You can play as long as you'd like!";
+    }
+    $cmd = '';
+}
+elsif ($date !~ m{\A CP}xms && $cmd eq 'lg') {
+    my $uuid11 = substr($uuid, 0, 11);
+    $message = `$cgi_dir/nytbee_log.pl $date '$uuid11'`;
+    $cmd = '';
+}
 elsif ($date !~ m{\A CP}xms && $cmd eq 'ac') {
     if ($date < '20221222') {
         $message = 'Activity monitoring began on December 22, 2022.';
@@ -1945,7 +1998,7 @@ elsif ($cmd eq 'rcp') {
                );
     for my $p (@puzzles) {
         $msg .= Tr(
-                        td({class => 'lt'}, qq!<span class=link onclick="new_date('cp$p->{n}')">CP$p->{n}</span>!),
+                        td({class => 'lt'}, qq!<span class=link onclick="issue_cmd('cp$p->{n}')">CP$p->{n}</span>!),
                         td({class => 'lt'}, $p->{name}), 
                         td({class => 'lt'}, $p->{title}), 
                         td(puzzle_class($p->{nwords})),
@@ -2539,12 +2592,12 @@ if ($show_BingoTable) {
         push @rows, Tr(th({ style => 'text-align: center' }, $c),
                        td($sp
                         . "<span class=pointer"
-                        . qq! onclick="define_ht('$c', $min);">!
+                        . qq! onclick="issue_cmd('D+$c$min');">!
                         . $min
                         . "</span>"),
                        td($sp
                         . "<span class=pointer"
-                        . qq! onclick="define_ht('$c', $max);">!
+                        . qq! onclick="issue_cmd('D+$c$max');">!
                         . $max
                         . "</span>"),
                     );
@@ -2569,7 +2622,7 @@ sub color_pg {
 # the second is the word itself plain
 sub def_word {
     my ($t, $w) = @_;
-    qq!<span style='cursor: pointer' onclick="def_word(event, '$w')">$t</span>!;
+    qq!<span style='cursor: pointer' onclick="issue_cmd('D $w')">$t</span>!;
 }
 
 # time to display the words we have found
@@ -3084,13 +3137,14 @@ elsif ($cmd eq 'ow') {
     $message = 'These words were found only by you:<br><br><table>';
     for my $type (qw/ donut lexicon bonus /) {
         $message .= "<tr><td class=rt valign=top>\u$type:</td>";
-        open my $in, '<', "$type/$date" or die "no $type/$date";
         my %words;
-        while (my $w = <$in>) {
-            chomp $w;
-            ++$words{$w};
+        if (open my $in, '<', "$type/$date") {
+            while (my $w = <$in>) {
+                chomp $w;
+                ++$words{$w};
+            }
+            close $in;
         }
-        close $in;
         my @words = map {
                         ucfirst
                     }
@@ -3199,7 +3253,7 @@ if ($ht_chosen) {
             }
             push @cells, td($sums{$c}{$l}?
                                "<span class=pointer"
-                               . qq! onclick="define_ht('$c', $l);">!
+                               . qq! onclick="issue_cmd('D+$c$l');">!
                                . "$sums{$c}{$l}</span>"
                            : $dash
                           );
@@ -3239,7 +3293,7 @@ if ($tl_chosen) {
         if ($two_lets{$two[$i]} == 0) {
             next TWO;
         }
-        $two_lets .= qq!<span class=pointer onclick="define_tl('$two[$i]');">!
+        $two_lets .= qq!<span class=pointer onclick="issue_cmd('D+$two[$i]');">!
                   .  qq!\U$two[$i]\E-$two_lets{$two[$i]}</span>!;
         if ($i < $#two
             && substr($two[$i], 0, 1) ne substr($two[$i+1], 0, 1)
@@ -3327,7 +3381,7 @@ my $heading = $show_Heading? <<"EOH": '';
      <img width=53 src=$log/nytbee/pics/bee-logo.png onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
 </div>
 <div class=float-child3>
-    <div style="text-align: center"><span class=help><a target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span>&nbsp;&nbsp;<span class=help><a target=_blank href='$log/nytbee/cmd_list.pdf'>Cmds</a><br><span class=create_add>$create_add</span><br><a class=cursor onclick="forum();">Forum</a> $num_msgs</div>
+    <div style="text-align: center"><span class=help><a target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span>&nbsp;&nbsp;<span class=help><a target=_blank href='$log/nytbee/cmd_list.pdf'>Cmds</a><br><span class=create_add>$create_add</span><br><a class=cursor onclick="issue_cmd('F');">Forum</a> $num_msgs</div>
 </div>
 <br><br>
 EOH
@@ -3379,9 +3433,10 @@ sub click_td {
     # didn't work 
     # this is messy.  better to use a class instead of a style...
     # it works, yes, but clean it up.
+    my $disp_l = $l eq 'I'? '&nbsp;I&nbsp;': $l;
     return td({ style => "text-align: center;"},
                "<span class='bonus_let cursor_black $color'"
-             . qq! onclick="add_redlet('$l')">$l</span>!);
+             . qq! onclick="add_redlet('$l')">$disp_l</span>!);
 }
         if ($bonus_mode) {
             my @blets = grep { !/[$seven]/ } 'a' .. 'z';
@@ -3406,8 +3461,9 @@ EOH
 <span class=lets id=lets></span>
 <span class='enter' onclick="sub_lets();">Enter</span>
 <span class='define' onclick="del_let();">Delete</span>
-<span class='standings' onclick="standings();">Standings</span>
-<span class='bonus2' onclick="toggle_bonus();">Bonus</span>
+<span class='standings' onclick="issue_cmd('CW');">Standings</span>
+<span class='own' onclick="issue_cmd('OW');">Own</span>
+<span class='bonus2' onclick="issue_cmd('BN');">Bonus</span>
 </span>
 <span class=bonus_lets>$bonus_table</span>
 EOH
@@ -3415,13 +3471,13 @@ EOH
         else {
             $letters .= <<"EOH";
 <span class='enter cursor_black' onclick="sub_lets();">Enter</span>
-<span class='define cursor_black' onclick="rand_def();">Define</span>
-<span class='bonus cursor_black' onclick="toggle_bonus();">Bonus</span>
+<span class='define cursor_black' onclick="issue_cmd('D+R');">Define</span>
+<span class='bonus cursor_black' onclick="issue_cmd('BN');">Bonus</span>
 <span class=lets id=lets></span>
 <span class='delete cursor_black' onclick="del_let();">Delete</span>
 <span class='helplink cursor_black'>
 <a class='cursor_black' target=_blank href='$log/nytbee/help.html#toc'">Help</a></span>
-<span class='forum cursor_black' onclick='forum();'>Forum $num_msgs</span>
+<span class='forum cursor_black' onclick="issue_cmd('F');">Forum $num_msgs</span>
 EOH
         }
     }
@@ -3505,7 +3561,7 @@ elsif ($hive == 3) {    # hex letters
         $letters .= "<table style='width: 100%; margin-bottom: 10mm'><tr>"
                  .  "<td class=h3cmd onclick='del_let()'>Delete</td>"
                  .  "<td class='h3cmd'><a style='color: black' target=_blank href='$log/nytbee/help.html#toc'>Help</a></td>"
-                 .  "<td class=h3cmd onclick='rand_def();'>Define</td>"
+                 .  qq!<td class=h3cmd onclick="issue_cmd('DR');">Define</td>!
                  .  "<td class=h3cmd onclick='sub_lets()'>Enter</td>"
                  .  "</tr></table>"
                  ;
@@ -3719,7 +3775,7 @@ my $css = $mobile? 'mobile_': '';
 my $new_words_size = $mobile? 30: 40;
 my $enter_top  = 90 + ($show_Heading? 79: 0);
 my $define_top  = 90 + ($show_Heading? 79: 0);
-my $bonus_top  = 45 + ($show_Heading? 79: 0);
+my $bonus_top  = 40 + ($show_Heading? 79: 0);
 my $lets_top   = 135 + ($show_Heading? 79: 0);
 my $bonus_lets_top   = 185 + ($show_Heading? 79: 0);
 my $delete_top = 190 + ($show_Heading? 79: 0);
@@ -3758,6 +3814,11 @@ $letter_styles
     position: absolute;
     left: 420;
     top: $define_top;
+}
+.own {
+    position: absolute;
+    left: 420;
+    top: $bonus_top;
 }
 .bonus {
     position: absolute;
@@ -3813,7 +3874,7 @@ $letter_styles
 }
 </style>
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_${css}style.css'/>
-<script src="$log/nytbee/js/nytbee4.js"></script>
+<script src="$log/nytbee/js/nytbee5.js"></script>
 </head>
 <body onload='init(); $focus'>
 $heading

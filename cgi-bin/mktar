@@ -13,6 +13,7 @@ nyt_puzzles.txt \
 nytbee_list.pl \
 nytbee_time.pl \
 nytbee_activity.pl \
+nytbee_log.pl \
 indexize \
 de_indexize \
 get_pangrams \

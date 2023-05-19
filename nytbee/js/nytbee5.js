@@ -30,24 +30,12 @@ function del_let() {
     }
     lets.innerHTML = s;
 }
-function shuffle() {
-    nw.value = '';
+function issue_cmd(s) {
+    hnw.value = s;
     main.submit();
 }
 function sub_lets() {
     hnw.value = lets.textContent;
-    main.submit();
-}
-function rand_def() {
-    hnw.value = 'D+R';
-    main.submit();
-}
-function forum() {
-    hnw.value = 'F';
-    main.submit();
-}
-function standings() {
-    hnw.value = 'CW';
     main.submit();
 }
 function check_name_location() {
@@ -65,37 +53,9 @@ function check_name_location() {
     }
     return true;
 }
-function new_date(d) {
-    hnw.value = d;
-    main.submit();
-}
 function add_clues() {
     set_focus();
     document.getElementById('add_clues').submit();
-}
-function define_tl(two_let) {
-    hnw.value = 'D+' + two_let;
-    main.submit();
-}
-function define_ht(c, n) {
-    hnw.value = 'D+' + c + n;
-    main.submit();
-}
-function toggle_bonus() {
-    hnw.value = 'BN';
-    main.submit();
-}
-function def_word(event, word) {
-    var nw_val = nw.value.toLowerCase();
-    if (event.shiftKey) {
-        nw.focus();
-        window.open('https://wordnik.com/words/' + word,
-                    'wordnik', 'width=1000');
-    }
-    else {
-        hnw.value = 'D ' + word;
-        main.submit();
-    }
 }
 function clues_by(person_id) {
     document.getElementById('person_id').value = person_id;
@@ -107,6 +67,7 @@ function set_focus() {
     nw.focus();
     return true;
 }
+// for obscuring my email address
 function xyz(s) {
     var out = '';
     for (let i = 0; i < s.length; ++i) {
