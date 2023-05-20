@@ -7,7 +7,7 @@ sub oops {
 oops unless @ARGV == 3;
 my ($hash_file, $key, $val) = @ARGV;
 oops unless $hash_file && $hash_file =~ m{\A \S+[.]dbm \z}xms;
-oops unless $key && $val;
+oops unless defined $key && defined $val;
 use DB_File;
 my %hash;
 tie %hash, 'DB_File', $hash_file;

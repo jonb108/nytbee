@@ -353,13 +353,21 @@ sub now_secs {
     return 60*60*$hour + 60*$minute + $second;
 }
 
-if (exists $end_time_for{$uuid11}) {
-    # is their time up?
-    if (now_secs() >= $end_time_for{$uuid11}) {
-        $message = "Your self-imposed time limit has arrived. &#128542;<br>"
-                 . "Tomorrow is another day. &#128522;";
-        $params{new_words} = '';
-        $params{hidden_new_words} = '';
+my $end_time = $end_time_for{$uuid11};
+if ($end_time) {
+    my $now = now_secs();
+    if ($end_time =~ m{\A [+](\d+)}xms) {
+        my $secs_left = $1;
+        $end_time_for{$uuid11} = $now + $secs_left;
+    }
+    else {
+        # is their time up?
+        if ($now >= $end_time) {
+            $message = "Your self-imposed time limit has arrived. &#128542;<br>"
+                     . "Tomorrow is another day. &#128522;";
+            $params{new_words} = '';
+            $params{hidden_new_words} = '';
+        }
     }
 }
 if ($params{new_words} =~ m{\A \s* idk? \s+}xmsi) {
@@ -1445,7 +1453,9 @@ elsif ($cmd eq 'bn') {
 elsif ($cmd =~ m{\A fx \s* (\d+) \z}xms) {
     my $id = $1;
     system("$cgi_dir/del_post.pl $id '$screen_name'");
-    --$num_msgs{$date};
+    if ($num_msgs{$date} > 0) {
+        --$num_msgs{$date};
+    }
     $cmd = '';
 }
 elsif ($cmd =~ m{\A fe \s* (\d+) \z}xms) {
@@ -1947,6 +1957,20 @@ elsif ($cmd =~ m{\A lm \s*(\d*) \z}xms) {
     }
     else {
         $message = "You can play as long as you'd like!";
+    }
+    $cmd = '';
+}
+elsif ($cmd eq 'pa') {
+    my $end = $end_time_for{$uuid11};
+    if ($end) {
+        my $n = $end - now_secs();
+        my $m = int($n / 60);
+        my $s = $n % 60;
+        $end_time_for{$uuid11} = "+$n";
+        $message = sprintf "Paused.&nbsp;&nbsp;%d:%02d left", $m, $s;
+    }
+    else {
+        $message = 'There was no time limit in place.';
     }
     $cmd = '';
 }
