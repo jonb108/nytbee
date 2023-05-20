@@ -349,6 +349,7 @@ tie %end_time_for, 'DB_File', 'end_time_for.dbm';
 
 sub now_secs {
     my ($second, $minute, $hour) = (localtime)[0 .. 2];
+    --$hour;    # west coast time
     return 60*60*$hour + 60*$minute + $second;
 }
 
@@ -1930,7 +1931,19 @@ elsif ($cmd =~ m{\A lm \s*(\d*) \z}xms) {
         }
     }
     elsif ($mins_more) {
-        $end_time_for{$uuid11} = $now + 60*$mins_more;
+        my $new_time = $now + 60*$mins_more;
+        if ($new_time >= 24*60*60) {
+            # at 23:55 the person issued the command "LM 10".
+            # the expiration time would be after midnight
+            # at which time the limits are cleared so we
+            # clear their limit now.
+            delete $end_time_for{$uuid11};
+            $message = "Your end time would be after midnight!";
+            # what else to say or do?
+        }
+        else {
+            $end_time_for{$uuid11} = $new_time;
+        }
     }
     else {
         $message = "You can play as long as you'd like!";
