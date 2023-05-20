@@ -23,7 +23,7 @@ my $OY = $svgy/2;
 my $svg;
 
 sub do_hex {
-    my ($X, $Y, $C, $color) = @_;
+    my ($X, $Y, $C, $center) = @_;
     
     my $Ox = $OX + $X;
     my $Oy = $OY + $Y;
@@ -50,15 +50,17 @@ sub do_hex {
                 . ($mobile? 'pointer': 'default')
                 . qq!"\n    !
                 ;
+    my $hex_fill  = $center? "CENTER_HEX": "DONUT_HEX";
+    my $text_fill = $center? "CENTER_TEXT": "DONUT_TEXT";
     print {$svg} <<"EOH";
 <polygon
     ${onclick}points="$points"
-    fill="$color"
+    fill="$hex_fill"
     $cursor></polygon>
 <text
     x="$fx"
     y="$fy"
-    fill="black"
+    fill="$text_fill"
     ${cursor}${onclick}class=lets
 >$C</text>
 EOH
@@ -116,11 +118,11 @@ my $red   = '#ff0000';
 my $green = '#22ff22';
 
 init();
-do_hex(              0,             0, 'LET0', 'gold');
-do_hex(              0, -1*(2*$w1+$s), 'LET1', $gray);
-do_hex(              0,  1*(2*$w1+$s), 'LET2', $gray);
-do_hex( 1*($w+$w2+$s1),   1*($w1+$s2), 'LET3', $gray);
-do_hex(-1*($w+$w2+$s1),  -1*($w1+$s2), 'LET4', $gray);
-do_hex(-1*($w+$w2+$s1),   1*($w1+$s2), 'LET5', $gray);
-do_hex( 1*($w+$w2+$s1),  -1*($w1+$s2), 'LET6', $gray);
+do_hex(              0,             0, 'LET0', 1);
+do_hex(              0, -1*(2*$w1+$s), 'LET1', 0);
+do_hex(              0,  1*(2*$w1+$s), 'LET2', 0);
+do_hex( 1*($w+$w2+$s1),   1*($w1+$s2), 'LET3', 0);
+do_hex(-1*($w+$w2+$s1),  -1*($w1+$s2), 'LET4', 0);
+do_hex(-1*($w+$w2+$s1),   1*($w1+$s2), 'LET5', 0);
+do_hex( 1*($w+$w2+$s1),  -1*($w1+$s2), 'LET6', 0);
 finis();

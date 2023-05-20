@@ -1,6 +1,9 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
 my $seven = shift;
 my @seven = split //, $seven;
-print "@seven";
+my ($ch, $ct, $dh, $dt) = @ARGV;
 open my $in, '<', 'svg.html';
 open my $out, '>', 'svg1.html';
 {
@@ -8,6 +11,10 @@ open my $out, '>', 'svg1.html';
     my $s = <$in>;
     close $in;
     $s =~ s{LET(\d)}{$seven[$1]}xmsg;
+    $s =~ s{CENTER_HEX}{$ch}xmsg;
+    $s =~ s{CENTER_TEXT}{$ct}xmsg;
+    $s =~ s{DONUT_HEX}{$dh}xmsg;
+    $s =~ s{DONUT_TEXT}{$dt}xmsg;
     print {$out} $s;
 }
 close $out;
