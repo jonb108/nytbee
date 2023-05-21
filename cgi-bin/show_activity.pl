@@ -14,9 +14,10 @@ if (! open $log, '<', "beelog/$ymd") {
     print "cannot open log for $ymd\n";
     exit;
 }
+$uid =~ s{COMMENT}{#}g;
 LINE:
 while (my $line = <$log>) {
-    if ($line =~ s{\A $uid \s* = \s*}{}xms) {
-        print "$line<br>";
+    if (index($line, $uid) == 0) {
+        print substr($line, length($uid)+3) . "<br>";
     }
 }

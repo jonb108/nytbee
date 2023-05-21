@@ -279,6 +279,7 @@ for my $uid (keys %data) {
 sub show_data {
     my ($uid) = @_;
     my $href = $data{$uid};
+    $uid =~ s{[#]}{COMMENT}g;
     my $act = "https://logicalpoetry.com/cgi-bin/show_activity.pl/$ymd/$uid";
     #print "$uid => ";   # new
     if ($href->{country}) {
