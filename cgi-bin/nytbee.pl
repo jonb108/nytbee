@@ -577,8 +577,6 @@ my $forum_mode      = exists $params{forum_mode}?
                              $params{forum_mode}: 0;
 my $show_RankImage  = exists $params{show_RankImage}?
                              $params{show_RankImage}: 1;
-my $show_ZeroRowCol = exists $params{show_ZeroRowCol}?
-                             $params{show_ZeroRowCol}: !$mobile;
 my $show_GraphicStatus = exists $params{show_GraphicStatus}?
                              $params{show_GraphicStatus}: 0;
 
@@ -1367,10 +1365,6 @@ elsif ($cmd eq 'f') {
 }
 elsif ($cmd eq 'im') {
     $show_RankImage = ! $show_RankImage;
-    $cmd = '';
-}
-elsif ($cmd eq 'co') {
-    $show_ZeroRowCol = ! $show_ZeroRowCol;
     $cmd = '';
 }
 elsif ($cmd eq 'st') {
@@ -3163,25 +3157,25 @@ if ($ht_chosen) {
     push @th, th('&nbsp;');
     LEN:
     for my $l (4 .. $max_len) {
-        if ($sums{1}{$l} == 0 && !$show_ZeroRowCol) {
+        if ($sums{1}{$l} == 0) {
             next LEN;
         }
         push @th, th("$space$l");
     }
-    if ($show_ZeroRowCol || $ncols > 1) {
+    if ($ncols > 1) {
         push @th, th("$space&nbsp;&Sigma;");
     }
     push @rows, Tr(@th);
     CHAR:
     for my $c (@seven) {
-        if (! $show_ZeroRowCol && $sums{$c}{1} == 0) {
+        if ($sums{$c}{1} == 0) {
             next CHAR;
         }
         my @cells;
         push @cells, th({ class => 'lt' }, uc $c);
         LEN:
         for my $l (4 .. $max_len) {
-            if (! $show_ZeroRowCol && $sums{1}{$l} == 0) {
+            if ($sums{1}{$l} == 0) {
                 next LEN;
             }
             push @cells, td($sums{$c}{$l}?
@@ -3191,16 +3185,16 @@ if ($ht_chosen) {
                            : $dash
                           );
         }
-        if ($show_ZeroRowCol || ($sums{$c}{1} != 0 && $ncols > 1)) {
+        if ($sums{$c}{1} != 0 && $ncols > 1) {
             push @cells, th($sums{$c}{1} || 0);
         }
         push @rows, Tr(@cells);
     }
-    if ($nrows > 1 || $show_ZeroRowCol) {
+    if ($nrows > 1) {
         @th = th({ class => 'rt' }, '&Sigma;');
         LEN:
         for my $l (4 .. $max_len) {
-            if (! $show_ZeroRowCol && $sums{1}{$l} == 0) {
+            if ($sums{1}{$l} == 0) {
                 next LEN;
             }
             push @th, th($sums{1}{$l} || $dash);
@@ -3246,14 +3240,14 @@ if (7 <= $rank && $rank <= 9) {
     $image = "<img src=$log/nytbee/pics/$name.png>";
 }
 my $rank_image = $show_RankImage?
-        "<span class='rank_name rank$rank'>$rank_name</span>$image"
+        "<span class='rank_name rank$rank'>$rank_name</span>$image<br>"
        : $rank_name;
 
 my $disp_nhints = "";
 if ($nhints || $rank == 9) {
-    $disp_nhints .= "<br>Hints: $nhints";
+    $disp_nhints .= " Hints: $nhints";
     if ($rank >= 7) {
-        $disp_nhints .= "<br>Ratio: " . sprintf("%.2f", $nhints/$score);
+        $disp_nhints .= " Ratio: " . sprintf("%.2f", $nhints/$score);
     }
 }
 
@@ -3531,7 +3525,7 @@ EOS
 }
 
 my $hint_table_list = '';
-if ($ht_chosen && ($show_ZeroRowCol || $sums{1}{1} != 0)) {
+if ($ht_chosen && $sums{1}{1} != 0) {
     $hint_table_list .= <<"EOH";
 <div class=float-child4>
     <div id=hint_table class=hint_table>
@@ -3540,7 +3534,7 @@ if ($ht_chosen && ($show_ZeroRowCol || $sums{1}{1} != 0)) {
 </div>
 EOH
 }
-if ($tl_chosen && ($show_ZeroRowCol || $sums{1}{1} != 0)) {
+if ($tl_chosen && $sums{1}{1} != 0) {
     $hint_table_list .= <<"EOH";
 <div class=float-child5>
     <div id=two_lets class=two_lets>
@@ -3823,7 +3817,6 @@ $heading
 <input type=hidden name=bonus_mode value=$bonus_mode>
 <input type=hidden name=forum_mode value=$forum_mode>
 <input type=hidden name=show_RankImage value=$show_RankImage>
-<input type=hidden name=show_ZeroRowCol value=$show_ZeroRowCol>
 <input type=hidden name=show_GraphicStatus value=$show_GraphicStatus>
 $letters
 <div style="width: 640px">$message</div>
