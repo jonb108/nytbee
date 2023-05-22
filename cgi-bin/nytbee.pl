@@ -3246,6 +3246,7 @@ my $rank_image = $show_RankImage?
 my $disp_nhints = "";
 if ($nhints || $rank == 9) {
     $disp_nhints .= " Hints: $nhints";
+    $disp_nhints .= ($show_RankImage)? '<br>': ' ';
     if ($rank >= 7) {
         $disp_nhints .= " Ratio: " . sprintf("%.2f", $nhints/$score);
     }
@@ -3694,7 +3695,7 @@ EOH
 }
 
 my $status = $show_GraphicStatus? graphical_status()
-            :                     "Score: $score $rank_image\n$disp_nhints";
+            :                     "Score: $score $rank_image $disp_nhints";
 if ($bonus_mode) {
     $status = '';
 }
