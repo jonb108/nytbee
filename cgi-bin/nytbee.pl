@@ -2915,7 +2915,7 @@ if ($ht_chosen) {
                 next LEN;
             }
             push @cells, td($sums{$c}{$l}?
-                               "<span class='pointer alink'"
+                               "<span class='pointer' style='color: $colors{alink}'"
                                . qq! onclick="issue_cmd('D+$c$l');">!
                                . "$sums{$c}{$l}</span>"
                            : $dash
@@ -2956,7 +2956,7 @@ if ($tl_chosen) {
         if ($two_lets{$two[$i]} == 0) {
             next TWO;
         }
-        $two_lets .= qq!<span class='pointer alink' onclick="issue_cmd('D+$two[$i]');">!
+        $two_lets .= qq!<span class='pointer' style='color: $colors{alink}' onclick="issue_cmd('D+$two[$i]');">!
                   .  qq!\U$two[$i]\E-$two_lets{$two[$i]}</span>!;
         if ($i < $#two
             && substr($two[$i], 0, 1) ne substr($two[$i+1], 0, 1)
@@ -3116,15 +3116,16 @@ EOH
 EOH
         }
         else {
+            my $st = "style='color: $colors{alink}'";
             $letters .= <<"EOH";
-<span class='enter cursor_black alink' onclick="sub_lets();">Enter</span>
-<span class='define cursor_black alink' onclick="issue_cmd('D+R');">Define</span>
-<span class='bonus cursor_black alink' onclick="issue_cmd('BN');">Bonus</span>
+<span class='enter cursor_black' $st onclick="sub_lets();">Enter</span>
+<span class='define cursor_black' $st onclick="issue_cmd('D+R');">Define</span>
+<span class='bonus cursor_black' $st onclick="issue_cmd('BN');">Bonus</span>
 <span class=lets id=lets></span>
-<span class='delete cursor_black alink' onclick="del_let();">Delete</span>
+<span class='delete cursor_black' $st onclick="del_let();">Delete</span>
 <span class='helplink cursor_black'>
-<a class='cursor_black alink' target=_blank href='$log/nytbee/help.html#toc'">Help</a></span>
-<span class='forum cursor_black alink' onclick="issue_cmd('F');">Forum $num_msgs</span>
+<a class='cursor_black' $st target=_blank href='$log/nytbee/help.html#toc'">Help</a></span>
+<span class='forum cursor_black' $st onclick="issue_cmd('F');">Forum $num_msgs</span>
 EOH
         }
     }
