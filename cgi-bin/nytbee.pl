@@ -30,6 +30,8 @@ use BeeUtil qw/
     $cgi_dir
     $thumbs_up
     get_html
+/;
+use BeeColor qw/
     set_colors
     get_colors
 /;
@@ -858,7 +860,7 @@ sub define {
     if (! $def) {
         $def = 'No definition';
     }
-    return ucfirst $def;
+    return "<span class=letter>" . ucfirst($def) . "</span>";
 }
 
 sub do_define {
@@ -1167,7 +1169,7 @@ elsif ($cmd =~ m{\A d \s+ ([a-z ]+) \z}xms) {
     my $words = $1;
     my @words = split ' ', $words;
     for my $word (@words) {
-        $message .= qq!<br><span class=cursor_black onclick="full_def('$word');">\U$word:!
+        $message .= qq!<br><span class=cursor_black onclick="full_def('$word');"><span class=letter>\U$word</span>:!
                  .  ul(define($word, 1, 0))
                  .  '</span>'
                  ;
@@ -2913,7 +2915,7 @@ if ($ht_chosen) {
                 next LEN;
             }
             push @cells, td($sums{$c}{$l}?
-                               "<span class=pointer"
+                               "<span class='pointer alink'"
                                . qq! onclick="issue_cmd('D+$c$l');">!
                                . "$sums{$c}{$l}</span>"
                            : $dash
@@ -2954,7 +2956,7 @@ if ($tl_chosen) {
         if ($two_lets{$two[$i]} == 0) {
             next TWO;
         }
-        $two_lets .= qq!<span class=pointer onclick="issue_cmd('D+$two[$i]');">!
+        $two_lets .= qq!<span class='pointer alink' onclick="issue_cmd('D+$two[$i]');">!
                   .  qq!\U$two[$i]\E-$two_lets{$two[$i]}</span>!;
         if ($i < $#two
             && substr($two[$i], 0, 1) ne substr($two[$i+1], 0, 1)
@@ -3015,7 +3017,7 @@ my $add_clues_form = '';
 if ($date =~ m{\A \d}xms) {
     my $add_edit = index($puzzle_has_clues{$date}, $uuid) >= 0? 'Edit': 'Add';
     $create_add
-        .= "&nbsp;&nbsp;<span class='link alink' onclick='add_clues();'>$add_edit Clues</span>";
+        .= "&nbsp;&nbsp;<span class=alink onclick='add_clues();'>$add_edit Clues</span>";
     $add_clues_form = <<"EOH";
 <form target=_blank
       id=add_clues
@@ -3036,11 +3038,6 @@ if (my $nm = $num_msgs{$date}) {
 }
 
 my $heading = $show_Heading? <<"EOH": '';
-<style>
-.alink {
-    color: $colors{alink};
-}
-</style>
 <div class=float-child1>
     <a target=_blank class=alink onclick="set_focus();" href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date$clues_are_present
 </div>
@@ -3048,7 +3045,7 @@ my $heading = $show_Heading? <<"EOH": '';
      <img width=53 src=$log/nytbee/pics/bee-logo.png onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
 </div>
 <div class=float-child3>
-    <div style="text-align: center"><span class=help><a class=alink target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span>&nbsp;&nbsp;<span class=help><a target=_blank class=alink href='$log/nytbee/cmd_list.pdf'>Cmds</a><br><span class=create_add'>$create_add</span><br><a class='cursor alink' onclick="issue_cmd('F');">Forum</a> $num_msgs</div>
+    <div style="text-align: center"><span class=help><a class=alink target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span>&nbsp;&nbsp;<span class=help><a target=_blank class=alink href='$log/nytbee/cmd_list.pdf'>Cmds</a><br><span class=create_add'>$create_add</span><br><a class='alink' onclick="issue_cmd('F');">Forum</a> $num_msgs</div>
 </div>
 <br><br>
 EOH
@@ -3078,14 +3075,14 @@ elsif ($hive == 1) {        # bee hive honeycomb
         # all positioned absolutely as well
 sub click_td {
     my ($l, $color) = @_;
-    $color = $color? 'green': '';
+    $color = $color? 'green': $colors{letter};
     # tried putting text-align: center in bonus_let style
     # didn't work 
     # this is messy.  better to use a class instead of a style...
     # it works, yes, but clean it up.
     my $disp_l = $l eq 'I'? '&nbsp;I&nbsp;': $l;
     return td({ style => "text-align: center;"},
-               "<span class='bonus_let cursor_black $color'"
+               "<span class='bonus_let cursor_black' style='color: $color'"
              . qq! onclick="add_redlet('$l')">$disp_l</span>!);
 }
         if ($bonus_mode) {
@@ -3366,6 +3363,13 @@ print <<"EOH";
 body {
     background: $colors{background};
     color: $colors{letter};
+}
+.letter {
+    color: $colors{letter};
+}
+.alink {
+    color: $colors{alink};
+    cursor: pointer;
 }
 .enter {
     position: absolute;

@@ -11,7 +11,6 @@ use Date::Simple qw/
 /;
 use BeeUtil qw/
     my_today
-    JON
 /;
 my $today = my_today();
 my $date = shift;
