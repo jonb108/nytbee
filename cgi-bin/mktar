@@ -6,6 +6,7 @@ BeeDBM.pm \
 comments.txt \
 SvgHex.pm \
 free_sn \
+BeeColor.pm \
 BeeClues.pm \
 clues.pl \
 cron_jon \
