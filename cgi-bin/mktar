@@ -3,6 +3,8 @@ rm -f /tmp/cgi.tar
 tar cvf /tmp/cgi.tar  \
 BeeUtil.pm \
 BeeDBM.pm \
+comments.txt \
+SvgHex.pm \
 free_sn \
 BeeClues.pm \
 clues.pl \

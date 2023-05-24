@@ -17,6 +17,7 @@ our @EXPORT_OK = qw/
     %first_appeared
     %definition_of
     %message_for
+    %uuid_colors_for
 /;
 
 use DB_File;
@@ -114,5 +115,16 @@ tie %message_for, 'DB_File', 'message_for.dbm';
 # value is "# date"
 # the number of the last message (in directory message/)
 # the user saw and the date they saw it
+
+our %uuid_colors_for;
+tie %uuid_colors_for, 'DB_File', 'uuid_colors_for.dbm';
+# key is uuid
+# value is a Data::Dumper created *string* representing a hash
+#     whose keys are:
+#       center_hex center_text
+#       donut_hex donut_text
+#       background letter link
+#     and whose values are colors in one of these forms:
+#       either html_name, #FFa9e4, rgb(114, 100, 29A), hsl(34, 50%, 20%)
 
 1;

@@ -1,0 +1,277 @@
+
+=comment
+
+-------
+TODO:
+W>> - increasing score (length and pangram...)
+
+status - like hive - preserved over sessions
+         default is graphics
+BT - a toggle preserved based on which game you're on
+     like HT or TL
+
+51, 52, DR5 - if no more 5+ letter words - say so
+
+ST - on the nose?  not quite - a bit over
+8/23/22 - Dimwit Dominion Domino Midtown Minim Minion Motion Motto Timid Tomtit
+
+for bee art not swiped from the NYT:
+https://www.dreamstime.com/illustration/queen-bee-black-white.html
+
+first - check to see if new_words contains a command or not.
+    should be easy - this is the most common case...
+    the rest could even be a separate process - to 
+    reduce the compilation time?
+    how fast does Perl process 2,000 lines????
+    and don't create the hint table and two letter list
+    unless you need to!
+
+Max Bingo - could a word be very long, not a pangram
+    yet be the word of maximum score for that initial letter?
+
+Dez?  his work, history, puzzledom
+admin.pl
+update help.html about title, description, publish,
+ID ... explained in help
+add a video about new commands since other videos were made
+make Collapse the default and remove CO
+allow clicking on letters even if not mobile
+SC - mark other ranks aside from Great, Amazing, Genius, Queen Bee?
+
+Create a site to report missing Lexicon words.
+    My program can add to it automatically. :)
+    Nah. nytbee.com has a start...
+
+Clues - have a <select> dropdown to choose an alternate format.
+    Less obtrusive.   And they can select-all and copy, yes?
+Have a comment that they shouldn't skip the clues.
+
+BINGO - if a bingo is possible and the person HAS found 7 words
+    with the initial letter - give them some kind of credit
+
+S/regex
+    => regexp.pl
+
+Have a way to leave a comment for the puzzle maker.
+    Like a forum.
+    Timestamped
+
+STatus or REmaining - to toggle showing line graphs
+    that start long and get shorter with each word entered
+    one for #words
+    one for score - with little marks for the different ranks
+    there's a similar thing on the NYTimes app (or webpage)
+        but it has the same lengths for each rank.
+        Mine would be linear and include Queen Bee.
+
+what about showing words not yet found
+    but only their length and the position of the center letter?
+
+Each clue is a haiku.
+
+when creating a puzzle
+    somehow mark words that do NOT have s, re, ing?
+
+why is the response time of pangram haiku puzzles tapping faster?
+
+does copy to clipboard work on phone?
+
+when Queen Bee is reached - show the ratio #hints/#points
+    to two decimal points
+    and log it 
+    and have a command to show the 
+        progress - table/graph
+    when QueenBee is reached what is the ratio
+    when QB is reached store it in the database
+        words found in order plus first hint, # hints
+    then list all queen bees with stats with QB command
+        by date, click on the date
+
+A new section in the help.html
+    Lists of Words and Puzzles
+    with links
+ALL words
+    word, length, frequency of use, first used
+        dynamic, see if it's fast enough
+    otherwise several files asc, desc, with links to each in heading
+ALL puzzles
+    date with #words, #points, #4letters, #pangrams, bingo?
+at first - make these dynamic and see how fast it is
+    otherwise - make a bunch of files - nah
+
+when using the W commands add a count at the end
+    of the lines in gray - just like the normal display
+
+Bingo is not set properly - c y, i, g y and copy/paste, then i
+
+in /bee link /bee-def add definitions - for an active dynamic grid
+    add to the Help
+
+given a date (like today) which words were used for the FIRST time?
+    'FT', 'FT 4/5/19'
+
+make the nyt_puzzles.txt file downloadable
+    in some order
+
+add your email address on the screen?
+    info@logicalpoetry.com??
+    with 'questions?   feedback?' like Karen
+
+add definitions to /bee?
+in the Help - add link to /nytbee
+
+creating empty community puzzle - with a refresh somehow?
+
+improve admin.pl - a table id, location, prog, grid, which games
+
+LE ooooooC     use the parameter as the scrambled LEtters
+    for making a nice screenshot (FINDME Y => indemnify)
+    C is center letter, oooooo are the 6 outer letters
+    document it in super power user section
+
+document mobile use, define
+
+admin.pl - show location (even multiple at same location) 
+    with prog/grid tallies
+
+id sahadev108!
+
+    enter "your" id on each device
+        and after each time you clear the cookies
+    can share identities
+    or just switch identities for two people in same house
+        on same machine
+    it saves the previous settings entirely
+
+save game status and history in the database
+    at some interval?  or before clearing the game...
+
+separate files for each day's log in an log/ directory
+a cgi-bin command to extract statistics from the day's log
+    count of different people using the full vs dynamic grid
+    count of dynamic single words vs multiple words entered
+    locations of unique people (remember them in a DBM file)
+        https://freegeoip.app/csv/$ip
+    total lines
+
+in dynamic.pl if someone enters 5 single words 
+    show them the full application url
+        in a pop up window they have to dismiss
+    and remember you have done that so you don't spam them...
+
+after making a new puzzle show the link to it
+
+?? Safari:
+try {
+    // try to use Clipboard API
+    await navigator.clipboard.writeText(text);
+    return true
+} catch (_) {
+    // Clipboard API is not supported
+    const el = document.createElement('textarea')
+    el.value = text
+    document.body.appendChild(el)
+    el.select()
+    const result = document.execCommand('copy')
+    document.body.removeChild(el)
+    return result === 'unsuccessful' ? false : true
+}
+
+to email: https://cs.brynmawr.edu/~dkumar/
+
+ask John Napiorkowski about FAST CGI or Dancer
+    or Plack or PSGI or ... mod_perl
+    if needed...
+
+it is so fast - FastCGI or mod_perl or ...
+    it's tricky with limited ability to install this or that
+    dancer?
+
+test suite!
+
+tips, tricks
+    Tab to get focus on new_words
+    pangram game or getting to a certain rank
+
+film(s)
+
+Art is about "drawing the line".
+    we're getting very close to the end.
+    so perhaps put your new ideas in a
+    section called "Future Plans?"
+    when are we done?  when adding anything else
+    spoils what is already there.
+    or when explaining the new thing is simply
+    too complicated and would put off people
+    from trying it in the first place!
+
+find beta testers - friends and the hivemind
+should it be labeled NYT Bee, ToBee, or what?
+
+<script>
+several functions that
+may not be used - make them conditional
+</script>
+
+make more additions to js/
+
+divide styles into two - static and dynamic
+    static can be cached the browser
+    cgi_style.css is a start
+scripts, too
+
+for a competition - announce a certain puzzle as the one for the day.
+    this would work *only* with CP puzzles as all of the NYT puzzle
+    answer words are available in various places - nytbee.com, shunn.net, etc
+        add the page source!
+    the competition puzzle has certain hint restrictions in place
+        and these are announced.   as well as prizes :)
+        and time limits - when is the last time?
+    cheater programs?  yeah... :(  lexicon plus search, analysis
+        participants would have to promise to not use them.
+    command HR - what hint restrictions are in force for this puzzle?
+    You enter the competition with a certain command
+        then you give your name, the puzzle name.
+    perhaps like 'ENTER CP5'
+        you are prompted for mixed case Name, Location, and Contact Email
+        and you are asked to promise to not use any other resource
+    The time is noted along with your uuid.
+    When you achieve Queen Bee for the puzzle the timer is stopped
+        and the time is noted.
+    For competition, the hint restrictions are enforced regardless
+        of what NOH/OKH the person has in place...
+        It's on a per *puzzle* basis from person to person, browser to browser.
+    Results are tallied.  and made available somehow
+    prizes?
+    A nice dream, anyway :).
+
+    for testing of clues - make puzzles (with accompanying clues)
+        with TION pangrams (adoption, antagonizing, annihilation)
+        (also add clues for NYT puzzles that have
+        those words as pangrams and either N or O as center letter
+        - like conduction on 8/26/21)
+        and give these various clues for NOON:
+        - the opposite of midnight
+        - a palindromic time of day
+        - John Wayne movie - High ____
+        and these clues for TOOT:
+        - honk
+        - a palindromic sound
+        - snort of a drug
+
+some way to preserve your accomplishments?
+print it
+
+add to hint total when looking at all clues?
+    clues are not as easy as dictionary definitions
+    it's all just fun, anyway ...
+
+at some point it becomes Art
+practical use yields to beauty
+to others its over-the-top impracticality
+    seems insane and a waste of time
+    but to the artist
+    it gives meaning to life and is therapeutic
+
+=cut
+

@@ -1,283 +1,6 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-
-=comment
-
--------
-TODO:
-W>> - increasing score (length and pangram...)
-
-status - like hive - preserved over sessions
-         default is graphics
-BT - a toggle preserved based on which game you're on
-     like HT or TL
-
-51, 52, DR5 - if no more 5+ letter words - say so
-
-ST - on the nose?  not quite - a bit over
-8/23/22 - Dimwit Dominion Domino Midtown Minim Minion Motion Motto Timid Tomtit
-
-for bee art not swiped from the NYT:
-https://www.dreamstime.com/illustration/queen-bee-black-white.html
-
-first - check to see if new_words contains a command or not.
-    should be easy - this is the most common case...
-    the rest could even be a separate process - to 
-    reduce the compilation time?
-    how fast does Perl process 2,000 lines????
-    and don't create the hint table and two letter list
-    unless you need to!
-
-Max Bingo - could a word be very long, not a pangram
-    yet be the word of maximum score for that initial letter?
-
-Dez?  his work, history, puzzledom
-admin.pl
-update help.html about title, description, publish,
-ID ... explained in help
-add a video about new commands since other videos were made
-make Collapse the default and remove CO
-allow clicking on letters even if not mobile
-SC - mark other ranks aside from Great, Amazing, Genius, Queen Bee?
-
-Create a site to report missing Lexicon words.
-    My program can add to it automatically. :)
-    Nah. nytbee.com has a start...
-
-Clues - have a <select> dropdown to choose an alternate format.
-    Less obtrusive.   And they can select-all and copy, yes?
-Have a comment that they shouldn't skip the clues.
-
-BINGO - if a bingo is possible and the person HAS found 7 words
-    with the initial letter - give them some kind of credit
-
-S/regex
-    => regexp.pl
-
-Have a way to leave a comment for the puzzle maker.
-    Like a forum.
-    Timestamped
-
-STatus or REmaining - to toggle showing line graphs
-    that start long and get shorter with each word entered
-    one for #words
-    one for score - with little marks for the different ranks
-    there's a similar thing on the NYTimes app (or webpage)
-        but it has the same lengths for each rank.
-        Mine would be linear and include Queen Bee.
-
-what about showing words not yet found
-    but only their length and the position of the center letter?
-
-Each clue is a haiku.
-
-when creating a puzzle
-    somehow mark words that do NOT have s, re, ing?
-
-why is the response time of pangram haiku puzzles tapping faster?
-
-does copy to clipboard work on phone?
-
-when Queen Bee is reached - show the ratio #hints/#points
-    to two decimal points
-    and log it 
-    and have a command to show the 
-        progress - table/graph
-    when QueenBee is reached what is the ratio
-    when QB is reached store it in the database
-        words found in order plus first hint, # hints
-    then list all queen bees with stats with QB command
-        by date, click on the date
-
-A new section in the help.html
-    Lists of Words and Puzzles
-    with links
-ALL words
-    word, length, frequency of use, first used
-        dynamic, see if it's fast enough
-    otherwise several files asc, desc, with links to each in heading
-ALL puzzles
-    date with #words, #points, #4letters, #pangrams, bingo?
-at first - make these dynamic and see how fast it is
-    otherwise - make a bunch of files - nah
-
-when using the W commands add a count at the end
-    of the lines in gray - just like the normal display
-
-Bingo is not set properly - c y, i, g y and copy/paste, then i
-
-in /bee link /bee-def add definitions - for an active dynamic grid
-    add to the Help
-
-given a date (like today) which words were used for the FIRST time?
-    'FT', 'FT 4/5/19'
-
-make the nyt_puzzles.txt file downloadable
-    in some order
-
-add your email address on the screen?
-    info@logicalpoetry.com??
-    with 'questions?   feedback?' like Karen
-
-add definitions to /bee?
-in the Help - add link to /nytbee
-
-creating empty community puzzle - with a refresh somehow?
-
-improve admin.pl - a table id, location, prog, grid, which games
-
-LE ooooooC     use the parameter as the scrambled LEtters
-    for making a nice screenshot (FINDME Y => indemnify)
-    C is center letter, oooooo are the 6 outer letters
-    document it in super power user section
-
-document mobile use, define
-
-admin.pl - show location (even multiple at same location) 
-    with prog/grid tallies
-
-id sahadev108!
-
-    enter "your" id on each device
-        and after each time you clear the cookies
-    can share identities
-    or just switch identities for two people in same house
-        on same machine
-    it saves the previous settings entirely
-
-save game status and history in the database
-    at some interval?  or before clearing the game...
-
-separate files for each day's log in an log/ directory
-a cgi-bin command to extract statistics from the day's log
-    count of different people using the full vs dynamic grid
-    count of dynamic single words vs multiple words entered
-    locations of unique people (remember them in a DBM file)
-        https://freegeoip.app/csv/$ip
-    total lines
-
-in dynamic.pl if someone enters 5 single words 
-    show them the full application url
-        in a pop up window they have to dismiss
-    and remember you have done that so you don't spam them...
-
-after making a new puzzle show the link to it
-
-?? Safari:
-try {
-    // try to use Clipboard API
-    await navigator.clipboard.writeText(text);
-    return true
-} catch (_) {
-    // Clipboard API is not supported
-    const el = document.createElement('textarea')
-    el.value = text
-    document.body.appendChild(el)
-    el.select()
-    const result = document.execCommand('copy')
-    document.body.removeChild(el)
-    return result === 'unsuccessful' ? false : true
-}
-
-to email: https://cs.brynmawr.edu/~dkumar/
-
-ask John Napiorkowski about FAST CGI or Dancer
-    or Plack or PSGI or ... mod_perl
-    if needed...
-
-it is so fast - FastCGI or mod_perl or ...
-    it's tricky with limited ability to install this or that
-    dancer?
-
-test suite!
-
-tips, tricks
-    Tab to get focus on new_words
-    pangram game or getting to a certain rank
-
-film(s)
-
-Art is about "drawing the line".
-    we're getting very close to the end.
-    so perhaps put your new ideas in a
-    section called "Future Plans?"
-    when are we done?  when adding anything else
-    spoils what is already there.
-    or when explaining the new thing is simply
-    too complicated and would put off people
-    from trying it in the first place!
-
-find beta testers - friends and the hivemind
-should it be labeled NYT Bee, ToBee, or what?
-
-<script>
-several functions that
-may not be used - make them conditional
-</script>
-
-make more additions to js/
-
-divide styles into two - static and dynamic
-    static can be cached the browser
-    cgi_style.css is a start
-scripts, too
-
-for a competition - announce a certain puzzle as the one for the day.
-    this would work *only* with CP puzzles as all of the NYT puzzle
-    answer words are available in various places - nytbee.com, shunn.net, etc
-        add the page source!
-    the competition puzzle has certain hint restrictions in place
-        and these are announced.   as well as prizes :)
-        and time limits - when is the last time?
-    cheater programs?  yeah... :(  lexicon plus search, analysis
-        participants would have to promise to not use them.
-    command HR - what hint restrictions are in force for this puzzle?
-    You enter the competition with a certain command
-        then you give your name, the puzzle name.
-    perhaps like 'ENTER CP5'
-        you are prompted for mixed case Name, Location, and Contact Email
-        and you are asked to promise to not use any other resource
-    The time is noted along with your uuid.
-    When you achieve Queen Bee for the puzzle the timer is stopped
-        and the time is noted.
-    For competition, the hint restrictions are enforced regardless
-        of what NOH/OKH the person has in place...
-        It's on a per *puzzle* basis from person to person, browser to browser.
-    Results are tallied.  and made available somehow
-    prizes?
-    A nice dream, anyway :).
-
-    for testing of clues - make puzzles (with accompanying clues)
-        with TION pangrams (adoption, antagonizing, annihilation)
-        (also add clues for NYT puzzles that have
-        those words as pangrams and either N or O as center letter
-        - like conduction on 8/26/21)
-        and give these various clues for NOON:
-        - the opposite of midnight
-        - a palindromic time of day
-        - John Wayne movie - High ____
-        and these clues for TOOT:
-        - honk
-        - a palindromic sound
-        - snort of a drug
-
-some way to preserve your accomplishments?
-print it
-
-add to hint total when looking at all clues?
-    clues are not as easy as dictionary definitions
-    it's all just fun, anyway ...
-
-at some point it becomes Art
-practical use yields to beauty
-to others its over-the-top impracticality
-    seems insane and a waste of time
-    but to the artist
-    it gives meaning to life and is therapeutic
-
-=cut
-
 use CGI;
 use CGI::Carp qw/
     fatalsToBrowser
@@ -307,6 +30,8 @@ use BeeUtil qw/
     $cgi_dir
     $thumbs_up
     get_html
+    set_colors
+    get_colors
 /;
 use BeeDBM qw/
     %end_time_for
@@ -322,6 +47,10 @@ use BeeDBM qw/
     %first_appeared
     %definition_of
     %message_for
+    %uuid_colors_for
+/;
+use SvgHex qw/
+    svg_hex
 /;
 use Date::Simple qw/
     today
@@ -422,7 +151,6 @@ my $focus = $mobile? '': 'set_focus();';
 # nytbee.com ends at 7/29/18
 # mine ends at 5/29/18  sbsolver.com goes back further to 5/9/18
 # We are 'toiling in the same field'.
-# Remove the CO command - have it always collapse - like the /bee
 #
 # when solving today's puzzle - recommend a subscription?
 #
@@ -909,7 +637,7 @@ my $letter_regex = qr{([^$seven])}xms;  # see sub check_word
 my $no_def = qr{No\s+definition}xms;
 my $npangrams = @pangrams;
 
-# get ready for hive == 3 (seven straight letters)
+# get ready for hive == 2 (seven straight letters)
 my @seven_let;
 if ($params{seven_let} && $date eq $params{date}) {
     @seven_let = split ' ', $params{seven_let};
@@ -1743,12 +1471,12 @@ elsif ($cmd =~ m{\A s \s+ ([a-z]+) \z}xms) {
 }
 elsif ($cmd eq 'h') {
     ++$hive;
-    if ($hive == 5) {
+    if ($hive == 4) {
         $hive = 1;
     }
     $cmd = '';
 }
-elsif ($cmd =~ m{\A h \s* ([1-4]) \z}xms) {
+elsif ($cmd =~ m{\A h \s* ([1-3]) \z}xms) {
     $hive = $1;
     $cmd = '';
 }
@@ -1955,6 +1683,7 @@ if (   $cmd ne '1'
     && $cmd !~ m{\A cw\s*\d* \z}xms
     && $cmd !~ m{\A m\d* \z}xms
     && $cmd !~ m{\A sn\b }xms
+    && $cmd !~ m{\A co\b }xms
     && $cmd !~ m{\A ([+][+]|[-][-])cp }xms
 ) {
     # what about $cmd eq 'i' or bw or ... ?
@@ -3112,6 +2841,10 @@ elsif ($cmd eq 'id') {
                        # javascript without a user click...
     $cmd = '';
 }
+elsif ($cmd =~ m{\A co \s+ (.*)}xms) {
+    $message = set_colors($uuid, $1);
+    $cmd = '';
+}
 elsif ($cmd eq 'sn') {
     # they may not have one yet ...
     check_screen_name();
@@ -3146,6 +2879,7 @@ elsif ($cmd =~ m{\A sn \s+ (.*) \z}xms) {
     }
     $cmd = '';
 }
+my %colors = get_colors($uuid);
 
 # the hint tables
 my $hint_table = '';
@@ -3275,13 +3009,13 @@ if ($message) {
     $has_message = 1;
 }
 my $create_add
-    = "<a  onclick='set_focus();' target=_blank href='$log/nytbee/mkpuz.html'>"
+    = "<a class=alink onclick='set_focus();' target=_blank href='$log/nytbee/mkpuz.html'>"
     . "Create Puzzle</a>";
 my $add_clues_form = '';
 if ($date =~ m{\A \d}xms) {
     my $add_edit = index($puzzle_has_clues{$date}, $uuid) >= 0? 'Edit': 'Add';
     $create_add
-        .= "&nbsp;&nbsp;<span class=link onclick='add_clues();'>$add_edit Clues</span>";
+        .= "&nbsp;&nbsp;<span class='link alink' onclick='add_clues();'>$add_edit Clues</span>";
     $add_clues_form = <<"EOH";
 <form target=_blank
       id=add_clues
@@ -3302,23 +3036,25 @@ if (my $nm = $num_msgs{$date}) {
 }
 
 my $heading = $show_Heading? <<"EOH": '';
+<style>
+.alink {
+    color: $colors{alink};
+}
+</style>
 <div class=float-child1>
-    <a target=_blank onclick="set_focus();" href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date$clues_are_present
+    <a target=_blank class=alink onclick="set_focus();" href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date$clues_are_present
 </div>
 <div class=float-child2>
      <img width=53 src=$log/nytbee/pics/bee-logo.png onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
 </div>
 <div class=float-child3>
-    <div style="text-align: center"><span class=help><a target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span>&nbsp;&nbsp;<span class=help><a target=_blank href='$log/nytbee/cmd_list.pdf'>Cmds</a><br><span class=create_add>$create_add</span><br><a class=cursor onclick="issue_cmd('F');">Forum</a> $num_msgs</div>
+    <div style="text-align: center"><span class=help><a class=alink target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span>&nbsp;&nbsp;<span class=help><a target=_blank class=alink href='$log/nytbee/cmd_list.pdf'>Cmds</a><br><span class=create_add'>$create_add</span><br><a class='cursor alink' onclick="issue_cmd('F');">Forum</a> $num_msgs</div>
 </div>
 <br><br>
 EOH
 
 my $letters = '';
-my @coords;
-my $let_size;
-my $img_left_margin;
-if ($hive == 4) {
+if ($hive == 3) {
     $letters = <<"EOH";
 <pre>
      $six[0]   $six[1]
@@ -3328,32 +3064,18 @@ if ($hive == 4) {
 EOH
 }
 elsif ($hive == 1) {        # bee hive honeycomb
+    $letters = svg_hex($mobile);
+    $letters =~ s{LET0}{$Center}xmsg;
+    for my $i (1 .. 6) {
+        $letters =~ s{LET$i}{$six[$i-1]}xmsg;
+    }
+    $letters =~ s{CENTER_HEX}{$colors{center_hex}}xmsg;
+    $letters =~ s{CENTER_TEXT}{$colors{center_text}}xmsg;
+    $letters =~ s{DONUT_HEX}{$colors{donut_hex}}xmsg;
+    $letters =~ s{DONUT_TEXT}{$colors{donut_text}}xmsg;
     if ($mobile) {
-        $letters = "<p><img usemap='#mapletters' class=img src=$log/nytbee/pics/hive.jpg height=240><p>";
-        $letters .= qq!<span onclick="add_let('$Center');" class='p0 ab cursor_black' tabindex=-1>\U$center\E</span>!;
-        for my $i (1 .. 6) {
-            $letters .= qq!<span onclick="add_let('$six[$i-1]');" class='p$i ab cursor_black' tabindex=-1>$six[$i-1]</span>!;
-        }
         # enter, wordlets, delete, define
         # all positioned absolutely as well
-        $letters .= <<"EOH";
-<map name=mapletters>
-<area tabindex=-1 shape='poly' href='javascript: add_let("$Center")' class=let
-      coords=' 94, 83, 136, 83, 157,120, 136,156,  94,156,  74,120,  94, 83, '>
-<area tabindex=-1 shape='poly' href='javascript: add_let("$six[0]")' class=let
-      coords=' 94,  2, 136,  2, 157, 39, 136, 75,  94, 75,  74, 39,  94,  2, '>
-<area tabindex=-1 shape='poly' href='javascript: add_let("$six[1]")' class=let
-      coords=' 25, 42,  67, 42,  88, 79,  67,115,  25,115,   5, 79,  25, 42, '>
-<area tabindex=-1 shape='poly' href='javascript: add_let("$six[2]")' class=let
-      coords='165, 42, 207, 42, 228, 79, 207,115, 165,115, 145, 79, 165, 42, '>
-<area tabindex=-1 shape='poly' href='javascript: add_let("$six[3]")' class=let
-      coords=' 25,123,  67,123,  88,160,  67,196,  25,196,   5,160,  25,123, '>
-<area tabindex=-1 shape='poly' href='javascript: add_let("$six[4]")' class=let
-      coords='165,123, 207,123, 228,160, 207,196, 165,196, 145,160, 165,123, '>
-<area tabindex=-1 shape='poly' href='javascript: add_let("$six[5]")' class=let
-      coords=' 94,163, 136,163, 157,200, 136,236,  94,236,  74,200,  94,163, '>
-</map>
-EOH
 sub click_td {
     my ($l, $color) = @_;
     $color = $color? 'green': '';
@@ -3387,95 +3109,30 @@ $row2
 EOH
             $letters .= <<"EOH";
 <span class=lets id=lets></span>
-<span class='enter' onclick="sub_lets();">Enter</span>
-<span class='define' onclick="del_let();">Delete</span>
-<span class='standings' onclick="issue_cmd('CW');">Standings</span>
-<span class='own' onclick="issue_cmd('OW');">Own</span>
-<span class='bonus2' onclick="issue_cmd('BN');">Bonus</span>
+<span class='enter alink' onclick="sub_lets();">Enter</span>
+<span class='define alink' onclick="del_let();">Delete</span>
+<span class='standings alink' onclick="issue_cmd('CW');">Standings</span>
+<span class='own alink' onclick="issue_cmd('OW');">Own</span>
+<span class='bonus2 alink' onclick="issue_cmd('BN');">Bonus</span>
 </span>
 <span class=bonus_lets>$bonus_table</span>
 EOH
         }
         else {
             $letters .= <<"EOH";
-<span class='enter cursor_black' onclick="sub_lets();">Enter</span>
-<span class='define cursor_black' onclick="issue_cmd('D+R');">Define</span>
-<span class='bonus cursor_black' onclick="issue_cmd('BN');">Bonus</span>
+<span class='enter cursor_black alink' onclick="sub_lets();">Enter</span>
+<span class='define cursor_black alink' onclick="issue_cmd('D+R');">Define</span>
+<span class='bonus cursor_black alink' onclick="issue_cmd('BN');">Bonus</span>
 <span class=lets id=lets></span>
-<span class='delete cursor_black' onclick="del_let();">Delete</span>
+<span class='delete cursor_black alink' onclick="del_let();">Delete</span>
 <span class='helplink cursor_black'>
-<a class='cursor_black' target=_blank href='$log/nytbee/help.html#toc'">Help</a></span>
-<span class='forum cursor_black' onclick="issue_cmd('F');">Forum $num_msgs</span>
+<a class='cursor_black alink' target=_blank href='$log/nytbee/help.html#toc'">Help</a></span>
+<span class='forum cursor_black alink' onclick="issue_cmd('F');">Forum $num_msgs</span>
 EOH
         }
     }
-    else {
-        # non-mobile phone...
-        $letters = "<p><img class=img src=$log/nytbee/pics/hive.jpg height=240><p>";
-        $letters .= "<span class='p0 ab' tabindex=-1>\U$center\E</span>";
-        for my $i (1 .. 6) {
-            $letters .= "<span class='p$i ab' tabindex=-1>$six[$i-1]</span>";
-        }
-    }
-    $let_size = 24;
-    $img_left_margin = 37;
-    #       1
-    #    2     3
-    #       0
-    #    4     5
-    #       6
-    @coords = (
-        { top => 214, left => 172, }, #0    208 168
-        { top => 134, left => 172, }, #1
-        { top => 175, left => 104, }, #2
-        { top => 175, left => 241, }, #3
-        { top => 253, left => 104, }, #4
-        { top => 253, left => 239, }, #5
-        { top => 295, left => 172, }, #6
-    );
-    # adjust an I
-    for my $i (1 .. 6) {
-        if ($six[$i-1] eq 'I') {
-            $coords[$i]{left} += 6;
-        }
-    }
-    if ($center eq 'i') {
-        $coords[0]{left} += 6;
-    }
 }
-elsif ($hive == 2) {        # flower
-    $letters = "<p><img class=img src=$log/nytbee/pics/flower.jpg height=250><p>";
-    $letters .= "<span class='p0 ab white'>\U$center\E</span>";
-    for my $i (1 .. 6) {
-        $letters .= "<span class='p$i ab'>$six[$i-1]</span>";
-    }
-    $let_size = 24;
-    $img_left_margin = 30;
-    #
-    #   2   3
-    # 4   0   5
-    #   6   1
-    #
-    @coords = (
-        { top => 220, left => 179, }, #0
-        { top => 277, left => 213, }, #1
-        { top => 160, left => 143, }, #2
-        { top => 160, left => 213, }, #3
-        { top => 220, left => 105, }, #4
-        { top => 220, left => 243, }, #5
-        { top => 277, left => 138, }, #6
-    );
-    # adjust an I
-    for my $i (1 .. 6) {
-        if ($six[$i-1] eq 'I') {
-            $coords[$i]{left} += 7;
-        }
-    }
-    if ($center eq 'i') {
-        $coords[0]{left} += 7;
-    }
-}
-elsif ($hive == 3) {    # hex letters
+elsif ($hive == 2) {    # hex letters
     if ($mobile) {
         $letters = "<div class=h3lets id=lets>&nbsp;</div>";
         $letters .= "<table width=100%><tr>\n";
@@ -3505,23 +3162,6 @@ elsif ($hive == 3) {    # hex letters
             }
         }
         $letters .= "</pre>";
-    }
-}
-if (! $show_Heading && ($hive == 1 || $hive == 2)) {
-    for my $c (@coords) {
-        $c->{top} -= 79;
-    }
-}
-
-my $letter_styles = '';
-if (@coords) {
-    for my $i (0 .. 6) {
-        $letter_styles .= <<"EOS";
-.p$i {
-    top: $coords[$i]{top}px;
-    left: $coords[$i]{left}px;
-}
-EOS
     }
 }
 
@@ -3723,16 +3363,10 @@ print <<"EOH";
 <meta charset='UTF-8'>
 <title>Spelling Bee - $show_date</title>
 <style>
-.img {
-    margin-left: ${img_left_margin}px;
+body {
+    background: $colors{background};
+    color: $colors{letter};
 }
-.ab {
-    position: absolute;
-    font-weight: bold;
-    font-family: Arial;
-    font-size: ${let_size}px;
-}
-$letter_styles
 .enter {
     position: absolute;
     left: 320;
@@ -3772,7 +3406,7 @@ $letter_styles
     position: absolute;
     left: 320;
     top: $lets_top;
-    font-size: 24pt;
+    font-size: 28pt;
     color: green;
 }
 .bonus_lets {
