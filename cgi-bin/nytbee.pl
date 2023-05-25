@@ -81,6 +81,7 @@ my $hive_cookie = $q->cookie(
     -expires => '+20y',
 );
 my $uuid = cgi_header($q, $hive_cookie);
+my %colors = get_colors($uuid);
 my $uuid11 = substr($uuid, 0, 11);
 my %params = $q->Vars();
 
@@ -1296,7 +1297,7 @@ elsif (my ($pat) = $cmd =~ m{\A lcp \s*(\S*) \z}xms) {
         }
         my $cpn = "CP$n";
         push @rows, Tr(td({ class => 'rt' },
-                          qq!<span class=link onclick="issue_cmd('$cpn');">!
+                          qq!<span class=alink onclick="issue_cmd('$cpn');">!
                           . "$cpn</span>"),
                        td(     $date eq $cpn? red('*')
                           :$is_in_list{$cpn}? '*'
@@ -1323,9 +1324,9 @@ elsif ($cmd eq 'ycp') {
     for my $n (@nums) {
         my $href = do "$comm_dir/$n.txt";
         my @pangrams = map { ucfirst } @{$href->{pangrams}};
-        push @rows, Tr(td("<a target=nytbee onclick='set_focus();'"
+        push @rows, Tr(td("<a class=alink target=nytbee onclick='set_focus();'"
                         . " href='$log/cgi-bin/edit_cp.pl/$n'>CP$n</a>"),
-                       td(slash_date($href->{created})),
+                       td({ }, slash_date($href->{created})),
                        td({ class => 'lt' }, @pangrams),
                     );
     }
@@ -1343,7 +1344,7 @@ elsif ($cmd eq 'l') {
                        td($n),
                        td($cur),
                        td({ class => 'lt' }, 
-                      qq!<span class=link onclick="issue_cmd('$p->[0]');">!
+                      qq!<span class=alink onclick="issue_cmd('$p->[0]');">!
                           . slash_date($p->[0])
                           . "<span>"),
                       td({ class => 'lt' }, $ranks[$p->[2]]->{name}),
@@ -1366,7 +1367,7 @@ elsif ($cmd eq 'cl') {
             = 'Puzzles you clued:<br>'
             . table(
                   map {
-                      Tr(td(qq!<span class=link onclick="issue_cmd('$_');">!
+                      Tr(td(qq!<span class=alink onclick="issue_cmd('$_');">!
                            .slash_date($_)
                            .'</span>'),
                          td($is_in_list{$_}? ($_ eq $date? red('*'): '*'): ''),
@@ -1395,7 +1396,7 @@ elsif ($cmd eq 'f7') {
     for my $p (sort { $a->[0] cmp $b->[0] } @puz) {
         my $date = $p->[0];
         push @rows,
-            Tr(td(qq!<span class=link onclick="issue_cmd('$date');">!
+            Tr(td(qq!<span class=alink onclick="issue_cmd('$date');">!
                   . slash_date($date) . "</span>"),
                td({ class => 'lt' }, $p->[1])
               );
@@ -1421,7 +1422,7 @@ elsif ($cmd =~ m{\A ft \s+ ([a-z]+) \z}xms) {
     # when did this word first appear?
     my $dt = $first_appeared{$word};
     if ($dt) {
-        $message .= qq!<span class=link onclick="issue_cmd('$dt');">!
+        $message .= qq!<span class=alink onclick="issue_cmd('$dt');">!
                  . slash_date($dt)
                  . '</span>'
                  ;
@@ -1442,7 +1443,7 @@ elsif ($cmd =~ m{\A s \s+ ([a-z]+) \z}xms) {
         }
     }
     my @rows = map {
-                   Tr(td(qq!<span class=link onclick="issue_cmd('$_');">!
+                   Tr(td(qq!<span class=alink onclick="issue_cmd('$_');">!
                          . slash_date($_) . "</span>"),
                       td(     $date eq $_? ' ' . red('*')
                          :$is_in_list{$_}? ' *'
@@ -1457,7 +1458,7 @@ elsif ($cmd =~ m{\A s \s+ ([a-z]+) \z}xms) {
     push @rows,
         map {
             my $cpn = "CP$_";
-            Tr(td(qq!<span class=link onclick="issue_cmd('$cpn');">!
+            Tr(td(qq!<span class=alink onclick="issue_cmd('$cpn');">!
                   . "$cpn</span>"),
                td(     $date eq $cpn? ' ' . red('*')
                   :$is_in_list{$cpn}? ' *'
@@ -1658,7 +1659,7 @@ elsif ($cmd eq 'rcp') {
                );
     for my $p (@puzzles) {
         $msg .= Tr(
-                        td({class => 'lt'}, qq!<span class=link onclick="issue_cmd('cp$p->{n}')">CP$p->{n}</span>!),
+                        td({class => 'lt'}, qq!<span class=alink onclick="issue_cmd('cp$p->{n}')">CP$p->{n}</span>!),
                         td({class => 'lt'}, $p->{name}), 
                         td({class => 'lt'}, $p->{title}), 
                         td(puzzle_class($p->{nwords})),
@@ -2252,12 +2253,12 @@ if ($show_BingoTable) {
         my $max = $bingo_table{$c}{maxlen};
         push @rows, Tr(th({ style => 'text-align: center' }, $c),
                        td($sp
-                        . "<span class=pointer"
+                        . "<span class=pointer style='color: $colors{alink}'"
                         . qq! onclick="issue_cmd('D+$c$min');">!
                         . $min
                         . "</span>"),
                        td($sp
-                        . "<span class=pointer"
+                        . "<span class=pointer style='color: $colors{alink}'"
                         . qq! onclick="issue_cmd('D+$c$max');">!
                         . $max
                         . "</span>"),
@@ -2845,6 +2846,7 @@ elsif ($cmd eq 'id') {
 }
 elsif ($cmd =~ m{\A co \s+ (.*)}xms) {
     $message = set_colors($uuid, $1);
+    %colors = get_colors($uuid);
     $cmd = '';
 }
 elsif ($cmd eq 'sn') {
@@ -2881,7 +2883,6 @@ elsif ($cmd =~ m{\A sn \s+ (.*) \z}xms) {
     }
     $cmd = '';
 }
-my %colors = get_colors($uuid);
 
 # the hint tables
 my $hint_table = '';

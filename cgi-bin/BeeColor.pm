@@ -59,11 +59,13 @@ sub within {
 }
 sub set_colors {
     my ($uuid, $color_param) = @_;
-    my %colors = get_colors($uuid);
+    # . to ' . ' so we don't have to insert spaces between dots
+    $color_param =~ s{[.]}{ . }xmsg;
+    # ellipsis to . . . 
+    $color_param =~ s{\x85}{ . . . }xms;
     # tidy up rgb(a,b,c)
     $color_param =~ s{ [(] ([^)]*) [)] }{'(' . squish($1) . ')'}xmsge;
-    # . to ' . ' so we don't have to insert spaces
-    $color_param =~ s{\.}{ . }xmsg;
+    my %colors = get_colors($uuid);
     my @new_colors = split ' ', $color_param;
     if (@new_colors == 1 && $new_colors[0] eq 'a') {
         # standard colors
@@ -75,6 +77,24 @@ sub set_colors {
         $colors{letter} = 'black',
         $colors{alink} = 'blue',
     }
+    elsif (@new_colors == 1 && $new_colors[0] eq 'b') {
+        $colors{center_hex} = 'seagreen';
+        $colors{center_text} = 'springgreen';
+        $colors{donut_hex} = 'lavender';
+        $colors{donut_text} = 'purple';
+        $colors{background} = 'lightblue';
+        $colors{letter} = 'rgb(153,153,153)';
+        $colors{alink} = 'cornflowerblue';
+    }
+    elsif (@new_colors == 1 && $new_colors[0] eq 'c') {
+        $colors{center_hex} = 'firebrick';
+        $colors{center_text} = 'hotpink';
+        $colors{donut_hex} = 'salmon';
+        $colors{donut_text} = 'darkred';
+        $colors{background} = 'honeydew';
+        $colors{letter} = 'rgb(153,153,153)';
+        $colors{alink} = 'darkgreen';
+    }
     elsif (@new_colors == 1 && $new_colors[0] eq 'd') {
         # dark mode standard colors
         $colors{center_hex} = 'gold';
@@ -84,6 +104,16 @@ sub set_colors {
         $colors{background} = 'black',
         $colors{letter} = 'white',
         $colors{alink} = 'skyblue',
+    }
+    elsif (@new_colors == 1 && $new_colors[0] eq 'e') {
+        # dark mode standard colors
+        $colors{center_hex} = 'rgb(204,204,204)';
+        $colors{center_text} = 'black';
+        $colors{donut_hex} = 'rgb(178,178,178)';
+        $colors{donut_text} = 'rgb(127,127,127)';
+        $colors{background} = 'ivory',
+        $colors{letter} = 'rgb(153,153,153)',
+        $colors{alink} = 'olive',
     }
     else {
         # validate the colors
@@ -109,7 +139,7 @@ sub set_colors {
             elsif ($c =~ m{\A [#][a-f0-9]{6} \z }xms) {
                 # ok
             }
-            elsif ($c =~ m{\A rgb[(](\d+),(\d+),(\d+)[)] \z}xms
+            elsif ($c =~ m{\A rgb[(](\d+),(\d+),(\d+)[)] \z}xmsi
                    && within($1) && within($2) && within($3)
             ) {
                 # ok

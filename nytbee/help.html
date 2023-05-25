@@ -278,12 +278,13 @@ that you have found.
 </h2>
 The <span class=cmd>CO</span> command controls the <span class=cmd>co</span>lors.
 You can change the color of nearly everything you see.
-Rather than being stuck with the gray/gold hexagon:
+Rather than being stuck with the standard NYT gray/gold hexagon:
 <ul>
 <img src=pics/hive.png width=180>
 </ul>
-and having it etched/<b>burned</b> into your retinas you can have fun experimenting
-with different hues.  Perhaps your favorite color is <span style='color: skyblue'>sky blue</span>.
+and having it forever etched/<b>burned</b> into your retinas
+you can have fun experimenting with different hues.
+Perhaps your favorite color is <span style='color: skyblue'>sky blue</span>.
 Or on Tuesdays you feel like a spicy <span style="color: pink">pink</span>/<span style="color: magenta">magenta</span>/<span style="color: red">red</span>.
 Or on the weekends you want <span style="color: #777777">different</span> <span style="color: #999999">shades</span> <span style="color: aaaaaa">of</span> <span style="color: #dddddd">gray</span>.
 <ul>
@@ -293,12 +294,28 @@ Or on the weekends you want <span style="color: #777777">different</span> <span 
 &nbsp;&nbsp
 <img src=pics/gray.png width=170>
 </ul>
-You can control the colors of 7 different areas:
+<h3>PreSet Colors</h3>
+The simplest way to change the colors is with the 5 PreSets A to E:
+<ul>
+<table cellpadding=10 border=1>
+<tr><th>Command</td><th align=left>Name</th></tr>
+<tr><td class=cmd>CO A</td><td>NYT Standard</td></tr>
+<tr><td class=cmd>CO B</td><td>The Blues</td></tr>
+<tr><td class=cmd>CO C</td><td>Floral</td></tr>
+<tr><td class=cmd>CO D</td><td>Dark Mode</td></tr>
+<tr><td class=cmd>CO E</td><td>Black and White</td></tr>
+</table>
+</ul>
+Each of these PreSets has a different mood and feel.
+Try them all.
+<h3>Precise Control of Colors</h3>
+You have very fine control over the colors
+but it does take some explaining.
+You can change the colors of these 7 different areas:
 <ol>
-<li>The background of the center letter in the hexagon.
-<li>The text of the center letter in the hexagon.
-<li>The background of the donut letters (the 6 outer hexagons).
-<li>The background of the donut letters (the outer hexagon letters).
+<li>The background of the center letter.
+<li>The text of the center letter.
+<li>The background of the donut letters (the 6 outer letters).
 <li>The text of the donut letters.
 <li>The background of the entire screen.
 <li>The text on the screen (word lists, definitions, etc).
@@ -306,14 +323,45 @@ You can control the colors of 7 different areas:
 </ol>
 Each of these 7 colors can be expressed in 4 different ways:
 <ol>
-<li>The standard HTML color name - see this <a target=_blank href='https://www.w3schools.com/colors/colors_names.asp'>name reference</a>.  There are 140 different names - like Orchid and LemonChiffon &#128522.
-<li>Shades of gray - 'GRAY0' (white) to 'GRAY100' (black).   You can spell GRAY as GREY if you wish.
-<li>6 hexadecimal digits - like this: #04FA99. The 3 hex digit pairs
-represent the values of red, green, and blue - from 00 to FF.
-See this <a target=_blank href='https://www.w3schools.com/html/html_colors_hex.asp'>hex reference</a>.
+<li>The standard HTML color name - see this <a target=_blank href='https://www.w3schools.com/colors/colors_names.asp'>name reference</a>.  There are 140 different fun names - like <span style="color: orchid">Orchid</span> and
+<span style="color: aquamarine">Aquamarine</span> &#128522.
 <li>3 decimal rgb values (red-green-blue) - like this: rgb(45, 140, 210).  The rgb values are from 0 to 255.  
-See this <a target=_blank href='https://www.w3schools.com/html/html_colors_rgb.asp'>rgb reference</a>.
+See this <a target=_blank href='https://www.w3schools.com/html/html_colors_rgb.asp'>rgb reference</a>.  The red, green, and blue combine to make more than 16 million different colors (256*256*256 = 16,777,216).
+<li>Shades of gray - 'GRAY0' (black) to 'GRAY100' (white).   You can spell GRAY as GREY if you wish.
+<li>6 hexadecimal digits - like this: #04FA99. The 3 hex digit pairs
+represent the values of red, green, and blue - from 00 to FF (instead of 0 to 255).
+See this <a target=_blank href='https://www.w3schools.com/html/html_colors_hex.asp'>hex reference</a>.
 </ol>
+<p>
+Here's an example where you give different colors (by name) to
+each of the 7 areas listed above - <i>in that order</i>:
+<ul>
+<span class=cmd>CO&nbsp;&nbsp;RED&nbsp;&nbsp;PINK&nbsp;&nbsp;SKYBLUE&nbsp;&nbsp;NAVY&nbsp;&nbsp;IVORY&nbsp;&nbsp;DARKGRAY&nbsp;&nbsp;ORCHID</span>
+</ul>
+Try select-copy-pasting the above command into the puzzle's input text area.
+<p>
+<ul>
+<span class=cmd>CO&nbsp;&nbsp;GRAY70&nbsp;&nbsp;GRAY20&nbsp;&nbsp;RGB(240,80,80)&nbsp;&nbsp;RGB(240,180,180)</span>
+</ul>
+The above uses shades of gray and rgb values:
+There are only 4 colors - so it only changes the 
+background and text of the center and donut letters - the first 4 areas.
+The colors of the other 3 areas are unchanged.
+<p>
+</ul>
+The following example shows how you can leave certain areas unchanged
+while you change others:
+<ul>
+<span class=cmd>CO&nbsp;&nbsp;.&nbsp;&nbsp;GREEN&nbsp;&nbsp;.&nbsp;&nbsp;RED</span>
+</ul>
+The dots are 'place holders' for areas you don't want to change.
+The above command changes the center letter text to <span style='color: green'>green</span> and the donut letters text to <span style='color: red'>red</span>.
+<p>
+One more:
+<ul>
+<span class=cmd>CO ......TURQUOISE</span>
+</ul>
+What does this do?
 <a name=screen_names></a>
 <h2>Screen Names and Your Identity
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -1431,7 +1479,7 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1842 puzzles with
+1843 puzzles with
 a total of 9570 different words!
 <p>
 Which puzzles from the large archive to play?
