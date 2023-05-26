@@ -10,6 +10,7 @@ sub svg_hex {
     my ($mobile) = @_;
     my $s = <<'EOH';
 <br>
+<!-- SEVEN HEXAGONS -->
 <style>
 .svglets {
     font-size: 18pt;

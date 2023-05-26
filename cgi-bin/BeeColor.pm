@@ -62,7 +62,7 @@ sub set_colors {
     # . to ' . ' so we don't have to insert spaces between dots
     $color_param =~ s{[.]}{ . }xmsg;
     # ellipsis to . . . 
-    $color_param =~ s{\x85}{ . . . }xms;
+    $color_param =~ s{\x85}{ . . . }xmsg;
     # tidy up rgb(a,b,c)
     $color_param =~ s{ [(] ([^)]*) [)] }{'(' . squish($1) . ')'}xmsge;
     my %colors = get_colors($uuid);
@@ -73,15 +73,15 @@ sub set_colors {
         $colors{center_text} = 'black';
         $colors{donut_hex} = '#e7e7e7';
         $colors{donut_text} = 'black';
-        $colors{background} = 'white',
-        $colors{letter} = 'black',
-        $colors{alink} = 'blue',
+        $colors{background} = 'white';
+        $colors{letter} = 'black';
+        $colors{alink} = 'blue';
     }
     elsif (@new_colors == 1 && $new_colors[0] eq 'b') {
-        $colors{center_hex} = 'seagreen';
-        $colors{center_text} = 'springgreen';
+        $colors{center_hex} = 'cornflowerblue';
+        $colors{center_text} = 'midnightblue';
         $colors{donut_hex} = 'lavender';
-        $colors{donut_text} = 'purple';
+        $colors{donut_text} = 'mediumblue';
         $colors{background} = 'lightblue';
         $colors{letter} = 'rgb(153,153,153)';
         $colors{alink} = 'cornflowerblue';
@@ -101,9 +101,9 @@ sub set_colors {
         $colors{center_text} = 'black';
         $colors{donut_hex} = '#e7e7e7';
         $colors{donut_text} = 'black';
-        $colors{background} = 'black',
-        $colors{letter} = 'white',
-        $colors{alink} = 'skyblue',
+        $colors{background} = 'black';
+        $colors{letter} = 'white';
+        $colors{alink} = 'skyblue';
     }
     elsif (@new_colors == 1 && $new_colors[0] eq 'e') {
         # dark mode standard colors
@@ -111,9 +111,29 @@ sub set_colors {
         $colors{center_text} = 'black';
         $colors{donut_hex} = 'rgb(178,178,178)';
         $colors{donut_text} = 'rgb(127,127,127)';
-        $colors{background} = 'ivory',
-        $colors{letter} = 'rgb(153,153,153)',
-        $colors{alink} = 'olive',
+        $colors{background} = 'ivory';
+        $colors{letter} = 'rgb(153,153,153)';
+        $colors{alink} = 'olive';
+    }
+    elsif (@new_colors == 1 && $new_colors[0] eq 'f') {
+        # Lilac Spring - from Morgan
+        $colors{center_hex} = 'teal';
+        $colors{center_text} = 'white';
+        $colors{donut_hex} = 'plum';
+        $colors{donut_text} = 'black';
+        $colors{background} = 'seashell';
+        $colors{letter} = 'black';
+        $colors{alink} = 'navy';
+    }
+    elsif (@new_colors == 1 && $new_colors[0] eq 'g') {
+        # Green - from Morgan
+        $colors{center_hex} = 'darkgreen';
+        $colors{center_text} = 'white';
+        $colors{donut_hex} = 'darkseagreen';
+        $colors{donut_text} = 'black';
+        $colors{background} = 'honeydew';
+        $colors{letter} = 'black';
+        $colors{alink} = 'darkgoldenrod';
     }
     else {
         # validate the colors

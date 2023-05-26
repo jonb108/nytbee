@@ -295,15 +295,30 @@ Or on the weekends you want <span style="color: #777777">different</span> <span 
 <img src=pics/gray.png width=170>
 </ul>
 <h3>PreSet Colors</h3>
-The simplest way to change the colors is with the 5 PreSets A to E:
+The simplest way to change the colors is with the 7 PreSets A to G:
+<style>
+.cc {
+    text-align: center;
+    font-weight: bold;
+}
+</style>
 <ul>
 <table cellpadding=10 border=1>
-<tr><th>Command</td><th align=left>Name</th></tr>
-<tr><td class=cmd>CO A</td><td>NYT Standard</td></tr>
-<tr><td class=cmd>CO B</td><td>The Blues</td></tr>
-<tr><td class=cmd>CO C</td><td>Floral</td></tr>
-<tr><td class=cmd>CO D</td><td>Dark Mode</td></tr>
-<tr><td class=cmd>CO E</td><td>Black and White</td></tr>
+<tr><th>Command</td><th align=left>Name</th><th>Center Colors</th></tr>
+<tr><td class=cmd>CO A</td><td>NYT Standard</td>
+<td class=cc style="background: gold; color: black;">A</td></tr>
+<tr><td class=cmd>CO B</td><td>The Blues</td>
+<td class=cc style="background: cornflowerblue; color: midnightblue;">B</td></tr>
+<tr><td class=cmd>CO C</td><td>Floral</td>
+<td class=cc style="background: firebrick; color: hotpink;">C</td></tr>
+<tr><td class=cmd>CO D</td><td style="background: black; color: white">Dark Mode</td>
+<td class=cc style="background: gold; color: black;">D</td></tr>
+<tr><td class=cmd>CO E</td><td>Black and White</td>
+<td class=cc style="background: rgb(204,204,204); color: rgb(178,178,178);">E</td></tr>
+<tr><td class=cmd>CO F</td><td>Lilac Spring</td>
+<td class=cc style="background: teal; color: white;">F</td></tr>
+<tr><td class=cmd>CO G</td><td>Green Haze</td>
+<td class=cc style="background: darkgreen; color: white;">G</td></tr>
 </table>
 </ul>
 Each of these PreSets has a different mood and feel.
@@ -343,7 +358,7 @@ Try select-copy-pasting the above command into the puzzle's input text area.
 <ul>
 <span class=cmd>CO&nbsp;&nbsp;GRAY70&nbsp;&nbsp;GRAY20&nbsp;&nbsp;RGB(240,80,80)&nbsp;&nbsp;RGB(240,180,180)</span>
 </ul>
-The above uses shades of gray and rgb values:
+The above uses shades of gray and rgb values.
 There are only 4 colors - so it only changes the 
 background and text of the center and donut letters - the first 4 areas.
 The colors of the other 3 areas are unchanged.
@@ -475,7 +490,7 @@ Tapping on letters will copy them to the area on the right:
 <p>
 Tap on <span class=cmd>Enter</span> to submit the word.
 <br>
-Tap on <span class=cmd>Define</span> to do a DR command to define a random unfound word.
+Tap on <span class=cmd>Define</span> to do a <span class=cmd>DR</span> command to define a random unfound word.
 <br>
 Tap on <span class=cmd>Bonus</span> to switch into <a href=#bonus_mode>Bonus Mode</a>.
 <br>
@@ -490,7 +505,7 @@ or view the Hint Table simply scroll down.
 <p>
 Android phones will behave in a similar way.
 <p>
-If you are adept at texting with your thumbs you may prefer using the <span class=cmd>H3</span> command to display the letters in a line - like this:
+If you are adept at texting with your thumbs you may prefer using the <span class=cmd>H2</span> command to display the letters in a line - like this:
 <p>
 <img src=pics/kitchen_h3.png width=800 border=1>
 <a name=hint_commands></a>
@@ -902,7 +917,7 @@ There is, of course, no &#8220;official&#8221; list of these Extra words.
 This makes it more fun, in a way.  More creative.
 Here are 7 commands to show the Extra words found by the
 <i>entire</i> global world-wide community.
-You cannot use these commands on the same day of the puzzle; otherwise, people
+You cannot use these commands on the same day of the puzzle &ndash; otherwise, people
 could &#8220;cheat&#8221; and use words found by others, yes?
 The command <span class=cmd>Y</span> is convenient here to go
 to yesterday&#8217;s puzzle.
@@ -1248,7 +1263,6 @@ like so: <span class=cmd>D+P</span> or <span class=cmd>D+B8</span>.
 <tr><td><span class=cmd>HE</span></td><td>Toggle the showing of the <span class=cmd>he</span>ader.  Default is to show it.</td></tr>
 <tr><td><span class=cmd>WL</span></td><td>Toggle the showing of the list of found words.  Default is to show the <span class=cmd>w</span>ord <span class=cmd>l</span>ist.</td></tr>
 <tr><td><span class=cmd>IM</span></td><td>Toggle the showing of the <span class=cmd>im</span>age for the ranks of Amazing, Genius, and Queen Bee.  Default is to show it.</td></tr>
-<tr><td><span class=cmd>CO</span></td><td>Toggle the <span class=cmd>co</span>llapsing of the <a href=#table_list>Hint Table</a>.  Default is to <i>not</i> include columns and rows that have no entries.<br><br></td></tr>
 <tr><td colspan=2>Preserving Your Identity</td></tr>
 <tr><td><span class=cmd>ID</span></td><td>Show the long string of characters that constitute your &#8220;identity&#8221; to the program.  It will look something like this:
 <div class=long_string>963e4401-81eq-18ec-g81c-b1f85c942ex3<span></div>This command copies the long string to the system clipboard.  Save this string in a secure place.</td></tr>
@@ -1479,7 +1493,7 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1843 puzzles with
+1844 puzzles with
 a total of 9570 different words!
 <p>
 Which puzzles from the large archive to play?

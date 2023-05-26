@@ -2181,7 +2181,7 @@ if ($show_WordList) {
                } 
                @lexicon;
     if ($word_col) {
-        $donut_lexicon_bonus  = one_col('Donut:',  \@donut);
+        $donut_lexicon_bonus .= one_col('Donut:',  \@donut);
         $donut_lexicon_bonus .= one_col('Lexicon', \@lexicon);
         $donut_lexicon_bonus .= one_col('Bonus',   \@bonus);
         if ($donut_lexicon_bonus) {
@@ -2189,14 +2189,16 @@ if ($show_WordList) {
         }
     }
     else {
-        $donut_lexicon_bonus  = dlb_row('Donut:',   \@donut)
+        $donut_lexicon_bonus .= dlb_row('Donut:',   \@donut)
             unless $bonus_mode;
         $donut_lexicon_bonus .= dlb_row('Lexicon:', \@lexicon)
             unless $bonus_mode;
         $donut_lexicon_bonus .= dlb_row('Bonus:',   \@bonus);
         if ($donut_lexicon_bonus) {
             # convert rows to a table...
-            $donut_lexicon_bonus = '<p>' . table($donut_lexicon_bonus);
+            $donut_lexicon_bonus = '<p>'
+                                 . "<!-- DONUT LEXICON BONUS WORDS -->\n"
+                                 . table($donut_lexicon_bonus);
         }
         if ($bonus_mode && ! $mobile) {
             my @other = grep { !/[$seven]/ } 'a' .. 'z';
@@ -2220,6 +2222,9 @@ if ($show_WordList) {
 }
 my $bingo_table = '';
 if ($show_BingoTable) {
+    $bingo_table = <<'EOH';
+<!-- BINGO TABLE -->
+EOH
     # we unfortunately determine the bingo status twice
     # once here and again below.
     my %bingo_table;     # { let1 => { min => $min, max => $max, },
@@ -2396,6 +2401,12 @@ if ($bonus_mode) {
 }
 if (! $show_WordList) {
     $found_words = '';
+}
+else {
+    $found_words = <<"EOH";
+<!-- FOUND WORDS -->
+$found_words
+EOH
 }
 
 # get the HT and TL tables ready
@@ -3071,6 +3082,14 @@ elsif ($hive == 1) {        # bee hive honeycomb
     $letters =~ s{CENTER_TEXT}{$colors{center_text}}xmsg;
     $letters =~ s{DONUT_HEX}{$colors{donut_hex}}xmsg;
     $letters =~ s{DONUT_TEXT}{$colors{donut_text}}xmsg;
+    if (index($seven, 'i') >= 0) {
+        $letters =~ s{
+            <text([^>]*)
+                x="([\d.]+)
+                ([^>]*)>I<
+        }
+        {qq!<text$1x="! . ($2+6) . "$3>I<"}xmse;
+    }
     if ($mobile) {
         # enter, wordlets, delete, define
         # all positioned absolutely as well
@@ -3167,6 +3186,7 @@ elsif ($hive == 2) {    # hex letters
 my $hint_table_list = '';
 if ($ht_chosen && $sums{1}{1} != 0) {
     $hint_table_list .= <<"EOH";
+<!-- HINT TABLE -->
 <div class=float-child4>
     <div id=hint_table class=hint_table>
     $hint_table
@@ -3176,6 +3196,7 @@ EOH
 }
 if ($tl_chosen && $sums{1}{1} != 0) {
     $hint_table_list .= <<"EOH";
+<!-- TWO LETTER LIST -->
 <div class=float-child5>
     <div id=two_lets class=two_lets>
     $two_lets
@@ -3194,6 +3215,7 @@ sub graphical_status {
     my $between_dots = 11;
     my $dotr1 = 2;
     my $dotr2 = 5;
+    my $col_let = $colors{letter};
     my $html = "";
     my @color = qw/
         8E008E
@@ -3213,17 +3235,18 @@ sub graphical_status {
     my $height = (($bingo? 1: 0) + ($nhints? 1: 0) + 3) * 23;
                #    b                 h             pws
     $html = <<"EOH";
-    <style>
-    .glets, .bold_glets {
-        font-size: 18pt;
-        font-family: Courier New;
-    }
-    .bold_glets {
-        font-weight: bold;
-        font-size: 20pt;
-    }
-    </style>
-    <svg width=$width height=$height>
+<!-- GRAPHICAL STATUS -->
+<style>
+.glets, .bold_glets {
+    font-size: 18pt;
+    font-family: Courier New;
+}
+.bold_glets {
+    font-weight: bold;
+    font-size: 20pt;
+}
+</style>
+<svg width=$width height=$height>
 EOH
     my $y = $between_lines;
     if ($bingo) {
@@ -3231,10 +3254,10 @@ EOH
         for my $w (grep { !m{[*+-]\z}xms } @found) {
             ++$first_found{uc substr($w, 0, 1)};
         }
-        $html .= "<text x=$ind1 y=$y class=glets>b</text>\n";
+        $html .= "<text x=$ind1 y=$y class=glets fill=$col_let>b</text>\n";
         my $x = $ind2;
         for my $c (map { uc } @seven) {
-            my ($color, $class) = ('black', 'glets');
+            my ($color, $class) = ($col_let, 'glets');
             if ($first_found{$c}) {
                 ($color, $class) = ('#8E008E', 'bold_glets');
             }
@@ -3244,7 +3267,7 @@ EOH
         $y += $between_lines;
     }
 
-    $html .= "<text x=$ind1 y=$y class=glets>p</text>\n";
+    $html .= "<text x=$ind1 y=$y class=glets fill=$col_let>p</text>\n";
     my $x = $ind2;
     $y -= 4;
     my $npangrams_found = grep { $is_found{$_} } @pangrams;
@@ -3253,14 +3276,14 @@ EOH
         $x += $between_dots;
     }
     for my $i ($npangrams_found+1 .. $npangrams) {
-        $html .= "<circle cx=$x cy=$y r=$dotr1 fill=black></circle>\n";
+        $html .= "<circle cx=$x cy=$y r=$dotr1 fill=$col_let></circle>\n";
         $x += $between_dots;
     }
     $y += 4;
     $y += $between_lines;
 
     my $w_ind = $ind1-2;
-    $html .= "<text x=$w_ind y=$y class=glets>w</text>\n";
+    $html .= "<text x=$w_ind y=$y class=glets fill=$col_let>w</text>\n";
     $x = $ind2;
     $y -= 4;
     my $nfound = grep { !m{[*+-]\z}xms } @found;
@@ -3269,19 +3292,19 @@ EOH
         $x += $between_dots;
     }
     for my $i ($nfound+1 .. $nwords) {
-        $html .= "<circle cx=$x cy=$y r=$dotr1 fill=black></circle>\n";
+        $html .= "<circle cx=$x cy=$y r=$dotr1 fill=$col_let></circle>\n";
         $x += $between_dots;
     }
     $y += 4;
     $y += $between_lines;
 
-    $html .= "<text x=$ind1 y=$y class=glets>s</text>\n";
+    $html .= "<text x=$ind1 y=$y class=glets fill=$col_let>s</text>\n";
 
     # a black line from 0 to max_score
     $y -=5; # centered on the S
     my $max_x = $ind2 + ($nwords-1)*$between_dots;
     my $x1 = $ind2;
-    $html .= "<line x1=$x1 y1=$y x2=$max_x y2=$y stroke=black stroke-width=1></line>\n";
+    $html .= "<line x1=$x1 y1=$y x2=$max_x y2=$y stroke=$col_let stroke-width=1></line>\n";
 
     # colored ranks between the percentages
     # but only up to the score %
@@ -3305,14 +3328,14 @@ EOH
     for my $pct (@pct) {
         my $x1 = $ind2 + ($pct/100)*($max_x - $ind2);
         my $x2 = $x1;
-        $html .= "<line x1=$x1 y1=$y1 x2=$x2 y2=$y2 stroke=black stroke-width=1></line>\n";
+        $html .= "<line x1=$x1 y1=$y1 x2=$x2 y2=$y2 stroke=$col_let stroke-width=1></line>\n";
     }
     $y += 4;
     $y += $between_lines;
 
     # hints
     if ($nhints) {
-        $html .= "<text x=$ind1 y=$y class=glets>h</text>\n";
+        $html .= "<text x=$ind1 y=$y class=glets fill=$col_let>h</text>\n";
         $x = $ind2;
         $y -= 5;
         HINT:
@@ -3322,7 +3345,7 @@ EOH
                 last HINT;
             }
             else {
-                my $color = $nhints > 0? 'black': 'red';
+                my $color = $nhints > 0? $col_let: 'red';
                 $html .= "<circle cx=$x cy=$y r=$dotr1 fill=$color></circle>\n";
             }
             $x += $between_dots;
