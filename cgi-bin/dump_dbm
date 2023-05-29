@@ -6,6 +6,6 @@ die "usage: dump_dbm file.dbm\n"
 use DB_File;
 my %hash;
 tie %hash, 'DB_File', $ARGV[0];
-for my $k (sort keys %hash) {
-    print "$k => $hash{$k}\n";
+while (my ($k, $v) = each %hash) {
+    print "$k => $v\n";
 }

@@ -1,7 +1,9 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-my ($date, $uuid11) = @ARGV;
+use BeeUtil qw/
+    my_today
+/;
 print <<'EOH';
 <style>
 .lg {
@@ -9,6 +11,7 @@ print <<'EOH';
 }
 </style>
 EOH
+my ($date, $uuid11) = @ARGV;
 open my $in, '<', "beelog/$date";
 my $saved_time = '';
 LINE:

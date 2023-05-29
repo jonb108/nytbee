@@ -8,7 +8,7 @@ use BeeUtil qw/
 use List::Util qw/
     max
 /;
-my $date = shift;
+my ($date, $text_color) = @ARGV;
 open my $in, '<', "beelog/$date";
 my (@words, @grid, @cmds);
 my $i;
@@ -80,7 +80,7 @@ for my $i (0 .. $max-1) {
                    . ($i*$plot_w)
                    . " y="
                    . ($height-$bottom+20)
-                   . " fill=black"
+                   . " fill=$text_color"
                    . ">$h</text>\n";
     }
 

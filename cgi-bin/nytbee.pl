@@ -1,4 +1,9 @@
 #!/usr/bin/perl
+# add two colors for the input background and text
+# SCO 1 set the current color scheme as YOUR #1
+# CO1 - restore your #1
+# CO will echo the current colors
+#
 use strict;
 use warnings;
 use CGI;
@@ -1598,7 +1603,7 @@ elsif ($cmd eq 'pa') {
     }
     $cmd = '';
 }
-elsif ($date !~ m{\A CP}xms && $cmd eq 'lg') {
+elsif ($date !~ m{\A CP }xms && $cmd eq 'lg') {
     my $uuid11 = substr($uuid, 0, 11);
     $message = `$cgi_dir/nytbee_log.pl $date '$uuid11'`;
     $cmd = '';
@@ -1608,7 +1613,7 @@ elsif ($date !~ m{\A CP}xms && $cmd eq 'ac') {
         $message = 'Activity monitoring began on December 22, 2022.';
     }
     else {
-        $message = `$cgi_dir/nytbee_activity.pl $date`;
+        $message = `$cgi_dir/nytbee_activity.pl $date '$colors{letter}'`;
     }
     $cmd = '';
 }
@@ -2860,6 +2865,11 @@ elsif ($cmd =~ m{\A co \s+ (.*)}xms) {
     %colors = get_colors($uuid);
     $cmd = '';
 }
+elsif ($cmd =~ m{\A co([a-g]) \z}xms) {
+    $message = set_colors($uuid, $1);
+    %colors = get_colors($uuid);
+    $cmd = '';
+}
 elsif ($cmd eq 'sn') {
     # they may not have one yet ...
     check_screen_name();
@@ -3082,6 +3092,7 @@ elsif ($hive == 1) {        # bee hive honeycomb
     $letters =~ s{CENTER_TEXT}{$colors{center_text}}xmsg;
     $letters =~ s{DONUT_HEX}{$colors{donut_hex}}xmsg;
     $letters =~ s{DONUT_TEXT}{$colors{donut_text}}xmsg;
+
     if (index($seven, 'i') >= 0) {
         $letters =~ s{
             <text([^>]*)
@@ -3090,6 +3101,7 @@ elsif ($hive == 1) {        # bee hive honeycomb
         }
         {qq!<text$1x="! . ($2+6) . "$3>I<"}xmse;
     }
+
     if ($mobile) {
         # enter, wordlets, delete, define
         # all positioned absolutely as well
