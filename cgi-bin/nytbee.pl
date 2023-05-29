@@ -39,6 +39,7 @@ use BeeUtil qw/
 use BeeColor qw/
     set_colors
     get_colors
+    save_colors
 /;
 use BeeDBM qw/
     %end_time_for
@@ -2866,8 +2867,15 @@ elsif ($cmd =~ m{\A co \s+ (.*)}xms) {
     $cmd = '';
 }
 elsif ($cmd =~ m{\A co([a-g]) \z}xms) {
+    # DRY!
     $message = set_colors($uuid, $1);
     %colors = get_colors($uuid);
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A sco \s+ ([a-z]) \s+ hello! \z}xms) {
+    my $let = $1;
+    save_colors($uuid, "preset $let");
+    $message = "Saved in PreSet Color \U$let.";
     $cmd = '';
 }
 elsif ($cmd eq 'sn') {
@@ -3384,7 +3392,7 @@ my $delete_top = 190 + ($show_Heading? 79: 0);
 my $help_top = 190 + ($show_Heading? 79: 0);
 my $forum_html = '';
 if ($forum_mode) {
-    $forum_html = `$cgi_dir/show_forum.pl $date "$screen_name" $forum_post_to_edit`;
+    $forum_html = `$cgi_dir/show_forum.pl $date "$screen_name" $forum_post_to_edit $colors{bg_input} $colors{text_input}`;
     $bingo_table =
     $found_words =
     $donut_lexicon_bonus =
@@ -3500,6 +3508,7 @@ $letters
 <input class=new_words
        type=text
        size=$new_words_size
+       style="background: $colors{bg_input}; color: $colors{text_input};"
        id=new_words
        name=new_words
        autocomplete=off

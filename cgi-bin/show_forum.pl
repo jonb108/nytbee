@@ -17,7 +17,7 @@ use Date::Simple qw/
 use DB_File;
 my %num_msgs;
 tie %num_msgs, 'DB_File', 'num_msgs.dbm';
-my ($p_date, $screen_name, $post_to_edit) = @ARGV;
+my ($p_date, $screen_name, $post_to_edit, $bg_color, $text_color) = @ARGV;
 my $post_text = '';
 if ($post_to_edit) {
     my $get_sth = $dbh->prepare(<<"EOS");
@@ -87,10 +87,14 @@ function disable_span(id) {
 .stamp {
     color: #999999;
 }
+.share {
+    background: $bg_color;
+    color: $text_color;
+}
 </style>
 Please share:<br>
-<textarea rows=3 cols=40 name=forum_post id=forum_post>$post_text</textarea><br>
-<button id=post_it onclick="document.getElementById('post_it').style.pointerEvents = 'none';" style="font-size: 14pt">Submit</button>
+<textarea rows=3 cols=40 name=forum_post id=forum_post class=share>$post_text</textarea><br>
+<button id=post_it onclick="document.getElementById('post_it').style.pointerEvents = 'none';" style="font-size: 14pt" class=share>Submit</button>
 <div class=post>
 EOH
 my $get_msgs_sth = $dbh->prepare(<<'EOS');

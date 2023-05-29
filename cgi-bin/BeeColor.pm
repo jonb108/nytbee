@@ -5,6 +5,7 @@ use base 'Exporter';
 our @EXPORT_OK = qw/
     get_colors
     set_colors
+    save_colors
 /;
 use BeeDBM qw/
     %uuid_colors_for
@@ -15,6 +16,17 @@ use Data::Dumper qw/
 $Data::Dumper::Indent = 0;
 $Data::Dumper::Terse  = 1;
 
+my @names = qw/
+    center_hex
+    center_text
+    donut_hex
+    donut_text
+    background
+    letter
+    alink
+    bg_input
+    text_input
+/;
 my %valid_color = map { lc $_ => 1 } qw/
 AliceBlue AntiqueWhite Aqua Aquamarine Azure Beige Bisque Black BlanchedAlmond
 Blue BlueViolet Brown BurlyWood CadetBlue Chartreuse Chocolate Coral
@@ -57,6 +69,10 @@ sub within {
     my ($n) = @_;
     return 0 <= $n && $n <= 255;
 }
+sub mqw {
+    my ($s) = @_;
+    return split ' ', $s;
+}
 sub set_colors {
     my ($uuid, $color_param) = @_;
     # . to ' . ' so we don't have to insert spaces between dots
@@ -67,91 +83,25 @@ sub set_colors {
     $color_param =~ s{ [(] ([^)]*) [)] }{'(' . squish($1) . ')'}xmsge;
     my %colors = get_colors($uuid);
     my @new_colors = split ' ', $color_param;
-    if (@new_colors == 1 && $new_colors[0] eq 'a') {
-        # standard colors
-        $colors{center_hex} = 'gold';
-        $colors{center_text} = 'black';
-        $colors{donut_hex} = '#e7e7e7';
-        $colors{donut_text} = 'black';
-        $colors{background} = 'white';
-        $colors{letter} = 'black';
-        $colors{alink} = 'blue';
-    }
-    elsif (@new_colors == 1 && $new_colors[0] eq 'b') {
-        $colors{center_hex} = 'cornflowerblue';
-        $colors{center_text} = 'midnightblue';
-        $colors{donut_hex} = 'lavender';
-        $colors{donut_text} = 'mediumblue';
-        $colors{background} = 'lightblue';
-        $colors{letter} = 'rgb(153,153,153)';
-        $colors{alink} = 'cornflowerblue';
-    }
-    elsif (@new_colors == 1 && $new_colors[0] eq 'c') {
-        $colors{center_hex} = 'firebrick';
-        $colors{center_text} = 'hotpink';
-        $colors{donut_hex} = 'salmon';
-        $colors{donut_text} = 'darkred';
-        $colors{background} = 'honeydew';
-        $colors{letter} = 'rgb(153,153,153)';
-        $colors{alink} = 'darkgreen';
-    }
-    elsif (@new_colors == 1 && $new_colors[0] eq 'd') {
-        # dark mode standard colors
-        $colors{center_hex} = 'gold';
-        $colors{center_text} = 'black';
-        $colors{donut_hex} = '#e7e7e7';
-        $colors{donut_text} = 'black';
-        $colors{background} = 'black';
-        $colors{letter} = 'white';
-        $colors{alink} = 'skyblue';
-    }
-    elsif (@new_colors == 1 && $new_colors[0] eq 'e') {
-        # dark mode standard colors
-        $colors{center_hex} = 'rgb(204,204,204)';
-        $colors{center_text} = 'black';
-        $colors{donut_hex} = 'rgb(178,178,178)';
-        $colors{donut_text} = 'rgb(127,127,127)';
-        $colors{background} = 'ivory';
-        $colors{letter} = 'rgb(153,153,153)';
-        $colors{alink} = 'olive';
-    }
-    elsif (@new_colors == 1 && $new_colors[0] eq 'f') {
-        # Lilac Spring - from Morgan
-        $colors{center_hex} = 'teal';
-        $colors{center_text} = 'white';
-        $colors{donut_hex} = 'plum';
-        $colors{donut_text} = 'black';
-        $colors{background} = 'seashell';
-        $colors{letter} = 'black';
-        $colors{alink} = 'navy';
-    }
-    elsif (@new_colors == 1 && $new_colors[0] eq 'g') {
-        # Green - from Morgan
-        $colors{center_hex} = 'darkgreen';
-        $colors{center_text} = 'white';
-        $colors{donut_hex} = 'darkseagreen';
-        $colors{donut_text} = 'black';
-        $colors{background} = 'honeydew';
-        $colors{letter} = 'black';
-        $colors{alink} = 'darkgoldenrod';
+    if (@new_colors == 1
+        && $new_colors[0] =~ m{\A ([a-z]) \z}xms
+    ) {
+        my $let = $1;
+        my $colors9 = $uuid_colors_for{"preset $let"};
+        if (! $colors9) {
+            $colors9 = $uuid_colors_for{"preset a"};
+        }
+        @colors{@names} = mqw($colors9);
     }
     else {
         # validate the colors
+        # TODO - limit it to 9 colors
         my @bad;
-        my @name = qw/
-            center_hex
-            center_text
-            donut_hex
-            donut_text
-            background
-            letter
-            alink
-        /;
         for my $i (0 .. $#new_colors) {
             my $c = $new_colors[$i];
             if ($c eq '.') {
                 # don't change this position
-                $new_colors[$i] = $colors{$name[$i]};
+                $new_colors[$i] = $colors{$names[$i]};
             }
             elsif ($valid_color{$c}) {
                 # ok
@@ -164,15 +114,9 @@ sub set_colors {
             ) {
                 # ok
             }
-            elsif ($c =~ m{\A gr[ae]y (\d+) \z}xms) {
-                my $x = $1;
-                if (0 <= $x && $x <= 100) {
-                    my $y = 255*($x/100);
-                    $new_colors[$i] = sprintf "rgb(%d,%d,%d)", $y, $y, $y;
-                }
-                else {
-                    push @bad, uc $c;
-                }
+            elsif ($c =~ m{\A g ([1-9]) \z}xms) {
+                my $x = 255*($1/10);
+                $new_colors[$i] = sprintf "rgb(%d,%d,%d)", $x, $x, $x;
             }
             else {
                 push @bad, uc $c;
@@ -183,28 +127,48 @@ sub set_colors {
             return "Invalid color$pl: " . join(', ', @bad);
         }
         for my $i (0 .. $#new_colors) {
-            $colors{$name[$i]} = $new_colors[$i];
+            $colors{$names[$i]} = $new_colors[$i];
         }
     }
-    $uuid_colors_for{$uuid} = Dumper(\%colors);
+    $uuid_colors_for{$uuid} = join ' ', @colors{@names};
     return '';
 }
+
 # returns a hash with 7 keys
 sub get_colors {
     my ($uuid) = @_;
-    if ($uuid_colors_for{$uuid}) {
-        return %{ eval $uuid_colors_for{$uuid} };
+    my $s = $uuid_colors_for{$uuid};
+    if ($s) {
+        my @col = mqw($s);
+        my %colors;
+        for my $i (0 .. 8) {
+            $colors{$names[$i]} = $col[$i];
+        }
+        return %colors;
     }
     else {
         return (
-            center_hex => 'gold',
+            center_hex  => 'gold',
             center_text => 'black',
-            donut_hex => 'lightgray',
-            donut_text => 'black',
-            background => 'white',
-            letter => 'black',
-            alink => 'blue',
+            donut_hex   => 'lightgray',
+            donut_text  => 'black',
+            background  => 'white',
+            letter      => 'black',
+            alink       => 'blue',
+            bg_input    => 'white',
+            bg_text     => 'black',
         );
+    }
+}
+
+sub save_colors {
+    my ($uuid, $name) = @_;
+    if (index($name, 'preset ') == 0) {
+        $uuid_colors_for{$name} = $uuid_colors_for{$uuid};
+    }
+    else {
+        # $name must be a digit - save for the individual
+        # in %uuid_colors_saved_for
     }
 }
 

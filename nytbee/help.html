@@ -942,7 +942,7 @@ Try them all.  It's okay to leave out the space - so COA, COB, COC, etc. will wo
 <h3>Precise Control of Colors</h3>
 You have very fine control over the colors
 but it does take some explaining.
-You can change the colors of these 7 different areas:
+You can change the colors of these 9 different areas:
 <ol>
 <li>The background of the center letter.
 <li>The text of the center letter.
@@ -951,28 +951,30 @@ You can change the colors of these 7 different areas:
 <li>The background of the entire screen.
 <li>The text on the screen (word lists, definitions, etc).
 <li>The clickable links on the screen.
+<li>The background of the command input field.
+<li>The text in the command input field.
 </ol>
-Each of these 7 colors can be expressed in 4 different ways:
+Each of these 9 colors can be expressed in 4 different ways:
 <ol>
 <li>The standard HTML color name - see this <a target=_blank href='https://www.w3schools.com/colors/colors_names.asp'>name reference</a>.  There are 140 different fun names - like <span style="color: orchid">Orchid</span> and
 <span style="color: aquamarine">Aquamarine</span> &#128522.
 <li>3 decimal rgb values (red-green-blue) - like this: rgb(45, 140, 210).  The rgb values are from 0 to 255.  
 See this <a target=_blank href='https://www.w3schools.com/html/html_colors_rgb.asp'>rgb reference</a>.  The red, green, and blue combine to make more than 16 million different colors (256*256*256 = 16,777,216).
-<li>Shades of gray - 'GRAY0' (black) to 'GRAY100' (white).   You can spell GRAY as GREY if you wish.
+<li>Shades of gray - 'G1' (nearly black) to 'G9' (whitish).
 <li>6 hexadecimal digits - like this: #04FA99. The 3 hex digit pairs
 represent the values of red, green, and blue - from 00 to FF (instead of 0 to 255).
 See this <a target=_blank href='https://www.w3schools.com/html/html_colors_hex.asp'>hex reference</a>.
 </ol>
 <p>
 Here's an example where you give different colors (by name) to
-each of the 7 areas listed above - <i>in that order</i>:
+each of the 9 areas listed above - <i>in that order</i>:
 <ul>
-<span class=cmd>CO&nbsp;&nbsp;RED&nbsp;&nbsp;PINK&nbsp;&nbsp;SKYBLUE&nbsp;&nbsp;NAVY&nbsp;&nbsp;IVORY&nbsp;&nbsp;DARKGRAY&nbsp;&nbsp;ORCHID</span>
+<span class=cmd>CO&nbsp;&nbsp;RED&nbsp;&nbsp;PINK&nbsp;&nbsp;PLUM&nbsp;&nbsp;NAVY&nbsp;&nbsp;IVORY&nbsp;&nbsp;TAN&nbsp;&nbsp;GREEN&nbsp;&nbsp;PURPLE&nbsp;&nbsp;ORANGE</span>
 </ul>
 Try select-copy-pasting the above command into the puzzle's input text area.
 <p>
 <ul>
-<span class=cmd>CO&nbsp;&nbsp;GRAY70&nbsp;&nbsp;GRAY20&nbsp;&nbsp;RGB(240,80,80)&nbsp;&nbsp;RGB(240,180,180)</span>
+<span class=cmd>CO&nbsp;&nbsp;G7&nbsp;&nbsp;G2&nbsp;&nbsp;RGB(240,80,80)&nbsp;&nbsp;RGB(240,180,180)</span>
 </ul>
 The above uses shades of gray and rgb values.
 There are only 4 colors - so it only changes the 
@@ -1196,7 +1198,7 @@ name@hello.com becomes <a href='mailto:name@hello.com'>name@hello.com<br>
 These commands are of more limited use.  Some of them were added just for the beauty of software Art.
 <p>
 <table cellpadding=5>
-<tr><td><span class=cmd>LG</span></td><td>Show a time-stamped <span class=cmd>l</span>o<span class=cmd>g</span> of your activity today.  The times are 24 hour format U.S. West Coast Pacific Time</td><tr>
+<tr><td><span class=cmd>LG</span></td><td>Show a time-stamped <span class=cmd>l</span>o<span class=cmd>g</span> of your activity on the day of the NYT Puzzle.  The times are 24 hour format U.S. West Coast Pacific Time</td><tr>
 <tr><td><span class=cmd>LM #mins</span></td><td>Set a <span class=cmd>l</span>i<span class=cmd>m</span>it of how much longer you want to play.
 <span class=cmd>LM 10</span> will allow you to play for 10 more minutes.
 <span class=cmd>LM</span> without a number will show how much time remains.
@@ -1210,7 +1212,7 @@ This command may prove helpful for those who feel that they
 are spending too much time on this silly game.
 </td><tr>
 <tr><td><span class=cmd>PA</span></td><td><span class=cmd>Pa</span>use your <span class=cmd>LM</span> time limit.  Any action will resume the time.  This would be useful if you only want to play for 30 minutes today but would like to do it in three 10 minute sessions throughout the day.</td></tr>
-<tr><td><span class=cmd>AC</span></td><td>Show a stacked bar graph of <i>everyone's</i> <span class=cmd>ac</span>tivity through the day.  <span style='color: green'>Green</span>: #words, <span class=red1>Red</span>: #commands, <span style='color: blue'>Blue</span>: #dynamic grid queries.  The X-axis is hours since midnight, U.S. Pacific Time.  Monitoring began on December 22, 2022. </td></tr>
+<tr><td><span class=cmd>AC</span></td><td>Show a stacked bar graph of <i>everyone's</i> <span class=cmd>ac</span>tivity through the day.  <span style='color: green'>Green</span>: #words, <span class=red1>Red</span>: #commands, <span style='color: blue'>Blue</span>: #dynamic grid queries.  The X-axis is hours since midnight, U.S. Pacific Time.  The Y-axis is number of commands issued.  Monitoring began on December 22, 2022. </td></tr>
 <tr><td><span class=cmd>H</span></td><td>Cycle through different presentations
 of the 7 letters  - <span class=cmd>H</span>oneycomb to Inline Letters to <span class=cmd>H</span>ex Letters.<p>
 <img height=150 src=pics/df_honeycomb.png>&nbsp;&nbsp;<img height=70 src=pics/df_inline.png><img height=130 src=pics/df_hexlet.png>
