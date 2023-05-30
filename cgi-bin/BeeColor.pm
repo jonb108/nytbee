@@ -6,7 +6,21 @@ our @EXPORT_OK = qw/
     get_colors
     set_colors
     save_colors
+    color_schemes
+    del_scheme
 /;
+use DB_File;
+our %uuid_colors_for;
+tie %uuid_colors_for, 'DB_File', 'uuid_colors_for.dbm';
+# key is uuid
+# value is a string of 9 colors
+our %uuid_color_schemes_for;
+tie %uuid_color_schemes_for, 'DB_File', 'uuid_color_schemes_for.dbm';
+# key is uuid
+# values is a Dumper string representing a hash ref with
+#   key of scheme name
+#   value of a string of 9 colors
+
 use BeeDBM qw/
     %uuid_colors_for
 /;
@@ -83,17 +97,37 @@ sub set_colors {
     $color_param =~ s{ [(] ([^)]*) [)] }{'(' . squish($1) . ')'}xmsge;
     my %colors = get_colors($uuid);
     my @new_colors = split ' ', $color_param;
-    if (@new_colors == 1
-        && $new_colors[0] =~ m{\A ([a-z]) \z}xms
+    my %schemes;
+    my $sch = $uuid_color_schemes_for{$uuid};
+    if ($sch) {
+        %schemes = %{ eval $sch };
+    }
+
+    my $single;
+    if (@new_colors == 1) {
+        $single = $new_colors[0];
+    }
+    if ($single
+        && $single =~ m{\A ([a-z]) \z}xms
     ) {
+        # a PreSet
         my $let = $1;
         my $colors9 = $uuid_colors_for{"preset $let"};
         if (! $colors9) {
+            # doesn't exist - force it to be A
             $colors9 = $uuid_colors_for{"preset a"};
         }
         @colors{@names} = mqw($colors9);
     }
+    elsif ($single
+           && exists $schemes{$single}
+    ) {
+        # they're choosing one of their previously saved schemes
+        @colors{@names} = mqw($schemes{$single});
+    }
     else {
+        # a NEW setting of colors
+        #
         # validate the colors
         # TODO - limit it to 9 colors
         my @bad;
@@ -163,13 +197,54 @@ sub get_colors {
 
 sub save_colors {
     my ($uuid, $name) = @_;
-    if (index($name, 'preset ') == 0) {
+    if ($name =~ m{\A preset\s([a-z]) \z}xms) {
+        my $let = $1;
         $uuid_colors_for{$name} = $uuid_colors_for{$uuid};
+        return "Colors saved in PreSet \U$let.";
+    }
+    elsif ($valid_color{$name}) {
+        # what about g1-9?
+        return "Sorry, you cannot save your color scheme to one of the 140 standard HTML Web Color names.";
+    }
+    elsif ($name =~ m{\A [a-z] \z}xms) {
+        return "Sorry, your color scheme name cannot be just 1 letter.";
     }
     else {
-        # $name must be a digit - save for the individual
-        # in %uuid_colors_saved_for
+        my $s = $uuid_color_schemes_for{$uuid};
+        my %schemes;
+        if ($s) {
+            %schemes = %{ eval $s };
+        }
+        # update or add:
+        $schemes{$name} = $uuid_colors_for{$uuid}; 
+        $uuid_color_schemes_for{$uuid} = Dumper(\%schemes);
+        return "Your color scheme was saved to \U$name.\n";
     }
+}
+
+sub color_schemes {
+    my ($uuid) = @_;
+    my $s = $uuid_color_schemes_for{$uuid};
+    my @schemes;
+    if ($s) {
+        @schemes = keys %{ eval $s; };
+    }
+    if (@schemes) {
+        return "Your color schemes: "
+             . join(', ', map { uc } @schemes);
+    }
+    return "You have no saved color schemes.";
+}
+
+sub del_scheme {
+    my ($uuid, $scheme) = @_;
+    my %schemes;
+    my $s = $uuid_color_schemes_for{$uuid};
+    if ($s) {
+        %schemes = %{ eval $s };
+    }
+    delete $schemes{$scheme};
+    $uuid_color_schemes_for{$uuid} = Dumper(\%schemes);
 }
 
 1;

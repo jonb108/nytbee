@@ -1,9 +1,4 @@
 #!/usr/bin/perl
-# add two colors for the input background and text
-# SCO 1 set the current color scheme as YOUR #1
-# CO1 - restore your #1
-# CO will echo the current colors
-#
 use strict;
 use warnings;
 use CGI;
@@ -40,6 +35,8 @@ use BeeColor qw/
     set_colors
     get_colors
     save_colors
+    color_schemes
+    del_scheme
 /;
 use BeeDBM qw/
     %end_time_for
@@ -55,7 +52,6 @@ use BeeDBM qw/
     %first_appeared
     %definition_of
     %message_for
-    %uuid_colors_for
 /;
 use SvgHex qw/
     svg_hex
@@ -1692,7 +1688,7 @@ if (   $cmd ne '1'
     && $cmd !~ m{\A cw\s*\d* \z}xms
     && $cmd !~ m{\A m\d* \z}xms
     && $cmd !~ m{\A sn\b }xms
-    && $cmd !~ m{\A co\b }xms
+    && $cmd !~ m{\A d?co\b }xms
     && $cmd !~ m{\A ([+][+]|[-][-])cp }xms
 ) {
     # what about $cmd eq 'i' or bw or ... ?
@@ -2861,21 +2857,31 @@ elsif ($cmd eq 'id') {
                        # javascript without a user click...
     $cmd = '';
 }
-elsif ($cmd =~ m{\A co \s+ (.*)}xms) {
-    $message = set_colors($uuid, $1);
-    %colors = get_colors($uuid);
-    $cmd = '';
-}
-elsif ($cmd =~ m{\A co([a-g]) \z}xms) {
-    # DRY!
+elsif ($cmd =~ m{\A co \s+ (.*)}xmsa    # specific color setting
+       || $cmd =~ m{\A co([a-z]) \z}xms # a preset
+) {
     $message = set_colors($uuid, $1);
     %colors = get_colors($uuid);
     $cmd = '';
 }
 elsif ($cmd =~ m{\A sco \s+ ([a-z]) \s+ hello! \z}xms) {
+    # official saving of a PreSet
     my $let = $1;
-    save_colors($uuid, "preset $let");
-    $message = "Saved in PreSet Color \U$let.";
+    $message = save_colors($uuid, "preset $let");
+    $cmd = '';
+}
+elsif ($cmd eq 'co') {
+    $message = color_schemes($uuid);
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A dco \s+ (\w+) \z}xms) {
+    del_scheme($uuid, $1);
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A sco \s+ (\w+) \z}xms) {
+    # saving to personal color stash by name
+    my $name = $1;
+    $message = save_colors($uuid, $name);
     $cmd = '';
 }
 elsif ($cmd eq 'sn') {
