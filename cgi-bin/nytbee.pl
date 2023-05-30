@@ -1695,7 +1695,8 @@ if (   $cmd ne '1'
     # turns out it's okay ... but sloppy.
     # special case ...
     # for pasting a bunch of BW words along with numbers
-    $cmd =~ s{\d}{}xmsg;    
+    # TODO JON REFACTOR THIS HACK!
+    #$cmd =~ s{\d}{}xmsg;    
     @new_words = map {
                      lc
                  }
@@ -3398,7 +3399,7 @@ my $delete_top = 190 + ($show_Heading? 79: 0);
 my $help_top = 190 + ($show_Heading? 79: 0);
 my $forum_html = '';
 if ($forum_mode) {
-    $forum_html = `$cgi_dir/show_forum.pl $date "$screen_name" $forum_post_to_edit $colors{bg_input} $colors{text_input}`;
+    $forum_html = `$cgi_dir/show_forum.pl $date "$screen_name" $forum_post_to_edit '$colors{bg_input}' '$colors{text_input}'`;
     $bingo_table =
     $found_words =
     $donut_lexicon_bonus =
