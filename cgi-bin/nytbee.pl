@@ -34,6 +34,7 @@ use BeeUtil qw/
 use BeeColor qw/
     set_colors
     get_colors
+    arr_get_colors
     save_colors
     color_schemes
     del_scheme
@@ -2871,16 +2872,39 @@ elsif ($cmd =~ m{\A sco \s+ ([a-z]) \s+ hello! \z}xms) {
     $message = save_colors($uuid, "preset $let");
     $cmd = '';
 }
-elsif ($cmd eq 'co') {
+elsif ($cmd eq 'lco') {
     $message = color_schemes($uuid);
     $cmd = '';
 }
-elsif ($cmd =~ m{\A dco \s+ (\w+) \z}xms) {
-    del_scheme($uuid, $1);
+elsif ($cmd =~ m{\A xco \s+ (\w+) \z}xms) {
+    $message = del_scheme($uuid, $1);
+    $cmd = '';
+}
+elsif ($cmd eq 'co') {
+    my @c = arr_get_colors($uuid);
+    $message = <<"EOH";
+<style>
+/* align td left just for the co table */
+.co td {
+    text-align: left;
+}
+</style>
+<table cellpadding=3 class=co>
+<tr><td>1</td><td>Center background</td><td>$c[0]</td></tr>
+<tr><td>2</td><td>Center text</td></td><td>$c[1]</td></tr>
+<tr><td>3</td><td>Donut background</td></td><td>$c[2]</td></tr>
+<tr><td>4</td><td>Donut text</td></td><td>$c[3]</td></tr>
+<tr><td>5</td><td>Page background</td></td><td>$c[4]</td></tr>
+<tr><td>6</td><td>Page text</td></td><td>$c[5]</td></tr>
+<tr><td>7</td><td>Links</td></td><td>$c[6]</td></tr>
+<tr><td>8</td><td>Input background</td></td><td>$c[7]</td></tr>
+<tr><td>9</td><td>Input text</td></td><td>$c[8]</td></tr>
+</table>
+EOH
     $cmd = '';
 }
 elsif ($cmd =~ m{\A sco \s+ (\w+) \z}xms) {
-    # saving to personal color stash by name
+    # saving to personal color scheme by name
     my $name = $1;
     $message = save_colors($uuid, $name);
     $cmd = '';

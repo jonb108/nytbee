@@ -4,6 +4,7 @@ package BeeColor;
 use base 'Exporter';
 our @EXPORT_OK = qw/
     get_colors
+    arr_get_colors
     set_colors
     save_colors
     color_schemes
@@ -87,12 +88,45 @@ sub mqw {
     my ($s) = @_;
     return split ' ', $s;
 }
+# are there an even number of terms
+# and are all even indices 1-9?
+sub odd_digits {
+    my @terms = @_;
+    if (@terms % 2 == 1) {
+        return 0;
+    }
+    for (my $i = 0; $i < $#terms; $i += 2) {
+        if ($terms[$i] !~ m{\A [1-9] \z}xms) {
+            return 0;
+        }
+    }
+    return 1;
+}
+# we pass a reference to a scalar.
+# return true if the scalar is an ok color else 0.
+# if the color is g[1-9] transform the
+# scalar into an rgb(x,x,x) value instead.
+# fancy!
+sub ok_color {
+    my ($cref) = @_;
+    my $c = ${$cref};
+    if ($valid_color{$c} 
+        || $c =~ m{\A [#][a-f0-9]{6} \z }xms
+        || ($c =~ m{\A rgb[(](\d+),(\d+),(\d+)[)] \z}xmsi
+               && within($1) && within($2) && within($3))
+    ) {
+        return 1;
+    }
+    if ($c =~ m{\A g([1-9]) \z}xms) {
+        my $x = 255*($1/10);
+        $$cref = sprintf "rgb(%d,%d,%d)", $x, $x, $x;
+        return 1;
+    }
+    return 0;
+}
 sub set_colors {
+    my $mess = '';
     my ($uuid, $color_param) = @_;
-    # . to ' . ' so we don't have to insert spaces between dots
-    $color_param =~ s{[.]}{ . }xmsg;
-    # ellipsis to . . . 
-    $color_param =~ s{\x85}{ . . . }xmsg;
     # tidy up rgb(a,b,c)
     $color_param =~ s{ [(] ([^)]*) [)] }{'(' . squish($1) . ')'}xmsge;
     my %colors = get_colors($uuid);
@@ -110,14 +144,19 @@ sub set_colors {
     if ($single
         && $single =~ m{\A ([a-z]) \z}xms
     ) {
-        # a PreSet
         my $let = $1;
-        my $colors9 = $uuid_colors_for{"preset $let"};
-        if (! $colors9) {
-            # doesn't exist - force it to be A
-            $colors9 = $uuid_colors_for{"preset a"};
+        if (! exists $uuid_colors_for{"preset $let"}) {
+            $mess = "\u$let: no such PreSet";
         }
-        @colors{@names} = mqw($colors9);
+        else {
+            # a PreSet
+            my $colors9 = $uuid_colors_for{"preset $let"};
+            if (! $colors9) {
+                # doesn't exist - force it to be A
+                $colors9 = $uuid_colors_for{"preset a"};
+            }
+            @colors{@names} = mqw($colors9);
+        }
     }
     elsif ($single
            && exists $schemes{$single}
@@ -125,47 +164,37 @@ sub set_colors {
         # they're choosing one of their previously saved schemes
         @colors{@names} = mqw($schemes{$single});
     }
-    else {
-        # a NEW setting of colors
-        #
-        # validate the colors
-        # TODO - limit it to 9 colors
-        my @bad;
-        for my $i (0 .. $#new_colors) {
-            my $c = $new_colors[$i];
-            if ($c eq '.') {
-                # don't change this position
-                $new_colors[$i] = $colors{$names[$i]};
-            }
-            elsif ($valid_color{$c}) {
-                # ok
-            }
-            elsif ($c =~ m{\A [#][a-f0-9]{6} \z }xms) {
-                # ok
-            }
-            elsif ($c =~ m{\A rgb[(](\d+),(\d+),(\d+)[)] \z}xmsi
-                   && within($1) && within($2) && within($3)
-            ) {
-                # ok
-            }
-            elsif ($c =~ m{\A g ([1-9]) \z}xms) {
-                my $x = 255*($1/10);
-                $new_colors[$i] = sprintf "rgb(%d,%d,%d)", $x, $x, $x;
+    elsif (odd_digits(@new_colors)) {
+        my @mess;
+        while (my ($i, $c) = splice @new_colors, 0, 2) {
+            if (ok_color(\$c)) {
+                $colors{$names[$i-1]} = $c;
+                # -1 since 0 based
             }
             else {
-                push @bad, uc $c;
+                push @mess, uc $c;
             }
         }
-        if (@bad) {
-            my $pl = @bad == 1? '': 's';
-            return "Invalid color$pl: " . join(', ', @bad);
-        }
-        for my $i (0 .. $#new_colors) {
-            $colors{$names[$i]} = $new_colors[$i];
+        if (@mess) {
+            my $pl = @mess == 1? '': 's';
+            $mess = "Invalid color$pl: " . join ', ', @mess;
         }
     }
+    else {
+        $mess = "Invalid color settings: " . uc $color_param;
+    }
     $uuid_colors_for{$uuid} = join ' ', @colors{@names};
-    return '';
+    return $mess;
+}
+
+sub arr_get_colors {
+    my ($uuid) = @_;
+    my $s = $uuid_colors_for{$uuid};
+    if (! $s) {
+        # NYT Standard
+        $s = "gold black lightgray black white black blue white black"
+    }
+    return mqw(uc $s);
 }
 
 # returns a hash with 7 keys
@@ -233,7 +262,7 @@ sub color_schemes {
         return "Your color schemes: "
              . join(', ', map { uc } @schemes);
     }
-    return "You have no saved color schemes.";
+    return "You have no color schemes.";
 }
 
 sub del_scheme {
@@ -243,8 +272,17 @@ sub del_scheme {
     if ($s) {
         %schemes = %{ eval $s };
     }
-    delete $schemes{$scheme};
-    $uuid_color_schemes_for{$uuid} = Dumper(\%schemes);
+    else {
+        return "You have no color schemes.";
+    }
+    if (! exists $schemes{$scheme}) {
+        return "You have no color scheme named \U$scheme.";
+    }
+    else {
+        delete $schemes{$scheme};
+        $uuid_color_schemes_for{$uuid} = Dumper(\%schemes);
+        return "\U$scheme\E was deleted.";
+    }
 }
 
 1;
