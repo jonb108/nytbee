@@ -948,7 +948,7 @@ tied to your <a href=#identity>ID</a> so they will be preserved
 from day to day and across browsers.
 <h3>Precise Control of Colors</h3>
 You have very fine control over the colors
-but it is rather complex to explain &ndash; so pay attention!
+but it is rather complex and takes a lot of explaining.
 You can change the colors of these 9 different areas:
 <ol>
 <li>The background of the center letter.
@@ -990,6 +990,7 @@ the background (#1) and text (#2) of the center letter:
 <ul>
 <span class=cmd>CO&nbsp;&nbsp;1&nbsp;&nbsp;RED&nbsp;&nbsp;2&nbsp;&nbsp;PINK</span>
 </ul>
+You give pairs &ndash; an area number (1-9) and a color for that area.
 <p>
 Colors can be expressed in 4 different ways:
 <ol>
@@ -997,16 +998,20 @@ Colors can be expressed in 4 different ways:
 <span style="color: aquamarine">Aquamarine</span> &#128522.
 <li>3 decimal rgb values (red-green-blue) - like this: rgb(45,140,210).  The rgb values are from 0 to 255.  
 See this <a target=_blank href='https://www.w3schools.com/html/html_colors_rgb.asp'>rgb reference</a>.  The red, green, and blue combine to make more than 16 million different colors (256*256*256 = 16,777,216).
-<li>Shades of gray - G1 (nearly black) to G9 (whitish).
 <li>6 hexadecimal digits - like this: #04FA99. The 3 hex digit pairs
 represent the values of red, green, and blue - from 00 to FF (instead of 0 to 255).
 See this <a target=_blank href='https://www.w3schools.com/html/html_colors_hex.asp'>hex reference</a>.
+<li>Shades of gray - G1 (nearly black) to G9 (whitish).
 </ol>
+The 3 references above have color mixers and color pickers that are
+fun to play with.  You can find a color you like and then
+select-copy-paste the rgb or hex color values.
+<p>
 Here&#8217;s another command
 to change the page background (#5) and link (#7) colors:
 <p>
 <ul>
-<span class=cmd>CO&nbsp;&nbsp;5&nbsp;&nbsp;LAVENDER&nbsp;&nbsp;7&nbsp;&nbsp;MAGENTA</span>
+<span class=cmd>CO&nbsp;&nbsp;5&nbsp;&nbsp;LAVENDER&nbsp;&nbsp;7&nbsp;&nbsp;#B21F1F</span>
 </ul>
 And the input text (#9) and the page text (#6):
 <p>
@@ -1019,7 +1024,7 @@ You may want to have a <i>collection</i>
 of several favorite color combinations (aka Color Schemes).
 Perhaps one for weekday mornings and another for late night.
 Once you have configured a set of colors you really like
-you should Save it by name with the <span class=cmd>SCO</span> command:
+you should save it by name with the <span class=cmd>SCO</span> command:
 <ul>
 <span class=cmd>SCO&nbsp;LATE</span>
 </ul>
@@ -1027,7 +1032,7 @@ Your color scheme name cannot be one of the standard HTML Color Names nor
 can it be a single letter as they are reserved for the PreSets.
 <p>
 The command <span class=cmd>CO</span> will reset the colors
-using one of your saved color schemes:
+with one of your color scheme names:
 <ul>
 <span class=cmd>CO&nbsp;&nbsp;MORN</span>
 </ul>
@@ -1537,7 +1542,7 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1848 puzzles with
+1849 puzzles with
 a total of 9576 different words!
 <p>
 Which puzzles from the large archive to play?
