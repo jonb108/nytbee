@@ -942,13 +942,13 @@ Each of these PreSets has a different mood and feel.
 Try them all.  It's okay to leave out the space - so COA, COB, COC, etc. will work.
 <p>
 These PreSets are nice but you will very likely want to tweak them
-in various ways or create your own snazzy color scheme.
+in various ways to create your own snazzy color scheme(s).
 However you set and tweak the colors they will be remembered &ndash; they are
 tied to your <a href=#identity>ID</a> so they will be preserved
 from day to day and across browsers.
 <h3>Precise Control of Colors</h3>
 You have very fine control over the colors
-but it is rather complex to explain &ndash; so pay attention!  &#128522;
+but it is rather complex to explain &ndash; so pay attention!
 You can change the colors of these 9 different areas:
 <ol>
 <li>The background of the center letter.
@@ -983,7 +983,7 @@ will show a table of the current color settings:
 <tr><td>9</td><td>Input text</td></td><td>DARKBLUE</td></tr>
 </table>
 </ul>
-The above is what you will see after choosing 'The Blues' PreSet.
+The above is what you will see after choosing 'The Blues' PreSet (<span class=cmd>COB</span>).
 <p>
 Here&#8217;s an example of how to change
 the background (#1) and text (#2) of the center letter:
@@ -995,7 +995,7 @@ Colors can be expressed in 4 different ways:
 <ol>
 <li>The standard HTML color name - see this <a target=_blank href='https://www.w3schools.com/colors/colors_names.asp'>name reference</a>.  There are 140 different fun names - like <span style="color: orchid">Orchid</span> and
 <span style="color: aquamarine">Aquamarine</span> &#128522.
-<li>3 decimal rgb values (red-green-blue) - like this: rgb(45, 140, 210).  The rgb values are from 0 to 255.  
+<li>3 decimal rgb values (red-green-blue) - like this: rgb(45,140,210).  The rgb values are from 0 to 255.  
 See this <a target=_blank href='https://www.w3schools.com/html/html_colors_rgb.asp'>rgb reference</a>.  The red, green, and blue combine to make more than 16 million different colors (256*256*256 = 16,777,216).
 <li>Shades of gray - G1 (nearly black) to G9 (whitish).
 <li>6 hexadecimal digits - like this: #04FA99. The 3 hex digit pairs
@@ -1013,15 +1013,13 @@ And the input text (#9) and the page text (#6):
 <ul>
 <span class=cmd>CO&nbsp;&nbsp;9&nbsp;&nbsp;G4&nbsp;&nbsp;6&nbsp;&nbsp;RGB(200,120,190)</span>
 </ul>
-Note that 16 million different colors in 9 different areas
-create 10<sup>56</sup> possible combinations!  That&#8217;s plenty
-of room for self expression.
-<h3>Your Color Schemes</h3>
+<a name=schemes></a>
+<h3>Color Schemes</h3>
 You may want to have a <i>collection</i>
 of several favorite color combinations (aka Color Schemes).
-One for weekday mornings and another for late night.
+Perhaps one for weekday mornings and another for late night.
 Once you have configured a set of colors you really like
-you can Save it by name with the <span class=cmd>SCO</span> command:
+you should Save it by name with the <span class=cmd>SCO</span> command:
 <ul>
 <span class=cmd>SCO&nbsp;LATE</span>
 </ul>
@@ -1038,6 +1036,9 @@ and they can be deleted with <span class=cmd>XCO</span>:
 <ul>
 <span class=cmd>XCO&nbsp;&nbsp;PURP</span>
 </ul>
+Note that 16 million different colors in 9 different areas
+create 10<sup>56</sup> possible combinations!  That&#8217;s plenty
+of room for self expression.  See the <a href=#calc>&dagger;&dagger;</a> footnote for the fun calculation.
 <a name=clues></a>
 <h2>Clues for Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -1658,6 +1659,20 @@ their fast and solid hosting.
 <h2>Footnotes
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
-&dagger; The comment in the <a href=#videos>Videos</a> section was inspired by <a target=ives href='https://en.wikipedia.org/wiki/Charles_Ives'>Charles Ives</a> in the preface to his <a target=ives href='https://www.gutenberg.org/files/3673/3673-h/3673-h.htm'><u>Essays Before a Sonata</u></a> &ndash; a book of essays to accompany the monumental <a target=ives href='https://www.youtube.com/watch?v=cDNPpsUaVYo'>Concord Sonata</a>.
+&dagger;
+<br>The comment in the <a href=#videos>Videos</a> section was inspired by <a target=ives href='https://en.wikipedia.org/wiki/Charles_Ives'>Charles Ives</a> in the preface to his <a target=ives href='https://www.gutenberg.org/files/3673/3673-h/3673-h.htm'><u>Essays Before a Sonata</u></a> &ndash; a book of essays to accompany the monumental <a target=ives href='https://www.youtube.com/watch?v=cDNPpsUaVYo'>Concord Sonata</a>.
+<p>
+<a name=calc></a>
+&dagger;&dagger;<br>
+How many different <a href=#schemes>Color Schemes</a> are there?<p>
+A <b>bit</b> is either 0 or 1 = <span class=red>2</span> states.<br>
+A <b>byte</b> has <span class=red>8</span> bits giving 2<sup>8</sup> = 256 values from 0 to 255.<br>
+A <b>color</b> is composed of <span class=red>3</span> bytes (red, green, blue) so there are 256<sup>3</sup> = 16,777,216 unique colors.<br>
+A <b>color scheme</b> has a color for each of <span class=red>9</span> areas so there are 16,777,216<sup>9</sup> = 10<sup>56</sup> different color schemes.<br>
+<p>
+Summarizing:<ul>
+<span style='font-size: 34pt'>2<sup>8<sup>3<sup>9</sup></sup></sup></span> = 1.053122916686e65, approximately.
+</ul>
+How fun is that! &#128522;
 </body>
 </html>
