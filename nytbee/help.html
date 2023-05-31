@@ -259,6 +259,7 @@ The other letters are in lower case.
 <p>
 Entering the <span class=cmd>SN</span> command by itself will show you
 what your screen name is.
+<a name=identity></a>
 <h3>Identity String</h3>
 The identity string is generated to be unique.  It is a long string
 of characters like this:
@@ -939,9 +940,15 @@ The simplest way to change the colors is with the 7 PreSets A to G:
 </ul>
 Each of these PreSets has a different mood and feel.
 Try them all.  It's okay to leave out the space - so COA, COB, COC, etc. will work.
+<p>
+These PreSets are nice but you will very likely want to tweak them
+in various ways or create your own snazzy color scheme.
+However you set and tweak the colors they will be remembered &ndash; they are
+tied to your <a href=#identity>ID</a> so they will be preserved
+from day to day and across browsers.
 <h3>Precise Control of Colors</h3>
 You have very fine control over the colors
-but it does take some explaining.
+but it is rather complex to explain &ndash; so pay attention!  &#128522;
 You can change the colors of these 9 different areas:
 <ol>
 <li>The background of the center letter.
@@ -954,48 +961,83 @@ You can change the colors of these 9 different areas:
 <li>The background of the command input field.
 <li>The text in the command input field.
 </ol>
-Each of these 9 colors can be expressed in 4 different ways:
+<p>
+The <span class=cmd>CO</span> command by itself
+will show a table of the current color settings:
+<ul>
+<style>
+/* align td left just for the co table */
+.co td {
+    text-align: left;
+}
+</style>
+<table cellpadding=3 class=co>
+<tr><td>1</td><td>Center background</td><td>CORNFLOWERBLUE</td></tr>
+<tr><td>2</td><td>Center text</td></td><td>MIDNIGHTBLUE</td></tr>
+<tr><td>3</td><td>Donut background</td></td><td>LAVENDER</td></tr>
+<tr><td>4</td><td>Donut text</td></td><td>MEDIUMBLUE</td></tr>
+<tr><td>5</td><td>Page background</td></td><td>LIGHTBLUE</td></tr>
+<tr><td>6</td><td>Page text</td></td><td>RGB(102,102,102)</td></tr>
+<tr><td>7</td><td>Links</td></td><td>CORNFLOWERBLUE</td></tr>
+<tr><td>8</td><td>Input background</td></td><td>SKYBLUE</td></tr>
+<tr><td>9</td><td>Input text</td></td><td>DARKBLUE</td></tr>
+</table>
+</ul>
+The above is what you will see after choosing 'The Blues' PreSet.
+<p>
+Here&#8217;s an example of how to change
+the background (#1) and text (#2) of the center letter:
+<ul>
+<span class=cmd>CO&nbsp;&nbsp;1&nbsp;&nbsp;RED&nbsp;&nbsp;2&nbsp;&nbsp;PINK</span>
+</ul>
+<p>
+Colors can be expressed in 4 different ways:
 <ol>
 <li>The standard HTML color name - see this <a target=_blank href='https://www.w3schools.com/colors/colors_names.asp'>name reference</a>.  There are 140 different fun names - like <span style="color: orchid">Orchid</span> and
 <span style="color: aquamarine">Aquamarine</span> &#128522.
 <li>3 decimal rgb values (red-green-blue) - like this: rgb(45, 140, 210).  The rgb values are from 0 to 255.  
 See this <a target=_blank href='https://www.w3schools.com/html/html_colors_rgb.asp'>rgb reference</a>.  The red, green, and blue combine to make more than 16 million different colors (256*256*256 = 16,777,216).
-<li>Shades of gray - 'G1' (nearly black) to 'G9' (whitish).
+<li>Shades of gray - G1 (nearly black) to G9 (whitish).
 <li>6 hexadecimal digits - like this: #04FA99. The 3 hex digit pairs
 represent the values of red, green, and blue - from 00 to FF (instead of 0 to 255).
 See this <a target=_blank href='https://www.w3schools.com/html/html_colors_hex.asp'>hex reference</a>.
 </ol>
-<p>
-Here's an example where you give different colors (by name) to
-each of the 9 areas listed above - <i>in that order</i>:
-<ul>
-<span class=cmd>CO&nbsp;&nbsp;RED&nbsp;&nbsp;PINK&nbsp;&nbsp;PLUM&nbsp;&nbsp;NAVY&nbsp;&nbsp;IVORY&nbsp;&nbsp;TAN&nbsp;&nbsp;GREEN&nbsp;&nbsp;PURPLE&nbsp;&nbsp;ORANGE</span>
-</ul>
-Try select-copy-pasting the above command into the puzzle's input text area.
+Here&#8217;s another command
+to change the page background (#5) and link (#7) colors:
 <p>
 <ul>
-<span class=cmd>CO&nbsp;&nbsp;G7&nbsp;&nbsp;G2&nbsp;&nbsp;RGB(240,80,80)&nbsp;&nbsp;RGB(240,180,180)</span>
+<span class=cmd>CO&nbsp;&nbsp;5&nbsp;&nbsp;LAVENDER&nbsp;&nbsp;7&nbsp;&nbsp;MAGENTA</span>
 </ul>
-The above uses shades of gray and rgb values.
-There are only 4 colors - so it only changes the 
-background and text of the center and donut letters - the first 4 areas.
-The colors of the other 3 areas are unchanged.
+And the input text (#9) and the page text (#6):
 <p>
-</ul>
-The following example shows how you can leave certain areas unchanged
-while you change others:
 <ul>
-<span class=cmd>CO&nbsp;&nbsp;.&nbsp;&nbsp;GREEN&nbsp;&nbsp;.&nbsp;&nbsp;RED</span>
+<span class=cmd>CO&nbsp;&nbsp;9&nbsp;&nbsp;G4&nbsp;&nbsp;6&nbsp;&nbsp;RGB(200,120,190)</span>
 </ul>
-The dots are 'place holders' for areas you don't want to change.
-The above command changes the center letter text to <span style='color: green'>green</span> and the donut letters text to <span style='color: red'>red</span>.
-<p>
-One more:
+Note that 16 million different colors in 9 different areas
+create 10<sup>56</sup> possible combinations!  That&#8217;s plenty
+of room for self expression.
+<h3>Your Color Schemes</h3>
+You may want to have a <i>collection</i>
+of several favorite color combinations (aka Color Schemes).
+One for weekday mornings and another for late night.
+Once you have configured a set of colors you really like
+you can Save it by name with the <span class=cmd>SCO</span> command:
 <ul>
-<span class=cmd>CO ......TURQUOISE</span>
+<span class=cmd>SCO&nbsp;LATE</span>
 </ul>
-What does this do?
+Your color scheme name cannot be one of the standard HTML Color Names.
 <p>
+The command <span class=cmd>CO</span> will reset the colors
+using one of your saved color schemes:
+<ul>
+<span class=cmd>CO&nbsp;&nbsp;MORN</span>
+</ul>
+<p>
+The command <span class=cmd>LCO</span> will list your color schemes
+and they can be deleted with <span class=cmd>XCO</span>:
+<ul>
+<span class=cmd>XCO&nbsp;&nbsp;PURP</span>
+</ul>
 <a name=clues></a>
 <h2>Clues for Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
