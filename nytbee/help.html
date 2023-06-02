@@ -478,6 +478,7 @@ your list of games with the <span class=cmd>XA</span> command.
 (via the <span class=cmd>D</span>, <span class=cmd>V</span>, and <span class=cmd>E</span> commands) until you get to Queen Bee.   This is
 still an accomplishment!  Using brief definitions to find words
 is a way to challenge and enlarge your vocabulary.
+You can use D+R to get definitions <i>and</i> any clues for random unfound words.
 <li>You could do <i>all</i> of the above
 by resetting the puzzle between the games with the <span class=cmd>C Y</span> command.
 <li>Find all the words and get to Queen Bee however you want
@@ -616,12 +617,16 @@ and a definition will be shown.  Nice!
 Another type of word is one that IS a real valid actual proper qualified word
 containing the center letter but which for some mysterious, arbitrary,
 rational, or irrational reason was not included in the &#8220;allowed list&#8221;.
-In the above puzzle the words WAIN and WANG are such valid words that
+In this puzzle:
+<p>
+<img width=340 src=pics/donut.png>
+<br>
+the words WAIN and WANG are such valid words that
 were not included in the allowed list - because they are rare or obscure?
 These disallowed words are the subject of many many repetitous and lengthy
 discussions and debates in the HiveMind Forum.  One example is
 the word URTICARIA - see 
-<a target=_blank href='https://www.nytimes.com/2022/05/16/crosswords/spelling-bee-forum.html#commentsContainer'>the forum for May 16, 2022</a>.
+<a target=_blank href='https://www.nytimes.com/2022/05/16/crosswords/spelling-bee-forum.html#commentsContainer'>the NYT HiveMind forum for May 16, 2022</a>.
 These words are called &#8220;Lexicon Words&#8221; because they <b>are</b> to be found
 in the large lexicon of words in /usr/share/dict/words on OSX.
 This lexicon contains 235,886 words of which 98,634 of them have a
@@ -667,6 +672,36 @@ A <span class=purple>Perfect Bonus Pangram</span> is exactly 8 letters long.
 There is yet <span style="color: magenta"><i>another</i></span> type of Bonus Pangram &ndash; which I will leave
 undocumented so you can have the pleasure of discovering it on your own.
 <p>
+<h3>Hint Credits</h3>
+These three types of words (the term &#8220;Extra Words&#8221; seems a good one) are
+listed below the words you have found in the allowed list.  Like so:
+<p style="margin-left: .2in">
+<img src=pics/list3.png width=600>
+<p>
+You also get &#8220;Hint Credits&#8221; by
+adding a negative number to the Hint total:
+<ul>
+<table cellpadding=5>
+<tr><td>Donut</td><td>-1</td></tr>
+<tr><td>Lexicon</td><td>-2</td></tr>
+<tr><td>Bonus</td><td>-3</td></tr>
+</table>
+</ul>
+In the above puzzle we have:
+<ul>
+(5 * -1) + (3 * -2) + (7 * -3) = -32
+</ul>
+When the puzzle status is graphical negative hints are colored
+in <span class=red1>red</span>.
+<p>
+Accumulating hint credits is like having money in the bank.
+You can spend them wisely on 
+definitions, reveals, and showing the
+Hint Table and Two Letter List.
+<p>
+Finally, note that the minus command (hyphen, dash, '-') which is
+used to remove words from the found list will add hints back if you
+remove an Extra word.
 <a name=bonus_mode></a>
 <h4>Bonus Mode</h4>
 Searching for Bonus words on a mobile phone is somewhat awkward.
@@ -716,36 +751,6 @@ you have 7 letters in your rack and you need to find <i>another</i> letter
 already on the board to place your word.
 Finding Bonus words is easier than Scrabble
 because you can simply <i>choose</i> whatever other letter you need!
-<h3>Hint Credits</h3>
-These three types of words (the term &#8220;Extra Words&#8221; seems a good one) are
-listed below the words you have found in the allowed list.  Like so:
-<p style="margin-left: .2in">
-<img src=pics/list3.png width=600>
-<p>
-You also get &#8220;Hint Credits&#8221; by
-adding a negative number to the Hint total:
-<ul>
-<table cellpadding=5>
-<tr><td>Donut</td><td>-1</td></tr>
-<tr><td>Lexicon</td><td>-2</td></tr>
-<tr><td>Bonus</td><td>-3</td></tr>
-</table>
-</ul>
-In the above puzzle we have:
-<ul>
-(5 * -1) + (3 * -2) + (7 * -3) = -32
-</ul>
-When the puzzle status is graphical negative hints are colored
-in <span class=red1>red</span>.
-<p>
-Accumulating hint credits is like having money in the bank.
-You can spend them wisely on 
-definitions, reveals, and showing the
-Hint Table and Two Letter List.
-<p>
-Finally, note that the minus command (hyphen, dash, '-') which is
-used to remove words from the found list will add hints back if you
-remove an Extra word.
 <h3>Global Lists of Extra Words</h3>
 There is, of course, no &#8220;official&#8221; list of these Extra words.
 This makes it more fun, in a way.  More creative.
@@ -862,7 +867,7 @@ Messages are shown in reverse chronological order.
 can click the flag icon <img src=pics/flag.png width=20>. The flag will turn red <img src=pics/redflag.png width=20> and the authorities will be notified. &#128522;
 </ul>
 <p>
-Two things to note about composing your message:
+When composing your message:
 <ul>
 <li>Entering Emojis on a desktop computer: &#128522;&#128545;&#128077;&#128591;&#127996;&#128029;&#127752;
 <ul>
@@ -870,9 +875,10 @@ Two things to note about composing your message:
 <li>MS Windows: WindowsLogoKey-Period&nbsp;&nbsp;
 <img src=pics/windows.png><span style="font-size: 30pt">.</span>
 </ul>
-Hold these keys down simultaneously and a menu of emojis will pop up.
-<li>Within a message you can enter URLs beginning with 'http'.
-These will be transformed into links that open in a new window.
+<li>*hello* becomes <b>hello</b>
+<li>_hello_ becomes <u>hello</u>
+<li>charles@gmail.com becomes <a target=_blank href='mailto:charles@gmail.com'>charles@gmail.com</a>
+<li>http://hello.com becomes <a target=_blank href=http://hello.com>http://hello.com</a>
 </ul>
 If a puzzle has messages the number of messages will be shown 
 <span class=red1>in red</span> at the top after the word Forum
@@ -949,18 +955,20 @@ from day to day and across browsers.
 <h3>Precise Control of Colors</h3>
 You have very fine control over the colors
 but it is rather complex and takes a lot of explaining.
-You can change the colors of these 9 different areas:
+You can change the colors of 9 different areas:
 <ol>
 <li>The background of the center letter.
 <li>The text of the center letter.
 <li>The background of the donut letters (the 6 outer letters).
 <li>The text of the donut letters.
-<li>The background of the entire screen.
-<li>The text on the screen (word lists, definitions, etc).
-<li>The clickable links on the screen.
+<li>The background of the entire page.
+<li>The text on the page (word lists, definitions, etc).
+<li>The clickable links.
 <li>The background of the command input field.
 <li>The text in the command input field.
 </ol>
+<p>
+<img src=pics/color.jpg width=750 border=1>
 <p>
 The <span class=cmd>CO</span> command by itself
 will show a table of the current color settings:
@@ -983,8 +991,6 @@ will show a table of the current color settings:
 <tr><td>9</td><td>Input text</td></td><td>DARKBLUE</td></tr>
 </table>
 </ul>
-The above is what you will see after choosing 'The Blues' PreSet (<span class=cmd>COB</span>).
-<p>
 Here&#8217;s an example of how to change
 the background (#1) and text (#2) of the center letter:
 <ul>
@@ -1031,14 +1037,13 @@ you should save it by name with the <span class=cmd>SCO</span> command:
 Your color scheme name cannot be one of the standard HTML Color Names nor
 can it be a single letter as they are reserved for the PreSets.
 <p>
-The command <span class=cmd>CO</span> will reset the colors
-with one of your color scheme names:
+<span class=cmd>CO</span> is used to put one of your color schemes in place:
 <ul>
 <span class=cmd>CO&nbsp;&nbsp;MORN</span>
 </ul>
 <p>
-The command <span class=cmd>LCO</span> will list your color schemes
-and they can be deleted with <span class=cmd>XCO</span>:
+The command <span class=cmd>LCO</span> will list your color schemes.
+They can be deleted with <span class=cmd>XCO</span>:
 <ul>
 <span class=cmd>XCO&nbsp;&nbsp;PURP</span>
 </ul>
@@ -1204,9 +1209,14 @@ You do not need to include <i>all</i> common ordinary words.
 This is your own custom personalized puzzle and you can make your own rules!
 <li>Give clues for the words, if you wish.  See the <a href=#clues>previous section</a> for
 more details on entering the clues.
-<li>Lastly, give your name and location.  Optionally, you can give your
-puzzle a title and description.  You also choose whether the puzzle is ready
-to be &#8220;published&#8221; - made visible to the community.
+<li>Final steps:
+<p>Your name and location.<br>
+A title and description for your puzzle (optional).<br>
+Is the puzzle is ready
+to be &#8220;published&#8221; and available to the community?
+<p>
+Note that the description is subject to the same formatting as
+<a href=#forum>Forum</a> posts.  e.g. *hello* becomes <b>hello</b>
 </ol>
 When these steps are complete your puzzle is assigned
 a number and is immediately available to the community.
@@ -1233,13 +1243,7 @@ that <i>you</i> have created.
 <p>
 The description of your puzzle can be used to inform
 people why you made the puzzle and explain any guidelines for
-what words might be included or excluded.  You can format
-the description with these codings:
-<ul>
-*word* becomes <b>word</b><br>
-_word_ becomes <u>word</u><br>
-name@hello.com becomes <a href='mailto:name@hello.com'>name@hello.com<br>
-</ul>
+what words might be included or excluded.
 <a name=power></a>
 <h2>Power User Commands
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -1542,8 +1546,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1849 puzzles with
-a total of 9576 different words!
+1851 puzzles with
+a total of 9582 different words!
 <p>
 Which puzzles from the large archive to play?
 You can get one at random with the <span class=cmd>NR</span> command or you could

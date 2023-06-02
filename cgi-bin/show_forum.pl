@@ -7,6 +7,7 @@ use Bee_DBH qw/
 use BeeUtil qw/
     $log
     $cgi_dir
+    mark_up
 /;
 use Time::Simple qw/
     get_time
@@ -110,8 +111,7 @@ while (my $href = $get_msgs_sth->fetchrow_hashref()) {
         $t .= ' ' . date($href->{m_date})->format("%D");
     }
     my $id = $href->{id};
-    my $msg = $href->{message};
-    $msg =~ s{(https?://\S+)}{<a target=_blank href='$1'>$1</a>}xmsg;
+    my $msg = mark_up($href->{message});
     my $flag = $href->{flagged}? "<span class=flagged><img src=$pics/redflag.png $height></span>"
               :                  "<span id=msg$id class='cursor_black flag' onclick='flag($id);'><img src=$pics/flag.png $height></span>";
     my ($e, $x) = ('', '');
