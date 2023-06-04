@@ -32,8 +32,8 @@ td {
 <tr><td colspan=2 class=heading>Definitions</td></tr>
 <tr><td class=cmd>DP</td><td>Define pangrams</td></tr>
 <tr><td>DR</td><td>Define a random word</td></tr>
-<tr><td>DA5</td><td>Define words beginning with A of 5 letters</td></tr>
-<tr><td>DGR</td><td>Define words beginning with GR</td></tr>
+<tr><td>DA5</td><td>Define A5 words</td></tr>
+<tr><td>DGR</td><td>Define GR words</td></tr>
 <tr><td>D5</td><td>Define words that are at least 5 letters long</td></tr>
 <tr><td valign=top>D+</td><td>D+ instead of D in the above commands will show definitions in addition to user-provided clues.</td></tr>
 <tr><td>D &lt;word&gt; ...</td><td>Define the words</td></tr>
@@ -51,7 +51,10 @@ td {
 <tr><td>R%</td><td>Same as R but showing percentages as well.</td></tr>
 <tr><td>ST</td><td>Toggle the status between numeric and graphical.</td></tr>
 <tr><td>SC</td><td>Show the sequence of found words and scores.</td></tr>
-<tr><td>LG</td><td>Show the log of your activity <b>on</b> the day of the NYT puzzle.</td></tr>
+<tr><td>S &lt;word&gt;</td><td>Which dates did the word appear in an NYT puzzle?</td></tr>
+<tr><td>SL</td><td>Show which found words use the same letters.</td></tr>
+<tr><td>CL</td><td>Which dates did you provide clues for the NYT puzzle?</td></tr>
+<tr><td>LG</td><td>Show the log of your activity on the day of the NYT puzzle.</td></tr>
 <tr><td>AC</td><td>Show a stacked bar graph of activity on the day of the NYT puzzle.</td></tr>
 <tr><td>M</td><td>Show the latest Message of the Day.</td></tr>
 <tr><td>F</td><td>Toggle Forum mode.</td></tr>
@@ -119,14 +122,14 @@ td {
 <tr><td>P</td><td>Move to the previous puzzle in the list.</td></tr>
 <tr><td>P&lt;num&gt;</td><td>Move to puzzle #num in the list.</td></tr>
 <tr><td>X</td><td>Remove the current puzzle from the list.</td></tr>
-<tr><td>X 3,5,9-11</td><td>Remove the itemizd puzzles from the list.</td></tr>
+<tr><td>X 3,5,9-11</td><td>Remove the itemized puzzles from the list.</td></tr>
 <tr><td>XA</td><td>Remove all but today's NYT puzzle.</td></tr>
 
 <tr><td colspan=2 class=heading><br>Community Puzzles</td></tr>
 <tr><td>LCP</td><td>List the 5 latest community puzzles.  LCP 10 will list 10.</td></tr>
 <tr><td>LCP &lt;pattern&gt;</td><td>List the community puzzles created by names that match the pattern.</td></tr>
 <tr><td>RCP</td><td>List recommended community puzzles.</td></tr>
-<tr><td>CP&lt;num&gt;</td><td>Play community puzzle #num</td></tr>
+<tr><td>CP&lt;num&gt;</td><td>Play community puzzle &lt;num&gt;</td></tr>
 <tr><td>YCP</td><td>List the community puzzles you created.</td></tr>
 <tr><td>XCP&lt;num&gt;</td><td>Delete one of your community puzzles.</td></tr>
 
@@ -140,17 +143,14 @@ td {
 <tr><td>XCO &lt;scheme&gt;</td><td>Delete the named color scheme.</td></tr>
 
 <tr><td colspan=2 class=heading><br>Miscellaneous</td></tr>
-<tr><td>LM &lt;mins&gt;</td><td></td></tr>
-<tr><td>LM</td><td></td></tr>
-<tr><td>PA</td><td></td></tr>
-<tr><td>H</td><td></td></tr>
-<tr><td>H&lt;1-3&gt;</td><td></td></tr>
-<tr><td>CL</td><td></td></tr>
-<tr><td>S &lt;word&gt;</td><td></td></tr>
-<tr><td>SL</td><td></td></tr>
-<tr><td>HE</td><td></td></tr>
-<tr><td>IM</td><td></td></tr>
-<tr><td>C Y</td><td></td></tr>
-<tr><td>G Y</td><td></td></tr>
-<tr><td>G YP</td><td></td></tr>
+<tr><td>LM &lt;mins&gt;</td><td>Limit your play to &lt;mins&gt; more minutes.</td></tr>
+<tr><td>LM</td><td>How much time remains?</td></tr>
+<tr><td>PA</td><td>Pause the self-imposed time limit.</td></tr>
+<tr><td>H</td><td>Cycle between 3 presentations of the 7 letters.</td></tr>
+<tr><td>H&lt;1-3&gt;</td><td>Choose one of the 3 presentations of the 7 letters.</td></tr>
+<tr><td>HE</td><td>Toggle the header.</td></tr>
+<tr><td>IM</td><td>Toggle the showing of images (for Amazing, Genius, and Queen Bee) in the numeric status.</td></tr>
+<tr><td>C Y</td><td>Clear the puzzle and start afresh.</td></tr>
+<tr><td>G Y</td><td>Give up and show the words you have not yet found.</td></tr>
+<tr><td>G YP</td><td>Give up and enter the words you have not yet found.</td></tr>
 </table></td><td></td></tr>
