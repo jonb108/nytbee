@@ -1,101 +1,137 @@
-#
-#5
-#>4
-#B
--5
-1
-1W
-2
-51
-52
-ABW
-AC
-BOA
-BT
-BT
-BW
-C Y
-CL
-CO
-CO # color1 # color2 ...
-CO X (a preset color A-G)
-CO <scheme name>
-CP<num>
-CW
-D <word> ...
-D+
-D5
-DA5
-DGR
-DP
-DR
-DW
-E3A5
-E4GR
-F
-F7
-FT
-FT <word>
-G Y
-G YP
-H
-H<1-3>
-HE
-HT
-I
-ID
-ID <identity string>
-IM
-L
-LCP
-LG
-LM
-LM <mins>
-LCO - list your color schemes
-LW
-M
-N
-NBW
-NDW
-NLW
-NR
-NRB
-OW
-P
-P<num>
-PA
-R
-R%
-RCP
-S <word>
-SC
-SCO <scheme name>
-SL
-SN
-SN <screen name>
-ST
-T
-TL
-V1P
-V3A5
-V4GR
-W
-W <prefix>
-W!/<pattern>
-W/<pattern>
-W4
-W<
-W<7
-W>
-W>4
-WL
-X
-X 3,5,9-11
-XA
-XCO <scheme name>
-XCP<num>
-Y
-YCP
-dd (not 1 or 2)
-mm/dd
-mm/dd/yy from May 9, 2018 to today
+<html>
+<head>
+<style>
+body {
+    margin-top: .2in;
+    margin-bottom: .2in;
+    margin-left: .2in;
+    width: 90%;
+    font-family: Arial;
+}
+h1 {
+    font-size: 24pt;
+    color: red;
+}
+td {
+    vertical-align: top;
+    font-size: 15pt;
+}
+.cmd {
+    width: 25%;
+}
+.alpha {
+    margin-left: .5in;
+    font-size: 14pt;
+}
+a {
+    color: blue;
+    text-decoration: none;
+}
+</style>
+</head>
+<body>
+<h1>Commands Alphabetically <a class=alpha href='https://logicalpoetry.com/nytbee/cmds.html'>By Category</a><a class=alpha href='https://logicalpoetry.com/nytbee/help.html'>Full Help</a></h1>
+<table cellpadding=5 style="width: 100%" border=0>
+<tr><td class=cmd>#5</td><td>How many words of length 5 remain?</td></tr>
+<tr><td>#</td><td>How many words remain?</td></tr>
+<tr><td>#>4</td><td>How many words of length greater than 4 remain? </td></tr>
+<tr><td>#B</td><td>How many words beginning with B remain?</td></tr>
+<tr><td>-5</td><td>Play the NYT puzzle from 5 days ago.</td></tr>
+<tr><td>1</td><td>Display a random entry from the Hint Table.</td></tr>
+<tr><td>1W</td><td>Show the found words in 1 column</td></tr>
+<tr><td>2</td><td>Display a random entry from the Two Letter List.</td></tr>
+<tr><td>51</td><td>Display a random entry from the Hint Table of 5+ letter words.</td></tr>
+<tr><td>52</td><td>Display a random entry from the Two Letter List of 5+ letter words.</td></tr>
+<tr><td>ABW</td><td>Show everyone's Bonus words in order of the additional letter.</td></tr>
+<tr><td>AC</td><td>Show a stacked bar graph of activity on the day of the NYT puzzle.</td></tr>
+<tr><td>BN</td><td>Toggle Bonus mode.</td></tr>
+<tr><td>BOA</td><td>Show your Bonus words in order by the additional letter.</td></tr>
+<tr><td>BT</td><td>If the puzzle is a Bingo show the min/max list.</td></tr>
+<tr><td>BW</td><td>Show everyone's Bonus words in alphabetical order.</td></tr>
+<tr><td>C Y</td><td>Clear the puzzle and start afresh.</td></tr>
+<tr><td>CL</td><td>Which dates did you provide clues for the NYT puzzle?</td></tr>
+<tr><td>CO # color ...</td><td>Change numbered area colors</td></tr>
+<tr><td>CO &lt;scheme&gt;</td><td>Set your color scheme.</td></tr>
+<tr><td>CO X</td><td>Set a preset color A-G.</td></tr>
+<tr><td>CO</td><td>Display a table of current colors.</td></tr>
+<tr><td>CP&lt;num&gt;</td><td>Play community puzzle &lt;num&gt;</td></tr>
+<tr><td>CW</td><td>Show the tallies of who found extra words</td></tr>
+<tr><td>D &lt;word&gt; ...</td><td>Define the words</td></tr>
+<tr><td>D5</td><td>Define words that are at least 5 letters long</td></tr>
+<tr><td>DA5</td><td>Define A5 words</td></tr>
+<tr><td>dd</td><td>Play the NYT puzzle from day dd in the current month.</td></tr>
+<tr><td>DGR</td><td>Define GR words</td></tr>
+<tr><td>DP</td><td>Define pangrams</td></tr>
+<tr><td>DR</td><td>Define a random word</td></tr>
+<tr><td>DW</td><td>Show everyone's Donut words in alphabetical order.</td></tr>
+<tr><td>D+</td><td>D+ instead of D in the above commands will show definitions in addition to user-provided clues.</td></tr>
+<tr><td>E3A5</td><td>Show 2 first and 1 last letters of A5 words </td></tr>
+<tr><td>E4GR</td><td>Show 2 first and 2 last letters of GR words</td></tr>
+<tr><td>F7</td><td>What other NYT puzzles use the same 7 letters?</td></tr>
+<tr><td>F</td><td>Toggle Forum mode.</td></tr>
+<tr><td>FT &lt;word&gt;</td><td>When did the word appear for the first time in an NYT puzzle?</td></tr>
+<tr><td>FT</td><td>Which found words are appearing in an NYT puzzle for the first time?</td></tr>
+<tr><td>G Y</td><td>Give up and show the words you have not yet found.</td></tr>
+<tr><td>G YP</td><td>Give up and enter the words you have not yet found.</td></tr>
+<tr><td>H&lt;1-3&gt;</td><td>Choose one of the 3 presentations of the 7 letters.</td></tr>
+<tr><td>H</td><td>Cycle between 3 presentations of the 7 letters.</td></tr>
+<tr><td>HE</td><td>Toggle the header.</td></tr>
+<tr><td>HT</td><td>Show the Hint Table.</td></tr>
+<tr><td>I</td><td>Show the puzzle statistics - # words, # points, # pangrams, bingo?  Also the names of people who provided clues.</td></tr>
+<tr><td>ID &lt;string&gt;</td><td>Change your private identity string.</td></tr>
+<tr><td>ID</td><td>Display your private identity string.</td></tr>
+<tr><td>IM</td><td>Toggle the showing of images (for Amazing, Genius, and Queen Bee) in the numeric status.</td></tr>
+<tr><td>L</td><td>List your current puzzles.</td></tr>
+<tr><td>LCO</td><td>List all of your color schemes.</td></tr>
+<tr><td>LCP &lt;pattern&gt;</td><td>List the community puzzles created by names that match the pattern.</td></tr>
+<tr><td>LCP</td><td>List the 5 latest community puzzles.  LCP 10 will list 10.</td></tr>
+<tr><td>LG</td><td>Show the log of your activity on the day of the NYT puzzle.</td></tr>
+<tr><td>LM &lt;mins&gt;</td><td>Limit your play to &lt;mins&gt; more minutes.</td></tr>
+<tr><td>LM</td><td>How much time remains?</td></tr>
+<tr><td>LW</td><td>Show everyone's Lexicon words in alphabetical order.</td></tr>
+<tr><td>M</td><td>Show the latest Message of the Day.</td></tr>
+<tr><td>mm/dd/yy</td><td>Play the NYT puzzle on mm/dd/yy - May 9, 2018 to today.</td></tr>
+<tr><td>mm/dd</td><td>Play the NYT puzzle on mm/dd in the current year.</td></tr>
+<tr><td>N</td><td>Move to the next puzzle in the list.</td></tr>
+<tr><td>NBW</td><td>Show everyone's Bonus words in order of how many people found them.</td></tr>
+<tr><td>NDW</td><td>Show everyone's Donut words in order of how many people found them.</td></tr>
+<tr><td>NLW</td><td>Show everyone's Lexicon words in order of how many people found them.</td></tr>
+<tr><td>NR</td><td>Play a random NYT puzzle.</td></tr>
+<tr><td>NRB</td><td>Play a random NYT puzzle that has a Bingo.</td></tr>
+<tr><td>OW</td><td>Show bonus, donut, and lexicon words that were found only by you.</td></tr>
+<tr><td>P&lt;num&gt;</td><td>Move to puzzle #num in the list.</td></tr>
+<tr><td>P</td><td>Move to the previous puzzle in the list.</td></tr>
+<tr><td>PA</td><td>Pause the self-imposed time limit.</td></tr>
+<tr><td>R%</td><td>Same as R but showing percentages as well.</td></tr>
+<tr><td>R</td><td>Show the point rankings from Beginner to Good to Great to Queen Bee.  Also how many more points to the next rank.</td></tr>
+<tr><td>RCP</td><td>List recommended community puzzles.</td></tr>
+<tr><td>S &lt;word&gt;</td><td>Which dates did the word appear in an NYT puzzle?</td></tr>
+<tr><td>SC</td><td>Show the sequence of found words and scores.</td></tr>
+<tr><td>SCO &lt;scheme&gt;</td><td>Save your colors in a scheme name.</td></tr>
+<tr><td>SL</td><td>Show which found words use the same letters.</td></tr>
+<tr><td>SN &lt;name&gt;</td><td>Change your public screen name.</td></tr>
+<tr><td>SN</td><td>Display your public screen name.</td></tr>
+<tr><td>ST</td><td>Toggle the status between numeric and graphical.</td></tr>
+<tr><td>T</td><td>Play today's NYT puzzle.</td></tr>
+<tr><td>TL</td><td>Show the Two Letter List.</td></tr>
+<tr><td>V1P</td><td>Show the first letter of the pangrams</td></tr>
+<tr><td>V3A5</td><td>Show the first 3 letters of A5 words</td></tr>
+<tr><td>V4GR</td><td>Show the first 4 letters of GR words</td></tr>
+<tr><td>W &lt;prefix&gt;</td><td>Show found words beginning with prefix</td></tr>
+<tr><td>W!/&lt;pattern&gt;</td><td>Show found words that do not match the pattern</td></tr>
+<tr><td>W&gt;</td><td>Show found words in order of increasing length</td></tr>
+<tr><td>W&lt7</td><td>Show found words of length less than 7</td></tr>
+<tr><td>W&lt;</td><td>Show found words in order of decreasing length</td></tr>
+<tr><td>W/&lt;pattern&gt;</td><td>Show found words matching the pattern</td></tr>
+<tr><td>W4</td><td>Show found words of length 4</td></tr>
+<tr><td>W</td><td>Show the found words in the order they were found</td></tr>
+<tr><td>W>4</td><td>Show found words of length greater than 4</td></tr>
+<tr><td>WL</td><td>Toggle showing the word lists</td></tr>
+<tr><td>X 3,5,9-11</td><td>Remove the itemized puzzles from the list.</td></tr>
+<tr><td>X</td><td>Remove the current puzzle from the list.</td></tr>
+<tr><td>XA</td><td>Remove all but today's NYT puzzle.</td></tr>
+<tr><td>XCO &lt;scheme&gt;</td><td>Delete the named color scheme.</td></tr>
+<tr><td>XCP&lt;num&gt;</td><td>Delete one of your community puzzles.</td></tr>
+<tr><td>Y</td><td>Play yesterday's NYT puzzle.</td></tr>
+<tr><td>YCP</td><td>List the community puzzles you created.</td></tr>
+</table></td><td></td></tr>

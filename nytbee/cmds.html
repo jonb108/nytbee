@@ -9,7 +9,7 @@ body {
     font-family: Arial;
 }
 h1 {
-    font-size: 30pt;
+    font-size: 24pt;
     color: red;
 }
 td {
@@ -18,15 +18,23 @@ td {
 }
 .heading {
     font-size: 20pt;
-    color: blue;
+    color: green;
 }
 .cmd {
     width: 25%;
 }
+.alpha {
+    margin-left: .5in;
+    font-size: 14pt;
+}
+a {
+    color: blue;
+    text-decoration: none;
+}
 </style>
 </head>
 <body>
-<h1>Commands by Category</h1>
+<h1>Commands By Category <a class=alpha href='https://logicalpoetry.com/nytbee/scmds.html'>Alphabetically</a><a class=alpha href='https://logicalpoetry.com/nytbee/help.html'>Full Help</a></h1>
 <table cellpadding=5 style="width: 100%" border=0>
 
 <tr><td colspan=2 class=heading>Definitions</td></tr>
@@ -36,6 +44,8 @@ td {
 <tr><td>DGR</td><td>Define GR words</td></tr>
 <tr><td>D5</td><td>Define words that are at least 5 letters long</td></tr>
 <tr><td valign=top>D+</td><td>D+ instead of D in the above commands will show definitions in addition to user-provided clues.</td></tr>
+<tr><td colspan=2>The above commands will skip words that have
+been found.  The one below will define any word - in the puzzle or not.</td></tr>
 <tr><td>D &lt;word&gt; ...</td><td>Define the words</td></tr>
 
 <tr><td colspan=2 class=heading><br>Revealing Letters</td></tr>
@@ -78,7 +88,7 @@ td {
 <tr><td colspan=2 class=heading><br>Bonus, Donut, and Lexicon Words</td></tr>
 <tr><td>BN</td><td>Toggle Bonus mode.</td></tr>
 <tr><td>CW</td><td>Show the tallies of who found extra words</td></tr>
-<tr><td>ow</td><td>show bonus, donut, and lexicon words that were found only by you.</td></tr>
+<tr><td>OW</td><td>Show bonus, donut, and lexicon words that were found only by you.</td></tr>
 <tr><td>BOA</td><td>Show your Bonus words in order by the additional letter.</td></tr>
 <tr><td colspan=2>The follwing can not be used <b>on</b> the day of the puzzle.</td></tr>
 <tr><td>BW</td><td>Show everyone's Bonus words in alphabetical order.</td></tr>
@@ -98,9 +108,9 @@ td {
 <tr><td colspan=2 class=heading><br>Hints</td></tr>
 <tr><td>HT</td><td>Show the Hint Table.</td></tr>
 <tr><td>TL</td><td>Show the Two Letter List.</td></tr>
-<tr><td>BT</td><td>If the puzzle is a Bingo show the Bingo min/max list.</td></tr>
+<tr><td>BT</td><td>If the puzzle is a Bingo show the min/max list.</td></tr>
 <tr><td>1</td><td>Display a random entry from the Hint Table.</td></tr>
-<tr><td>2</td><td>Display a random entery from the Two Letter List.</td></tr>
+<tr><td>2</td><td>Display a random entry from the Two Letter List.</td></tr>
 <tr><td>51</td><td>Display a random entry from the Hint Table of 5+ letter words.</td></tr>
 <tr><td>52</td><td>Display a random entry from the Two Letter List of 5+ letter words.</td></tr>
 <tr><td>#</td><td>How many words remain?</td></tr>
@@ -137,9 +147,9 @@ td {
 <tr><td>CO X</td><td>Set a preset color A-G.</td></tr>
 <tr><td>CO</td><td>Display a table of current colors.</td></tr>
 <tr><td>CO # color ...</td><td>Change numbered area colors</td></tr>
-<tr><td>SCO &lt;scheme&gt;</td><td>Save your colors in scheme name</td></tr>
+<tr><td>SCO &lt;scheme&gt;</td><td>Save your colors in a scheme name.</td></tr>
 <tr><td>CO &lt;scheme&gt;</td><td>Set your color scheme.</td></tr>
-<tr><td>LCO</td><td>List all of your color schemes</td></tr>
+<tr><td>LCO</td><td>List all of your color schemes.</td></tr>
 <tr><td>XCO &lt;scheme&gt;</td><td>Delete the named color scheme.</td></tr>
 
 <tr><td colspan=2 class=heading><br>Miscellaneous</td></tr>
