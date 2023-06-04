@@ -30,6 +30,7 @@ use BeeUtil qw/
     $cgi_dir
     $thumbs_up
     get_html
+    mark_up
 /;
 use BeeColor qw/
     set_colors
@@ -203,17 +204,9 @@ sub cp_message {
     if ($cp_href->{title}) {
         $mess .= "$cp_href->{title}";
     }
-    if ($cp_href->{description}) {
-        my $s = $cp_href->{description};
-        $s =~ s{[<][^>]*[>]}{}xms;  # no HTML tags, please
-        $s =~ s{\n\n}{<p>}xms;
-        $s =~ s{[*](\S+)[*]}{<b>$1</b>}xms;
-        $s =~ s{[_](\S+)[_]}{<u>$1</u>}xms;
-        $s =~ s{(\S+@[a-z.]+)}{<a href="mailto:$1?subject=CP$n">$1</a>}xmsi;
-        $mess .= "<p>$s";
-    }
-    if ($mess) {
-        $mess = "<div class=description>$mess</div>";
+    my $desc = mark_up($cp_href->{description});
+    if ($desc) {
+        $mess = "<div class=description>$desc</div>";
     }
     return $mess;
 }
@@ -1162,7 +1155,7 @@ elsif (my ($gt, $item) = $cmd =~ m{\A \s* [#] \s*([>]?)(\d*|[a-z]?) \s* \z}xms) 
             # not sure why we need the <br>
     }
     else {
-        my $n = grep { m{\A$term}xms } @words;
+        my $n = grep { m{\A$item}xms } @words;
         $message .= $n . '<br>';
     }
     $cmd = '';
