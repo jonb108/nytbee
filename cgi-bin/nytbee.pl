@@ -3101,7 +3101,7 @@ my $heading = $show_Heading? <<"EOH": '';
 <div class=float-child3>
     <div style="text-align: center"><span class=help><a class=alink target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span>&nbsp;&nbsp;<span class=help><a target=_blank class=alink href='$log/nytbee/cmds.html'>Cmds</a><br><span class=create_add'>$create_add</span><br><a class='alink' onclick="issue_cmd('F');">Forum</a> $num_msgs</div>
 </div>
-<br><br>
+<br><br><br>
 EOH
 
 my $letters = '';

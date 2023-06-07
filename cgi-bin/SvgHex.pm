@@ -9,7 +9,6 @@ our @EXPORT_OK = qw/
 sub svg_hex {
     my ($mobile) = @_;
     my $s = <<'EOH';
-<br>
 <!-- SEVEN HEXAGONS -->
 <style>
 .svglets {
