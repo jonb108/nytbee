@@ -761,6 +761,18 @@ else {
                                 # at the very beginning!
     @found     = ();
 }
+if ($cmd eq 'q' || $cmd eq '?') {
+    # define the last word
+    my $word = @found[-1];
+    if (! $word) {
+        $message = "No words have been found.";
+        $cmd = '';        
+    }
+    else {
+        $word =~ s{[*+-]\z}{}xms;
+        $cmd = "d $word";
+    }
+}
 my %is_found = map {
                    my $x = $_;
                    $x =~ s{[*+-]\z}{}xms;

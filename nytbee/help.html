@@ -353,7 +353,11 @@ Most of us mere mortals need some kind of help to get to Amazing or Genius.
 <table cellpadding=5>
 <tr><td><span class=cmd>HT</span></td><td>Show the Hint Table.</td></tr>
 <tr><td><span class=cmd>TL</span></td><td>Show the Two Letter List.</td></tr>
-<tr><td colspan=2>The Hint Table and the Two Letter List are explained <a href=#table_list>below</a>.<p></td></tr>
+<tr><td colspan=2>The Hint Table and the Two Letter List are explained <a href=#table_list>below</a>.</td></tr>
+<tr><td><span class=cmd>1</span></td><td>Show a random entry from the Hint Table.</td></tr>
+<tr><td><span class=cmd>2</span></td><td>Show a random entry from the Two Letter List.
+<tr><td colspan=2>These two will work even if the full Table and List are not shown.<p></td></tr>
+<tr><td colspan=2 class=green>Definitions/Clues</td></tr>
 <tr><td><span class=cmd>DP</span></td><td>Define the Pangrams.</td></tr>
 <tr><td><span class=cmd>DB8</span></td><td>Define the words beginning with B of length 8.</td></tr>
 <tr><td><span class=cmd>DGA</span></td><td>Define the words beginning with GA.</td></tr>
@@ -364,19 +368,19 @@ No hints are tallied.
 This form of the <span class=cmd>D</span> command serves as a quick and fun way to browse a dictionary that is more pleasant somehow (less clutter and noise!) than a full web site.  You can give multiple words on the command line.
 </td></tr>
 <tr><td colspan=2>
-Definitions are from <a target=nytbee href='https://wordnik.com'>wordnik.com</a>.  These definitions are very brief because they&#8217;re just a hint.  Complete definitions would cover multiple meanings and multiple parts of speech.  Once a word is found and shown in the Found Word List you can click on it again to see the brief definition.  Click on the brief definition to see the <i>complete</i> definition from wordnik.com in another window.
+Definitions are from <a target=nytbee href='https://wordnik.com'>wordnik.com</a>.  These definitions are very brief because they&#8217;re just a hint.  Complete definitions would cover multiple meanings and multiple parts of speech.  Once a word is found and shown in the Found Word List you can click on it again to see the brief definition.  
+The command <span class=cmd>Q</span> (or <span class=cmd>?</span>) will show the definition of the last word that was found.
+Click on brief definitions to see the <i>complete</i> definition from wordnik.com in another window.
 <p>
 If there there is a <a href=#clues>clue</a> for a word it is shown
-instead of the dictionary definition.
+instead of the dictionary definition.  Using D+ instead of D will show <i>both</i> the definition and any clue.
 </td></tr>
+<tr><td colspan=2 class=green>Revealing Letters</td></tr>
 <tr><td><span class=cmd>V2P</span></td><td>Reveal the first two letters (and the length) of the pangrams.</td></tr>
 <tr><td><span class=cmd>V3B8</span></td><td>Reveal the first 3 letters of the words beginning with B of length 8.</td></tr>
 <tr><td><span class=cmd>V4GA</span></td><td>Reveal the first 4 letters (and the length) of the words beginning with GA.</td></tr>
 <tr><td colspan=2>Using <span class=cmd>E</span> instead of <span class=cmd>V</span> reveals letters at the front and at the End of the word.  Commands that would reveal the entire word (like V4B4) are silently ignored (as are commands like V1B8 or V2GA).</td></tr>
 <tr><td colspan=2>Both define and reveal commands skip words that have already been found.<p></td></tr>
-<tr><td><span class=cmd>1</span></td><td>Show a random entry from the Hint Table.</td></tr>
-<tr><td><span class=cmd>2</span></td><td>Show a random entry from the Two Letter List.
-<tr><td colspan=2>These will work even if the Table and List are not shown.<p></td></tr>
 </table>
 <a name=table_list></a>
 <h2>The Hint Table and the Two Letter List
@@ -612,7 +616,8 @@ that it is indeed an acceptable word.  For example:
 <br>
 So now you are probably wondering what TEET means, right?
 You can click on the red <span style="color: red">TEET</span>
-and a definition will be shown.  Nice!
+and a definition will be shown.  Nice!   Another way to see the definition
+of the last word that was found is the <span class=cmd>Q</span> (or <span class=cmd>?</span>) command.
 <h3>Lexicon</h3>
 Another type of word is one that IS a real valid actual proper qualified word
 containing the center letter but which for some mysterious, arbitrary,
