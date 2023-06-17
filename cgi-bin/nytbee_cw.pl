@@ -98,7 +98,7 @@ for my $u (keys %tally) {
     for my $t (@types) {
         my $n = scalar keys %{$tally{$u}{$t}};
         if ($n) {
-            push @counts, [ $u, $order{$t}, $n ];
+            push @counts, [ $u, $order{$t}, $n, $only{$u}{$t}, $boa_score{$u} ];
         }
     }
 }
@@ -128,6 +128,10 @@ for my $aref (sort {
                   $a->[1] <=> $b->[1]
                   ||
                   $b->[2] <=> $a->[2]
+                  || 
+                  $b->[3] <=> $a->[3]
+                  ||
+                  $b->[4] <=> $a->[4]
                   ||
                   $a->[0] cmp $b->[0]
               } @counts
