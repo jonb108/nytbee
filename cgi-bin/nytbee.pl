@@ -125,7 +125,8 @@ if (exists $uuid_screen_name{$uuid11}) {
     $screen_name = $uuid_screen_name{$uuid11};
 }
 
-my $mobile = $ENV{HTTP_USER_AGENT} =~ m{iPhone|Android}xms;
+my $mobile = $params{mobile_Device}
+             || $ENV{HTTP_USER_AGENT} =~ m{iPhone|Android}xms;
 #$mobile = 1;
 my $focus = $mobile? '': 'set_focus();';
 
@@ -292,6 +293,8 @@ if (! $cmd) {
     }
 }
 
+my $mobile_Device   = exists $params{mobile_Device}?
+                             $params{mobile_Device}: $mobile;
 my $show_Heading    = exists $params{show_Heading}?
                              $params{show_Heading}: !$mobile;
 my $show_WordList   = exists $params{show_WordList}?
@@ -763,7 +766,7 @@ else {
 }
 if ($cmd eq 'q' || $cmd eq '?') {
     # define the last word
-    my $word = @found[-1];
+    my $word = $found[-1];
     if (! $word) {
         $message = "No words have been found.";
         $cmd = '';        
@@ -1072,6 +1075,13 @@ elsif ($cmd eq 'tl') {
 }
 elsif ($cmd eq 'he') {
     $show_Heading = ! $show_Heading;
+    $cmd = '';
+}
+elsif ($cmd eq 'mo') {
+    $mobile_Device = ! $mobile_Device;
+    $show_Heading = ! $mobile_Device;
+    $mobile = $mobile_Device;
+    $focus = $mobile? '': 'set_focus();';
     $cmd = '';
 }
 elsif ($cmd eq 'wl') {
@@ -3186,7 +3196,7 @@ EOH
 <span class='define alink' onclick="del_let();">Delete</span>
 <span class='standings alink' onclick="issue_cmd('CW');">Standings</span>
 <span class='own alink' onclick="issue_cmd('OW');">Own</span>
-<span class='bonus2 alink' onclick="issue_cmd('BN');">Bonus</span>
+<span class='bonus2 alink' onclick="issue_cmd('BN');"><s>Bonus</s></span>
 </span>
 <span class=bonus_lets>$bonus_table</span>
 EOH
@@ -3532,6 +3542,7 @@ $heading
 <input type=hidden name=seven_let value='@seven_let'>
 <input type=hidden name=hive value=$hive>
 <input type=hidden name=show_Heading value=$show_Heading>
+<input type=hidden name=mobile_Device value=$mobile_Device>
 <input type=hidden name=show_WordList value=$show_WordList>
 <input type=hidden name=show_BingoTable value=$show_BingoTable>
 <input type=hidden name=bonus_mode value=$bonus_mode>
