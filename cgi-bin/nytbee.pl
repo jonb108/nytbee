@@ -1217,9 +1217,17 @@ elsif ($cmd =~ m{\A g \s+ yp? \z}xms) {
     }
     add_hints(@words * 5);
 }
-elsif ($cmd =~ m{\A c \s+ y \z}xms) {
-    @found = ();
-    %is_found = ();
+elsif ($cmd =~ m{\A c \s+ y \s*(a?) \z}xms) {
+    my $all = $1;
+    if ($all) {
+        @found = ();
+        %is_found = ();
+    }
+    else {
+        # leave the Extra words in place
+        @found = grep { /[*+-]\z/ } @found;
+        %is_found = map { $_ => 1 } @found;
+    }
     $nhints = 0;
     $ht_chosen = 0;
     $tl_chosen = 0;
