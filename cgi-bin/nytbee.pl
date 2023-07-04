@@ -1219,15 +1219,8 @@ elsif ($cmd =~ m{\A g \s+ yp? \z}xms) {
 }
 elsif ($cmd =~ m{\A c \s+ y \s*(a?) \z}xms) {
     my $all = $1;
-    if ($all) {
-        @found = ();
-        %is_found = ();
-    }
-    else {
-        # leave the Extra words in place
-        @found = grep { /[*+-]\z/ } @found;
-        %is_found = map { $_ => 1 } @found;
-    }
+    @found = $all? (): grep { /[*+-]\z/ } @found;
+                       # leave the Extra words in place
     $nhints = 0;
     $ht_chosen = 0;
     $tl_chosen = 0;
