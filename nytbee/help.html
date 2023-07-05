@@ -386,6 +386,10 @@ instead of the dictionary definition.  Using D+ instead of D will show <i>both</
 <tr><td><span class=cmd>V4GA</span></td><td>Reveal the first 4 letters (and the length) of the words beginning with GA.</td></tr>
 <tr><td colspan=2>Using <span class=cmd>E</span> instead of <span class=cmd>V</span> reveals letters at the front and at the End of the word.  Commands that would reveal the entire word (like V4B4) are silently ignored (as are commands like V1B8 or V2GA).</td></tr>
 <tr><td colspan=2>Both define and reveal commands skip words that have already been found.<p></td></tr>
+<tr><td colspan=2 class=green>Revealing the Middle (aka Center) Letter</td></tr>
+<tr><td><span class=cmd>MP</span></td><td>Reveal where the Center letter is in the pangrams.</td></tr>
+<tr><td><span class=cmd>MB8</span></td><td>Show where the Center letter is in words beginning with B of length 8.</td></tr>
+<tr><td><span class=cmd>MGA</span></td><td>Show where the Center letter is in the words beginning with GA.</td></tr>
 </table>
 <a name=table_list></a>
 <h2>The Hint Table and the Two Letter List
@@ -438,11 +442,12 @@ The number of hints are tallied like so:
 <p>
 <ul>
 <table cellpadding=5>
-<tr><th>Command</th><th align=left colspan=2>&nbsp;&nbsp;# hints</th></tr>
+<tr><th>Hint Command</th><th align=left colspan=2>&nbsp;&nbsp;# hints</th></tr>
 <tr><td><span class=cmd>HT</span></td><td align=right>10</td></tr>
 <tr><td><span class=cmd>TL</span></td><td align=right>5</td></tr>
 <tr><td><span class=cmd>D</span></td><td align=right>3</td><td>for each word</td></tr>
 <tr><td><span class=cmd>V,E</span></td><td align=right>2</td><td>for each word</td></tr>
+<tr><td><span class=cmd>M</span></td><td align=right>1</td><td>for each word</td></tr>
 <tr><td><span class=cmd>1</span></td><td align=right>1</td></tr>
 <tr><td><span class=cmd>2</span></td><td align=right>1</td></tr>
 <tr><td><span class=cmd>DR</span></td><td align=right>1</td></tr>
@@ -1577,7 +1582,7 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1883 puzzles with
+1884 puzzles with
 a total of 9646 different words!
 <p>
 Which puzzles from the large archive to play?

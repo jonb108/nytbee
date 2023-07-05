@@ -1011,6 +1011,59 @@ sub get_words {
            @ok_words;
 }
 
+sub do_show_middle {
+    my ($term) = @_;
+    my $msg = '';
+    my $err = 0;
+    if ($term eq 'p') {
+        for my $w (grep { ! $is_found{$_} } @pangrams) {
+            $msg .= show_middle($w);
+        }
+    }
+    elsif (my ($first, $len) = $term =~ m{\A ([a-z])(\d+)}xms) {
+        if ($first =~ $letter_regex) {
+            $msg .= ul(red(uc $cmd) . ": \U$first\E is not in \U$seven");
+            $err = 1;
+        }
+        else {
+            if ($len == 1) {
+                # silently gnore
+            }
+            else {
+                for my $w (get_words($first, $len)) {
+                    $msg .= show_middle($w, $first);
+                }
+            }
+        }
+    }
+    else {
+        # $term is two letters
+        if ($term =~ $letter_regex) {
+            $msg .= ul(red(uc $cmd) . ": \U$1\E is not in \U$seven");
+            $err = 1;
+        }
+        else {
+            for my $w (get_words($term)) {
+                $msg .= show_middle($w, $term);
+            }
+        }
+    }
+    if (!$err && $msg) {
+        $message .= "\U$cmd\E:" . ul($msg);
+    }
+}
+
+# needs rethinking?
+sub show_middle {
+    my ($w, $first_lets) = @_;
+    $w = uc $w;
+    $first_lets = uc $first_lets;
+    my $s = substr($w, length($first_lets));
+    $s =~ s{[^$center]}{ &ndash; }xmsgi;
+    add_hints(1);
+    return "$first_lets$s<br>";
+}
+
 sub do_reveal {
     my ($ev, $nlets, $term) = @_;
     my $err = 0;
@@ -1221,10 +1274,15 @@ elsif ($cmd =~ m{\A c \s+ y \s*(a?) \z}xms) {
     my $all = $1;
     @found = $all? (): grep { /[*+-]\z/ } @found;
                        # leave the Extra words in place
+    %is_found = map { s/[*+-]$//; $_ => 1 } @found;
     $nhints = 0;
     $ht_chosen = 0;
     $tl_chosen = 0;
     $score_at_first_hint = -1;
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A m (p|[a-z]\d+|[a-z][a-z]) \z}xms) {
+    do_show_middle($1);
     $cmd = '';
 }
 elsif ($cmd eq 'sc') {
