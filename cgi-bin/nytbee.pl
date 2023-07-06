@@ -1992,19 +1992,21 @@ for my $w (@new_words) {
 # ??? is this right???  why is it called twice?
 my $old_rank = $rank;
 compute_score_and_rank();
-if ($old_rank < $rank && $rank >= 7) {
+if ($old_rank < $rank) {
     log_it("rank$rank $date");
-    $message .= ul( $rank == 7? "Amazing "   .  $thumbs_up
-                   :$rank == 8? "Genius "    . ($thumbs_up x 2)
-                   :            "Queen Bee " . ($thumbs_up x 3)
-                );
-    if ($rank == 8) {
-        my @four = grep { ! m{[*+-]\z}xms && length == 4 } @found;
-        if (! @four) {
-            $message .= ul('And you did it without ANY 4 letter words! '
-                           .  $thumbs_up);
-            if ($score == $ranks[8]{value}) {
-                $message .= ul("On the Nose! <span style='font-size: 24pt'>&#128067</span> $thumbs_up");
+    if ($rank >= 7) {
+        $message .= ul( $rank == 7? "Amazing "   .  $thumbs_up
+                       :$rank == 8? "Genius "    . ($thumbs_up x 2)
+                       :            "Queen Bee " . ($thumbs_up x 3)
+                    );
+        if ($rank == 8) {
+            my @four = grep { ! m{[*+-]\z}xms && length == 4 } @found;
+            if (! @four) {
+                $message .= ul('And you did it without ANY 4 letter words! '
+                               .  $thumbs_up);
+                if ($score == $ranks[8]{value}) {
+                    $message .= ul("On the Nose! <span style='font-size: 24pt'>&#128067</span> $thumbs_up");
+                }
             }
         }
     }
