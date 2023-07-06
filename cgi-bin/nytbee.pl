@@ -1993,11 +1993,11 @@ for my $w (@new_words) {
 my $old_rank = $rank;
 compute_score_and_rank();
 if ($old_rank < $rank && $rank >= 7) {
-    log_it("rank$rank");
+    log_it("rank$rank $date");
     $message .= ul( $rank == 7? "Amazing "   .  $thumbs_up
-                  :$rank == 8? "Genius "    . ($thumbs_up x 2)
-                  :            "Queen Bee " . ($thumbs_up x 3)
-                 );
+                   :$rank == 8? "Genius "    . ($thumbs_up x 2)
+                   :            "Queen Bee " . ($thumbs_up x 3)
+                );
     if ($rank == 8) {
         my @four = grep { ! m{[*+-]\z}xms && length == 4 } @found;
         if (! @four) {
@@ -2674,6 +2674,10 @@ elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
         }
         $message .= table(@rows);
     }
+    $cmd = '';
+}
+elsif ($cmd eq 'top') {
+    $message = `$cgi_dir/nytbee_top.pl $date`;
     $cmd = '';
 }
 elsif ($cmd =~ m{\A cw \s* (\d*) \z}xms) {
