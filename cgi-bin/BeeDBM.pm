@@ -18,6 +18,7 @@ our @EXPORT_OK = qw/
     %definition_of
     %message_for
     %uuid_colors_for
+    %full_uuid
 /;
 
 use DB_File;
@@ -127,4 +128,10 @@ tie %uuid_colors_for, 'DB_File', 'uuid_colors_for.dbm';
 #     and whose values are colors in one of these forms:
 #       either html_name, #FFa9e4, rgb(114, 100, 29A), hsl(34, 50%, 20%)
 
+our %full_uuid;
+tie %full_uuid, 'DB_File', 'full_uuid.dbm';
+# key is uuid11
+# value is the full uuid
+# This is needed because I thought the full uuid was just too long
+# and unnecessarly so.  Premature optimization...
 1;
