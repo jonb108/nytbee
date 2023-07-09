@@ -6,6 +6,7 @@ use BeeUtil qw/
 /;
 use DB_File;
 my $date = shift;
+my $my_screen_name = shift;
 my $in;
 if (! open $in, '<', "beelog/$date") {
     print "No log for $date.";
@@ -67,6 +68,7 @@ for my $name (sort {
         print "<tr><th class='lt green'>$rank_name{$rank_for{$name}}</th></tr>\n";
         $prev_rank = $rank_for{$name};
     }
-    print "<tr><td class=rt>$name</td><td align=right>&nbsp;&nbsp;$hints_for{$name}</td></tr>\n";
+    my $red_star = $name eq $my_screen_name? ' <td class="rt red">*</td>': '';
+    print "<tr><td class=rt>$name</td><td align=right>&nbsp;&nbsp;$hints_for{$name}</td>$red_star</tr>\n";
 }
 print "</table>\n";

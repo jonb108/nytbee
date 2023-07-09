@@ -54,6 +54,7 @@ use BeeDBM qw/
     %first_appeared
     %definition_of
     %message_for
+    %full_uuid
 /;
 use SvgHex qw/
     svg_hex
@@ -87,6 +88,10 @@ my $hive_cookie = $q->cookie(
 my $uuid = cgi_header($q, $hive_cookie);
 my %colors = get_colors($uuid);
 my $uuid11 = substr($uuid, 0, 11);
+# unfortunate ... - premature optimization :(
+if (! exists $full_uuid{$uuid11}) {
+    $full_uuid{$uuid11} = $uuid;
+}
 my %params = $q->Vars();
 
 sub now_secs {
@@ -1221,7 +1226,6 @@ elsif ($cmd =~ m{\A c \s+ y \s*(a?) \z}xms) {
     my $all = $1;
     @found = $all? (): grep { /[*+-]\z/ } @found;
                        # leave the Extra words in place
-    %is_found = map { s/[*+-]$//; $_ => 1 } @found;
     $nhints = 0;
     $ht_chosen = 0;
     $tl_chosen = 0;
@@ -1700,6 +1704,7 @@ if (   $cmd ne '1'
     && $cmd ne '51'
     && $cmd ne '52'
     && $cmd ne 'id'
+    && $cmd ne 'top'
     && $cmd !~ m{\A n?[dlb]w \z}xms
     && $cmd ne 'abw'
     && $cmd ne 'i'
@@ -1845,13 +1850,6 @@ for my $w (@new_words) {
     if (my ($xword) = $w =~ m{\A [-]([a-z]+)}xms) {
         # remove the word from the found list
         if ($is_found{$xword}) {
-            for my $w (@found) {
-                if (my ($char) = $w =~ m{\A $xword([*+-])}xms) {
-                    add_hints($char eq '-'? 1
-                             :$char eq '+'? 2
-                             :              3);
-                }
-            }
             @found = grep { !m{\A $xword \b }xms  } @found;
             delete $is_found{$xword};
         }
@@ -1877,32 +1875,29 @@ for my $w (@new_words) {
             if ($mess eq 'donut') {
                 $not_okay_words .= "<span class=not_okay>"
                                 .  def_word(uc($w), $w)
-                                .  "</span>: Donut word $thumbs_up -1 hint<br>"
+                                .  "</span>: Donut word $thumbs_up<br>"
                                 .  pangram_check($w, 6);
                 add_3word('donut', $date, $w);
                 log_it('*donut');
                 $w .= '-';
-                add_hints(-1);
             }
             elsif ($mess eq 'lexicon') {
                 $not_okay_words .= "<span class=not_okay>"
                                 .  def_word(uc($w), $w)
-                                .  "</span>: Lexicon word $thumbs_up -2 hints<br>"
+                                .  "</span>: Lexicon word $thumbs_up<br>"
                                 .  pangram_check($w, 7);
                 add_3word('lexicon', $date, $w);
                 log_it('*lexicon');
                 $w .= '+';
-                add_hints(-2);
             }
             elsif ($mess eq 'bonus') {
                 $not_okay_words .= "<span class=not_okay>"
                                 .  def_word(uc($w), $w)
-                                .  "</span>: Bonus word $thumbs_up -3 hints<br>"
+                                .  "</span>: Bonus word $thumbs_up<br>"
                                 .  pangram_check($w, 8, $seven);
                 add_3word('bonus', $date, $w);
                 log_it('*bonus');
                 $w .= '*';      # * in the found list marks bonus words
-                add_hints(-3);
             }
             else {
                 if ($is_pangram{$w}) {
@@ -2679,7 +2674,10 @@ elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
     $cmd = '';
 }
 elsif ($cmd eq 'top') {
-    $message = `$cgi_dir/nytbee_top.pl $date`;
+    check_screen_name();
+    untie %uuid_screen_name;
+    untie %screen_name_uuid;
+    $message .= `$cgi_dir/nytbee_top.pl $date $screen_name`;
     $cmd = '';
 }
 elsif ($cmd =~ m{\A cw \s* (\d*) \z}xms) {
@@ -3426,8 +3424,7 @@ EOH
                 last HINT;
             }
             else {
-                my $color = $nhints > 0? $col_let: 'red';
-                $html .= "<circle cx=$x cy=$y r=$dotr1 fill=$color></circle>\n";
+                $html .= "<circle cx=$x cy=$y r=$dotr1 fill=$col_let></circle>\n";
             }
             $x += $between_dots;
         }
