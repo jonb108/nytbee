@@ -78,6 +78,17 @@ use File::Slurp qw/
 
 my $message = '';
 my $ymd = ymd();
+my @base = qw/
+    Bee
+    Drone
+    Queen
+    Hive
+    Worker
+    Bumble
+    Honey
+    Apian
+    Buzz
+/;
 my $q = CGI->new();
 my $hive = $q->param('hive') || $q->cookie('hive') || 1;
 my $hive_cookie = $q->cookie(
@@ -185,6 +196,35 @@ sub add_3word {
     my ($type, $date, $w) = @_;
     append_file("$type/$date",  "$w\n");
 }
+sub str_sub {
+    my ($msg) = @_;
+    if ($msg !~ m{%(\w+)%}xms) {
+        return $msg;
+    }
+    my $var = $1;
+    if ($var eq 'change_screen_name') {
+        my $base = join '|', @base;
+        if ($screen_name =~ m{
+                \A
+                $base\d+
+                \z
+            }xms
+        ) {
+            my $s = <<"EOM";
+<p>
+Maybe now is a good time change your assigned screen name of $screen_name
+to something more fun, clever, or reflective of 'who you are'.
+The <span class=cmd>SN</span> command is explained <a target=_blank 
+href='https://logicalpoetry.com/nytbee/help.html#screen_names'>here</a>.
+EOM
+            $msg =~ s{%change_screen_name%}{$s}xms;
+        }
+        else {
+            $msg =~ s{%change_screen_name%}{}xms;
+        }
+    }
+    return $msg;
+}
 
 #
 # returns an array of arrayrefs representing
@@ -273,7 +313,6 @@ log_it($cmd) if $cmd;
 
 # is there a 'message of the day' that the user
 # has not yet seen?
-# disabled for now ...
 if (! $cmd) {
     if ($message_for{$uuid}) {
         my ($n, $date) = split ' ', $message_for{$uuid};
@@ -285,7 +324,7 @@ if (! $cmd) {
             $date = date($date);
             if ($date < $today) {
                 # yes.
-                $message .= read_file("messages/$n");
+                $message .= str_sub(scalar(read_file("messages/$n")));
                 $message_for{$uuid} = "$n " . $today->as_d8();
             }
         }
@@ -294,7 +333,7 @@ if (! $cmd) {
         # this user has seen no messages at all
         # and needs to see the first message
         $message_for{$uuid} = "1 " . $today->as_d8();
-        $message .= read_file("messages/1");
+        $message .= str_sub(scalar(read_file("messages/1")));
     }
 }
 
@@ -1733,17 +1772,6 @@ sub check_screen_name {
     if ($screen_name) {
         return;
     }
-    my @base = qw/
-        Bee
-        Drone
-        Queen
-        Hive
-        Worker
-        Bumble
-        Honey
-        Apian
-        Buzz
-    /;
     my $name = $base[ rand @base ];
     my $i = 1;
     while (exists $screen_name_uuid{"$name$i"}) {
@@ -1988,7 +2016,7 @@ for my $w (@new_words) {
 my $old_rank = $rank;
 compute_score_and_rank();
 if ($old_rank < $rank) {
-    log_it("rank$rank $date");
+    my $gn4l = '';
     if ($rank >= 7) {
         $message .= ul( $rank == 7? "Amazing "   .  $thumbs_up
                        :$rank == 8? "Genius "    . ($thumbs_up x 2)
@@ -2001,13 +2029,16 @@ if ($old_rank < $rank) {
                                .  $thumbs_up);
                 if ($score == $ranks[8]{value}) {
                     $message .= ul("On the Nose! <span style='font-size: 24pt'>&#128067</span> $thumbs_up");
+                    $gn4l = 'GOTN';
+                }
+                else {
+                    $gn4l = 'GN4L';
                 }
             }
         }
     }
+    log_it("rank$rank $date $gn4l");
 }
-
-
 if (! $prefix && ! $pattern && ! $limit && ! @words_found) {
     # the default when there are no restrictions
     @words_found = sort grep { !m/[*+-]\z/xms } @found;
@@ -2868,7 +2899,7 @@ elsif ($cmd =~ m{\A m(\d+)? \z}xms) {
         $message .= "No such message of the day.";
     }
     else {
-        $message .= read_file("messages/$n");
+        $message .= str_sub(scalar(read_file("messages/$n")));
     }
     $cmd = '';
 }

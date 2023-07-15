@@ -1,4 +1,22 @@
 #!/usr/bin/env perl
+# look for C\s+YA? $date
+# if so mark those screen names with a &dagger;
+# to indicate possible 'trying to game the system' aka cheating.
+# the C Y command IS okay for doing Bingo first ...
+# i.e. when the rank is <= 4
+# maybe later also look for
+#     more than 5 minus word commands once level is Great
+# log C\s+YA? with the $date
+#
+# TOP does not apply to Community Puzzles?
+#
+# report on Bingo levels?
+# 1 for first 7
+# 2 for alpha order
+# 4 for minimum
+# 8 for maximum - OR'ed together
+# max replaces min so 11 instead of 7
+# Show this at the end - if the puzzle is a bingo
 use strict;
 use warnings;
 use BeeUtil qw/
@@ -12,6 +30,7 @@ if (! open $in, '<', "beelog/$date") {
     print "No log for $date.";
     exit;
 }
+my %genius_for;
 my %rank_for;
 my %hints_for;
 my %uuid_screen_name;
@@ -31,6 +50,9 @@ while (my $line = <$in>) {
     ) {
         my $name = $uuid_screen_name{$uuid11} || '??';
         $rank_for{$name} = $rank;
+        if ($line =~ m{(gn4l|gotn)\z}xmsi) {
+            $genius_for{$name} = $1;
+        }
         if (! exists $hints_for{$name}) {
             my $uuid = $full_uuid{$uuid11};
             my %cur_puzzles = %{ eval $cur_puzzles_store{$uuid} };
@@ -53,22 +75,34 @@ my %rank_name = (
     9 => 'Queen Bee',
 );
 my $prev_rank = 0;
-# display first Queen Bee down to Genius... people
+# display Queen Bee down to Genius... people
 #   reverse sorted by # hints
+#   and reverse sorted by genius attainment
 for my $name (sort {
-               $rank_for{$b} <=> $rank_for{$a}
-               ||
-               $hints_for{$a} <=> $hints_for{$b}
-               ||
-               $a cmp $b
-           }
-           keys %rank_for
+                  $rank_for{$b} <=> $rank_for{$a}
+                  ||
+                  $hints_for{$a} <=> $hints_for{$b}
+                  ||
+                  $genius_for{$b} <=> $genius_for{$a}
+                      # luckily 'gotn' gt 'gn4l' gt ''
+                  ||
+                  $a cmp $b
+              }
+              keys %rank_for
 ) {
     if ($rank_for{$name} != $prev_rank) {
         print "<tr><th class='lt green'>$rank_name{$rank_for{$name}}</th></tr>\n";
         $prev_rank = $rank_for{$name};
     }
-    my $red_star = $name eq $my_screen_name? ' <td class="rt red">*</td>': '';
-    print "<tr><td class=rt>$name</td><td align=right>&nbsp;&nbsp;$hints_for{$name}</td>$red_star</tr>\n";
+    my $red_star = $name eq $my_screen_name? ' <span class="rt red">*</span>': '';
+    my $gn = $genius_for{$name};
+    if ($gn) {
+        $gn .=' ';
+    }
+    my $sp = '&nbsp;' x 2;
+    my $col3 = ($gn || $red_star)? "<td>$sp$gn$red_star</td>": '';
+    print "<tr><td class=rt>$name</td>"
+        . "<td align=right>$sp$hints_for{$name}</td>"
+        . "$col3</tr>\n";
 }
 print "</table>\n";
