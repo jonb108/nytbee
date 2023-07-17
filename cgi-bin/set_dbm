@@ -8,6 +8,14 @@ oops unless @ARGV == 3;
 my ($hash_file, $key, $val) = @ARGV;
 oops unless $hash_file && $hash_file =~ m{\A \S+[.]dbm \z}xms;
 oops unless defined $key && defined $val;
+if ($val =~ m{\A f:(\S+) \z}xms) {
+    my $fname = $1;
+    open my $in, '<', $fname or die "cannot open $fname: $!\n";
+    local $/;
+    $val = <$in>;
+    chomp $val;
+    close $in;
+}
 use DB_File;
 my %hash;
 tie %hash, 'DB_File', $hash_file;

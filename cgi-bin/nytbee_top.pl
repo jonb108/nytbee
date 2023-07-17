@@ -83,7 +83,7 @@ for my $name (sort {
                   ||
                   $hints_for{$a} <=> $hints_for{$b}
                   ||
-                  $genius_for{$b} <=> $genius_for{$a}
+                  $genius_for{$b} cmp $genius_for{$a}
                       # luckily 'gotn' gt 'gn4l' gt ''
                   ||
                   $a cmp $b
@@ -100,7 +100,7 @@ for my $name (sort {
         $gn .=' ';
     }
     my $sp = '&nbsp;' x 2;
-    my $col3 = ($gn || $red_star)? "<td>$sp$gn$red_star</td>": '';
+    my $col3 = ($gn || $red_star)? "<td class=lt>$sp$gn$red_star</td>": '';
     print "<tr><td class=rt>$name</td>"
         . "<td align=right>$sp$hints_for{$name}</td>"
         . "$col3</tr>\n";
