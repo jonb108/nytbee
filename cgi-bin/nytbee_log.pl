@@ -45,6 +45,7 @@ if ($ARGV[0] eq '-s') {
     for my $uid (keys %sn_for) {
         if ($sn_for{$uid} =~ m{\A $sn \z}xmsi) {
             $uuid11 = $uid;
+            print "Log for $sn_for{$uid}<p>\n";
             last;
         }
     }
