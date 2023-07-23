@@ -25,11 +25,13 @@ use BeeUtil qw/
 use DB_File;
 my $date = shift;
 my $my_screen_name = shift;
+my $sp = '&nbsp;' x 2;
 my $in;
 if (! open $in, '<', "beelog/$date") {
     print "No log for $date.";
     exit;
 }
+my (%bingo_score_for, %bingo_hints_for);
 my %genius_for;
 my %rank_for;
 my %hints_for;
@@ -45,22 +47,59 @@ while (my $line = <$in>) {
         next LINE;
     }
     chomp $line;
-    if (my ($uuid11, $rank)
-            = $line =~ m{\A (\S+) \s+ = \s+ rank(\d) \s+ $date}xms
+    if (my ($r_uuid11, $rank)
+            = $line =~ m{\A (\S+) \s+ = \s+
+                         rank(\d) \s+ $date
+                         \s* \z
+                        }xms
     ) {
-        my $name = $uuid_screen_name{$uuid11} || '??';
+        my $name = $uuid_screen_name{$r_uuid11} || '??';
         $rank_for{$name} = $rank;
         if ($line =~ m{(gn4l|gotn)\z}xmsi) {
             $genius_for{$name} = $1;
         }
         if (! exists $hints_for{$name}) {
-            my $uuid = $full_uuid{$uuid11};
+            my $uuid = $full_uuid{$r_uuid11};
             my %cur_puzzles = %{ eval $cur_puzzles_store{$uuid} };
             $hints_for{$name} = (split ' ', $cur_puzzles{$date})[0];
         }
     }
+    elsif (my ($b_uuid11, $bingo_score, $bingo_hints)
+               = $line =~ m{\A (\S+) \s+ = \s+
+                            bingo \s+ $date \s+
+                            (\d+) \s+ (\d+)
+                            \s* \z
+                           }xms
+    ) {
+        my $name = $uuid_screen_name{$b_uuid11} || '??';
+        if (! exists $bingo_score_for{$name}
+            || $bingo_score > $bingo_score_for{$name}
+        ) {
+            $bingo_score_for{$name} = $bingo_score;
+            $bingo_hints_for{$name} = $bingo_hints;
+        }
+    }
 }
 print scalar(keys %rank_for) . " people</p>";
+if (%bingo_score_for) {
+    print "<table>\n";
+    print "<tr><th class='lt green'>Bingo</th></tr>\n";
+    print "<tr><th class='rt'>Name</th><th class=rt>${sp}Score</th><th class=rt>${sp}Hints</th></tr>\n";
+    for my $sn (sort {
+                    $bingo_score_for{$b} <=> $bingo_score_for{$a}
+                    ||
+                    $bingo_hints_for{$a} <=> $bingo_hints_for{$b}
+                }
+                keys %bingo_score_for
+    ) {
+        print "<tr><td>$sn</td><td>$sp$bingo_score_for{$sn}</td><td>$sp$bingo_hints_for{$sn}</td>";
+        if ($sn eq $my_screen_name) {
+            print "<td><span class='rt red'>$sp*</span></td>";
+        }
+        print "</tr>\n";
+    }
+    print "</table><p>\n";
+}
 print "<table>\n";
 my %rank_name = (
     0 => 'Beginner',
@@ -74,6 +113,7 @@ my %rank_name = (
     8 => 'Genius',
     9 => 'Queen Bee',
 );
+my $name_hints = 0;
 my $prev_rank = 0;
 # display Queen Bee down to Genius... people
 #   reverse sorted by # hints
@@ -92,14 +132,17 @@ for my $name (sort {
 ) {
     if ($rank_for{$name} != $prev_rank) {
         print "<tr><th class='lt green'>$rank_name{$rank_for{$name}}</th></tr>\n";
+        if (! $name_hints) {
+            print "<tr><th class='rt'>Name</th><th class=rt>${sp}Hints</th></tr>\n";
+            $name_hints = 1;
+        }
         $prev_rank = $rank_for{$name};
     }
     my $red_star = $name eq $my_screen_name? ' <span class="rt red">*</span>': '';
     my $gn = $genius_for{$name};
     if ($gn) {
-        $gn .=' ';
+        $gn .= ' ';
     }
-    my $sp = '&nbsp;' x 2;
     my $col3 = ($gn || $red_star)? "<td class=lt>$sp$gn$red_star</td>": '';
     print "<tr><td class=rt>$name</td>"
         . "<td align=right>$sp$hints_for{$name}</td>"

@@ -1939,6 +1939,7 @@ for my $w (@new_words) {
                 # it's a valid word in the allowed list
                 # has this word completed a bingo?
                 # analyze this before we add it to @found 
+                my $bingo_score = 0;
 
                 # ignore donut, lexicon, and bonus words
                 my @found2 = grep { ! m{[*+-]\z}xms } @found;
@@ -1955,6 +1956,7 @@ for my $w (@new_words) {
                         $not_okay_words .= 'In the FIRST 7 words you found! '
                                         .  ($thumbs_up x 2)
                                         . '<br>';
+                        $bingo_score += 1;                
                         my $in_order = 1;
                         ORDER:
                         for my $i (0 .. 4) {
@@ -1967,6 +1969,7 @@ for my $w (@new_words) {
                             $not_okay_words .= 'Even better, they were found in ALPHABETICAL order! '
                                             .  ($thumbs_up x 3)
                                             . '<br>';
+                            $bingo_score += 2;                
                         }
                         # min/max score??
                         # consider pangram not just length!
@@ -1992,12 +1995,15 @@ for my $w (@new_words) {
                             $not_okay_words .= 'AND with a MINIMUM score! '
                                             .  ($thumbs_up x 4)
                                             .  '<br>';
+                            $bingo_score += 4;                
                         }
                         if ($max) {
                             $not_okay_words .= 'AND with a MAXIMUM score! '
                                             .  ($thumbs_up x 4)
                                             .  '<br>';
+                            $bingo_score += 8;                
                         }
+                        log_it("bingo $date $bingo_score $nhints");
                     }
                 }
             }

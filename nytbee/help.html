@@ -186,10 +186,10 @@ Note that a pangram is termed &#8220;perfect&#8221; if it is 7 letters long.
 <p>
 If <a href=#clues>clues have been added</a> for a puzzle the authors are listed.  Click on an author name to see all of their clues.</td></tr>
 <tr><td><span class=cmd>R</span></td><td>Show the <span class=cmd>r</span>ankings - from Beginner to ... Amazing to Genius to Queen Bee.  It also shows how many points are needed to get to the next rank.</td></tr>
-<tr><td><span class=cmd>TOP</span></td><td>Show the <a href=#screen_names>screen names</a> of people who have achieved the ranks of Queen Bee down to Good Start.  Also shown are the number of <a href=#hint>hints</a> they needed. If someone achieved GN4L or GOTN this is noted.</td></tr>
 <tr><td><span class=cmd>W</span></td><td>Show the found words in the order they were found.</td></tr>
 <tr><td><span class=cmd>SC</span></td><td>Show how the score was tallied and how many words remain to be found.  A thin line shows where you first asked for a hint.</td></tr>
 <tr><td><span class=cmd>M</span></td><td>Show the latest Message of the Day.  These messages will be shown periodically to give tips, tricks, and other information.</td></tr>
+<tr><td><span class=cmd>TOP</span></td><td>Show the <a href=#screen_names>screen names</a> of people who have achieved the ranks of Queen Bee down to Good Start.  Also shown are the number of <a href=#hint>hints</a> they needed. If someone achieved <a href=#gn4l>GN4L or GOTN</a> this is noted. <a href=#bingo>Bingo</a> achievements are shown for <a href=#bingo>Bingo</a> puzzles.</td></tr>
 <tr><td><span class=cmd>ST</span></td><td>Toggle the showing of puzzle <span class=cmd>st</span>atus: numeric or graphical. Default is numeric.<p>
 The numeric status looks like this:
 <p>
@@ -451,6 +451,7 @@ The number of hints are tallied like so:
 <tr><td><span class=cmd>51</span></td><td align=right>1</td></tr>
 <tr><td><span class=cmd>52</span></td><td align=right>1</td></tr>
 <tr><td><span class=cmd>#, #B, #4, #&gt;4</span></td><td align=right>1</td></tr>
+<tr><td><span class=cmd>BT</span></td><td align=right>0</td></tr>
 <tr><td><span class=cmd>G&nbsp;Y</span></td><td align=right>5</td><td>for each word</td></tr>
 </table>
 </ul>
@@ -551,12 +552,24 @@ The command <span class=cmd>BT</span> (Bingo Table) shows a subset of the <a hre
 <!-- I need to learn more about CSS! -->
 <ul><table cellpadding='2'><tr><th style='text-align: center'>C</th> <td align=right><span class=blue>&nbsp;&nbsp;&nbsp;4</span></td> <td align=right>&nbsp;&nbsp;&nbsp;<span class=blue>11</span></td></tr> <tr><th style='text-align: center'>E</th> <td align=right><span class=blue>5</span></td> <td align=right><span class=blue>8</span></td></tr> <tr><th style='text-align: center'>I</th> <td align=right><span class=blue>4</span></td> <td align=right><span class=blue>12</span></td></tr> <tr><th style='text-align: center'>N</th> <td align=right><span class=blue>4</span></td> <td align=right><span class=blue><span class=blue>8</span></td></tr> <tr><th style='text-align: center'>O</th> <td align=right><span class=blue><span class=blue>5</span></td> <td align=right><span class=blue>5</span></td></tr> <tr><th style='text-align: center'>T</th> <td align=right><span class=blue>4</span></td> <td align=right><span class=blue>8</span></td></tr> <tr><th style='text-align: center'>V</th> <td align=right><span class=blue>4</span></td> <td align=right><span class=blue>6</span></td></tr></table></ul>
 <p>
-Note that in this puzzle the word INCONVENIENCE (13) is longer than <span class=green>INCONVENIENT</span> (12) but the latter is a pangram.
+In this puzzle the word INCONVENIENCE (13) is longer than <span class=green>INCONVENIENT</span> (12) but the latter is a pangram.
+<p>
+<span class=cmd>BT</span> does not tally any <a href=#hint>hint points</a>.
 <p>
 As in the <a href=#table_list>Hint Table</a> the numbers in the BT table are <i>links</i> - to show a brief definition of the word(s). <span class=cmd>BT</span> is a toggle - the default is off.
 If a puzzle is not a Bingo no table will be shown.
 <p>
 If you enjoy Bingo games there is the command <span class=cmd>NRB</span> which will start a <span class=cmd>N</span>ew <span class=cmd>R</span>andom <span class=cmd>B</span>ingo puzzle from the NYT <a href='#nyt_archive'>archive</a>.
+<p>
+The <span class=cmd>TOP</span> command shows Bingo achievement scores that are tallied like this:
+<ul>
+<table cellpadding=2>
+<tr><td>First 7 words</td><td>&nbsp;1</td></tr>
+<tr><td>Alphabetical Order</td><td>&nbsp;2</td></tr>
+<tr><td>Minimum Score</td><td>&nbsp;4</td></tr>
+<tr><td>Maximum Score</td><td>&nbsp;8</td></tr>
+</table>
+</ul>
 <a name=gn4l></a>
 <h2>Genius No 4 Letter
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -1554,8 +1567,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1898 puzzles with
-a total of 9662 different words!
+1901 puzzles with
+a total of 9663 different words!
 <p>
 Which puzzles from the large archive to play?
 You can get one at random with the <span class=cmd>NR</span> command or you could
