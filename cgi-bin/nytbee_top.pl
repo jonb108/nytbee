@@ -50,7 +50,6 @@ while (my $line = <$in>) {
     if (my ($r_uuid11, $rank)
             = $line =~ m{\A (\S+) \s+ = \s+
                          rank(\d) \s+ $date
-                         \s* \z
                         }xms
     ) {
         my $name = $uuid_screen_name{$r_uuid11} || '??';
@@ -89,6 +88,8 @@ if (%bingo_score_for) {
                     $bingo_score_for{$b} <=> $bingo_score_for{$a}
                     ||
                     $bingo_hints_for{$a} <=> $bingo_hints_for{$b}
+                    ||
+                    $a cmp $b
                 }
                 keys %bingo_score_for
     ) {
