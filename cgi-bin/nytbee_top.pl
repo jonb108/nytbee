@@ -24,6 +24,7 @@ use BeeUtil qw/
 /;
 use DB_File;
 my $date = shift;
+my $qb_nwords = shift;
 my $my_screen_name = shift;
 my $sp = '&nbsp;' x 2;
 my $in;
@@ -37,6 +38,8 @@ my %rank_for;
 my %hints_for;
 my %uuid_screen_name;
 tie %uuid_screen_name, 'DB_File', 'uuid_screen_name.dbm';
+my %screen_name_uuid;
+tie %screen_name_uuid, 'DB_File', 'screen_name_uuid.dbm';
 my %cur_puzzles_store;
 tie %cur_puzzles_store, 'DB_File', 'cur_puzzles_store.dbm';
 my %full_uuid;
@@ -101,6 +104,23 @@ if (%bingo_score_for) {
     }
     print "</table><p>\n";
 }
+#
+# for the Genius people see how close
+# they got to Queen Bee.
+#
+my %queen_minus_for;
+for my $sn (keys %rank_for) {
+    if ($rank_for{$sn} == 8) {
+        # Genius
+        my $uuid11 = $screen_name_uuid{$sn};
+        my $full_uuid = $full_uuid{$uuid11};
+        my %cur_puzzles = %{ eval $cur_puzzles_store{$full_uuid} };
+        my $nwords = grep { /^[a-z]+$/ }
+                     split ' ', $cur_puzzles{$date};
+        my $left = $qb_nwords - $nwords;
+        $queen_minus_for{$sn} = $left;
+    }
+}
 print "<table>\n";
 my %rank_name = (
     0 => 'Beginner',
@@ -132,7 +152,11 @@ for my $name (sort {
               keys %rank_for
 ) {
     if ($rank_for{$name} != $prev_rank) {
-        print "<tr><th class='lt green'>$rank_name{$rank_for{$name}}</th></tr>\n";
+        print "<tr><th class='lt green' colspan=2>$rank_name{$rank_for{$name}}</th>";
+        if ($rank_for{$name} == 8) {
+            print "<th style='text-align: right; font-size: 13pt;'>Words<br>To QB</th>";
+        }
+        print "</tr>\n";
         if (! $name_hints) {
             print "<tr><th class='rt'>Name</th><th class=rt>${sp}Hints</th></tr>\n";
             $name_hints = 1;
@@ -147,6 +171,7 @@ for my $name (sort {
     my $col3 = ($gn || $red_star)? "<td class=lt>$sp$gn$red_star</td>": '';
     print "<tr><td class=rt>$name</td>"
         . "<td align=right>$sp$hints_for{$name}</td>"
+        . ($prev_rank != 8? '': "<td align=right>$queen_minus_for{$name}<td>")
         . "$col3</tr>\n";
 }
 print "</table>\n";

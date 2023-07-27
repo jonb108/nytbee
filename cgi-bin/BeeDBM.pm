@@ -64,9 +64,14 @@ tie %cur_puzzles_store, 'DB_File::Lock', 'cur_puzzles_store.dbm',
 # key is the uuid ("session" id)
 # value is a Data::Dumper created *string* representing a hash
 #     whose keys are the $date (or cp#)
-#     and the value is:
-#     #hints all_pangrams_found ht_chosen tl_chosen rank words_found...
-#     as above
+#     and the value is 6 numbers followed by words:
+#     0 #hints
+#     1 all_pangrams_found
+#     2 ht_chosen
+#     3 tl_chosen
+#     4 rank 
+#     5 score_at_first_hint
+#     words_found...
 
 our %puzzle_has_clues;
 tie %puzzle_has_clues, 'DB_File', 'nyt_puzzle_has_clues.dbm';

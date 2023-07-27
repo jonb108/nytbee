@@ -2719,7 +2719,8 @@ elsif ($cmd eq 'top') {
     check_screen_name();
     untie %uuid_screen_name;
     untie %screen_name_uuid;
-    $message .= `$cgi_dir/nytbee_top.pl $date $screen_name`;
+    my $nwords = @ok_words;
+    $message .= `$cgi_dir/nytbee_top.pl $date $nwords $screen_name`;
     $cmd = '';
 }
 elsif ($cmd =~ m{\A cw \s* (\d*) \z}xms) {
