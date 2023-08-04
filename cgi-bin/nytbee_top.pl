@@ -32,7 +32,11 @@ if (! open $in, '<', "beelog/$date") {
     print "No log for $date.";
     exit;
 }
+# Bingo is complicated! :) :(
+my (%min_bingo_score_for, %min_bingo_hints_for); # < 8
+my (%max_bingo_score_for, %max_bingo_hints_for); # >= 8
 my (%bingo_score_for, %bingo_hints_for);
+
 my %genius_for;
 my %rank_for;
 my %hints_for;
@@ -84,14 +88,42 @@ while (my $line = <$in>) {
                             \s* \z
                            }xms
     ) {
-        my $screen_name = $uuid_screen_name{$b_uuid11} || '??';
-        if (! exists $bingo_score_for{$screen_name}
-            || $bingo_score > $bingo_score_for{$screen_name}
-        ) {
-            $bingo_score_for{$screen_name} = $bingo_score;
-            $bingo_hints_for{$screen_name} = $bingo_hints;
+        my $screen_name = $uuid_screen_name{$b_uuid11};
+        if (! $screen_name) {
+            # assign them a screen name
+            # no need to inform them what it is.
+            my $i = 110;
+            while (exists $screen_name_uuid{"Buzz$i"}) {
+                ++$i;
+            }
+            $screen_name = "Buzz$i";
+            $uuid_screen_name{$r_uuid11} = $screen_name;
+            $screen_name_uuid{$screen_name} = $r_uuid11;
+        }
+        if ($bingo_score < 8) {
+            # min bingo
+            if (! exists $min_bingo_score_for{$screen_name}) {
+                $min_bingo_score_for{$screen_name} = $bingo_score;
+                $min_bingo_hints_for{$screen_name} = $bingo_hints;
+            }
+        }
+        else {
+            # max bingo
+            if (! exists $max_bingo_score_for{$screen_name}) {
+                $max_bingo_score_for{$screen_name} = $bingo_score;
+                $max_bingo_hints_for{$screen_name} = $bingo_hints;
+            }
         }
     }
+}
+# tally up the bingo scores
+for my $screen_name (keys %min_bingo_score_for) {
+    $bingo_score_for{$screen_name} = $min_bingo_score_for{$screen_name};
+    $bingo_hints_for{$screen_name} = $min_bingo_hints_for{$screen_name};
+}
+for my $screen_name (keys %max_bingo_score_for) {
+    $bingo_score_for{$screen_name} += $max_bingo_score_for{$screen_name};
+    $bingo_hints_for{$screen_name} += $max_bingo_hints_for{$screen_name};
 }
 print scalar(keys %rank_for) . " people</p>";
 if (%bingo_score_for) {
