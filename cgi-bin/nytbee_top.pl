@@ -55,15 +55,26 @@ while (my $line = <$in>) {
                          rank(\d) \s+ $date
                         }xms
     ) {
-        my $name = $uuid_screen_name{$r_uuid11} || '??';
-        $rank_for{$name} = $rank;
-        if ($line =~ m{(gn4l|gotn)\z}xmsi) {
-            $genius_for{$name} = $1;
+        my $screen_name = $uuid_screen_name{$r_uuid11};
+        if ($rank >= 8 && ! $screen_name) {
+            # assign them a screen name
+            # no need to inform them what it is.
+            my $i = 110;
+            while (exists $screen_name_uuid{"Buzz$i"}) {
+                ++$i;
+            }
+            $screen_name = "Buzz$i";
+            $uuid_screen_name{$r_uuid11} = $screen_name;
+            $screen_name_uuid{$screen_name} = $r_uuid11;
         }
-        if (! exists $hints_for{$name}) {
+        $rank_for{$screen_name} = $rank;
+        if ($line =~ m{(gn4l|gotn)\z}xmsi) {
+            $genius_for{$screen_name} = $1;
+        }
+        if (! exists $hints_for{$screen_name}) {
             my $uuid = $full_uuid{$r_uuid11};
             my %cur_puzzles = %{ eval $cur_puzzles_store{$uuid} };
-            $hints_for{$name} = (split ' ', $cur_puzzles{$date})[0];
+            $hints_for{$screen_name} = (split ' ', $cur_puzzles{$date})[0];
         }
     }
     elsif (my ($b_uuid11, $bingo_score, $bingo_hints)
@@ -73,12 +84,12 @@ while (my $line = <$in>) {
                             \s* \z
                            }xms
     ) {
-        my $name = $uuid_screen_name{$b_uuid11} || '??';
-        if (! exists $bingo_score_for{$name}
-            || $bingo_score > $bingo_score_for{$name}
+        my $screen_name = $uuid_screen_name{$b_uuid11} || '??';
+        if (! exists $bingo_score_for{$screen_name}
+            || $bingo_score > $bingo_score_for{$screen_name}
         ) {
-            $bingo_score_for{$name} = $bingo_score;
-            $bingo_hints_for{$name} = $bingo_hints;
+            $bingo_score_for{$screen_name} = $bingo_score;
+            $bingo_hints_for{$screen_name} = $bingo_hints;
         }
     }
 }
@@ -114,6 +125,7 @@ for my $sn (keys %rank_for) {
         # Genius
         my $uuid11 = $screen_name_uuid{$sn};
         my $full_uuid = $full_uuid{$uuid11};
+        # check $@ and return value 
         my %cur_puzzles = %{ eval $cur_puzzles_store{$full_uuid} };
         my $nwords = grep { /^[a-z]+$/ }
                      split ' ', $cur_puzzles{$date};
@@ -139,21 +151,23 @@ my $prev_rank = 0;
 # display Queen Bee down to Genius... people
 #   reverse sorted by # hints
 #   and reverse sorted by genius attainment
-for my $name (sort {
-                  $rank_for{$b} <=> $rank_for{$a}
-                  ||
-                  $hints_for{$a} <=> $hints_for{$b}
-                  ||
-                  $genius_for{$b} cmp $genius_for{$a}
-                      # luckily 'gotn' gt 'gn4l' gt ''
-                  ||
-                  $a cmp $b
-              }
-              keys %rank_for
+for my $screen_name (sort {
+                         $rank_for{$b} <=> $rank_for{$a}
+                         ||
+                         $hints_for{$a} <=> $hints_for{$b}
+                         ||
+                         $genius_for{$b} cmp $genius_for{$a}
+                             # luckily 'gotn' gt 'gn4l' gt ''
+                         ||
+                         $queen_minus_for{$a} <=> $queen_minus_for{$b}
+                         ||
+                         $a cmp $b
+                     }
+                     keys %rank_for
 ) {
-    if ($rank_for{$name} != $prev_rank) {
-        print "<tr><th class='lt green' colspan=2>$rank_name{$rank_for{$name}}</th>";
-        if ($rank_for{$name} == 8) {
+    if ($rank_for{$screen_name} != $prev_rank) {
+        print "<tr><th class='lt green' colspan=2>$rank_name{$rank_for{$screen_name}}</th>";
+        if ($rank_for{$screen_name} == 8) {
             print "<th style='text-align: right; font-size: 13pt;'>Words<br>To QB</th>";
         }
         print "</tr>\n";
@@ -161,17 +175,17 @@ for my $name (sort {
             print "<tr><th class='rt'>Name</th><th class=rt>${sp}Hints</th></tr>\n";
             $name_hints = 1;
         }
-        $prev_rank = $rank_for{$name};
+        $prev_rank = $rank_for{$screen_name};
     }
-    my $red_star = $name eq $my_screen_name? ' <span class="rt red">*</span>': '';
-    my $gn = $genius_for{$name};
+    my $red_star = $screen_name eq $my_screen_name? ' <span class="rt red">*</span>': '';
+    my $gn = $genius_for{$screen_name};
     if ($gn) {
         $gn .= ' ';
     }
     my $col3 = ($gn || $red_star)? "<td class=lt>$sp$gn$red_star</td>": '';
-    print "<tr><td class=rt>$name</td>"
-        . "<td align=right>$sp$hints_for{$name}</td>"
-        . ($prev_rank != 8? '': "<td align=right>$queen_minus_for{$name}<td>")
+    print "<tr><td class=rt>$screen_name</td>"
+        . "<td align=right>$sp$hints_for{$screen_name}</td>"
+        . ($prev_rank != 8? '': "<td align=right>$queen_minus_for{$screen_name}<td>")
         . "$col3</tr>\n";
 }
 print "</table>\n";
