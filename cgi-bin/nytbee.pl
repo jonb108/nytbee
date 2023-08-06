@@ -80,6 +80,8 @@ my $message = '';
 my $ymd = ymd();
 my $ext_sig = '!*+-';   # extra word sigils
                         # ! stash * bonus + lexicon - donut
+my $not_okay_words;
+
 my @base = qw/
     Bee
     Drone
@@ -1220,16 +1222,21 @@ elsif ($cmd =~ m{\A (d[+]?)(p|r|5|[a-z]\d+|[a-z][a-z]) \z}xms) {
 elsif ($cmd eq 'swa' || $cmd eq 'sw' 
        || $cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms
 ) {
+    # adding words to the stash.
+    # we first check the words.
+    # give errors for unqualified words and
+    # Extra words get added as normal.
     my $all = $cmd eq 'swa';
     my $stash = $1 || '';
     my @words = $all? grep { !/[$ext_sig]$/ } @found
                :      split ' ', $stash;
     for my $w (@words) {
-        $is_new_word{$w} = 1;
-        $is_found{$w} = 1; 
-        if (! in_stash($w)) {
-            push @found, "$w!";
-        }
+        consider_word($w, 1);
+    }
+    if ($bonus_mode) {
+        # we give this message because we are not
+        # showing the Stash word list in Bonus mode.
+        $message .= "Stashed";
     }
     $cmd = '';
 }
@@ -1857,8 +1864,6 @@ sub pangram_check {
     return '';
 }
 
-my $not_okay_words;
-
 sub check_word {
     my ($w) = @_;
     my $lw = length($w);
@@ -1922,22 +1927,15 @@ sub check_word {
     }
     return '';
 }
-WORD:
-for my $w (@new_words) {
-    next WORD if $w eq '1w';        # hack!
-    if (my ($xword) = $w =~ m{\A [-]([a-z]+)}xms) {
-        # remove the word from the found list
-        if ($is_found{$xword}) {
-            @found = grep { !m{\A $xword \b }xms  } @found;
-            delete $is_found{$xword};
-        }
-        else {
-            $not_okay_words = "<span class=not_okay>"
-                            . uc($xword)
-                            . "</span>: not a found word";
-        }
-        next WORD;
-    }
+
+#
+# check the word
+# and either add it, stash it, or give an error message.
+#
+# very tricky - test it thoroughly
+#
+sub consider_word {
+    my ($w, $stashing) = @_;
     my $mess = check_word($w);
     if (   $mess eq ''
         || $mess eq 'donut'
@@ -1945,12 +1943,19 @@ for my $w (@new_words) {
         || $mess eq 'bonus'
     ) {
         if ($mess ne '') {
+            # it's an extra word so we'll need
+            # a screen name for the CW report.
             check_screen_name();
         }
         $is_new_word{$w} = 1;
-        if (! $is_found{$w} || in_stash($w)) {
+        if ($stashing && in_stash($w)) {
+            # do nothing
+            $not_okay_words .= red(uc $w) . ": already stashed<br>";
+        }
+        elsif (! $is_found{$w} || in_stash($w)) {
             # if in the stash, take it out
-            if (in_stash($w)) {
+            # unless we are stashing
+            if (! $stashing && in_stash($w)) {
                 @found = grep { $_ ne "$w!" } @found;
             }
             $is_found{$w} = 1;
@@ -1980,6 +1985,15 @@ for my $w (@new_words) {
                 add_3word('bonus', $date, $w);
                 log_it('*bonus');
                 $w .= '*';      # * in the found list marks bonus words
+            }
+            elsif ($stashing) {
+                # it's an okay word
+                # put it in the stash
+                $is_new_word{$w} = 1;
+                $is_found{$w} = 1; 
+                if (! in_stash($w)) {
+                    $w .= '!';
+                }
             }
             else {
                 if ($is_pangram{$w}) {
@@ -2069,6 +2083,25 @@ for my $w (@new_words) {
                         .  uc($w)
                         .  "</span>: $mess<br>";
     }
+}
+
+WORD:
+for my $w (@new_words) {
+    next WORD if $w eq '1w';        # hack!
+    if (my ($xword) = $w =~ m{\A [-]([a-z]+)}xms) {
+        # remove the word from the found list
+        if ($is_found{$xword}) {
+            @found = grep { !m{\A $xword \b }xms  } @found;
+            delete $is_found{$xword};
+        }
+        else {
+            $not_okay_words = "<span class=not_okay>"
+                            . uc($xword)
+                            . "</span>: not a found word";
+        }
+        next WORD;
+    }
+    consider_word($w);
 }
 
 # now that we have added the new words...
@@ -3321,6 +3354,7 @@ $row2
 EOH
             $letters .= <<"EOH";
 <span class=lets id=lets></span>
+<span class='stash2 alink' onclick="stash_lets();">Stash</span>
 <span class='enter alink' onclick="sub_lets();">Enter</span>
 <span class='define alink' onclick="del_let();">Delete</span>
 <span class='standings alink' onclick="issue_cmd('CW');">Standings</span>
@@ -3600,6 +3634,11 @@ body {
 .stash {
     position: absolute;
     left: 520;
+    top: $stash_top;
+}
+.stash2 {
+    position: absolute;
+    left: 320;
     top: $stash_top;
 }
 .define {

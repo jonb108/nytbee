@@ -311,30 +311,33 @@ using the Safari browser with the text enlarged
 and holding the phone horizontally, 
 this is what the screen looks like:
 <p>
-<img src=pics/nytbee_iPhone.jpg width=800 border=1>
+<img src=pics/nytbee_iPhone.png width=800 border=1>
 <p>
 In this mobile mode the heading has been toggled off.
-You have 6 command words to the right of the hexagon letters:
+There are 7 command links to the right of the hexagon letters:
 <span class=cmd>Enter</span>,
-<span class=cmd>Define</span>,
-<span class=cmd>Bonus</span>,
 <span class=cmd>Delete</span>,
+<span class=cmd>Define</span>,
 <span class=cmd>Help</span>,
+<span class=cmd>Stash</span>,
+<span class=cmd>Bonus</span>,
 and <span class=cmd>Forum</span>.
 <p>
 Tapping on letters will copy them to the area on the right:
 <p>
-<img src=pics/kitchen.jpg width=800 border=1>
+<img src=pics/kitchen.png width=800 border=1>
 <p>
 Tap on <span class=cmd>Enter</span> to submit the word.
 <br>
-Tap on <span class=cmd>Define</span> to do a <span class=cmd>DR</span> command to define a random unfound word.
-<br>
-Tap on <span class=cmd>Bonus</span> to switch into <a href=#bonus_mode>Bonus Mode</a>.
-<br>
 Tap on <span class=cmd>Delete</span> to remove letters.
 <br>
+Tap on <span class=cmd>Define</span> to do a <span class=cmd>DR</span> command to define a random unfound word.
+<br>
 Tap on <span class=cmd>Help</span> to bring up this document in a separate browser window.  
+<br>
+Tap on <span class=cmd>Stash</span> to add the word to <a href=#stash>The Stash</a>.
+<br>
+Tap on <span class=cmd>Bonus</span> to switch into <a href=#bonus_mode>Bonus Mode</a>.
 <br>
 Tap on <span class=cmd>Forum</span> to toggle <a href=#forum>Forum Mode</a>.
 <p>
@@ -571,7 +574,7 @@ The <span class=cmd>TOP</span> command shows Bingo achievement scores that are t
 <tr><td>Maximum Score</td><td>&nbsp;8</td></tr>
 </table>
 </ul>
-The maximum Bingo score in <span class=cmd>TOP</span> is 18 = min (1 + 2 + 4) + max (1 + 2 + 8) = 18.
+The maximum Bingo score in <span class=cmd>TOP</span> is 18: min (1 + 2 + 4) + max (1 + 2 + 8) = 18.
 The total number of hints needed is also shown.
 Note that to do both min and max Bingo you need the <span class=cmd>C Y</span> command between them.
 <a name=gn4l></a>
@@ -661,6 +664,9 @@ your remembered 4 letter stash words with:
 <span class=cmd>SA</span>
 </ul>
 SA stands for <class=cmd>S</span>tash <span class=cmd>A</span>dd.
+<p>
+Note that words are checked before stashing.  Only valid puzzle
+words are stashed.  Extra words will be added as usual.
 <a name=donut></a>
 <h2>Donut, Lexicon, and Bonus Words
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -778,11 +784,12 @@ the mobile display will look like this:
 The 19 (26-7=19) additional letters are put in a table.
 Tap on them to append to the word.
 If a Bonus word has been found using a letter it will be <span class=green>green</span>.
-There are also links for <s>Bonus</s>, Standings, and Own:
+There are also command links for <span class=cmd>Stash</span>, <span class=cmd>Enter</span>, <span class=cmd>Own</span>, <span class=cmd>Delete</span>, <s><span class=cmd>Bonus</span></s>, and <span class=cmd>Standings</span>.
 <ul>
-<li><s>Bonus</s> will toggle OUT of Bonus Mode.
-<li>Standings will issue the <span class=cmd>CW</span> command for you (see <a href=#competition>below</a>).
-<li>Own will issue the <span class=cmd>OW</span> command to show what words only you have found.
+<li><span class=cmd>Stash</span>, <span class=cmd>Enter</span>, and <span class=cmd>Delete</span> have the usual functions.
+<li><s><span class=cmd>Bonus</span></s> will toggle OUT of Bonus Mode.
+<li><span class=cmd>Standings</span> will issue the <span class=cmd>CW</span> command for you (see <a href=#competition>below</a>).
+<li><span class=cmd>Own</span> will issue the <span class=cmd>OW</span> command to show what words only you have found.
 </ul>
 The letter table also has a green square &#129001; at the end
 that will insert a space.  This is useful for issuing various commands.
