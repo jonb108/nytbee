@@ -1217,9 +1217,11 @@ elsif ($cmd =~ m{\A (d[+]?)(p|r|5|[a-z]\d+|[a-z][a-z]) \z}xms) {
     do_define($term, $Dcmd eq 'd+');
     $cmd = '';
 }
-elsif ($cmd eq 'swa' || $cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms) {
+elsif ($cmd eq 'swa' || $cmd eq 'sw' 
+       || $cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms
+) {
     my $all = $cmd eq 'swa';
-    my $stash = $1;
+    my $stash = $1 || '';
     my @words = $all? grep { !/[$ext_sig]$/ } @found
                :      split ' ', $stash;
     for my $w (@words) {
@@ -3331,6 +3333,7 @@ EOH
         else {
             my $st = "style='color: $colors{alink}'";
             $letters .= <<"EOH";
+<span class='stash cursor_black' $st onclick="stash_lets();">Stash</span>
 <span class='enter cursor_black' $st onclick="sub_lets();">Enter</span>
 <span class='define cursor_black' $st onclick="issue_cmd('D+R');">Define</span>
 <span class='bonus cursor_black' $st onclick="issue_cmd('BN');">Bonus</span>
@@ -3556,6 +3559,7 @@ if ($bonus_mode) {
 my $css = $mobile? 'mobile_': '';
 my $new_words_size = $mobile? 30: 40;
 my $enter_top  = 90 + ($show_Heading? 79: 0);
+my $stash_top  = 40 + ($show_Heading? 79: 0);
 my $define_top  = 90 + ($show_Heading? 79: 0);
 my $bonus_top  = 40 + ($show_Heading? 79: 0);
 my $lets_top   = 135 + ($show_Heading? 79: 0);
@@ -3592,6 +3596,11 @@ body {
     position: absolute;
     left: 320;
     top: $enter_top;
+}
+.stash {
+    position: absolute;
+    left: 520;
+    top: $stash_top;
 }
 .define {
     position: absolute;
@@ -3657,7 +3666,7 @@ body {
 }
 </style>
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_${css}style.css'/>
-<script src="$log/nytbee/js/nytbee5.js"></script>
+<script src="$log/nytbee/js/nytbee6.js"></script>
 </head>
 <body onload='init(); $focus'>
 $heading
