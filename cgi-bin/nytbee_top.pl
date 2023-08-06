@@ -29,7 +29,8 @@ my $my_screen_name = shift;
 my $sp = '&nbsp;' x 2;
 my $in;
 if (! open $in, '<', "beelog/$date") {
-    print "No log for $date.";
+    $date =~ s{\A (....)(..)(..) \z}{$2/$3/$1}xms;
+    print "No log for $date";
     exit;
 }
 # Bingo is complicated! :) :(

@@ -61,6 +61,7 @@ And I have.  The complete source code for this project is on
 <a href=#games>Games within the Game</a><br>
 <a href=#bingo>Bingo</a><br>
 <a href=#gn4l>Genius No 4 Letter</a><br>
+<a href=#stash>The Stash</a><br>
 <a href=#donut>Donut, Lexicon, and Bonus Words</a><br>
 <a href=#archival_and_community>Archival and Community Puzzles</a><br>
 <a href=#forum>Discussion Forum</a><br>
@@ -608,6 +609,58 @@ this additional congratulatory message for GOTN:
 On the Nose! <span style='font-size: 24pt'>&#128067;</span> &#128522;
 </ul>
 As you get close to Genius you can consult the Hint Table to see if there is a 5+ letter word remaining that will get you to Genius exactly.  If not, you could <i>remove</i> a word with the <a href=#power>Power User</a> &#8220;minus&#8221; command - like this: <span class=red style='font-size: 25pt'>-</span>&lt;word&gt;.  This will adjust your score so you can then have other ways to make the score match the Genius level exactly. 
+<a name=stash></a>
+<h2>The Stash
+<a class=top href=#toc><img src=pics/top.gif height=25></a>
+</h2>
+When striving for <a href=#bingo>Bingo</a> or <a href=#gn4l>GN4L</a>
+you can effectively use "the stash".  The Stash is a place you can
+store words that you have found but don&#8217;t want to enter quite yet.
+Let&#8217;s say you are trying for minimal <a href=#bingo>Bingo</a> with
+this puzzle:
+<p style="margin-left: .5in">
+<img width=250 src=pics/stash.png>
+</p>
+There are several 4 letter words in the <span class=cmd>BT</span>
+table.  As you are looking for them you might see a pangram
+or a 5+ letter word.  You can &#8220;stash&#8221; these words
+so you don&#8217;t forget them!
+<ul>
+<span class=cmd>SW</span> CONDITION ADDICT DICTA
+</ul>
+SW stands for <span class=cmd>S</span>tash <span class=cmd>W</span>ords.
+<p>
+Note that if you see a Bonus or Donut word
+it&#8217;s okay to enter them <i>whenever</i> you wish.
+The <span class=cmd>C Y</span> command will <i>not</i> clear them.
+<p>
+When you finish with minimal Bingo you want to do a <span class=cmd>C Y</span>
+so that you can go on to maximal Bingo or GN4L.  But you don&#8217;t want to
+forget the 4 letter words you entered!  So before the <span class=cmd>C Y</span>
+you stash them <span class=cmd>a</span>ll with:
+<ul>
+<span class=cmd>SWA</span>
+</ul>
+The words in the Stash are shown below the Donut, Lexicon, and Bonus words.
+Something like this:
+<ul>
+Stash: Acid Addict Coda Condition Dicta Data ...
+</ul>
+Now you go on <a href=#gn4l>GN4L</a>.  You can add all of
+the 5+ letter words in the stash with:
+<ul>
+<span class=cmd>SA5</span>
+</ul>
+The stash will now contain:
+<ul>
+Stash: Acid Coda Data ...
+</ul>
+When you reach reach Genius and <a href=#gn4l>GN4L</a> you can now enter
+your remembered 4 letter stash words with:
+<ul>
+<span class=cmd>SA</span>
+</ul>
+SA stands for <class=cmd>S</span>tash <span class=cmd>A</span>dd.
 <a name=donut></a>
 <h2>Donut, Lexicon, and Bonus Words
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -1570,8 +1623,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1914 puzzles with
-a total of 9695 different words!
+1916 puzzles with
+a total of 9699 different words!
 <p>
 Which puzzles from the large archive to play?
 You can get one at random with the <span class=cmd>NR</span> command or you could

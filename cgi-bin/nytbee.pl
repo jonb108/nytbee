@@ -78,6 +78,8 @@ use File::Slurp qw/
 
 my $message = '';
 my $ymd = ymd();
+my $ext_sig = '!*+-';   # extra word sigils
+                        # ! stash * bonus + lexicon - donut
 my @base = qw/
     Bee
     Drone
@@ -783,6 +785,12 @@ my (@found,     # includes valid puzzle words, lexicon+ words, donut- words
     $score,
     $rank_name,
     $rank);
+my %is_new_word;
+
+sub in_stash {
+    my ($w) = @_;
+    return grep { $_ eq "$w!" } @found;
+}
 
 sub add_hints {
     my ($n) = @_;
@@ -816,13 +824,13 @@ if ($cmd eq 'q' || $cmd eq '?') {
         $cmd = '';        
     }
     else {
-        $word =~ s{[*+-]\z}{}xms;
+        $word =~ s{[$ext_sig]\z}{}xms;
         $cmd = "d $word";
     }
 }
 my %is_found = map {
                    my $x = $_;
-                   $x =~ s{[*+-]\z}{}xms;
+                   $x =~ s{[$ext_sig]\z}{}xms;
                    $x => 1;
                }
                @found;
@@ -831,7 +839,7 @@ sub compute_score_and_rank {
     $score = 0;
     WORD:
     for my $w (@found) {
-        next WORD if $w =~ m{[*+-] \z}xms;   # donut, lexicon
+        next WORD if $w =~ m{[$ext_sig] \z}xms;   # extra
         $score += word_score($w, $is_pangram{$w});
     }
     RANK:
@@ -1175,7 +1183,7 @@ elsif (my ($ev, $nlets, $term)
 }
 elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     my $percent = $1;
-    my $ndonut_lexicon_bonus = grep { m{[*+-]\z}xms } @found;
+    my $nextra = grep { m{[$ext_sig]\z}xms } @found;
     my $rows = '';
     for my $r (0 .. 9) {
         my $cols = td($ranks[$r]->{name});
@@ -1191,7 +1199,7 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
                       . ' more'
                       ;
                 if ($rank == 8) {
-                    my $m = @ok_words - @found + $ndonut_lexicon_bonus;
+                    my $m = @ok_words - @found + $nextra;
                     my $pl = $m == 1? '': 's';
                     $more .= ", $m more word$pl";
                 }
@@ -1208,6 +1216,39 @@ elsif ($cmd =~ m{\A (d[+]?)(p|r|5|[a-z]\d+|[a-z][a-z]) \z}xms) {
     my $term = $2;
     do_define($term, $Dcmd eq 'd+');
     $cmd = '';
+}
+elsif ($cmd eq 'swa' || $cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms) {
+    my $all = $cmd eq 'swa';
+    my $stash = $1;
+    my @words = $all? grep { !/[$ext_sig]$/ } @found
+               :      split ' ', $stash;
+    for my $w (@words) {
+        $is_new_word{$w} = 1;
+        $is_found{$w} = 1; 
+        if (! in_stash($w)) {
+            push @found, "$w!";
+        }
+    }
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A sa \z}xms) {
+    my @stash = map { /(.*)!$/; $1; }   # fun!
+                @found;
+    @found = grep { !/!$/ } @found;
+    for my $w (@stash) {
+        delete $is_found{$w};
+    }
+    $cmd = "@stash";
+}
+elsif ($cmd eq 'sa5') {
+    my @stash = map { /(.{5,})!$/; $1; }   # fun!
+                @found;
+    @found = grep { !/.{5,}!$/ } @found;
+    for my $w (@stash) {
+        delete $is_found{$w};
+    }
+    $cmd = "@stash";
+    
 }
 elsif (my ($gt, $item) = $cmd =~ m{\A \s* [#] \s*([>]?)(\d*|[a-z]?) \s* \z}xms) {
     my @words = grep { !$is_found{$_} }
@@ -1263,7 +1304,7 @@ elsif ($cmd =~ m{\A g \s+ yp? \z}xms) {
 }
 elsif ($cmd =~ m{\A c \s+ y \s*(a?) \z}xms) {
     my $all = $1;
-    @found = $all? (): grep { /[*+-]\z/ } @found;
+    @found = $all? (): grep { /[$ext_sig]\z/ } @found;
                        # leave the Extra words in place
     $nhints = 0;
     $ht_chosen = 0;
@@ -1280,20 +1321,22 @@ elsif ($cmd eq 'sc') {
         push @rows, Tr(td({ colspan => 3 }, '<hr>'));
     }
     my $space = '&nbsp;' x 2;
+    my %extra_type = qw/
+       ! Stash
+       * Bonus
+       + Lexicon
+       - Donut
+    /;
     FOUND:
     for my $w (@found) {
         my $x = $w;
-        if ($x =~ s{([*+-])\z}{}xms) {
+        if ($x =~ s{([$ext_sig])\z}{}xms) {
+            my $sigil = $1;
             push @rows, Tr(td({ class => 'gray' }, ucfirst $x),
                            td(''),
                            td(''),
                            td({ class => 'lt gray' },
-                              $space
-                              . {
-                                   '*' => 'Bonus',
-                                   '+' => 'Lexicon',
-                                   '-' => 'Donut',
-                                }->{$1}
+                              "$space$extra_type{$sigil}"
                              )
                         );
             next FOUND;
@@ -1322,8 +1365,8 @@ elsif ($cmd eq 'sc') {
         }
     }
     $message .= table({ cellpadding => 2 }, @rows);
-    my $ndonut_lexicon_bonus = grep { m{[*+-]\z}xms } @found;
-    my $more = @ok_words - (@found - $ndonut_lexicon_bonus);
+    my $nextra = grep { m{[$ext_sig]\z}xms } @found;
+    my $more = @ok_words - (@found - $nextra);
     my $pl = $more == 1? '': 's';
     $message .= "<p> $more more word$pl to find";
     $cmd = '';
@@ -1571,7 +1614,7 @@ my $prefix = '';
 my $pattern = '';
 my $limit = 0;
 my @words_found;
-my @found_puzzle_words = grep { !m/[*+-]\z/xms } @found;
+my @found_puzzle_words = grep { !m/[$ext_sig]\z/xms } @found;
 my $word_col = 0;
 my $order_found = 0;
 my $w_cmd = '';
@@ -1813,7 +1856,7 @@ sub pangram_check {
 }
 
 my $not_okay_words;
-my %is_new_word;
+
 sub check_word {
     my ($w) = @_;
     my $lw = length($w);
@@ -1903,7 +1946,11 @@ for my $w (@new_words) {
             check_screen_name();
         }
         $is_new_word{$w} = 1;
-        if (! $is_found{$w}) {
+        if (! $is_found{$w} || in_stash($w)) {
+            # if in the stash, take it out
+            if (in_stash($w)) {
+                @found = grep { $_ ne "$w!" } @found;
+            }
             $is_found{$w} = 1;
             if ($mess eq 'donut') {
                 $not_okay_words .= "<span class=not_okay>"
@@ -1941,8 +1988,8 @@ for my $w (@new_words) {
                 # analyze this before we add it to @found 
                 my $bingo_score = 0;
 
-                # ignore donut, lexicon, and bonus words
-                my @found2 = grep { ! m{[*+-]\z}xms } @found;
+                # ignore extra words
+                my @found2 = grep { ! m{[$ext_sig]\z}xms } @found;
                 my %first_c;
                 WORD:
                 for my $fw (@found2) {
@@ -2034,7 +2081,7 @@ if ($old_rank < $rank) {
                        :            "Queen Bee " . ($thumbs_up x 3)
                     );
         if ($rank == 8) {
-            my @four = grep { ! m{[*+-]\z}xms && length == 4 } @found;
+            my @four = grep { ! m{[$ext_sig]\z}xms && length == 4 } @found;
             if (! @four) {
                 $message .= ul('And you did it without ANY 4 letter words! '
                                .  $thumbs_up);
@@ -2052,7 +2099,7 @@ if ($old_rank < $rank) {
 }
 if (! $prefix && ! $pattern && ! $limit && ! @words_found) {
     # the default when there are no restrictions
-    @words_found = sort grep { !m/[*+-]\z/xms } @found;
+    @words_found = sort grep { !m/[$ext_sig]\z/xms } @found;
 }
 
 sub dlb_row {
@@ -2149,11 +2196,12 @@ sub restrict {
 # now to show the extra words
 # we may have a $w_cmd to limit the display
 #
-my $donut_lexicon_bonus = '';
+my $extra_words = '';
 if ($show_WordList) {
     my @donut;
     my @lexicon;
     my @bonus;
+    my @stash;
     for my $w (@found) {
         if ($w =~ m{[-]\z}xms) {
             my $x = $w;
@@ -2170,16 +2218,23 @@ if ($show_WordList) {
             $x =~ s{[*]\z}{}xms;
             push @bonus, $x;
         }
+        elsif ($w =~ m{[!]\z}xms) {
+            my $x = $w;
+            $x =~ s{[!]\z}{}xms;
+            push @stash, $x;
+        }
     }
     if (!$order_found) {
         @donut   = sort @donut;
         @lexicon = sort @lexicon;
         @bonus   = sort @bonus;
+        @stash   = sort @stash;
     }
     if ($w_cmd) {
         @donut   = restrict($w_cmd, \@donut);
         @lexicon = restrict($w_cmd, \@lexicon);
         @bonus   = restrict($w_cmd, \@bonus);
+        @stash   = restrict($w_cmd, \@stash);
     }
     # highlight new words
     # and perfect donut/bonus pangrams
@@ -2240,25 +2295,40 @@ if ($show_WordList) {
                    def_word($s, $w);
                } 
                @lexicon;
+    # STASH
+    @stash = map {
+                   my $w = $_;
+                   my $uw = ucfirst $w;
+                   my $s = $is_new_word{$w}?
+                               "<span class=new_word>$uw</span>"
+                          :    $uw
+                          ;
+                   def_word($s, $w);
+               } 
+               @stash;
+        
     if ($word_col) {
-        $donut_lexicon_bonus .= one_col('Donut:',  \@donut);
-        $donut_lexicon_bonus .= one_col('Lexicon', \@lexicon);
-        $donut_lexicon_bonus .= one_col('Bonus',   \@bonus);
-        if ($donut_lexicon_bonus) {
-            $donut_lexicon_bonus = "<br>$donut_lexicon_bonus";
+        $extra_words .= one_col('Donut:',  \@donut);
+        $extra_words .= one_col('Lexicon', \@lexicon);
+        $extra_words .= one_col('Bonus',   \@bonus);
+        $extra_words .= one_col('Stash',   \@stash);
+        if ($extra_words) {
+            $extra_words = "<br>$extra_words";
         }
     }
     else {
-        $donut_lexicon_bonus .= dlb_row('Donut:',   \@donut)
+        $extra_words .= dlb_row('Donut:',   \@donut)
             unless $bonus_mode;
-        $donut_lexicon_bonus .= dlb_row('Lexicon:', \@lexicon)
+        $extra_words .= dlb_row('Lexicon:', \@lexicon)
             unless $bonus_mode;
-        $donut_lexicon_bonus .= dlb_row('Bonus:',   \@bonus);
-        if ($donut_lexicon_bonus) {
+        $extra_words .= dlb_row('Bonus:',   \@bonus);
+        $extra_words .= dlb_row('Stash:',   \@stash)
+            unless $bonus_mode;
+        if ($extra_words) {
             # convert rows to a table...
-            $donut_lexicon_bonus = '<p>'
+            $extra_words = '<p>'
                                  . "<!-- DONUT LEXICON BONUS WORDS -->\n"
-                                 . table($donut_lexicon_bonus);
+                                 . table($extra_words);
         }
         if ($bonus_mode && ! $mobile) {
             my @other = grep { !/[$seven]/ } 'a' .. 'z';
@@ -2276,7 +2346,7 @@ if ($show_WordList) {
                 }
                 $lets .= ' ';
             }
-            $donut_lexicon_bonus = "$lets$donut_lexicon_bonus";
+            $extra_words = "$lets$extra_words";
         }
     }
 }
@@ -2397,7 +2467,7 @@ elsif ($order) {
 }
 elsif ($same_letters) {
     my %groups;
-    for my $w (grep { !m{[*+-]\z}xms } @found) {
+    for my $w (grep { !m{[$ext_sig]\z}xms } @found) {
         my $chars = join '', uniq_chars($w);
         push @{$groups{$chars}}, ucfirst $w;
     }
@@ -2470,6 +2540,7 @@ EOH
 }
 
 # get the HT and TL tables ready
+# do not include the Stash words
 # $sums{$c}{1} is the rightmost column (sigma)
 # $sums{1}{$l} is the bottom row       (sigma)
 #
@@ -2485,7 +2556,7 @@ for my $w (@ok_words) {
     }
     my $c1 = substr($w, 0, 1);
     ++$first_char{$c1};
-    if ($is_found{$w}) {
+    if ($is_found{$w} && ! in_stash($w)) {
         # skip it
         next WORD;
     }
@@ -3170,7 +3241,7 @@ my $heading = $show_Heading? <<"EOH": '';
      <img width=53 src=$log/nytbee/pics/bee-logo.png onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
 </div>
 <div class=float-child3>
-    <div style="text-align: center"><span class=help><a class=alink target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span>&nbsp;&nbsp;<span class=help><a target=_blank class=alink href='$log/nytbee/cmds.html'>Cmds</a><br><span class=create_add'>$create_add</span><br><a class='alink' onclick="issue_cmd('F');">Forum</a> $num_msgs</div>
+    <div style="text-align: center"><span class=help><a class=alink target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span>&nbsp;&nbsp;<span class=help><a target=_blank class=alink href='$log/nytbee/cmds.html'>Cmds</a><br><span class=create_add'>$create_add</span><br><a class='alink' onclick="issue_cmd('F');">Forum $num_msgs</a></div>
 </div>
 <br><br><br>
 EOH
@@ -3373,7 +3444,7 @@ EOH
     my $y = $between_lines;
     if ($bingo) {
         my %first_found;
-        for my $w (grep { !m{[*+-]\z}xms } @found) {
+        for my $w (grep { !m{[$ext_sig]\z}xms } @found) {
             ++$first_found{uc substr($w, 0, 1)};
         }
         $html .= "<text x=$ind1 y=$y class=glets fill=$col_let>b</text>\n";
@@ -3408,7 +3479,7 @@ EOH
     $html .= "<text x=$w_ind y=$y class=glets fill=$col_let>w</text>\n";
     $x = $ind2;
     $y -= 4;
-    my $nfound = grep { !m{[*+-]\z}xms } @found;
+    my $nfound = grep { !m{[$ext_sig]\z}xms } @found;
     for my $i (1 .. $nfound) {
         $html .= "<circle cx=$x cy=$y r=$dotr2 fill=green></circle>\n";
         $x += $between_dots;
@@ -3496,7 +3567,7 @@ if ($forum_mode) {
     $forum_html = `$cgi_dir/show_forum.pl $date "$screen_name" $forum_post_to_edit '$colors{bg_input}' '$colors{text_input}'`;
     $bingo_table =
     $found_words =
-    $donut_lexicon_bonus =
+    $extra_words =
     $status =
     $hint_table_list = '';
 }
@@ -3618,7 +3689,7 @@ $letters
 <p>
 $bingo_table
 $found_words
-$donut_lexicon_bonus
+$extra_words
 <p>
 $status$hint_table_list
 $forum_html
