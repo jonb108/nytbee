@@ -1219,24 +1219,32 @@ elsif ($cmd =~ m{\A (d[+]?)(p|r|5|[a-z]\d+|[a-z][a-z]) \z}xms) {
     do_define($term, $Dcmd eq 'd+');
     $cmd = '';
 }
-elsif ($cmd eq 'swa' || $cmd eq 'sw' 
-       || $cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms
-) {
+elsif ($cmd eq 'swa') {
+    # add all puzzle words to the stash
+    for my $w (@found) {
+        if ($w =~ m{[a-z]\z}xms) {
+            $w .= '!';
+        }
+    }
+    $message = 'Stashed';
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms) {
     # adding words to the stash.
     # we first check the words.
     # give errors for unqualified words and
     # Extra words get added as normal.
-    my $all = $cmd eq 'swa';
-    my $stash = $1 || '';
-    my @words = $all? grep { !/[$ext_sig]$/ } @found
-               :      split ' ', $stash;
+    my $stash = $1;
+    my @words = split ' ', $stash;
+    my $nwords_stashed = 0;
     for my $w (@words) {
-        consider_word($w, 1);
+        $nwords_stashed += consider_word($w, 1);
     }
-    if ($bonus_mode) {
+    if ($nwords_stashed && $bonus_mode) {
         # we give this message because we are not
         # showing the Stash word list in Bonus mode.
-        $message .= "Stashed";
+        my $pl = $nwords_stashed == 1? '': 's';
+        $not_okay_words .= "$nwords_stashed word$pl stashed";
     }
     $cmd = '';
 }
@@ -2083,6 +2091,7 @@ sub consider_word {
                         .  uc($w)
                         .  "</span>: $mess<br>";
     }
+    return $w =~ m{!\z}xms? 1: 0;
 }
 
 WORD:
