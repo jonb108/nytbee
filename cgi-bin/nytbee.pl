@@ -1221,11 +1221,8 @@ elsif ($cmd =~ m{\A (d[+]?)(p|r|5|[a-z]\d+|[a-z][a-z]) \z}xms) {
 }
 elsif ($cmd eq 'swa') {
     # add all puzzle words to the stash
-    for my $w (@found) {
-        if ($w =~ m{[a-z]\z}xms) {
-            $w .= '!';
-        }
-    }
+    # clear the hints?
+    s/([a-z])$/$1!/ for @found;   # fun!
     $message = 'Stashed';
     $cmd = '';
 }

@@ -72,6 +72,11 @@ while (my $line = <$in>) {
             $uuid_screen_name{$r_uuid11} = $screen_name;
             $screen_name_uuid{$screen_name} = $r_uuid11;
         }
+        if (exists $rank_for{$screen_name}
+            && $rank < $rank_for{$screen_name}
+        ) {
+            next LINE;
+        }
         $rank_for{$screen_name} = $rank;
         if ($line =~ m{(gn4l|gotn)\z}xmsi) {
             $genius_for{$screen_name} = $1;
