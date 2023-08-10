@@ -578,6 +578,7 @@ The <span class=cmd>TOP</span> command shows Bingo achievement scores that are t
 The maximum Bingo score in <span class=cmd>TOP</span> is 18: min (1 + 2 + 4) + max (1 + 2 + 8) = 18.
 The total number of hints needed is also shown.
 Note that to do both min and max Bingo you need the <span class=cmd>C Y</span> command between them.
+<span class=cmd>SWA</span> is better than <span class=cmd>C Y</span> - see <a href=#stash>The Stash</a>.
 <a name=gn4l></a>
 <h2>Genius No 4 Letter
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -884,9 +885,11 @@ Note that CW also shows OW and BOA scores.
 <h2>Missing Words and Added Words
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
-Even though the &#8220;large lexicon&#8221; <b>is</b>
-<i>quite</i> large and contains
-many rare and obscure and jargony words there are <i>many</i> words
+An Extra word (Donut, Lexicon, Bonus)
+is accepted if it has occured in an NYT puzzle or if it appears
+in the &#8220;large lexicon&#8221;.
+Even though the large lexicon <b>is</b> <i>quite</i> large and contains
+many rare and obscure and jargony words, there <i>are</i> words
 that are missing.  One such is INTERNET!  Another is RAZZMATAZZ. 
 Another is ENJOYED.
 This is frustrating &#128542; &#128562; &#128545;.  The NYT HiveMind Forum is full of complaints
@@ -900,17 +903,20 @@ that email account is generally regarded as a black hole.
 <circle r=30 cx=30 cy=30>
 </svg>
 </p>
-In <i>this</i> Bee an Extra word (Donut, Lexicon, Bonus)
-is accepted if it has occured in an NYT puzzle or if it appears
-in the large lexicon.  If you find a word that is clearly missing
+If you find a word that is clearly missing
 (like INTERNET) there <i>is</i> a solution:
 <ul>
 <span class=cmd>MW</span> INTERNET
 </ul>
-This will put a message in the Forum saying &#8220;Missing Word: INTERNET&#8221;.
+This puts a message in the Forum saying &#8220;Missing Word: INTERNET&#8221;.
 A Bee administrator will see the message and, if they agree,
 will add the word to a list of &#8220;Added Words&#8221;.  The word
-<i>will</i> then be accepted as an Extra word for all puzzles.
+will then be accepted as an Extra word for all puzzles.
+<p>
+Some will say that this will add ALL kinds of words that end in ED and ING.
+This is true but note that there are ALREADY many many such words
+in the NYT puzzles.  Using the <a href=#word_search>Bee Word Search</a> mechanism,
+of the 9713 unique words in the NYT Bee puzzles there are 1022 that end in ED and 906 that end in ING! (As of 8/10/23).  These include the questionable GABBED and GABBING &#128540;.
 <a name=archival_and_community></a>
 <h2>Archival and Community Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -1016,7 +1022,7 @@ Rather than being stuck with the standard NYT gray/gold hexagon:
 <ul>
 <img src=pics/hive.png width=180>
 </ul>
-and having it forever etched/<b>burned</b> into your retinas
+and having it forever etched and <b>burned</b> into your retinas
 you can have fun experimenting with different hues.
 Perhaps your favorite color is <span style='color: skyblue'>sky blue</span>.
 Or on Tuesdays you feel like a spicy <span style="color: pink">pink</span>/<span style="color: magenta">magenta</span>/<span style="color: red">red</span>.
@@ -1364,7 +1370,7 @@ These commands are of more limited use.  Some of them were added just for the be
 <table cellpadding=5>
 <tr><td><span class=cmd>MO</span></td><td>Toggle into "mobile mode". Useful when playing on an iPad or Tablet with a touch screen.  The 7 letters in the hexagon become tappable.</td></tr>
 <tr><td><span class=cmd>LG</span></td><td>Show a time-stamped <span class=cmd>l</span>o<span class=cmd>g</span> of your activity on the day of the NYT Puzzle.  The times are 24 hour format U.S. West Coast Pacific Time</td><tr>
-<tr><td><span class=cmd>LM #mins</span></td><td>Set a <span class=cmd>l</span>i<span class=cmd>m</span>it of how much longer you want to play.
+<tr><td><a name=lm></a><span class=cmd>LM #mins</span></td><td>Set a <span class=cmd>l</span>i<span class=cmd>m</span>it of how much longer you want to play.
 <span class=cmd>LM 10</span> will allow you to play for 10 more minutes.
 <span class=cmd>LM</span> without a number will show how much time remains.
 When the time has expired this message will be shown:<br>
@@ -1664,7 +1670,7 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1919 puzzles with
+1920 puzzles with
 a total of 9713 different words!
 <p>
 Which puzzles from the large archive to play?
@@ -1709,6 +1715,7 @@ If you scroll down on these pages you will see a link to
 This was done to make for faster loading of the top of the file
 (which is likely what you are most interested in).
 <p>
+<a name=word_search></a>
 Another way to do Bee &#8220;research&#8221; is to search NYT Bee words
 and Large Lexicon words for a pattern with this site:
 <ul>

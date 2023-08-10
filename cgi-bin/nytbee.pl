@@ -2113,6 +2113,8 @@ sub consider_word {
     return $w =~ m{!\z}xms? 1: 0;
 }
 
+my $n_minus = 0;
+
 WORD:
 for my $w (@new_words) {
     next WORD if $w eq '1w';        # hack!
@@ -2121,6 +2123,7 @@ for my $w (@new_words) {
         if ($is_found{$xword}) {
             @found = grep { !m{\A $xword \b }xms  } @found;
             delete $is_found{$xword};
+            ++$n_minus;
         }
         else {
             $not_okay_words = "<span class=not_okay>"
@@ -2136,7 +2139,7 @@ for my $w (@new_words) {
 # ??? is this right???  why is it called twice?
 my $old_rank = $rank;
 compute_score_and_rank();
-if ($old_rank < $rank) {
+if ($old_rank < $rank || ($n_minus > 0 && $score == $ranks[8]{value})) {
     my $gn4l = '';
     if ($rank >= 7) {
         $message .= ul( $rank == 7? "Amazing "   .  $thumbs_up
@@ -2997,7 +3000,7 @@ elsif ($cmd eq 'xdd') {
                `egrep -i '^[$donut_letters]{4,}\$' osx_usd_words-47.txt`;
 }
 # an undocumented cheat for Bonus words
-elsif ($cmd =~ m{\Abb([a-z])\z}xmsi) {
+elsif ($cmd =~ m{\A bb([a-z])\z}xmsi) {
     my $let = $1;
     $cmd = '';
     $message = join '',
