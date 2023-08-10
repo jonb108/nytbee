@@ -63,6 +63,7 @@ And I have.  The complete source code for this project is on
 <a href=#gn4l>Genius No 4 Letter</a><br>
 <a href=#stash>The Stash</a><br>
 <a href=#donut>Donut, Lexicon, and Bonus Words</a><br>
+<a href=#missing>Missing Words and Added Words</a><br>
 <a href=#archival_and_community>Archival and Community Puzzles</a><br>
 <a href=#forum>Discussion Forum</a><br>
 <a href=#colors>Colors</a><br>
@@ -637,24 +638,26 @@ Note that if you see a Bonus or Donut word
 it&#8217;s okay to enter them <i>whenever</i> you wish.
 The <span class=cmd>C Y</span> command will <i>not</i> clear them.
 <p>
-When you finish with minimal Bingo you want to do a <span class=cmd>C Y</span>
-so that you can go on to maximal Bingo or GN4L.  But you don&#8217;t want to
-forget the 4 letter words you entered!  So before the <span class=cmd>C Y</span>
-you stash them <span class=cmd>a</span>ll with:
+When you finish with minimal Bingo you likely want to
+go on to maximal Bingo (which is much harder) or <a href=#gn4l>GN4L</a>.
+But you don&#8217;t want to
+forget the 4 letter words you entered!  There is a command to help:
 <ul>
 <span class=cmd>SWA</span>
 </ul>
+This will stash <span class=cmd>a</span>ll of your puzzle words and reset your Hint total to 0.
+<p>
 The words in the Stash are shown below the Donut, Lexicon, and Bonus words.
 Something like this:
 <ul>
 Stash: Acid Addict Coda Condition Dicta Data ...
 </ul>
-Now you go on <a href=#gn4l>GN4L</a>.  You can add all of
+When you go on <a href=#gn4l>GN4L</a> you can add all of
 the 5+ letter words in the stash with:
 <ul>
 <span class=cmd>SA5</span>
 </ul>
-The stash will now contain:
+The stash will now contain only 4 letter words:
 <ul>
 Stash: Acid Coda Data ...
 </ul>
@@ -860,14 +863,14 @@ Two commands that show how you are doing with respect to others:
 <tr><th class='cmd rt'>OW</th><td>This tells you which
 Extra words were found <b><span class=cmd>O</span>nly By You</b>.</td></tr>
 <tr><th class='cmd rt' style="width: 15mm">CW</th><td>Community Words.
+The 'C' could also stand for Competitive &#128522;.
 Show the <a href=#screen_names>screen names</a>
 of the 5 people who found the most
 Extra words (Bonus, Donut, and Lexicon) for the current NYT puzzle.
 For example:
-<p>
+<br>
 <img src=pics/cw.png width=400>
 <br>
-The 'C' could also stand for Competitive &#128522;.
 CW 10 will show the top 10.
 Note that this command only shows the counts of words that were found <b>on</b>
 the day the puzzle was released.  This command <i>can</i> be
@@ -877,6 +880,37 @@ a fun competitive drive to try to find more and more words.
 Note that CW also shows OW and BOA scores.
 </td></tr>
 </table>
+<a name=missing></a>
+<h2>Missing Words and Added Words
+<a class=top href=#toc><img src=pics/top.gif height=25></a>
+</h2>
+Even though the &#8220;large lexicon&#8221; <b>is</b>
+<i>quite</i> large and contains
+many rare and obscure and jargony words there are <i>many</i> words
+that are missing.  One such is INTERNET!  Another is RAZZMATAZZ. 
+Another is ENJOYED.
+This is frustrating &#128542; &#128562; &#128545;.  The NYT HiveMind Forum is full of complaints
+about words that are missing from the &#8220;allowed list&#8221; of
+the daily NYT puzzle.  One <i>can</i> email
+<a href='mailto:buzzwords@nytimes.com'>buzzwords@nytimes.com</a>
+about this but
+that email account is generally regarded as a black hole.
+<p style="margin: .1in; margin-left: .4in">
+<svg width=60 height=60>
+<circle r=30 cx=30 cy=30>
+</svg>
+</p>
+In <i>this</i> Bee an Extra word (Donut, Lexicon, Bonus)
+is accepted if it has occured in an NYT puzzle or if it appears
+in the large lexicon.  If you find a word that is clearly missing
+(like INTERNET) there <i>is</i> a solution:
+<ul>
+<span class=cmd>MW</span> INTERNET
+</ul>
+This will put a message in the Forum saying &#8220;Missing Word: INTERNET&#8221;.
+A Bee administrator will see the message and, if they agree,
+will add the word to a list of &#8220;Added Words&#8221;.  The word
+<i>will</i> then be accepted as an Extra word for all puzzles.
 <a name=archival_and_community></a>
 <h2>Archival and Community Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -1630,7 +1664,7 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1918 puzzles with
+1919 puzzles with
 a total of 9713 different words!
 <p>
 Which puzzles from the large archive to play?

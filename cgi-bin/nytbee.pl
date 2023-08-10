@@ -55,6 +55,7 @@ use BeeDBM qw/
     %definition_of
     %message_for
     %full_uuid
+    %added_words
 /;
 use SvgHex qw/
     svg_hex
@@ -1219,10 +1220,25 @@ elsif ($cmd =~ m{\A (d[+]?)(p|r|5|[a-z]\d+|[a-z][a-z]) \z}xms) {
     do_define($term, $Dcmd eq 'd+');
     $cmd = '';
 }
+elsif ($uuid eq 'sahadev108!'
+       && $cmd =~ m{\A ad([+-]) \s (\S+) \z}xms
+) {
+    $message = `$cgi_dir/nytbee_ad.pl $1 $2`;
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A mw \s+ ([a-z ]*) \z}xms) {
+    $message = `$cgi_dir/nytbee_mw.pl $screen_name $date $1`;
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A aw \s+ ([a-z ]*) \z}xms) {
+    $message = `$cgi_dir/nytbee_aw.pl $screen_name $date $1`;
+    $cmd = '';
+}
 elsif ($cmd eq 'swa') {
     # add all puzzle words to the stash
-    # clear the hints?
+    # and clear the hints.
     s/([a-z])$/$1!/ for @found;   # fun!
+    $nhints = 0;
     $message = 'Stashed';
     $cmd = '';
 }
@@ -1254,7 +1270,7 @@ elsif ($cmd =~ m{\A sa \z}xms) {
     }
     $cmd = "@stash";
 }
-elsif ($cmd eq 'sa5') {
+elsif ($cmd =~ m{\A sa \s* 5 \z}xms) {
     my @stash = map { /(.{5,})!$/; $1; }   # fun!
                 @found;
     @found = grep { !/.{5,}!$/ } @found;
@@ -1262,7 +1278,6 @@ elsif ($cmd eq 'sa5') {
         delete $is_found{$w};
     }
     $cmd = "@stash";
-    
 }
 elsif (my ($gt, $item) = $cmd =~ m{\A \s* [#] \s*([>]?)(\d*|[a-z]?) \s* \z}xms) {
     my @words = grep { !$is_found{$_} }
@@ -1743,7 +1758,7 @@ elsif ($cmd eq 'ft') {
 }
 elsif (($uuid eq 'sahadev108!')
        && (my ($mode, $cp_num)
-              = $cmd =~ m{\A ([+][+]|[-][-])cp(\d+) \z}xms)
+              = $cmd =~ m{\A ([+-])cp(\d+) \z}xms)
 ) {
     my $fname = "$comm_dir/$cp_num.txt";
     if (! -f $fname) {
@@ -1751,7 +1766,7 @@ elsif (($uuid eq 'sahadev108!')
     }
     else {
         my $cp_href = do $fname;
-        $cp_href->{recommended} = $mode eq '++'? 1: 0;
+        $cp_href->{recommended} = $mode eq '+'? 1: 0;
         write_file $fname, Dumper($cp_href);
         $message .= 'Got it';
     }
@@ -1812,7 +1827,6 @@ if (   $cmd ne '1'
     && $cmd !~ m{\A cw\s*\d* \z}xms
     && $cmd !~ m{\A m\d* \z}xms
     && $cmd !~ m{\A sn\b }xms
-    && $cmd !~ m{\A d?co\b }xms
     && $cmd !~ m{\A ([+][+]|[-][-])cp }xms
 ) {
     # what about $cmd eq 'i' or bw or ... ?
@@ -1880,7 +1894,10 @@ sub check_word {
         $s =~ s{[$seven]}{}xmsg;
         if (uniq_chars($s) == 1) {
             # one extra letter not in the seven
-            if ($osx_usd_words_48{$w} || $first_appeared{$w}) {
+            if (   $osx_usd_words_48{$w}
+                || $first_appeared{$w}
+                || $added_words{$w}
+            ) {
                 return "bonus";
             }
         }
@@ -1915,7 +1932,10 @@ sub check_word {
         return "$lets $verb in \U$seven";
     }
     if (index($w, $center) < 0) {
-        if ($osx_usd_words_47{$w} || $first_appeared{$w}) {
+        if (   $osx_usd_words_47{$w}
+            || $first_appeared{$w}
+            || $added_words{$w}
+        ) {
             # we'll keep the word but not
             # count it for the score of the puzzle
             return 'donut';
@@ -1923,7 +1943,9 @@ sub check_word {
         return "does not contain: " . red($Center);
     }
     if (! exists $is_ok_word{$w}) {
-        if ($osx_usd_words_47{$w}) {
+        if (   $osx_usd_words_47{$w}
+            || $added_words{$w}
+        ) {
             # we'll keep the word but not
             # count it for the score of the puzzle
             return 'lexicon';
@@ -3093,7 +3115,7 @@ elsif ($cmd eq 'sn') {
     }
     $cmd = '';
 }
-elsif ($cmd =~ m{\A sn \s+ (.*) \z}xms) {
+elsif ($cmd =~ m{\A sn \s+ (\S+) \z}xms) {
     my $new_name = lc $1;
     $new_name =~ s{_([a-z])}{uc $1}xmsge;
     $new_name = ucfirst $new_name;

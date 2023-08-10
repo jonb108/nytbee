@@ -19,6 +19,7 @@ our @EXPORT_OK = qw/
     %message_for
     %uuid_colors_for
     %full_uuid
+    %added_words
 /;
 
 use DB_File;
@@ -104,6 +105,13 @@ tie %osx_usd_words_48, 'DB_File', 'osx_usd_words-48.dbm';
 # key is the word, value is just 1
 # we use this hash to check for bonus words
 
+our %added_words;
+tie %added_words, 'DB_File', 'added_words.dbm';
+# key is the word, value is just 1
+# we use this hash to check for missing donut and bonus words
+# that were added because they weren't in the large
+# lexicon or in the nytbee.
+
 our %first_appeared;
 tie %first_appeared, 'DB_File', 'first_appeared.dbm';
 # a hash with keys of all words that ever
@@ -139,4 +147,5 @@ tie %full_uuid, 'DB_File', 'full_uuid.dbm';
 # value is the full uuid
 # This is needed because I thought the full uuid was just too long
 # and unnecessarly so.  Premature optimization...
+
 1;
