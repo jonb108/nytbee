@@ -77,6 +77,6 @@ $ins_sth->execute($screen_name,
                   today()->as_d8(), $now->t24,
                   $p_date,
                   "Added Word$pl: "
-                 . join('  ', map { ucfirst } @new_words),
+                 . join('&nbsp;&nbsp;', map { ucfirst } @new_words),
                  );
 ++$num_msgs{$p_date};
