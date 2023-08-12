@@ -31,7 +31,13 @@ if (! $admin{$screen_name}) {
     exit;
 }
 my @new_words;
+WORD:
 for my $w (@words) {
+    $w =~ s{[,:]}{}xmsg;
+    if ($w =~ m{\A missing|words? \z}xms) {
+        next WORD;
+    }
+
     if (exists $first_appeared{$w}) {
         print "\U$w\E: WAS used in the NYT Bee<br>";
     }
@@ -71,8 +77,6 @@ $ins_sth->execute($screen_name,
                   today()->as_d8(), $now->t24,
                   $p_date,
                   "Added Word$pl: "
-                 . join(', ',
-                        map { ucfirst }
-                        @new_words),
+                 . join(' ', map { ucfirst } @new_words),
                  );
 ++$num_msgs{$p_date};
