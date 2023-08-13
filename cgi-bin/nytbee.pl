@@ -3119,27 +3119,32 @@ elsif ($cmd eq 'sn') {
     $cmd = '';
 }
 elsif ($cmd =~ m{\A sn \s+ (\S+) \z}xms) {
-    my $new_name = lc $1;
-    $new_name =~ s{_([a-z])}{uc $1}xmsge;
-    $new_name = ucfirst $new_name;
-    if ($new_name eq $screen_name) {
-        $message = $screen_name;
+    if ($cmd =~ m{[<>]}xms) {
+        $message = "Sorry, the characters &lt; and &gt; are not allowed in a screen name.";
     }
     else {
-        if (exists $screen_name_uuid{$new_name}) {
-            $message .= "Sorry, $new_name is already taken.";
+        my $new_name = lc $1;
+        $new_name =~ s{_([a-z])}{uc $1}xmsge;
+        $new_name = ucfirst $new_name;
+        if ($new_name eq $screen_name) {
+            $message = $screen_name;
         }
         else {
-            # they're actually changing it
-            if ($screen_name) {
-                # return the old one for reuse
-                delete $uuid_screen_name{$uuid11};
-                delete $screen_name_uuid{$screen_name};
+            if (exists $screen_name_uuid{$new_name}) {
+                $message .= "Sorry, $new_name is already taken.";
             }
-            $screen_name = $new_name;
-            $uuid_screen_name{$uuid11} = $screen_name;
-            $screen_name_uuid{$screen_name} = $uuid11;
-            $message .= $screen_name;
+            else {
+                # they're actually changing it
+                if ($screen_name) {
+                    # return the old one for reuse
+                    delete $uuid_screen_name{$uuid11};
+                    delete $screen_name_uuid{$screen_name};
+                }
+                $screen_name = $new_name;
+                $uuid_screen_name{$uuid11} = $screen_name;
+                $screen_name_uuid{$screen_name} = $uuid11;
+                $message .= $screen_name;
+            }
         }
     }
     $cmd = '';
