@@ -1282,7 +1282,13 @@ elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms) {
     my @words = split ' ', $stash;
     my $nwords_stashed = 0;
     for my $w (@words) {
-        $nwords_stashed += consider_word($w, 1);
+        if ($is_found{$w}) {
+            @found = map { s{\A $w \z}{$w!}xms; $_; } @found;
+            ++$nwords_stashed;
+        }
+        else {
+            $nwords_stashed += consider_word($w, 1);
+        }
     }
     if ($nwords_stashed && $bonus_mode) {
         # we give this message because we are not
@@ -2153,9 +2159,9 @@ for my $w (@new_words) {
     next WORD if $w eq '1w';        # hack!
     if (my ($xword) = $w =~ m{\A [-]([a-z]+)}xms) {
         # remove the word from the found list
+        # and put it in the stash
         if ($is_found{$xword}) {
-            @found = grep { !m{\A $xword \b }xms  } @found;
-            delete $is_found{$xword};
+            @found = map { s{\A $xword \z }{$xword!}xms; $_;  } @found;
             ++$n_minus;
         }
         else {
