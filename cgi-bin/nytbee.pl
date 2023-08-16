@@ -1114,7 +1114,38 @@ sub do_reveal {
     }
 }
 
-if ($cmd eq 'ht') {
+if ($cmd eq 'pg') {
+    my $n = $ranks[8]{value} - $score;
+    if ($n == 0) {
+        $message = "You are at Genius ON THE NOSE! $thumbs_up"; 
+    }
+    elsif ($n < 0) {
+        $n = -$n;
+        my $pl = $n == 1? '': 's';
+        $message = "You have $n point$pl over Genius!";
+    }
+    else {
+        my $pl = $n == 1? '': 's';
+        $message = "$n point$pl to Genius";
+    }
+    $cmd = '';
+}
+elsif ($cmd eq 'hi') {
+    my $base = join '|', @base;
+    if ($screen_name =~ m{
+            \A
+            $base\d+
+            \z
+        }xms
+    ) {
+        $message = "Sorry, the HI (History) command is only for people that have chosen their own screen name.  Please do that with the <span class=cmd>SN</span> command. Read about it <a target=_blank href='/nytbee/help.html#screen_names'>here</a>.";
+    }
+    else {
+        $message = `$cgi_dir/nytbee_hi.pl $uuid $screen_name`;
+    }
+    $cmd = '';
+}
+elsif ($cmd eq 'ht') {
     if (! $ht_chosen) {
         $ht_chosen = 1;
         add_hints(10);
@@ -1283,19 +1314,21 @@ elsif (my ($gt, $item) = $cmd =~ m{\A \s* [#] \s*([>]?)(\d*|[a-z]?) \s* \z}xms) 
     my @words = grep { !$is_found{$_} }
                 @ok_words;
     if (! $item) {
+        # no hints added
         $message .= scalar(@words);
     }
     elsif ($item =~ m{\A\d+\z}xms) {
         my $n = grep { $gt? length > $item: length == $item } @words;
+        add_hints(1);
         $message .= $n . '<br>';
             # not sure why we need the <br>
     }
     else {
         my $n = grep { m{\A$item}xms } @words;
+        add_hints(1);
         $message .= $n . '<br>';
     }
     $cmd = '';
-    add_hints(1);
 }
 elsif ($cmd =~ m{\A d \s+ ([a-z ]+) \z}xms) {
     # dictionary definitions of full words not clues

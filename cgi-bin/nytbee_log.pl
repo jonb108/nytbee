@@ -71,9 +71,16 @@ while (my $line = <$in>) {
         $line =~ s{\A .* = \s+}{}xms;
         if ($line =~ m{\A rank(\d)}xmsi) {
             my $r = $1;
-            $line =~ s{rank\d \s+ \S+}{}xms;
+            $line =~ s{rank\d \s+ (\S+)}{}xms;
                 # leaving GN4L or GOTN
-            $line = "<span class=lg>Rank $rank[$r]$line</span>";
+            my $the_date = $1;
+            if ($the_date ne $date) {
+                $the_date =~ s{\A (....)(..)(..) \z}{ $2/$3/$1}xms;
+            }
+            else {
+                $the_date = '';
+            }
+            $line = "<span class=lg>Rank $rank[$r]$line</span>$the_date";
         }
         else {
             $line =~ s{(\w+)}
