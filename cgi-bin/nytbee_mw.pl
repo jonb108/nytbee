@@ -55,7 +55,7 @@ if (!$nwords) {
     exit;
 }
 for my $w (@new_words) {
-    $missing_words{$w} = 1;
+    $missing_words{$w} = $p_date;
 }
 my $pl = $nwords == 1? '': 's';
 print "Got $nwords word$pl.";

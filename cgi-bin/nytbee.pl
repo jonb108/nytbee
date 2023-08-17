@@ -3153,12 +3153,15 @@ elsif ($cmd eq 'sn') {
     }
     $cmd = '';
 }
-elsif ($cmd =~ m{\A sn \s+ (\S+) \z}xms) {
-    if ($cmd =~ m{[<>]}xms) {
+elsif ($cmd =~ m{\A sn \s+ (.+) \z}xms) {
+    my $new_name = lc $1;
+    if ($new_name =~ m{[<>]}xms) {
         $message = "Sorry, the characters &lt; and &gt; are not allowed in a screen name.";
     }
+    elsif ($new_name =~ m{\s}xms) {
+        $message = "Sorry, spaces are not allowed in a screen name.";
+    }
     else {
-        my $new_name = lc $1;
         $new_name =~ s{_([a-z])}{uc $1}xmsge;
         $new_name = ucfirst $new_name;
         if ($new_name eq $screen_name) {

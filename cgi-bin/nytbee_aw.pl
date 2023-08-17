@@ -50,19 +50,27 @@ if (! %params) {
         print "There are no recently submitted Missing Words.<p>\n";
         exit;
     }
-    print "These are the recently submitted Missing Words.<p>\n";
-    print "Click on the words for a definition from <a target=_blank style='color: blue' href='https://wordnik.com'>wordnik.com</a>.<br>\n";
-    print "Words with no definition are marked ???.<p>\n";
+    print "<div style='width: 80%'>These are the recently submitted Missing Words.<p>\n";
+    print "Click on the words for a definition from <a target=_blank style='color: blue' href='https://wordnik.com'>wordnik.com</a>.";
+    print " Words with no definition are marked ???.</div><p>\n";
     print "<form>\n";
     print "<table cellpadding=3>\n";
-    print "<tr><th></th><th>Add</th><th>Delete</th></tr>\n";
+    print "<tr><th></th><th>Add</th><th>Delete</th><th>Defer</th></tr>\n";
     for my $w (@words) {
         my $def = get("https://wordnik.com/words/$w");
         my $no_def = $def =~ m{Sorry,\s*no\s*definitions\s*found}xms? '???': '';
         my $W = ucfirst $w;
         print "<tr><td><a target=_blank href='https://wordnik.com/words/$w'>$W</a></td>";
         print "<td align=center><input type=radio name=$w value=add checked>";
-        print "<td align=center><input type=radio name=$w value=del>\n";
+        print "<td align=center><input type=radio name=$w value=delete>\n";
+        print "<td align=center><input type=radio name=$w value=defer>\n";
+        if ($missing_words{$w} != 1) {
+            my $s = $missing_words{$w};
+            if ($s =~ m{\A (....)(..)(..) \z}xms) {
+                $s = "$2/$3/$1";
+            }
+            print "<td><a target=_blank style='color: blue' href='https://logicalpoetry.com/cgi-bin/nytbee.pl?new_words=$missing_words{$w}'>$s</a></td>\n";
+        }
         if ($no_def) {
             print "<td>???</td>";
         }
@@ -81,8 +89,11 @@ else {
             $added_words{$w} = 1;
             ++$n_added;
         }
-        else {
+        elsif ($params{$w} eq 'delete') {
             push @deleted, ucfirst $w;
+        }
+        else {
+            # deferred
         }
     }
     my $del_msg = '';
