@@ -1258,11 +1258,7 @@ elsif ($uuid eq 'sahadev108!'
     $cmd = '';
 }
 elsif ($cmd =~ m{\A mw \s+ ([a-z ]*) \z}xms) {
-    $message = `$cgi_dir/nytbee_mw.pl $screen_name $date $1`;
-    $cmd = '';
-}
-elsif ($cmd =~ m{\A aw \s+ ([a-z ,:]*) \z}xms) {
-    $message = `$cgi_dir/nytbee_aw.pl $screen_name $date $1`;
+    $message = `$cgi_dir/nytbee_mw.pl $screen_name $date $seven $1`;
     $cmd = '';
 }
 elsif ($cmd eq 'swa') {

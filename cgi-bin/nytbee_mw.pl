@@ -1,6 +1,9 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use BeeUtil qw/
+    uniq_chars
+/;
 use DB_File;
 my %osx_usd_words_48;
 tie %osx_usd_words_48, 'DB_File', 'osx_usd_words-48.dbm';
@@ -8,6 +11,8 @@ my %first_appeared;
 tie %first_appeared, 'DB_File', 'first_appeared.dbm';
 my %added_words;
 tie %added_words, 'DB_File', 'added_words.dbm';
+my %missing_words;
+tie %missing_words, 'DB_File', 'missing_words.dbm';
 # key: date/cp#
 # value: number of messages in the forum for this puzzle
 my %num_msgs;
@@ -23,17 +28,23 @@ use Bee_DBH qw/
     $dbh
 /;
 
-my ($screen_name, $p_date, @words) = @ARGV;
+my ($screen_name, $p_date, $seven, @words) = @ARGV;
 my @new_words;
 for my $w (@words) {
-    if (exists $first_appeared{$w}) {
-        print "\U$w\E: WAS used in the NYT Bee<br>";
+    my $W = '<span class=red>' . uc($w) . '</span>';
+    my $s = $w;
+    $s =~ s{[$seven]}{}xmsg;
+    if (uniq_chars($s) > 1) {
+        print "$W: not a valid Bonus word for this puzzle<br>";
+    }
+    elsif (exists $first_appeared{$w}) {
+        print "$W: WAS used in the NYT Bee<br>";
     }
     elsif (exists $osx_usd_words_48{$w}) {
-        print "\U$w\E: IS in the large lexicon<br>";
+        print "$W: IS in the large lexicon<br>";
     }
     elsif (exists $added_words{$w}) {
-        print "\U$w\E: is <i>already</i> an Added Word<br>";
+        print "$W: is <i>already</i> an Added Word<br>";
     }
     else {
         push @new_words, $w;
@@ -43,6 +54,11 @@ my $nwords = @new_words;
 if (!$nwords) {
     exit;
 }
+for my $w (@new_words) {
+    $missing_words{$w} = 1;
+}
+my $pl = $nwords == 1? '': 's';
+print "Got $nwords word$pl.";
 my $ins_sth = $dbh->prepare(<<'EOS');
 
     INSERT
@@ -64,7 +80,7 @@ $ins_sth->execute($screen_name,
                   today()->as_d8(), $now->t24,
                   $p_date,
                   "Missing Word$pl: "
-                 . join(', ',
+                 . join(' ',
                         map { ucfirst }
                         @new_words),
                  );
