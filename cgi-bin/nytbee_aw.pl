@@ -84,12 +84,13 @@ else {
     my @deleted;
     my $n_added = 0;
     for my $w (sort keys %params) {
-        delete $missing_words{$w};
-        if ($params{$w} eq 'add') {
+        if ($params{$w} eq 'add' && ! exists $added_words{$w}) {
+            delete $missing_words{$w};
             $added_words{$w} = 1;
             ++$n_added;
         }
-        elsif ($params{$w} eq 'delete') {
+        elsif ($params{$w} eq 'delete' && exists $missing_words{$w}) {
+            delete $missing_words{$w};
             push @deleted, ucfirst $w;
         }
         else {
