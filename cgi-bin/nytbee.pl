@@ -1251,12 +1251,6 @@ elsif ($cmd =~ m{\A (d[+]?)(p|r|5|[a-z]\d+|[a-z][a-z]) \z}xms) {
     do_define($term, $Dcmd eq 'd+');
     $cmd = '';
 }
-elsif ($uuid eq 'sahadev108!'
-       && $cmd =~ m{\A ad([+-]) \s (\S+) \z}xms
-) {
-    $message = `$cgi_dir/nytbee_ad.pl $1 $2`;
-    $cmd = '';
-}
 elsif ($cmd =~ m{\A mw \s+ ([a-z ]*) \z}xms) {
     $message = `$cgi_dir/nytbee_mw.pl $screen_name $date $seven $1`;
     $cmd = '';
@@ -1292,6 +1286,11 @@ elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms) {
         my $pl = $nwords_stashed == 1? '': 's';
         $not_okay_words .= "$nwords_stashed word$pl stashed";
     }
+    $cmd = '';
+}
+elsif ($cmd eq 'xpf') {
+    # undocumented
+    $message = "@found";
     $cmd = '';
 }
 elsif ($cmd =~ m{\A sa \z}xms) {
@@ -3026,7 +3025,7 @@ elsif ($cmd eq 'boa') {
     $message = "<ul>$message</ul>";
 }
 # an undocumented cheat for Donut words
-elsif ($cmd eq 'xdd') {
+elsif ($cmd eq 'xxd') {
     my $donut_letters = $seven;
     $donut_letters =~ s{$center}{}xms;
     $cmd = '';
