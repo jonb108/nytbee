@@ -59,11 +59,14 @@ if (! %params) {
     for my $w (@words) {
         my $def = get("https://wordnik.com/words/$w");
         my $no_def = $def =~ m{Sorry,\s*no\s*definitions\s*found}xms? '???': '';
+        my $add_checked   = $no_def? '': 'checked';
+        my $defer_checked = $no_def? 'checked': '';
+        
         my $W = ucfirst $w;
         print "<tr><td><a target=_blank href='https://wordnik.com/words/$w'>$W</a></td>";
-        print "<td align=center><input type=radio name=$w value=add checked>";
+        print "<td align=center><input type=radio name=$w value=add $add_checked>";
         print "<td align=center><input type=radio name=$w value=delete>\n";
-        print "<td align=center><input type=radio name=$w value=defer>\n";
+        print "<td align=center><input type=radio name=$w value=defer $defer_checked>\n";
         if ($missing_words{$w} != 1) {
             my $s = $missing_words{$w};
             if ($s =~ m{\A (....)(..)(..) \z}xms) {

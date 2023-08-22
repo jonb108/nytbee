@@ -35,7 +35,7 @@ my $uuid = cgi_header($q);
 
 my $cgi = "$log/cgi-bin";
 my $date;
-my $all_words = $q->path_info() eq '/today';;
+my $all_words = $q->path_info() eq '/today'? 1: 0;
 #
 # the directory logicalpoetry.com/mkclues has an index.html
 # file that redirects to logicalpoetry.com/cgi-bin/nytbee_mkclues.pl/today
@@ -47,7 +47,7 @@ else {
     $date = $q->param('date');
 }
 open my $out, '>>', 'beelog/' . ymd();
-print {$out} substr($uuid, 0, 11) . " mkclues $date\n";
+print {$out} substr($uuid, 0, 11) . " mkclues $date $all_words\n";
 close $out;
 
 my $puzzle = $puzzle{$date};
