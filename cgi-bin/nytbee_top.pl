@@ -84,7 +84,7 @@ while (my $line = <$in>) {
         if (! exists $hints_for{$screen_name}) {
             my $uuid = $full_uuid{$r_uuid11};
             my %cur_puzzles = %{ eval $cur_puzzles_store{$uuid} };
-            $hints_for{$screen_name} = (split ' ', $cur_puzzles{$date})[0];
+            $hints_for{$screen_name} = (split ' ', $cur_puzzles{$date})[1];   # => 1 OVERALL_HINTS
         }
     }
     elsif (my ($b_uuid11, $bingo_score, $bingo_hints)

@@ -70,9 +70,10 @@ show_forum.pl \
 forum_flag.pl \
 fmod.pl \
 get_post.pl \
+status.pl \
+fix_cur \
 ini \
 fin \
-status.pl \
 buddy.txt
 
 # these will not change

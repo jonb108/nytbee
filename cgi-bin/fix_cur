@@ -1,0 +1,67 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use DB_File;
+use Data::Dumper;
+$Data::Dumper::Indent = 0;
+$Data::Dumper::Terse  = 1;
+
+my %cur_puzzles_store;
+tie %cur_puzzles_store, 'DB_File', 'cur_puzzles_store.dbm';
+my %cur2_puzzles_store;
+tie %cur2_puzzles_store, 'DB_File', 'cur_puzzles_store2.dbm';
+my $n = 0;
+my $n2 = 0;
+UID:
+while (my ($uuid, $s) = each %cur_puzzles_store) {
+    ++$n;
+    # 092ff8fb-2342-11ed-9e8f-c3acfa2ac10a
+    # 0123456789012345678901234567890
+    #           1         2
+    if (length($uuid) < 24 || substr($uuid, 23, 1) ne '-') {
+        if ($uuid ne 'blahblah') {
+            process($uuid, eval $s);
+        }
+        next UID;
+    }
+    my %puzzles = %{ eval $s };
+    if ($@) {
+        print "$uuid problem $s\n";
+    }
+    else {
+        my $max = 0;
+        my @dates = sort keys %puzzles;
+        DATE:
+        for my $d (@dates) {
+            if (index($d, 'CP') >= 0) {
+                next DATE;
+            }
+            # 20231010
+            # 01234567
+            my $nmonths = (substr($d, 2, 2) - 18)*12 + substr($d, 4, 2);
+            if ($nmonths > $max) {
+                $max = $nmonths;
+            }
+        }
+        if ($max >= 66) {
+            process($uuid, \%puzzles);
+        }
+    }
+}
+print "total $n $n2\n";
+
+sub process {
+    my ($uuid, $href) = @_;
+    my %puzzles2;
+    my $n = 0;
+    for my $d (sort keys %$href) {
+        ++$n;
+        my ($nhints, $ap, $ht_chosen,
+            $tl_chosen, $rank, $score_at_first_hint,
+            @found) = split ' ', $href->{$d};
+        $puzzles2{$d} = "$nhints $nhints $ap $ht_chosen $tl_chosen $rank $score_at_first_hint @found";
+    }
+    print "good $uuid $n\n";
+    $cur2_puzzles_store{$uuid} = Dumper(\%puzzles2);
+    ++$n2;
+}

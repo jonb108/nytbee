@@ -348,6 +348,8 @@ my $show_Heading    = exists $params{show_Heading}?
                              $params{show_Heading}: !$mobile;
 my $show_WordList   = exists $params{show_WordList}?
                              $params{show_WordList}: 1;
+my $which_wl        = exists $params{which_wl}?
+                             $params{which_wl}: 'pdlbs';
 my $show_BingoTable = exists $params{show_BingoTable}?
                              $params{show_BingoTable}: 0;
 my $bonus_mode      = exists $params{bonus_mode}?
@@ -782,6 +784,7 @@ my @ranks = (
 
 my (@found,     # includes valid puzzle words, lexicon+ words, donut- words
     $nhints,
+    $n_overall_hints,
     $ht_chosen,
     $tl_chosen,
     $score_at_first_hint,
@@ -801,18 +804,20 @@ sub add_hints {
         $score_at_first_hint = $score;
     }
     $nhints += $n;
+    $n_overall_hints += $n;
 }
 
 if (exists $cur_puzzles{$date}) {
     my ($ap, $rank);    # all pangrams is not needed here...
                         # rank is recomputed
-    ($nhints, $ap, $ht_chosen,
+    ($nhints, $n_overall_hints, $ap, $ht_chosen,
      $tl_chosen, $rank, $score_at_first_hint,
      @found)
         = split ' ', $cur_puzzles{$date};
 }
 else {
     $nhints    = 0;
+    $n_overall_hints = 0;
     $ht_chosen = 0;
     $tl_chosen = 0;
     $score_at_first_hint = -1;  # -1 since we may ask for a hint
@@ -1172,6 +1177,12 @@ elsif ($cmd eq 'mo') {
 }
 elsif ($cmd eq 'wl') {
     $show_WordList = ! $show_WordList;
+    $which_wl = 'pdlbs';
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A wl \s* ([pdlbs]+)}xms) {
+    $show_WordList = 1;
+    $which_wl = $1;
     $cmd = '';
 }
 elsif ($cmd eq 'bt') {
@@ -1260,6 +1271,7 @@ elsif ($cmd eq 'swa') {
     # and clear the hints.
     s/([a-z])$/$1!/ for @found;   # fun!
     $nhints = 0;
+    # do not clear $n_overall_hints
     $message = 'Stashed';
     $cmd = '';
 }
@@ -1370,6 +1382,7 @@ elsif ($cmd =~ m{\A c \s+ y \s*(a?) \z}xms) {
     @found = $all? (): grep { /[$ext_sig]\z/ } @found;
                        # leave the Extra words in place
     $nhints = 0;
+    # do not clear $n_overall_hints
     $ht_chosen = 0;
     $tl_chosen = 0;
     $score_at_first_hint = -1;
@@ -2408,22 +2421,22 @@ if ($show_WordList) {
                @stash;
         
     if ($word_col) {
-        $extra_words .= one_col('Donut:',  \@donut);
-        $extra_words .= one_col('Lexicon', \@lexicon);
-        $extra_words .= one_col('Bonus',   \@bonus);
-        $extra_words .= one_col('Stash',   \@stash);
+        $extra_words .= one_col('Donut:',  \@donut  ) unless $which_wl =~ /d/;
+        $extra_words .= one_col('Lexicon', \@lexicon) unless $which_wl =~ /l/;
+        $extra_words .= one_col('Bonus',   \@bonus  ) unless $which_wl =~ /b/;
+        $extra_words .= one_col('Stash',   \@stash  ) unless $which_wl =~ /s/;
         if ($extra_words) {
             $extra_words = "<br>$extra_words";
         }
     }
     else {
         $extra_words .= dlb_row('Donut:',   \@donut)
-            unless $bonus_mode;
+            unless $bonus_mode || $which_wl !~ /d/;
         $extra_words .= dlb_row('Lexicon:', \@lexicon)
-            unless $bonus_mode;
-        $extra_words .= dlb_row('Bonus:',   \@bonus);
+            unless $bonus_mode || $which_wl !~ /l/;
+        $extra_words .= dlb_row('Bonus:',   \@bonus) if $bonus_mode || $which_wl =~ /b/;
         $extra_words .= dlb_row('Stash:',   \@stash)
-            unless $bonus_mode;
+            unless $bonus_mode || $which_wl !~ /s/;
         if ($extra_words) {
             # convert rows to a table...
             $extra_words = '<p>'
@@ -2629,7 +2642,7 @@ $found_words = "<div class=found_words>$found_words</div>";
 if ($bonus_mode) {
     $found_words = '';
 }
-if (! $show_WordList) {
+if (! $show_WordList || $which_wl !~ /p/) {
     $found_words = '';
 }
 else {
@@ -3302,7 +3315,7 @@ for my $p (@pangrams) {
 }
 
 $cur_puzzles{$date} = join ' ',
-    $nhints, $all_pangrams, $ht_chosen,
+    $nhints, $n_overall_hints, $all_pangrams, $ht_chosen,
     $tl_chosen, $rank, $score_at_first_hint,
     @found
     ;
@@ -3793,6 +3806,7 @@ $heading
 <input type=hidden name=show_WordList value=$show_WordList>
 <input type=hidden name=show_BingoTable value=$show_BingoTable>
 <input type=hidden name=bonus_mode value=$bonus_mode>
+<input type=hidden name=which_wl value=$which_wl>
 <input type=hidden name=forum_mode value=$forum_mode>
 <input type=hidden name=show_RankImage value=$show_RankImage>
 <input type=hidden name=show_GraphicStatus value=$show_GraphicStatus>

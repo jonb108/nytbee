@@ -145,7 +145,7 @@ You do not have to give clues for all of the words.  You can return
 here to update and revise your clues.
 <p>
 Clicking on the words will show a brief dictionary definition.
-SHIFT-clicking on the words will give a <i>complete</i> dictionary definition.
+Clicking on that brief defintion will give a <i>complete</i> definition.
 You may, instead, wish to give clues that are more
 ambiguous, clever, wordplay &#128522; - like clues for a crossword puzzle.
 $prior_clues
