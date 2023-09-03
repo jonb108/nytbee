@@ -242,7 +242,7 @@ sub my_puzzles {
     map {
         [
             $_,
-            (split ' ', $cur_puzzles{$_})[1, 4]
+            (split ' ', $cur_puzzles{$_})[2, 5]     # all_pangrams?, rank
         ]
     }
     sort
