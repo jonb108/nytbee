@@ -4,7 +4,7 @@
 <meta charset='UTF-8'>
 <title>The ENHANCED NYT Spelling Bee Puzzle</title>
 <link rel='stylesheet' type='text/css' href='css/style.css'/>
-<script src='js/nytbee5.js'></script>
+<script src='js/nytbee6.js'></script>
 </head>
 <body>
 <h1><img height=70 src='pics/bee-logo.png'><br>The Spelling Bee Puzzle<br>of<br>
@@ -63,7 +63,6 @@ And I have.  The complete source code for this project is on
 <a href=#gn4l>Genius No 4 Letter</a><br>
 <a href=#stash>The Stash</a><br>
 <a href=#donut>Donut, Lexicon, and Bonus Words</a><br>
-<a href=#missing>Missing Words and Added Words</a><br>
 <a href=#archival_and_community>Archival and Community Puzzles</a><br>
 <a href=#forum>Discussion Forum</a><br>
 <a href=#colors>Colors</a><br>
@@ -138,7 +137,7 @@ The many advantages of this alternate way include:
 <li>You can play the large archive of NYT puzzles.
 <li>Dictionary definitions as hints - to enlarge and challenge your vocabulary.
 <li>See how other players are doing and how many hints they needed.
-<li>Get &#8220;credit&#8221; for finding <a href='#donut'>donut, lexicon, and bonus</a> 
+<li>Get &#8220;credit&#8221; for finding <a href='#donut'>Donut, Lexicon, and Bonus</a> 
 words.  You can also see how many extra words others have found.
 This introduces <i>another</i> kind of fun Spelling Bee <a href=#competition>competition</a>.
 <li>There is a <a href=#forum>Discussion Forum</a> built-in to the software.
@@ -695,8 +694,10 @@ which had never occurred in an NYT Spelling Bee before - how fun is that! &#1285
 Note that <span class=purple>Arming</span>, <span class=green>Grammarian</span>, and <span class=purple>Margin</span> are <i>pangram</i> donut words because
 they use all 6 letters.  <span class=purple>Arming</span> and <span class=purple>Margin</span> are <i>perfect</i> pangram donut words because they are 6 letters long.  
 <p>
-Donut Words are deemed acceptable if they occur in the large lexicon
-or have appeared before in an NYT Bee Puzzle.
+Donut Words are deemed acceptable if they occur in the <a href=#lexicon>large lexicon</a>
+or have appeared before in an NYT Bee Puzzle
+OR if they have a definition at
+<a target=_blank href='https://wordnik.com'>wordnik.com</a>.
 <p>
 If you try to find Donut (or Lexicon) words by typing words that you don&#8217;t know
 and suspect <i>may</i> be a valid word you may be pleasantly surprised
@@ -723,9 +724,7 @@ discussions and debates in the HiveMind Forum.  One example is
 the word URTICARIA - see 
 <a target=_blank href='https://www.nytimes.com/2022/05/16/crosswords/spelling-bee-forum.html#commentsContainer'>the NYT HiveMind forum for May 16, 2022</a>.
 These words are called &#8220;Lexicon Words&#8221; because they <b>are</b> to be found
-in the large lexicon of words in /usr/share/dict/words on OSX.
-This lexicon contains 235,886 words of which 98,634 of them have a
-length >= 4 and contain no more than 7 unique letters.
+in the <a href=#lexicon>large lexicon</a>.
 <a name=bonus></a>
 <h3>Bonus</h3>
 When seeking questing looking for words in the allowed list
@@ -740,12 +739,15 @@ In this puzzle from November 13, 2022:
 <img src=pics/22-11-13.png width=300>
 <p>
 the words VICINIT<span class=red1>Y</span> and INCITE<span class=red1>M</span>ENT are Bonus words which use an additional Y and M respectively.
-Bonus words must appear either in the large lexicon or in the list of previous
-NYT Puzzle words.
+Bonus words must appear either in the <a href=#lexicon>large lexicon</a>
+or in the list of previous
+NYT Puzzle words
+OR if they have a definition at
+<a target=_blank href='https://wordnik.com'>wordnik.com</a>.
 The additional letter <i>can</i> be an <span class=red1 style="font-size: 20pt">S</span> (finally!).
 <span class=red1>S</span>CIENCE is another Bonus word for the above puzzle. 
-Note that very few plurals occur in the large lexicon and that
-many words ending in ING and ED are absent as well.
+Note that very few plurals occur in the <a href=#lexicon>large lexicon</a>
+and that many words ending in ING and ED are absent as well.
 <p>
 It seems that Bonus words are often more colorful and intriguing
 than the typical boring &#8220;normal&#8221; words.
@@ -883,47 +885,6 @@ a fun competitive drive to try to find more and more words.
 Note that CW also shows OW and BOA scores.
 </td></tr>
 </table>
-<a name=missing></a>
-<h2>Missing Words and Added Words
-<a class=top href=#toc><img src=pics/top.gif height=25></a>
-</h2>
-An Extra word (Donut, Lexicon, Bonus)
-is accepted if it has occured in an NYT puzzle or if it appears
-in the &#8220;large lexicon&#8221;.
-Even though the large lexicon <b>is</b> <i>quite</i> large and contains
-many rare and obscure and jargony words, there <i>are</i> words
-that are missing.  One such is INTERNET!  Another is RAZZMATAZZ. 
-Another is ENJOYED.
-This is frustrating &#128542; &#128562; &#128545;.  The NYT HiveMind Forum is full of complaints
-about words that are missing from the &#8220;allowed list&#8221; of
-the daily NYT puzzle.  One <i>can</i> email
-<a href='mailto:buzzwords@nytimes.com'>buzzwords@nytimes.com</a>
-about this but
-that email account is generally regarded as a black hole.
-<p style="margin: .1in; margin-left: .4in">
-<svg width=60 height=60>
-<circle r=30 cx=30 cy=30>
-</svg>
-</p>
-If you find an Extra word that is clearly missing
-(like INTERNET) there <i>is</i> a solution:
-<ul>
-<span class=cmd>MW</span> INTERNET
-</ul>
-This puts a message in the Forum saying &#8220;Missing Word: INTERNET&#8221;.
-A Bee administrator will see the message and, if they agree,
-will add the word to a list of &#8220;Added Words&#8221;.  The word
-will then be accepted as an Extra word for all puzzles.
-<p>
-You can give multiple words to <span class=cmd>MW</span>.
-<ul>
-<span class=cmd>MW</span> RAZZMATAZZ  ENJOYED
-</ul>
-<p>
-Some will say that this will add ALL kinds of words that end in ED and ING.
-This is true but note that there are ALREADY many many such words
-in the NYT puzzles.  Using the <a href=#word_search>Bee Word Search</a> mechanism,
-of the 9713 unique words in the NYT Bee puzzles there are 1022 that end in ED and 906 that end in ING! (As of 8/10/23).  These include the questionable GABBED and GABBING &#128540;.
 <a name=archival_and_community></a>
 <h2>Archival and Community Puzzles
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -1280,7 +1241,7 @@ lists of pangramic words to choose from:
 <ol>
 <li>Pangrams from NYT Puzzles
 <li>Pangramic words from a list of 10,000 common English words
-<li>Pangramic words from a large lexicon
+<li>Pangramic words from the <a href=#lexicon>large lexicon</a>
 </ol>
 These lists are disjoint.
 <li>It is overwhelming to be confronted with such a large number
@@ -1296,7 +1257,7 @@ text field for this purpose.
 <p>
 For example, the word &#8220;<span style="color: purple">enigma</span>&#8221; yields
 &#8220;<span class=green>magazine</span>&#8221; from the NYT puzzles, &#8220;<span class=green>demanding examining messaging remaining</span>&#8221;
-from the 10,000 word list, and 54 (!) words from the large lexicon - most
+from the 10,000 word list, and 54 (!) words from the <a href=#lexicon>large lexicon</a> - most
 of which are too esoteric for a &#8220;reasonable&#8221; puzzle.
 However &#128522; ... among those 54 I do see these that are quite reasonable:
 <ul class=green>
@@ -1439,7 +1400,7 @@ like so: <span class=cmd>D+P</span> or <span class=cmd>D+B8</span>.
 <tr><td><span class=cmd>FT&nbsp;&nbsp;&lt;word&gt;</span></td><td>Show the date on which the given word appeared for the <span class=cmd>f</span>irst <span class=cmd>t</span>ime.<br><br></td></tr>
 <tr><td colspan=2>If you are a minimalist:</td></tr>
 <tr><td><span class=cmd>HE</span></td><td>Toggle the showing of the <span class=cmd>he</span>ader.  Default is to show it.</td></tr>
-<tr><td><span class=cmd>WL</span></td><td>Toggle the showing of the list of found words.  Default is to show the <span class=cmd>w</span>ord <span class=cmd>l</span>ists (puzzle, donut, lexicon, bonus and stash).</td></tr>
+<tr><td><span class=cmd>WL</span></td><td>Toggle the showing of the list of found words.  Default is to show the <span class=cmd>w</span>ord <span class=cmd>l</span>ists (Puzzle, Donut, Lexicon, Bonus and Stash).</td></tr>
 <tr><td><span class=cmd>WL &lt;which&gt;</span></td><td>Similar to WL above but you can specify which word lists you want to see: <span class=cmd>&lt;which&gt;</span> is one or more of <span class=cmd>P</span>, <span class=cmd>D,</span> <span class=cmd>L,</span> <span class=cmd>B,</span> and <span class=cmd>S</span>.<p><ul><span class=cmd>P</span>uzzle<br><span class=cmd>D</span>onut<br><span class=cmd>L</span>exicon<br><span class=cmd>B</span>onus<br><span class=cmd>S</span>tash</ul>Like so:<p>
 <ul>
     <span class=cmd>WL&nbsp;&nbsp;PS</span>
@@ -1688,7 +1649,7 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-1944 puzzles with
+1948 puzzles with
 a total of 9761 different words!
 <p>
 Which puzzles from the large archive to play?
@@ -1834,5 +1795,12 @@ This post in the HiveMind on August 14, 2023 shows that being able to click on w
 words is a useful and desired thing:
 <p>
 <img style="width: 600px" src=pics/definitions-8-14-23.png>
+<p>
+<a name=lexicon></a>
+<span class=red>&dagger;&dagger;&dagger;&dagger;</span><br>
+The file /usr/share/dict/words on OSX is known as &#8220;the large lexicon&#8221;.
+This collection of words contains 235,886 words of which 98,634 of them have a
+length >= 4 and contain no more than 7 unique letters.
+Surprisingly, it is missing many words - such as INTERNET! &#128540;
 </body>
 </html>

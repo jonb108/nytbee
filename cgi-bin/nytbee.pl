@@ -60,6 +60,9 @@ use BeeDBM qw/
 use SvgHex qw/
     svg_hex
 /;
+use JSON qw/
+    decode_json
+/;
 use Date::Simple qw/
     today
     date
@@ -900,21 +903,8 @@ sub define {
         # just one word but perhaps several hints for that word
     }
     if (! exists $definition_of{$word}) {
-        # put this in BeeUtil???
-        my $html = get_html("https://www.wordnik.com/words/$word");
-        my ($def1) = $html =~ m{[<]meta\s content='$word:\ ([^']*)'}xms;
-        if ($def1) {
-            $def1 =~ s{[<][^>]*[>]}{}xmsg;
-            $def1 =~ s{[&][#]39;}{'}xmsg;
-            $def1 =~ s{$word}{'*' x length($word)}xmsegi;
-            $def1 =~ s{[^[[:ascii]]]}{}xmsg;
-            eval { $definition_of{$word} = $def1; };
-            if ($@) {
-                # try this:
-                $def1 =~ s{:.*}{.}xms;
-                eval { $definition_of{$word} = $def1; };
-            }
-        }
+        my $rv = in_wordnik($word);
+            # the above may set $definition_of{$word}
     }
     if ((!$def || $clue_plus) && exists $definition_of{$word}) {
         my $s = $definition_of{$word};
@@ -1260,10 +1250,6 @@ elsif ($cmd =~ m{\A (d[+]?)(p|r|5|[a-z]\d+|[a-z][a-z]) \z}xms) {
     my $Dcmd = $1;
     my $term = $2;
     do_define($term, $Dcmd eq 'd+');
-    $cmd = '';
-}
-elsif ($cmd =~ m{\A mw \s+ ([a-z ]*) \z}xms) {
-    $message = `$cgi_dir/nytbee_mw.pl $screen_name $date $seven $1`;
     $cmd = '';
 }
 elsif ($cmd eq 'swa') {
@@ -1930,6 +1916,25 @@ sub pangram_check {
     return '';
 }
 
+sub in_wordnik {
+    my ($word) = @_;
+    my $json = get_html("https://api.wordnik.com/v4/word.json/$word/definitions?api_key=jtatm78lwq4i5ed4y0touh93ftt29832ti8o24bbh6ek5ta5l");
+    my $aref = decode_json($json);
+    for my $href (@$aref) {
+        if (exists $href->{text}) {
+            my $def = $href->{text};
+            $added_words{$word} = 1;
+            $def =~ s{[<][^>]*[>]}{}xmsg;
+            $def =~ s{[&][#]39;}{'}xmsg;
+            $def =~ s{$word}{'*' x length($word)}xmsegi;
+            $def =~ s{[^[[:ascii]]]}{}xmsg;
+            $definition_of{$word} = $def;
+            return 1;
+        }
+    }
+    return 0;
+}
+
 sub check_word {
     my ($w) = @_;
     my $lw = length($w);
@@ -1944,6 +1949,7 @@ sub check_word {
             if (   $osx_usd_words_48{$w}
                 || $first_appeared{$w}
                 || $added_words{$w}
+                || in_wordnik($w)
             ) {
                 return "bonus";
             }
@@ -1982,6 +1988,7 @@ sub check_word {
         if (   $osx_usd_words_47{$w}
             || $first_appeared{$w}
             || $added_words{$w}
+            || in_wordnik($w)
         ) {
             # we'll keep the word but not
             # count it for the score of the puzzle
