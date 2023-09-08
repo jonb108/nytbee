@@ -1919,6 +1919,9 @@ sub pangram_check {
 sub in_wordnik {
     my ($word) = @_;
     my $json = get_html("https://api.wordnik.com/v4/word.json/$word/definitions?api_key=jtatm78lwq4i5ed4y0touh93ftt29832ti8o24bbh6ek5ta5l");
+    if (! $json) {
+        return 0;
+    }
     my $aref = decode_json($json);
     for my $href (@$aref) {
         if (exists $href->{text}) {
