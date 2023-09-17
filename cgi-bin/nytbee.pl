@@ -361,8 +361,15 @@ my $forum_mode      = exists $params{forum_mode}?
                              $params{forum_mode}: 0;
 my $show_RankImage  = exists $params{show_RankImage}?
                              $params{show_RankImage}: 1;
-my $show_GraphicStatus = exists $params{show_GraphicStatus}?
-                             $params{show_GraphicStatus}: 0;
+#my $show_GraphicStatus = exists $params{show_GraphicStatus}?
+#                             $params{show_GraphicStatus}: 0;
+my $show_GraphicStatus = 0;
+if ($message_for{$uuid}) {
+    my ($n, $date, $status) = split ' ', $message_for{$uuid};
+    if ($status == 1) {
+        $show_GraphicStatus = 1;
+    }
+}
 
 my $forum_post_to_edit = 0;
 
@@ -1207,7 +1214,9 @@ elsif ($cmd eq 'im') {
     $cmd = '';
 }
 elsif ($cmd eq 'st') {
-    $show_GraphicStatus = ! $show_GraphicStatus;
+    $show_GraphicStatus = $show_GraphicStatus? 0: 1;
+    my ($n, $date, $status) = split ' ', $message_for{$uuid};
+    $message_for{$uuid} = "$n $date $show_GraphicStatus";
     $cmd = '';
 }
 # do we have a reveal command?
@@ -3822,7 +3831,7 @@ $heading
 <input type=hidden name=which_wl value=$which_wl>
 <input type=hidden name=forum_mode value=$forum_mode>
 <input type=hidden name=show_RankImage value=$show_RankImage>
-<input type=hidden name=show_GraphicStatus value=$show_GraphicStatus>
+<!-- <input type=hidden name=show_GraphicStatus value=$show_GraphicStatus> -->
 $letters
 <div style="width: 640px">$message</div>
 <input type=hidden name=hidden_new_words id=hidden_new_words>

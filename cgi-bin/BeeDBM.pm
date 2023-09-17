@@ -126,9 +126,10 @@ tie %definition_of, 'DB_File', 'definition_of.dbm';
 our %message_for;
 tie %message_for, 'DB_File', 'message_for.dbm';
 # key is the uuid ("session" id)
-# value is "# date"
+# value is "# date 1/0"
 # the number of the last message (in directory message/)
 # the user saw and the date they saw it
+# the last number is for status = 1 is graphical, 0 is numeric
 
 our %uuid_colors_for;
 tie %uuid_colors_for, 'DB_File', 'uuid_colors_for.dbm';
