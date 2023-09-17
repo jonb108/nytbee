@@ -1170,9 +1170,12 @@ elsif ($cmd eq 'wl') {
     $which_wl = 'pdlbs';
     $cmd = '';
 }
-elsif ($cmd =~ m{\A wl \s* ([pdlbs]+)}xms) {
+elsif ($cmd =~ m{\A wl \s* ([pdlbs*]+)}xms) {
     $show_WordList = 1;
     $which_wl = $1;
+    if ($which_wl =~ /[*]/) {
+        $which_wl = 'pdlbs';
+    }
     $cmd = '';
 }
 elsif ($cmd eq 'bt') {
