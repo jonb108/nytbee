@@ -1942,7 +1942,7 @@ sub in_wordnik {
             $def =~ s{[<][^>]*[>]}{}xmsg;
             $def =~ s{[&][#]39;}{'}xmsg;
             $def =~ s{$word}{'*' x length($word)}xmsegi;
-            $def =~ s{[^[[:ascii]]]}{}xmsg;
+            $def =~ s{[^[:ascii:]]}{}xmsg;
             $definition_of{$word} = $def;
             return 1;
         }
