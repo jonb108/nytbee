@@ -190,9 +190,9 @@ my $focus = $mobile? '': 'set_focus();';
 #
 
 my %cur_puzzles;
-my $s = $cur_puzzles_store{$uuid};
-if ($s) {
-    %cur_puzzles = %{ eval $s };    # the key point #1 (see below for #2)
+my $cps = $cur_puzzles_store{$uuid};
+if ($cps) {
+    %cur_puzzles = %{ eval $cps };    # the key point #1 (see below for #2)
 }
 # otherwise this is a brand new user...
 
@@ -1177,7 +1177,7 @@ elsif ($cmd eq 'wl') {
     $which_wl = 'pdlbs';
     $cmd = '';
 }
-elsif ($cmd =~ m{\A wl \s* ([pdlbs*]+)}xms) {
+elsif ($cmd =~ m{\A wl \s* ([pdlbsa]+)}xms) {
     $show_WordList = 1;
     $which_wl = $1;
     if ($which_wl =~ /a/) {
@@ -1938,13 +1938,31 @@ sub in_wordnik {
     for my $href (@$aref) {
         if (exists $href->{text}) {
             my $def = $href->{text};
-            $added_words{$word} = 1;
             $def =~ s{[<][^>]*[>]}{}xmsg;
             $def =~ s{[&][#]39;}{'}xmsg;
             $def =~ s{$word}{'*' x length($word)}xmsegi;
             $def =~ s{[^[:ascii:]]}{}xmsg;
             $definition_of{$word} = $def;
             return 1;
+        }
+    }
+    return 0;
+}
+
+# https://www.grammarly.com/blog/plural-nouns/
+sub an_S_or_ES_word {
+    my ($w) = @_;
+    if ($w !~ m{s$}xmsi) {
+        return 0;
+    }
+    $w =~ s{s$}{}xmsi;
+    if (in_wordnik($w)) {
+        return uc $w;
+    }
+    if ($w =~ m{(s|ss|sh|ch|x|z)e$}xmsi) {
+        $w =~ s{e$}{}xms;
+        if (in_wordnik($w)) {
+            return uc $w;
         }
     }
     return 0;
@@ -1964,9 +1982,17 @@ sub check_word {
             if (   $osx_usd_words_48{$w}
                 || $first_appeared{$w}
                 || $added_words{$w}
-                || in_wordnik($w)
             ) {
                 return "bonus";
+            }
+            elsif (in_wordnik($w)) {
+                if (my $root = an_S_or_ES_word($w)) {
+                    return "Sorry, this word is just a plural OR a 3rd person singular simple present indicative form of " . red($root) . ".";
+                }
+                else {
+                    $added_words{$w} = 1;
+                    return "bonus";
+                }
             }
         }
     }
