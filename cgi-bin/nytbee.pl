@@ -1180,7 +1180,7 @@ elsif ($cmd eq 'wl') {
 elsif ($cmd =~ m{\A wl \s* ([pdlbs*]+)}xms) {
     $show_WordList = 1;
     $which_wl = $1;
-    if ($which_wl =~ /[*]/) {
+    if ($which_wl =~ /a/) {
         $which_wl = 'pdlbs';
     }
     $cmd = '';

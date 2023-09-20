@@ -72,15 +72,11 @@ while (my $line = <$in>) {
             $uuid_screen_name{$r_uuid11} = $screen_name;
             $screen_name_uuid{$screen_name} = $r_uuid11;
         }
-        if (exists $rank_for{$screen_name}
-            && $rank < $rank_for{$screen_name}
-        ) {
-            next LINE;
-        }
         $rank_for{$screen_name} = $rank;
         if ($line =~ m{(gn4l|gotn)\z}xmsi) {
             $genius_for{$screen_name} = $1;
         }
+        $genius_for{$screen_name} ||= '';
         if (! exists $hints_for{$screen_name}) {
             my $uuid = $full_uuid{$r_uuid11};
             my %cur_puzzles = %{ eval $cur_puzzles_store{$uuid} };
@@ -216,7 +212,7 @@ for my $screen_name (sort {
         $prev_rank = $rank_for{$screen_name};
     }
     my $red_star = $screen_name eq $my_screen_name? ' <span class="rt red">*</span>': '';
-    my $gn = $genius_for{$screen_name};
+    my $gn = $genius_for{$screen_name} || '';
     if ($gn) {
         $gn .= ' ';
     }
