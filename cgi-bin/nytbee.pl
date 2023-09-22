@@ -2952,7 +2952,7 @@ elsif ($cmd eq 'top') {
     untie %uuid_screen_name;
     untie %screen_name_uuid;
     my $nwords = @ok_words;
-    $message .= `$cgi_dir/nytbee_top.pl $date $nwords $screen_name`;
+    $message .= `$cgi_dir/nytbee_top.pl $date $nwords $seven $screen_name`;
     $cmd = '';
 }
 elsif ($cmd =~ m{\A cw \s* (\d*) \z}xms) {

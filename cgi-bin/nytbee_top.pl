@@ -23,14 +23,29 @@ use BeeUtil qw/
     JON
 /;
 use DB_File;
+my %rank_name = (
+    0 => 'Beginner',
+    1 => 'Good Start',
+    2 => 'Moving Up',
+    3 => 'Good',
+    4 => 'Solid',
+    5 => 'Nice',
+    6 => 'Great',
+    7 => 'Amazing',
+    8 => 'Genius',
+    9 => 'Queen Bee',
+);
 my $date = shift;
+my $disp_date = $date;
+$disp_date =~ s{\A (....)(..)(..) \z}{$2/$3/$1}xms;
 my $qb_nwords = shift;
+my $seven = shift;
 my $my_screen_name = shift;
+my ($nbonus, $ndonut, $nlexicon, $boa);
 my $sp = '&nbsp;' x 2;
 my $in;
 if (! open $in, '<', "beelog/$date") {
-    $date =~ s{\A (....)(..)(..) \z}{$2/$3/$1}xms;
-    print "No log for $date";
+    print "No log for $disp_date";
     exit;
 }
 # Bingo is complicated! :) :(
@@ -80,7 +95,22 @@ while (my $line = <$in>) {
         if (! exists $hints_for{$screen_name}) {
             my $uuid = $full_uuid{$r_uuid11};
             my %cur_puzzles = %{ eval $cur_puzzles_store{$uuid} };
-            $hints_for{$screen_name} = (split ' ', $cur_puzzles{$date})[1];   # => 1 OVERALL_HINTS
+            my @terms = split ' ', $cur_puzzles{$date};
+            $hints_for{$screen_name} = $terms[1];   # => 1 OVERALL_HINTS
+            # bonus is *, donut is -
+            if ($screen_name eq $my_screen_name) {
+                my @bonus = grep { /[*]$/ } @terms;
+                $nbonus = @bonus;
+                my %additional_letters;
+                for my $w (@bonus) {
+                    my $x = $w;
+                    $x =~ s{[$seven]}{}xmsg;
+                    $additional_letters{substr($x, 0, 1)} = 1;
+                }
+                $boa = keys %additional_letters;
+                $ndonut = grep { /[-]$/ } @terms;
+                $nlexicon = grep { /[+]$/ } @terms;
+            }
         }
     }
     elsif (my ($b_uuid11, $bingo_score, $bingo_hints)
@@ -127,7 +157,52 @@ for my $screen_name (keys %max_bingo_score_for) {
     $bingo_score_for{$screen_name} += $max_bingo_score_for{$screen_name};
     $bingo_hints_for{$screen_name} += $max_bingo_hints_for{$screen_name};
 }
-print scalar(keys %rank_for) . " people</p>";
+#
+# for the Genius people see how close
+# they got to Queen Bee.
+#
+my %queen_minus_for;
+for my $sn (keys %rank_for) {
+    if ($rank_for{$sn} == 8) {
+        # Genius
+        my $uuid11 = $screen_name_uuid{$sn};
+        my $full_uuid = $full_uuid{$uuid11};
+        # check $@ and return value 
+        my %cur_puzzles = %{ eval $cur_puzzles_store{$full_uuid} };
+        my $nwords = grep { /^[a-z]+$/ }
+                     split ' ', $cur_puzzles{$date};
+        my $left = $qb_nwords - $nwords;
+        $queen_minus_for{$sn} = $left;
+    }
+}
+my $share = '';
+if ($bingo_score_for{$my_screen_name}) {
+    $share = "Bingo $bingo_score_for{$my_screen_name}, $bingo_hints_for{$my_screen_name} Hints\\n";
+}
+if ($rank_for{$my_screen_name}) {
+    $share .= "$rank_name{$rank_for{$my_screen_name}}";
+    if ($genius_for{$my_screen_name}) {
+        $share .= ", $genius_for{$my_screen_name}";
+    }
+    if ($rank_for{$my_screen_name} == 8) {
+        $share .= ", $queen_minus_for{$my_screen_name} words to QB\\n";
+    }
+    $share .= ", $hints_for{$my_screen_name} Hints\\n";
+    if ($nbonus) {
+        $share .= "$nbonus Bonus, $boa BOA";
+    }
+    if ($ndonut) {
+        $share .= ", $ndonut Donut";
+    }
+    if ($nlexicon) {
+        $share .= ", $nlexicon Lexicon";
+    }
+}
+if ($share) {
+    $share = "Enhanced NYT Bee for $disp_date\\n$share";
+}
+print scalar(keys %rank_for) . " people";
+print qq!<a style='margin-left: 1in; font-size: 15pt;' class=alink onclick="navigator.clipboard.writeText('$share');alert('You can now paste your score from the clipboard.');set_focus();">Share your score.</a></p>!;
 if (%bingo_score_for) {
     print "<table>\n";
     print "<tr><th class='lt green'>Bingo</th></tr>\n";
@@ -149,37 +224,7 @@ if (%bingo_score_for) {
     }
     print "</table><p>\n";
 }
-#
-# for the Genius people see how close
-# they got to Queen Bee.
-#
-my %queen_minus_for;
-for my $sn (keys %rank_for) {
-    if ($rank_for{$sn} == 8) {
-        # Genius
-        my $uuid11 = $screen_name_uuid{$sn};
-        my $full_uuid = $full_uuid{$uuid11};
-        # check $@ and return value 
-        my %cur_puzzles = %{ eval $cur_puzzles_store{$full_uuid} };
-        my $nwords = grep { /^[a-z]+$/ }
-                     split ' ', $cur_puzzles{$date};
-        my $left = $qb_nwords - $nwords;
-        $queen_minus_for{$sn} = $left;
-    }
-}
 print "<table>\n";
-my %rank_name = (
-    0 => 'Beginner',
-    1 => 'Good Start',
-    2 => 'Moving Up',
-    3 => 'Good',
-    4 => 'Solid',
-    5 => 'Nice',
-    6 => 'Great',
-    7 => 'Amazing',
-    8 => 'Genius',
-    9 => 'Queen Bee',
-);
 my $name_hints = 0;
 my $prev_rank = 0;
 # display Queen Bee down to Genius... people
