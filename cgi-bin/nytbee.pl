@@ -85,6 +85,7 @@ my $ymd = ymd();
 my $ext_sig = '!*+-';   # extra word sigils
                         # ! stash * bonus + lexicon - donut
 my $not_okay_words;
+my $n_minus = 0;
 
 my @base = qw/
     Bee
@@ -1296,6 +1297,7 @@ elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms) {
         my $pl = $nwords_stashed == 1? '': 's';
         $not_okay_words .= "$nwords_stashed word$pl stashed";
     }
+    $n_minus = $nwords_stashed;     # for the possible On the Nose message
     $cmd = '';
 }
 elsif ($cmd eq 'xpf') {
@@ -2208,8 +2210,6 @@ sub consider_word {
     return $w =~ m{!\z}xms? 1: 0;
 }
 
-my $n_minus = 0;
-
 WORD:
 for my $w (@new_words) {
     next WORD if $w eq '1w';        # hack!
@@ -2527,11 +2527,13 @@ EOH
                 min => 99,
                 max => 0,
                 minlen => 99,
-                maxlen => 0
+                maxlen => 0,
+                pangram => 0,
             };
         }
         my $l = length $w;
-        my $sc = word_score($w, $is_pangram{$w});
+        my $pangram = $is_pangram{$w};
+        my $sc = word_score($w, $pangram);
         my $href = $bingo_table{$c};
         if ($sc < $href->{min}) {
             $href->{min} = $sc;
@@ -2540,6 +2542,7 @@ EOH
         if ($sc > $href->{max}) {
             $href->{max} = $sc;
             $href->{maxlen} = $l;
+            $href->{pangram} = $pangram;
         }
     }
     my @rows;
@@ -2547,6 +2550,7 @@ EOH
     for my $c (sort keys %bingo_table) {
         my $min = $bingo_table{$c}{minlen};
         my $max = $bingo_table{$c}{maxlen};
+        my $star = $bingo_table{$c}{pangram}? " <span class=red2>*</span>": '';
         push @rows, Tr(th({ style => 'text-align: center' }, $c),
                        td($sp
                         . "<span class=pointer style='color: $colors{alink}'"
@@ -2557,7 +2561,9 @@ EOH
                         . "<span class=pointer style='color: $colors{alink}'"
                         . qq! onclick="issue_cmd('D+$c$max');">!
                         . $max
-                        . "</span>"),
+                        . "</span>"
+                       ),
+                       td($star),
                     );
     }
     if (@rows == 7) {
@@ -2830,8 +2836,20 @@ if ($nperfect) {
 my $need_show_clue_form = 0;
 my $show_clue_form = '';
 if ($cmd eq 'i') {
+    # is GN4L possible?
+    my $gn4l = '';
+    my $tot = 0;
+    for my $w (@ok_words) {
+        my $lw = length $w;
+        if ($lw > 4) {
+            $tot += $lw + ($is_pangram{$w}? 7: 0);
+        }
+    }
+    if ($tot < $ranks[8]{value}) {
+        $gn4l = ', ' . red("No GN4L");
+    }
     $message .= "Words: $nwords, Points: $max_score, "
-             . "Pangrams: $npangrams$perfect$bingo";
+             . "Pangrams: $npangrams$perfect$bingo$gn4l";
     if ($date =~ m{\A CP}xms) {
         my ($n) = $date =~ m{(\d+)}xms;
         my $created = date($cp_href->{created})->format("%B %e, %Y");
