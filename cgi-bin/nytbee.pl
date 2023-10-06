@@ -2190,7 +2190,7 @@ sub consider_word {
                                             .  '<br>';
                             $bingo_score += 8;                
                         }
-                        log_it("bingo $date $bingo_score $nhints");
+                        log_it("bingo $date $bingo_score $n_overall_hints");
                     }
                 }
             }
