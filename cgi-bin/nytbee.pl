@@ -3450,7 +3450,8 @@ elsif ($hive == 1) {        # bee hive honeycomb
         $letters =~ s{LET$i}{$six[$i-1]}xmsg;
     }
     $letters =~ s{CENTER_HEX}{$colors{center_hex}}xmsg;
-    $letters =~ s{CENTER_TEXT}{$colors{center_text}}xmsg;
+    my $s = $which_wl eq 'd'? 'center_hex': 'center_text';
+    $letters =~ s{CENTER_TEXT}{$colors{$s}}xmsg;
     $letters =~ s{DONUT_HEX}{$colors{donut_hex}}xmsg;
     $letters =~ s{DONUT_TEXT}{$colors{donut_text}}xmsg;
 
@@ -3534,18 +3535,23 @@ EOH
 }
 elsif ($hive == 2) {    # hex letters
     if ($mobile) {
-        $letters = "<div class=h3lets id=lets>&nbsp;</div>";
+        # &nbsp; below to keep the line displayed.
+        # otherwise it is omitted.
+        $letters = "&nbsp;<div class=h3lets id=lets></div>&nbsp;";
         $letters .= "<table width=100%><tr>\n";
         for my $c (@seven_let) {
-            my $class = $c eq uc $center? 'red2 biglet': 'biglet';
-            $letters .= "<td class='$class' width='14.28%'>"
-                     .  qq!<span onclick="add_let('$c')">$c</span>!
-                     .  "</td>";
+            unless ($which_wl eq 'd' && $c eq uc $center) {
+                my $class = $c eq uc $center? 'red2 biglet': 'biglet';
+                $letters .= "<td class='$class' width='14.28%'>"
+                         .  qq!<span onclick="add_let('$c')">$c</span>!
+                         .  "</td>";
+            }
         }
         $letters .= "</tr></table>\n";
         $letters .= "<table style='width: 100%; margin-bottom: 10mm'><tr>"
                  .  "<td class=h3cmd onclick='del_let()'>Delete</td>"
-                 .  "<td class='h3cmd'><a style='color: black' target=_blank href='$log/nytbee/help.html#toc'>Help</a></td>"
+                 .  "<td class=h3cmd onclick='stash_lets()'>Stash</td>"
+                 #.  "<td class='h3cmd'><a style='color: white' target=_blank href='$log/nytbee/help.html#toc'>Help</a></td>"
                  .  qq!<td class=h3cmd onclick="issue_cmd('DR');">Define</td>!
                  .  "<td class=h3cmd onclick='sub_lets()'>Enter</td>"
                  .  "</tr></table>"
@@ -3555,7 +3561,9 @@ elsif ($hive == 2) {    # hex letters
         $letters = "<pre>\n  ";
         for my $c (@seven_let) {
             if ($c eq uc $center) {
-                $letters .= "<span class=red2>$c</span> ";
+                if ($which_wl ne 'd') {
+                    $letters .= "<span class=red2>$c</span> ";
+                }
             }
             else {
                 $letters .="$c ";
