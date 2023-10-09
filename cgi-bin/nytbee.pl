@@ -1119,13 +1119,14 @@ sub do_reveal {
 
 if ($cmd eq 'pg') {
     my $n = $ranks[8]{value} - $score;
-    if ($n == 0) {
-        $message = "You are at Genius ON THE NOSE! $thumbs_up"; 
-    }
-    elsif ($n < 0) {
+    if ($n <= 0) {
         $n = -$n;
         my $pl = $n == 1? '': 's';
-        $message = "You have $n point$pl over Genius!";
+        $message = $n == 0? "You are at Genius ON THE NOSE! $thumbs_up"
+                  :         "You have $n point$pl over Genius.";
+        my $nextra = grep { m{[$ext_sig]\z}xms } @found;
+        my $to_qb = @ok_words - @found + $nextra;
+        $message .= "<br>$to_qb more words to Queen Bee.";
     }
     else {
         my $pl = $n == 1? '': 's';
@@ -3533,12 +3534,12 @@ EOH
         }
     }
 }
-elsif ($hive == 2) {    # hex letters
+elsif ($hive == 2) {    # straight line letters
     if ($mobile) {
         # &nbsp; below to keep the line displayed.
         # otherwise it is omitted.
-        $letters = "&nbsp;<div class=h3lets id=lets></div>&nbsp;";
-        $letters .= "<table width=100%><tr>\n";
+        $letters = "<table width=100%><tr>\n";
+        $letters .= "<tr><td colspan=7 class=h3lets>&nbsp;<div id=lets></div>&nbsp;</td></tr>";
         for my $c (@seven_let) {
             unless ($which_wl eq 'd' && $c eq uc $center) {
                 my $class = $c eq uc $center? 'red2 biglet': 'biglet';
