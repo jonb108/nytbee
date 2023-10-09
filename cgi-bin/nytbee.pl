@@ -3538,8 +3538,12 @@ elsif ($hive == 2) {    # straight line letters
     if ($mobile) {
         # &nbsp; below to keep the line displayed.
         # otherwise it is omitted.
-        $letters = "<table width=100%><tr>\n";
-        $letters .= "<tr><td colspan=7 class=h3lets>&nbsp;<div id=lets></div>&nbsp;</td></tr>";
+        my $top = $show_Heading? 90: 0;
+        my $style = <<"EOS";
+style="width: 100%; color: green; font-size: 60pt; position: absolute; top: $top; text-align: center;"
+EOS
+        $letters = "<div $style id=lets></div>";
+        $letters .= "<table style='margin-top: .7in; width: 100%'><tr>\n";
         for my $c (@seven_let) {
             unless ($which_wl eq 'd' && $c eq uc $center) {
                 my $class = $c eq uc $center? 'red2 biglet': 'biglet';
@@ -3559,15 +3563,16 @@ elsif ($hive == 2) {    # straight line letters
                  ;
     }
     else {
-        $letters = "<pre>\n  ";
+        $letters = "<pre style='font-family: Arial; font-size: 40pt'>\n  ";
+        my $sp = '&nbsp;' x 2;
         for my $c (@seven_let) {
             if ($c eq uc $center) {
                 if ($which_wl ne 'd') {
-                    $letters .= "<span class=red2>$c</span> ";
+                    $letters .= "<span class=red2>$c$sp</span> ";
                 }
             }
             else {
-                $letters .="$c ";
+                $letters .="$c$sp";
             }
         }
         $letters .= "</pre>";
