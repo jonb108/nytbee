@@ -890,7 +890,7 @@ compute_score_and_rank();
 #
 # if fullword we don't tally hints and we don't mask the word
 sub define {
-    my ($word, $fullword, $clue_plus) = @_;
+    my ($word, $fullword) = @_;
 
     my $def = '';
     # a Community Puzzle clue
@@ -914,7 +914,7 @@ sub define {
         my $rv = in_wordnik($word);
             # the above may set $definition_of{$word}
     }
-    if ((!$def || $clue_plus) && exists $definition_of{$word}) {
+    if (exists $definition_of{$word}) {
         my $s = $definition_of{$word};
         if ($fullword) {
             # undo an earlier masking
@@ -934,7 +934,7 @@ sub define {
 }
 
 sub do_define {
-    my ($term, $plus) = @_;
+    my ($term) = @_;
 
     load_nyt_clues;
     my $msg = '';
@@ -943,7 +943,7 @@ sub do_define {
         my $npangrams =  0;
         for my $p (grep { !$is_found{$_} } @pangrams) {
             ++$npangrams;
-            my $def = define($p, 0, $plus);
+            my $def = define($p, 0);
             add_hints(3) unless $def =~ $no_def;
             if ($def) {
                 $msg .= ul($def) . '--';
@@ -965,7 +965,7 @@ sub do_define {
             $msg .= 'No more words.';
         }
         else {
-            $msg .= define($words[ rand @words ], 0, $plus);
+            $msg .= define($words[ rand @words ], 0);
             add_hints(1) unless $msg =~ $no_def;
         }
         $cmd = '';
@@ -977,7 +977,7 @@ sub do_define {
             $msg .= 'No more 5+ letter words.';
         }
         else {
-            $msg .= define($words[ rand @words ], 0, $plus);
+            $msg .= define($words[ rand @words ], 0);
             add_hints(1) unless $msg =~ $no_def;
         }
         $cmd = '';
@@ -991,7 +991,7 @@ sub do_define {
         else {
             $msg = '';
             for my $w (get_words($let, $len)) {
-                my $def = define($w, 0, $plus);
+                my $def = define($w, 0);
                 add_hints(3) unless $def =~ $no_def;
                 if ($def) {
                     $msg .= ul($def) .  '--';
@@ -1013,7 +1013,7 @@ sub do_define {
         else {
             $msg .= '';
             for my $w (get_words($lets)) {
-                my $def = define($w, 0, $plus);
+                my $def = define($w, 0);
                 add_hints(3) unless $def =~ $no_def;
                 if ($def) {
                     $msg .= ul($def) . '--';
@@ -1260,10 +1260,8 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     $message .= ul(table({ cellpadding => 4}, $rows));
     $cmd = '';
 }
-elsif ($cmd =~ m{\A (d[+]?)(p|r|5|[a-z]\d+|[a-z][a-z]) \z}xms) {
-    my $Dcmd = $1;
-    my $term = $2;
-    do_define($term, $Dcmd eq 'd+');
+elsif ($cmd =~ m{\A d(p|r|5|[a-z]\d+|[a-z][a-z]) \z}xms) {
+    do_define($1);
     $cmd = '';
 }
 elsif ($cmd eq 'swa') {
@@ -2555,12 +2553,12 @@ EOH
         push @rows, Tr(th({ style => 'text-align: center' }, $c),
                        td($sp
                         . "<span class=pointer style='color: $colors{alink}'"
-                        . qq! onclick="issue_cmd('D+$c$min');">!
+                        . qq! onclick="issue_cmd('D$c$min');">!
                         . $min
                         . "</span>"),
                        td($sp
                         . "<span class=pointer style='color: $colors{alink}'"
-                        . qq! onclick="issue_cmd('D+$c$max');">!
+                        . qq! onclick="issue_cmd('D$c$max');">!
                         . $max
                         . "</span>"
                        ),
@@ -3300,7 +3298,7 @@ if ($ht_chosen) {
             }
             push @cells, td($sums{$c}{$l}?
                                "<span class='pointer' style='color: $colors{alink}'"
-                               . qq! onclick="issue_cmd('D+$c$l');">!
+                               . qq! onclick="issue_cmd('D$c$l');">!
                                . "$sums{$c}{$l}</span>"
                            : $dash
                           );
@@ -3340,7 +3338,7 @@ if ($tl_chosen) {
         if ($two_lets{$two[$i]} == 0) {
             next TWO;
         }
-        $two_lets .= qq!<span class='pointer' style='color: $colors{alink}' onclick="issue_cmd('D+$two[$i]');">!
+        $two_lets .= qq!<span class='pointer' style='color: $colors{alink}' onclick="issue_cmd('D$two[$i]');">!
                   .  qq!\U$two[$i]\E-$two_lets{$two[$i]}</span>!;
         if ($i < $#two
             && substr($two[$i], 0, 1) ne substr($two[$i+1], 0, 1)
@@ -3523,7 +3521,7 @@ EOH
             $letters .= <<"EOH";
 <span class='stash cursor_black' $st onclick="stash_lets();">Stash</span>
 <span class='enter cursor_black' $st onclick="sub_lets();">Enter</span>
-<span class='define cursor_black' $st onclick="issue_cmd('D+R');">Define</span>
+<span class='define cursor_black' $st onclick="issue_cmd('DR');">Define</span>
 <span class='bonus cursor_black' $st onclick="issue_cmd('BN');">Bonus</span>
 <span class=lets id=lets></span>
 <span class='delete cursor_black' $st onclick="del_let();">Delete</span>
