@@ -1855,6 +1855,10 @@ elsif ($cmd eq 'rcp') {
     $message .= table({ cellpadding => 3 }, $msg);
     $cmd = '';
 }
+elsif ($cmd =~ m{\A wp \s+ ([\d/]+)}xms) {
+    $message .= `$cgi_dir/nytbee_wp.pl $1 $screen_name`;
+    $cmd = ''
+}
 
 # so we have dealt with the various commands. (not really...)
 # except for 1, 2, and a few others.
