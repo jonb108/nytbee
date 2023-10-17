@@ -88,7 +88,7 @@ while (my $line = <$in>) {
             $screen_name_uuid{$screen_name} = $r_uuid11;
         }
         $rank_for{$screen_name} = $rank;
-        if ($line =~ m{(gn4l|gotn)\z}xmsi) {
+        if ($line =~ m{((gn4l|gotn)([-]np)?)\z}xmsi) {
             $genius_for{$screen_name} = $1;
         }
         $genius_for{$screen_name} ||= '';
@@ -227,6 +227,12 @@ if (%bingo_score_for) {
 print "<table>\n";
 my $name_hints = 0;
 my $prev_rank = 0;
+my %grank = qw/
+    GOTN-NP 4
+    GOTN    3
+    GN4L-NP 2
+    GN4L    1
+/;
 # display Queen Bee down to Genius... people
 #   reverse sorted by # hints
 #   and reverse sorted by genius attainment
@@ -235,8 +241,7 @@ for my $screen_name (sort {
                          ||
                          $hints_for{$a} <=> $hints_for{$b}
                          ||
-                         $genius_for{$b} cmp $genius_for{$a}
-                             # luckily 'gotn' gt 'gn4l' gt ''
+                         $grank{$genius_for{$b}} <=> $grank{$genius_for{$a}}
                          ||
                          $queen_minus_for{$a} <=> $queen_minus_for{$b}
                          ||

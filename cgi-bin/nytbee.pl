@@ -2245,6 +2245,7 @@ if ($old_rank < $rank || ($n_minus > 0 && $score == $ranks[8]{value})) {
                        :            "Queen Bee " . ($thumbs_up x 3)
                     );
         if ($rank == 8) {
+            my $npangrams = grep { $is_pangram{$_} } @found;
             my @four = grep { ! m{[$ext_sig]\z}xms && length == 4 } @found;
             if (! @four) {
                 $message .= ul('And you did it without ANY 4 letter words! '
@@ -2255,6 +2256,10 @@ if ($old_rank < $rank || ($n_minus > 0 && $score == $ranks[8]{value})) {
                 }
                 else {
                     $gn4l = 'GN4L';
+                }
+                if ($npangrams == 0) {
+                    $message .= ul('And with No Pangrams! &#128526; &#128588;');
+                    $gn4l .= "-NP";
                 }
             }
         }
@@ -2462,9 +2467,13 @@ if ($show_WordList) {
     # STASH
     @stash = map {
                    my $w = $_;
+                   my $nchars = uniq_chars(lc $w);
                    my $uw = ucfirst $w;
                    my $s = $is_new_word{$w}?
                                "<span class=new_word>$uw</span>"
+                          :$is_pangram{$w}?
+                               length($w) == 7? "<span class=purple>$uw</span>"
+                              :                 "<span class=green>$uw</span>"
                           :    $uw
                           ;
                    def_word($s, $w);
