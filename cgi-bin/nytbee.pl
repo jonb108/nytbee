@@ -2912,8 +2912,10 @@ EOH
             $message .= "<br>Clues by " . join ', ', @names;
             $need_show_clue_form = 1;
         }
-        my ($year, $month, $day) = unpack "A4A2A2", $date;
-        $message .= "<a style='margin-left: .5in;' class=alink target=_blank href='https://www.nytimes.com/$year/$month/$day/crosswords/spelling-bee-forum.html#commentsContainer'>HiveMind</a>";
+        if ($date >= 20210920) {
+            my ($year, $month, $day) = unpack "A4A2A2", $date;
+            $message .= "<a style='margin-left: .5in;' class=alink target=_blank href='https://www.nytimes.com/$year/$month/$day/crosswords/spelling-bee-forum.html#commentsContainer'>HiveMind</a>";
+        }
     }
     if ($need_show_clue_form) {
         $show_clue_form = <<"EOH";
