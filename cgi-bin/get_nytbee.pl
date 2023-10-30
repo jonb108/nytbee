@@ -151,3 +151,11 @@ for my $w (@words) {
 close $out2;
 system "sort -u -o $bin/nyt-words.txt $bin/nyt-words.txt";
 system "/usr/bin/comm -23 $bin/osx_usd_words-47.txt $bin/nyt-words.txt >$bin/other-words.txt";
+
+# who played yesterday?
+my ($day, $month, $year) = (localtime(time() - 4*60*60))[3 .. 5];
+                                             # 4 hours ago
+++$month;
+$year += 1900;
+my $dt8 = sprintf "%04d%02d%02d", $year, $month, $day;
+system "$bin/who_played $dt8";

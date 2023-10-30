@@ -128,6 +128,7 @@ EOH
     _mklink($format, 1, "AB-x");
     _mklink($format, 2, "AB(x)");
     _mklink($format, 3, "ABx");
+    _mklink($format, 6, "x) AB");
     _mklink($format, 4, "Ax");
     _mklink($format, 5, "A");
     my $copy = $first? "show_copied('clues');": '';
@@ -163,7 +164,7 @@ EOH
             print "<br>$l1<br>\n";
             $prev_l1 = $l1;
         }
-        if ($format <= 3 && $prev_l2 ne $l2) {
+        if (($format <= 3 || $format == 6) && $prev_l2 ne $l2) {
             if ($format == 3) {
                 if ($prev_l2) {
                     print "<br>";
@@ -176,11 +177,14 @@ EOH
                 print "$l2<br>";
             }
         }
+        if ($format <= 2 || $format >= 4) {
+            print "<span class=$class>";
+        }
         if ($format == 3) {
             print "$l2$lw - ";
         }
-        if ($format <= 2 || $format == 4 || $format == 5) {
-            print "<span class=$class>";
+        if ($format == 6) {
+            print "$lw) ";
         }
         if ($format == 1 || $format == 2) {
             #print '&nbsp;' x 3;

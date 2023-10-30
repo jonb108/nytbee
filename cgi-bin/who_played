@@ -1,0 +1,38 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+use DB_File;
+my %uuid_screen_name;
+tie %uuid_screen_name, 'DB_File', 'uuid_screen_name.dbm';
+my %screen_name_uuid;
+tie %screen_name_uuid, 'DB_File', 'screen_name_uuid.dbm';
+my %who_played;
+tie %who_played, 'DB_File', 'who_played.dbm';
+
+for my $d (@ARGV) {
+    my $x = "beelog/$d";
+    my %who;
+    open my $in, '<', $x or die "cannot open $x: $!\n";
+    LINE:
+    while (my $line = <$in>) {
+        if ($line =~ m{\A (\S+) \s=\s}xms) {
+            my $uuid = $1;
+            my $sn = $uuid_screen_name{$uuid};
+            if (! $sn) {
+                # assign them a screen name
+                # no need to inform them what it is.
+                my $i = 187;
+                while (exists $screen_name_uuid{"Buzz$i"}) {
+                    ++$i;
+                }
+                $sn = "Buzz$i";
+                $uuid_screen_name{$uuid} = $sn;
+                $screen_name_uuid{$sn} = $uuid;
+            }
+            $who{$sn} = 1;
+        }
+    }
+    $who_played{$d} = join ' ', sort keys %who;
+    close $in;
+}

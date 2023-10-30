@@ -24,17 +24,17 @@ my @base = qw/
 /;
 my $base = '(' . join('|', @base) . ')';
 
+my ($arg, $my_screen_name, $all) = @ARGV;
+
 sub who_played_on {
     my ($d) = @_;
     for my $p (split ' ', $who_played{$d}) {
-        if ($p !~ m{\A $base\d+ \z}xms) {
+        if ($all || $p !~ m{\A $base\d+ \z}xms) {
             print "$p<br>\n";
         }
     }
 }
 
-my $arg = shift;
-my $my_screen_name = shift;
 if ($arg =~ m{\A \d+ \z}xms) {
     my %times_played;
     LOOP:
@@ -44,12 +44,13 @@ if ($arg =~ m{\A \d+ \z}xms) {
             last LOOP;
         }
         for my $p (split ' ', $who_played{$d->as_d8()}) {
-            if ($p !~ m{\A $base\d+ \z}xms) {
+            if ($all || $p !~ m{\A $base\d+ \z}xms) {
                 ++$times_played{$p};
             }
         }
     }
     my $asc = int(rand(2));
+    my $np = 0;
     PERSON:
     for my $p (sort {
                    $times_played{$b} <=> $times_played{$a}
@@ -59,8 +60,12 @@ if ($arg =~ m{\A \d+ \z}xms) {
                }
                keys %times_played
     ) {
+        ++$np;
         my $star = $p eq $my_screen_name? '<span class=red> *</span>': '';
         print "$p $times_played{$p}$star<br>\n";
+    }
+    if ($all) {
+        print "<p>$np different people\n";
     }
 }
 elsif (my ($mon, $day) = $arg =~ m{\A (\d+)/(\d+) \z}xms) {

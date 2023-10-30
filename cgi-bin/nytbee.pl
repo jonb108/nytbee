@@ -1856,7 +1856,22 @@ elsif ($cmd eq 'rcp') {
     $cmd = '';
 }
 elsif ($cmd =~ m{\A wp \s* ([\d/]+)}xms) {
-    $message .= `$cgi_dir/nytbee_wp.pl $1 $screen_name`;
+    my $base = join '|', @base;
+    if ($screen_name =~ m{
+            \A
+            $base\d+
+            \z
+        }xms
+    ) {
+        $message = "Sorry, the <span class=cmd>WP</span> command is only for those who have set a personalized screen name.  You can do this with the <span class=cmd>SN</span> command!";
+    }
+    else {
+        $message = `$cgi_dir/nytbee_wp.pl $1 $screen_name 0`;
+    }
+    $cmd = ''
+}
+elsif ($cmd =~ m{\A wpa \s* ([\d/]+)}xms) {
+    $message = `$cgi_dir/nytbee_wp.pl $1 $screen_name 1`;
     $cmd = ''
 }
 
@@ -2897,6 +2912,8 @@ EOH
             $message .= "<br>Clues by " . join ', ', @names;
             $need_show_clue_form = 1;
         }
+        my ($year, $month, $day) = unpack "A4A2A2", $date;
+        $message .= "<a style='margin-left: .5in;' class=alink target=_blank href='https://www.nytimes.com/$year/$month/$day/crosswords/spelling-bee-forum.html#commentsContainer'>HiveMind</a>";
     }
     if ($need_show_clue_form) {
         $show_clue_form = <<"EOH";
