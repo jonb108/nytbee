@@ -3767,7 +3767,7 @@ EOH
         HINT:
         for my $i (1 .. abs($nhints)) {
             if ($i > $nwords) {
-                $html .= "<text x=$x y=$y class=glets>+</text>\n";
+                $html .= "<text x=$x y=$y class=glets fill=$col_let>+</text>\n";
                 last HINT;
             }
             else {
