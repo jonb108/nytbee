@@ -41,7 +41,7 @@ my %clue_for
     = map {
           my $w = $_;
           my $clue = trim($params{$w});
-          $clue =~ s{"}{'}xmsg;
+          $clue =~ s{"}{&quot;}xmsg;
           $w =~ s{_clue\z}{}xms;
           $w => ucfirst $clue
       }

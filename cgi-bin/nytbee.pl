@@ -1283,8 +1283,13 @@ elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms) {
     my $nwords_stashed = 0;
     for my $w (@words) {
         if ($is_found{$w}) {
-            @found = map { s{\A $w \z}{$w!}xms; $_; } @found;
-            ++$nwords_stashed;
+            if (grep { /$w!/ } @found) {
+                $not_okay_words .= red(uc $w) . ": already stashed";
+            }
+            else {
+                @found = map { s{\A $w \z}{$w!}xms; $_; } @found;
+                ++$nwords_stashed;
+            }
         }
         else {
             $nwords_stashed += consider_word($w, 1);
@@ -1866,11 +1871,13 @@ elsif ($cmd =~ m{\A wp \s* ([\d/]+)}xms) {
         $message = "Sorry, the <span class=cmd>WP</span> command is only for those who have set a personalized screen name.  You can do this with the <span class=cmd>SN</span> command!";
     }
     else {
+        system "$cgi_dir/who_played $date" if $date !~ /CP/;
         $message = `$cgi_dir/nytbee_wp.pl $1 $screen_name 0`;
     }
     $cmd = ''
 }
 elsif ($cmd =~ m{\A wpa \s* ([\d/]+)}xms) {
+    system "$cgi_dir/who_played $date" if $date !~ /CP/;
     $message = `$cgi_dir/nytbee_wp.pl $1 $screen_name 1`;
     $cmd = ''
 }
@@ -3713,11 +3720,16 @@ EOH
     $x = $ind2;
     $y -= 4;
     my $nfound = grep { !m{[$ext_sig]\z}xms } @found;
+    my $nstash = grep { m{!\z}xms } @found;
     for my $i (1 .. $nfound) {
         $html .= "<circle cx=$x cy=$y r=$dotr2 fill=green></circle>\n";
         $x += $between_dots;
     }
-    for my $i ($nfound+1 .. $nwords) {
+    for my $i (1 .. $nstash) {
+        $html .= "<circle cx=$x cy=$y r=$dotr2 fill=#70aa70></circle>\n";
+        $x += $between_dots;
+    }
+    for my $i ($nfound+$nstash+1 .. $nwords) {
         $html .= "<circle cx=$x cy=$y r=$dotr1 fill=$col_let></circle>\n";
         $x += $between_dots;
     }
