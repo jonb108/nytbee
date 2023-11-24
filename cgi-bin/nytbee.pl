@@ -2579,30 +2579,60 @@ EOH
             $href->{pangram} = $pangram;
         }
     }
+    #       A  B  C  D  E  F  G
+    # Min   4  4  4  5  6  4  4
+    # Max   6  8  5 12  8  4  7
+    #          *     *            (pangrams)
     my @rows;
-    my $sp = '&nbsp;' x 3;
-    for my $c (sort keys %bingo_table) {
-        my $min = $bingo_table{$c}{minlen};
-        my $max = $bingo_table{$c}{maxlen};
-        my $star = $bingo_table{$c}{pangram}? " <span class=red2>*</span>": '';
-        push @rows, Tr(th({ style => 'text-align: center' }, $c),
-                       td($sp
-                        . "<span class=pointer style='color: $colors{alink}'"
-                        . qq! onclick="issue_cmd('D$c$min');">!
-                        . $min
-                        . "</span>"),
-                       td($sp
-                        . "<span class=pointer style='color: $colors{alink}'"
-                        . qq! onclick="issue_cmd('D$c$max');">!
-                        . $max
-                        . "</span>"
-                       ),
-                       td($star),
+    my @lets = sort keys %bingo_table;
+    if (@lets == 7) {
+        my $span = "<span class=pointer style='color: $colors{alink}'";
+        # LETTERS
+        push @rows, Tr(
+                        td('&nbsp;'),
+                        map {
+                            td({ style => 'width: 5mm; text-align: center' }, $_);
+                        }
+                        @lets
                     );
-    }
-    if (@rows == 7) {
-        # if not 7 it's not a bingo puzzle
-        $bingo_table = ul(table({ cellpadding => 2}, @rows)) . '<p>';
+        # MIN
+        push @rows, Tr(
+                        td('Min'),
+                        map {
+                            my $min = $bingo_table{$_}{minlen};
+                            td($span
+                               . qq! onclick="issue_cmd('D$_$min');">!
+                               . $min
+                               . "</span>"
+                            );
+                        }
+                        @lets,
+                    );
+        # MAX
+        push @rows, Tr(
+                        td('Max'),
+                        map {
+                            my $max = $bingo_table{$_}{maxlen};
+                            td($span
+                               . qq! onclick="issue_cmd('D$_$max');">!
+                               . $max
+                               . "</span>"
+                            );
+                        }
+                        @lets,
+                    );
+        # PANGRAMS
+        push @rows, Tr(
+                        td('&nbsp;'),
+                        map {
+                            td($bingo_table{$_}{pangram}?
+                                   " <span class=red2>*</span>"
+                                  :''
+                            );
+                        }
+                        @lets,
+                    );
+        $bingo_table = ul(table({ cellpadding => 6}, @rows)) . '<p>';
     }
 }
 if ($not_okay_words) {
