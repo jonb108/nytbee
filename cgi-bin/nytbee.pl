@@ -1659,14 +1659,7 @@ elsif ($cmd =~ m{\A s \s+ ([a-z]+) \z}xms) {
     $cmd = '';
 }
 elsif ($cmd eq 'h') {
-    ++$hive;
-    if ($hive == 4) {
-        $hive = 1;
-    }
-    $cmd = '';
-}
-elsif ($cmd =~ m{\A h \s* ([1-3]) \z}xms) {
-    $hive = $1;
+    $hive = $hive == 1? 2: 1;
     $cmd = '';
 }
 elsif ($cmd =~ m{\A le \s+ (\S{6}) \s* \z}xms) {
@@ -3502,16 +3495,7 @@ my $heading = $show_Heading? <<"EOH": '';
 EOH
 
 my $letters = '';
-if ($hive == 3) {
-    $letters = <<"EOH";
-<pre>
-     $six[0]   $six[1]
-   $six[2]   <span class=red2>\U$center\E</span>   $six[3]
-     $six[4]   $six[5]
-</pre>
-EOH
-}
-elsif ($hive == 1) {        # bee hive honeycomb
+if ($hive == 1) {        # bee hive honeycomb
     $letters = svg_hex($mobile);
     $letters =~ s{LET0}{$Center}xmsg;
     for my $i (1 .. 6) {
