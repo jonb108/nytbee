@@ -1195,6 +1195,11 @@ elsif ($cmd eq 'bn') {
     $bonus_mode = ! $bonus_mode;
     $cmd = '';
 }
+elsif ($cmd eq 'dn') {
+    $which_wl = $which_wl eq 'd'? 'pdlbs': 'd';
+    $bonus_mode = 0;
+    $cmd = '';
+}
 elsif ($cmd =~ m{\A fx \s* (\d+) \z}xms) {
     my $id = $1;
     system("$cgi_dir/del_post.pl $id '$screen_name'");
@@ -1271,6 +1276,10 @@ elsif ($cmd eq 'swa') {
     $nhints = 0;
     # do not clear $n_overall_hints
     $message = 'Stashed';
+    $cmd = '';
+}
+elsif ($cmd eq 'sw') {
+    # a no op - ignore
     $cmd = '';
 }
 elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms) {
@@ -3559,28 +3568,41 @@ $row2
 EOH
             $letters .= <<"EOH";
 <span class=lets id=lets></span>
-<span class='stash2 alink' onclick="stash_lets();">Stash</span>
-<span class='enter alink' onclick="sub_lets();">Enter</span>
-<span class='define alink' onclick="del_let();">Delete</span>
-<span class='standings alink' onclick="issue_cmd('CW');">Standings</span>
-<span class='own alink' onclick="issue_cmd('OW');">Own</span>
-<span class='bonus2 alink' onclick="issue_cmd('BN');"><s>Bonus</s></span>
-</span>
+<span class='pos11 alink' onclick="stash_lets();">Stash</span>
+<span class='pos21 alink' onclick="sub_lets();">Enter</span>
+<span class='pos22 alink' onclick="del_let();">Delete</span>
+<span class='pos23 alink' onclick="issue_cmd('CW');">Standings</span>
+<span class='pos12 alink' onclick="issue_cmd('OW');">Own</span>
+<span class='pos13 alink' onclick="issue_cmd('BN');"><s>Bonus</s></span>
 <span class=bonus_lets>$bonus_table</span>
 EOH
         }
+        elsif ($which_wl eq 'd') {
+            $letters .= <<"EOH";
+<span class=lets id=lets></span>
+<span class='pos11 alink' onclick="stash_lets();">Stash</span>
+<span class='pos21 alink' onclick="sub_lets();">Enter</span>
+<span class='pos22 alink' onclick="del_let();">Delete</span>
+<span class='pos23 alink' onclick="issue_cmd('CW');">Standings</span>
+<span class='pos12 alink' onclick="issue_cmd('OW');">Own</span>
+<span class='pos13 alink' onclick="issue_cmd('DN');"><s>Donut</s></span>
+<span class='pos32 cursor_black'>
+EOH
+        }
         else {
+            # not Donut, not Bonus
             my $st = "style='color: $colors{alink}'";
             $letters .= <<"EOH";
-<span class='stash cursor_black' $st onclick="stash_lets();">Stash</span>
-<span class='enter cursor_black' $st onclick="sub_lets();">Enter</span>
-<span class='define cursor_black' $st onclick="issue_cmd('DR');">Define</span>
-<span class='bonus cursor_black' $st onclick="issue_cmd('BN');">Bonus</span>
+<span class='pos11 cursor_black' $st onclick="stash_lets();">Stash</span>
+<span class='pos21 cursor_black' $st onclick="sub_lets();">Enter</span>
+<span class='pos12 cursor_black' $st onclick="issue_cmd('DR');">Define</span>
+<span class='pos23 cursor_black' $st onclick="issue_cmd('BN');">Bonus</span>
+<span class='pos13 cursor_black' $st onclick="issue_cmd('DN');">Donut</span>
 <span class=lets id=lets></span>
-<span class='delete cursor_black' $st onclick="del_let();">Delete</span>
-<span class='helplink cursor_black'>
+<span class='pos22 cursor_black' $st onclick="del_let();">Delete</span>
+<span class='pos32 cursor_black'>
 <a class='cursor_black' $st target=_blank href='$log/nytbee/help.html#toc'">Help</a></span>
-<span class='forum cursor_black' $st onclick="issue_cmd('F');">Forum $num_msgs</span>
+<span class='pos33 cursor_black' $st onclick="issue_cmd('F');">Forum $num_msgs</span>
 EOH
         }
     }
@@ -3814,14 +3836,11 @@ if ($bonus_mode) {
 }
 my $css = $mobile? 'mobile_': '';
 my $new_words_size = $mobile? 30: 40;
-my $enter_top  = 90 + ($show_Heading? 79: 0);
-my $stash_top  = 40 + ($show_Heading? 79: 0);
-my $define_top  = 90 + ($show_Heading? 79: 0);
-my $bonus_top  = 40 + ($show_Heading? 79: 0);
+my $row1_top  = 40 + ($show_Heading? 79: 0);
+my $row2_top  = 90 + ($show_Heading? 79: 0);
 my $lets_top   = 135 + ($show_Heading? 79: 0);
 my $bonus_lets_top   = 185 + ($show_Heading? 79: 0);
-my $delete_top = 190 + ($show_Heading? 79: 0);
-my $help_top = 190 + ($show_Heading? 79: 0);
+my $row3_top = 190 + ($show_Heading? 79: 0);
 my $forum_html = '';
 if ($forum_mode) {
     $forum_html = `$cgi_dir/show_forum.pl $date "$screen_name" $forum_post_to_edit '$colors{bg_input}' '$colors{text_input}'`;
@@ -3848,51 +3867,53 @@ body {
     color: $colors{alink};
     cursor: pointer;
 }
-.enter {
+/* the 2 row x 3 col grid at the top when in mobile mode */
+.pos11 {
     position: absolute;
     left: 320;
-    top: $enter_top;
+    top: $row1_top;
 }
-.stash {
+.pos12 {
+    position: absolute;
+    left: 420;
+    top: $row1_top;
+}
+.pos13 {
     position: absolute;
     left: 520;
-    top: $stash_top;
+    top: $row1_top;
 }
-.stash2 {
+.pos21 {
     position: absolute;
     left: 320;
-    top: $stash_top;
+    top: $row2_top;
 }
-.define {
+.pos22 {
     position: absolute;
     left: 420;
-    top: $define_top;
+    top: $row2_top;
 }
-.own {
+.pos23 {
+    position: absolute;
+    left: 520;
+    top: $row2_top;
+}
+.pos31 {
+    position: absolute;
+    left: 320;
+    top: $row3_top;
+}
+.pos32 {
     position: absolute;
     left: 420;
-    top: $bonus_top;
+    top: $row3_top;
 }
-.bonus {
+.pos33 {
     position: absolute;
     left: 520;
-    top: $define_top;
+    top: $row3_top;
 }
-.forum {
-    position: absolute;
-    left: 520;
-    top: $help_top;
-}
-.standings {
-    position: absolute;
-    left: 520;
-    top: $define_top;
-}
-.bonus2 {
-    position: absolute;
-    left: 520;
-    top: $bonus_top;
-}
+
 .lets {
     position: absolute;
     left: 320;
@@ -3909,21 +3930,6 @@ body {
     font-size: 22pt;
     font-weight: bold;
     cursor: black;
-}
-.bonus_delete {
-    position: absolute;
-    left: 320;
-    top: $delete_top;
-}
-.delete {
-    position: absolute;
-    left: 320;
-    top: $delete_top;
-}
-.helplink {
-    position: absolute;
-    left: 420;
-    top: $help_top;
 }
 </style>
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_${css}style.css'/>
