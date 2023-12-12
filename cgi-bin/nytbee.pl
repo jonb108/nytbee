@@ -3594,14 +3594,16 @@ EOH
             my $st = "style='color: $colors{alink}'";
             $letters .= <<"EOH";
 <span class='pos11 cursor_black' $st onclick="stash_lets();">Stash</span>
-<span class='pos21 cursor_black' $st onclick="sub_lets();">Enter</span>
 <span class='pos12 cursor_black' $st onclick="issue_cmd('DR');">Define</span>
-<span class='pos23 cursor_black' $st onclick="issue_cmd('BN');">Bonus</span>
 <span class='pos13 cursor_black' $st onclick="issue_cmd('DN');">Donut</span>
+<span class='pos21 cursor_black' $st onclick="sub_lets();">Enter</span>
+
 <span class=lets id=lets></span>
+
 <span class='pos22 cursor_black' $st onclick="del_let();">Delete</span>
-<span class='pos32 cursor_black'>
-<a class='cursor_black' $st target=_blank href='$log/nytbee/help.html#toc'">Help</a></span>
+<span class='pos23 cursor_black' $st onclick="issue_cmd('BN');">Bonus</span>
+<span class='pos31 cursor_black' $st onclick="issue_cmd('TOP');">Top</span>
+<span class='pos32 cursor_black'><a class='cursor_black' $st target=_blank href='$log/nytbee/help.html#toc'">Help</a></span>
 <span class='pos33 cursor_black' $st onclick="issue_cmd('F');">Forum $num_msgs</span>
 EOH
         }
