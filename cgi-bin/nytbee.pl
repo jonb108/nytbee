@@ -1193,9 +1193,12 @@ elsif ($cmd eq 'bt') {
 }
 elsif ($cmd eq 'bn') {
     $bonus_mode = ! $bonus_mode;
+    $which_wl = $bonus_mode? 'b': 'pdlbs';
     $cmd = '';
 }
 elsif ($cmd eq 'dn') {
+    # Donut mode is not separate from $which_wl
+    # which is awkward...
     $which_wl = $which_wl eq 'd'? 'pdlbs': 'd';
     $bonus_mode = 0;
     $cmd = '';
@@ -3833,7 +3836,7 @@ EOH
 
 my $status = $show_GraphicStatus? graphical_status()
             :                     "Score: $score $rank_image $disp_nhints";
-if ($bonus_mode) {
+if ($bonus_mode || $which_wl eq'd') {
     $status = '';
 }
 my $css = $mobile? 'mobile_': '';

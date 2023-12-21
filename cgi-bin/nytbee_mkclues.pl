@@ -151,7 +151,7 @@ ambiguous, clever, wordplay &#128522; - like clues for a crossword puzzle.
 $prior_clues
 <p>
 <table cellpadding=3>
-<tr><td>Your Name</td><td class=lt><input name=name id=name size=30 value='$name'></td></tr>
+<tr><td>Your Name</td><td class=lt><input name=name id=name size=30 value="$name"></td></tr>
 <tr><td>Your Location</td><td class=lt><input name=location id=location size=30 value='$location'></td></tr>
 <tr><td colspan=2>&nbsp;</td></tr>
 EOH
