@@ -2584,6 +2584,10 @@ EOH
             $href->{pangram} = $pangram;
         }
     }
+    my %first_found;
+    for my $w (grep { !m{[$ext_sig]\z}xms } @found) {
+        ++$first_found{uc substr($w, 0, 1)};
+    }
     #       A  B  C  D  E  F  G
     # Min   4  4  4  5  6  4  4
     # Max   6  8  5 12  8  4  7
@@ -2596,7 +2600,8 @@ EOH
         push @rows, Tr(
                         td('&nbsp;'),
                         map {
-                            td({ style => 'width: 5mm; text-align: center' }, $_);
+                            my $color = $first_found{$_}? 'color: #8E008E': '';
+                            td({ style => "width: 5mm; text-align: center; $color" }, $_);
                         }
                         @lets
                     );
