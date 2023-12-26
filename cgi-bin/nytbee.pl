@@ -2914,14 +2914,25 @@ if ($cmd eq 'i') {
     # is GN4L possible?
     my $gn4l = '';
     my $tot = 0;
+    my $np_tot = 0;
     for my $w (@ok_words) {
         my $lw = length $w;
         if ($lw > 4) {
-            $tot += $lw + ($is_pangram{$w}? 7: 0);
+            $tot += $lw;
+            if ($is_pangram{$w}) {
+                $tot += 7;
+            }
+            else {
+                $np_tot += $lw;
+            }
         }
     }
-    if ($tot < $ranks[8]{value}) {
+    my $genius = $ranks[8]{value};
+    if ($tot < $genius) {
         $gn4l = ', ' . red("No GN4L");
+    }
+    elsif ($np_tot < $genius) {
+        $gn4l = ', ' . red("No GN4L-NP");
     }
     $message .= "Words: $nwords, Points: $max_score, "
              . "Pangrams: $npangrams$perfect$bingo$gn4l";
