@@ -2245,9 +2245,10 @@ for my $w (@new_words) {
     next WORD if $w eq '1w';        # hack!
     if (my ($xword) = $w =~ m{\A [-]([a-z]+)}xms) {
         # remove the word from the found list
-        # and put it in the stash
+        # do not stash it
         if ($is_found{$xword}) {
-            @found = map { s{\A $xword \z }{$xword!}xms; $_;  } @found;
+            @found = grep { !m{\A $xword [!]?}xms } @found;
+            delete $is_found{$xword};
             ++$n_minus;
         }
         else {
@@ -2781,7 +2782,7 @@ EOH
 }
 
 # get the HT and TL tables ready
-# do not include the Stash words
+# DO include the Stash words
 # $sums{$c}{1} is the rightmost column (sigma)
 # $sums{1}{$l} is the bottom row       (sigma)
 #
@@ -2797,7 +2798,7 @@ for my $w (@ok_words) {
     }
     my $c1 = substr($w, 0, 1);
     ++$first_char{$c1};
-    if ($is_found{$w} && ! in_stash($w)) {
+    if ($is_found{$w}) {
         # skip it
         next WORD;
     }
