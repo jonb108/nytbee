@@ -7,7 +7,6 @@ our @EXPORT_OK = qw/
 /;
 use BeeUtil qw/
     $log
-    JON
 /;
 
 #
@@ -157,7 +156,6 @@ EOH
     my $prev_l1 = '';
     my $prev_l2 = '';
     for my $w (sort @clue_words) {
-JON "$w $was_found_href->{$w}";
         my $class = $all_found?               'black'
                    :$was_found_href->{$w}?    'gray'
                    :$was_found_href->{"$w!"}? 'stash_color'
