@@ -7,6 +7,7 @@ our @EXPORT_OK = qw/
 /;
 use BeeUtil qw/
     $log
+    JON
 /;
 
 #
@@ -87,6 +88,9 @@ body {
 .gray {
     color: rgb($gray_level, $gray_level, $gray_level);
 }
+.stash_color {
+    color: #aaaaff;
+}
 .info {
     display: normal;
 }
@@ -153,7 +157,11 @@ EOH
     my $prev_l1 = '';
     my $prev_l2 = '';
     for my $w (sort @clue_words) {
-        my $class = !$all_found && $was_found_href->{$w}? 'gray': 'black';
+JON "$w $was_found_href->{$w}";
+        my $class = $all_found?               'black'
+                   :$was_found_href->{$w}?    'gray'
+                   :$was_found_href->{"$w!"}? 'stash_color'
+                   :                          'black';
         my $lw = length($w);
         my $l1 = uc substr($w, 0, 1);
         my $l2 = uc substr($w, 0, 2);
@@ -200,7 +208,7 @@ EOH
         elsif ($format == 2) {
             print " ($lw) ";
         }
-        if ($was_found_href->{$w}) {
+        if ($was_found_href->{$w} || $was_found_href->{"$w!"}) {
             if ($format != 2) {
                 print " = ";
             }

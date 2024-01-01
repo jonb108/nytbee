@@ -207,10 +207,14 @@ to share your score with your friends.
 It looks like this:
 <ul>
 <pre>
-Enhanced NYT Bee for 09/22/2023
+Enhanced NYT Bee
+09/22/2023
 Bingo 7, 0 Hints
-Great, 5 Hints
-18 Bonus, 6 BOA, 13 Donut
+Great
+5 Hints
+18 Bonus
+6 BOA
+13 Donut
 </pre>
 </ul>
 </td></tr>
@@ -231,7 +235,7 @@ h - hints<br>
 <p>
 The bingo line will appear only if the puzzle is a <a href=#bingo>Bingo</a>.
 If the number of hints exceeds the number of words
-the line of dots will be truncated and a <span style="font-size: 23pt">+</span> will be appended.
+the line of dots will be truncated and a <span style="font-size: 20pt">+</span> will be appended.
 <br><br></td></tr>
 <tr><td><span class=cmd>C&nbsp;&nbsp;Y</span></td><td>Clear the puzzle and start over. <span class=cmd>C&nbsp;&nbsp;Y</span> means Clear and confirm with Yes.</td></tr>
 </table>
@@ -353,19 +357,21 @@ Tapping on letters will copy them to the area on the right:
 <p>
 <img src=pics/laundry.png width=800 border=1>
 <p>
-Tap on <span class=cmd>Enter</span> to submit the word.
-<br>
-Tap on <span class=cmd>Delete</span> to remove letters.
-<br>
 Tap on <span class=cmd>Stash</span> to add the word to <a href=#stash>The Stash</a>.
 <br>
 Tap on <span class=cmd>Define</span> to do a <span class=cmd>DR</span> command to define a random unfound word.
 <br>
-Tap on <span class=cmd>Help</span> to bring up this document in a separate browser window.  
-<br>
 Tap on <span class=cmd>Donut</span> to switch into <a href=#donut>Donut Mode</a>.
 <br>
+Tap on <span class=cmd>Enter</span> to submit the word.
+<br>
+Tap on <span class=cmd>Delete</span> to remove letters.
+<br>
 Tap on <span class=cmd>Bonus</span> to switch into <a href=#bonus_mode>Bonus Mode</a>.
+<br>
+Tap on <span class=cmd>Top</span> to issue the <span class=cmd>TOP</span> command.
+<br>
+Tap on <span class=cmd>Help</span> to bring up this document in a separate browser window.  
 <br>
 Tap on <span class=cmd>Forum</span> to toggle <a href=#forum>Forum Mode</a>.
 <p>
@@ -411,7 +417,11 @@ The command <span class=cmd>Q</span> (or <span class=cmd>?</span>) will show the
 Click on brief definitions to see the <i>complete</i> definition from wordnik.com in another window.
 <p>
 If there there is a <a href=#clues>clue</a> for a word it is shown
-first followed by the dictionary definition.
+first followed by the dictionary definition.  
+The power user command
+<span class=cmd>OC</span>
+will toggle between seeing <span class=cmd>o</span>nly the <span class=cmd>c</span>lues or seeing <i>both</i>
+the clues and the definitions.  The default is to show both.
 </td></tr>
 <tr><td colspan=2 class=green>Revealing Letters</td></tr>
 <tr><td><span class=cmd>V2P</span></td><td>Reveal the first two letters (and the length) of the pangrams.</td></tr>
@@ -759,6 +769,24 @@ your remembered 4 letter stash words with:
 <p>
 Note that words are checked before stashing.  Only valid puzzle
 words are stashed.  Extra words will be added as usual.
+<p>
+For power users there is one more stash command:
+<ul>
+<span class=cmd>SA XX</span>
+</ul>
+XX can be any letters you wish.   Any words in the stash
+that <i>contain</i> an XX will be UNstashed.  This would be useful if
+you saw a pangram during minimal bingo and stashed it and then you wanted
+to enter the pangram when doing maximal bingo.  Without this command
+you would have to re-enter it.  For example, if the pangram for the
+above puzzle is ADDICTION and the stash contained:
+<ul>
+ACIDIC ADDICTION ANACONDA CICADA 
+</ul>
+you could UNstash ADDICTION with:
+<ul>
+<span class=cmd>SA CT</span>
+</ul>
 <a name=donut></a>
 <h2>Donut, Lexicon, and Bonus Words
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -1761,8 +1789,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2057 puzzles with
-a total of 9930 different words!
+2063 puzzles with
+a total of 9948 different words!
 <p>
 Which puzzles from the large archive to play?
 You can get one at random with the <span class=cmd>NR</span> command or you could

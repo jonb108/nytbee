@@ -185,21 +185,22 @@ if ($rank_for{$my_screen_name}) {
         $share .= ", $genius_for{$my_screen_name}";
     }
     if ($rank_for{$my_screen_name} == 8) {
-        $share .= ", $queen_minus_for{$my_screen_name} words to QB\\n";
+        $share .= ", $queen_minus_for{$my_screen_name} words to QB";
     }
-    $share .= ", $hints_for{$my_screen_name} Hints\\n";
+    $share .= "\\n";
+    $share .= "$hints_for{$my_screen_name} Hints\\n";
     if ($nbonus) {
-        $share .= "$nbonus Bonus, $boa BOA";
+        $share .= "$nbonus Bonus, $boa BOA\\n";
     }
     if ($ndonut) {
-        $share .= ", $ndonut Donut";
+        $share .= "$ndonut Donut\\n";
     }
     if ($nlexicon) {
-        $share .= ", $nlexicon Lexicon";
+        $share .= "$nlexicon Lexicon\\n";
     }
 }
 if ($share) {
-    $share = "Enhanced NYT Bee for $disp_date\\n$share";
+    $share = "Enhanced NYT Bee\\n$disp_date\\n$share";
 }
 print scalar(keys %rank_for) . " people";
 print qq!<a style='margin-left: 1in; font-size: 15pt;' class=alink onclick="navigator.clipboard.writeText('$share');alert('You can now paste your score from the clipboard.');set_focus();">Share your score.</a></p>!;

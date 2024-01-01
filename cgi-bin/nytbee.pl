@@ -358,6 +358,8 @@ my $show_BingoTable = exists $params{show_BingoTable}?
                              $params{show_BingoTable}: 0;
 my $bonus_mode      = exists $params{bonus_mode}?
                              $params{bonus_mode}: 0;
+my $only_clues      = exists $params{only_clues}?
+                             $params{only_clues}: 0;
 my $forum_mode      = exists $params{forum_mode}?
                              $params{forum_mode}: 0;
 my $show_RankImage  = exists $params{show_RankImage}?
@@ -910,25 +912,27 @@ sub define {
         }
         # just one word but perhaps several hints for that word
     }
-    if (! exists $definition_of{$word}) {
-        my $rv = in_wordnik($word);
-            # the above may set $definition_of{$word}
-    }
-    if (exists $definition_of{$word}) {
-        my $s = $definition_of{$word};
-        if ($fullword) {
-            # undo an earlier masking
-            $s =~ s{[*]{2,}}{$word}xmsg;
+    if ($fullword || ! $only_clues) {
+        if (! exists $definition_of{$word}) {
+            my $rv = in_wordnik($word);
+                # the above may set $definition_of{$word}
         }
-        if ($def) {
-            $def .= "<li>$s</li>";
+        if (exists $definition_of{$word}) {
+            my $s = $definition_of{$word};
+            if ($fullword) {
+                # undo an earlier masking
+                $s =~ s{[*]{2,}}{$word}xmsg;
+            }
+            if ($def) {
+                $def .= "<li>$s</li>";
+            }
+            else {
+                $def .= $s;
+            }
         }
-        else {
-            $def .= $s;
+        if (! $def) {
+            $def = 'No definition';
         }
-    }
-    if (! $def) {
-        $def = 'No definition';
     }
     return "<span class=letter>" . ucfirst($def) . "</span>";
 }
@@ -1191,6 +1195,11 @@ elsif ($cmd eq 'bt') {
     $show_BingoTable = ! $show_BingoTable;
     $cmd = '';
 }
+elsif ($cmd eq 'oc') {
+    $only_clues = ! $only_clues;
+    $message = $only_clues? 'Only clues': 'Both clues and definitions';
+    $cmd = '';
+}
 elsif ($cmd eq 'bn') {
     $bonus_mode = ! $bonus_mode;
     $which_wl = $bonus_mode? 'b': 'pdlbs';
@@ -1321,7 +1330,7 @@ elsif ($cmd eq 'xpf') {
     $message = "@found";
     $cmd = '';
 }
-elsif ($cmd =~ m{\A sa \z}xms) {
+elsif ($cmd eq 'sa') {
     my @stash = map { /(.*)!$/; $1; }   # fun!
                 @found;
     @found = grep { !/!$/ } @found;
@@ -1331,9 +1340,22 @@ elsif ($cmd =~ m{\A sa \z}xms) {
     $cmd = "@stash";
 }
 elsif ($cmd =~ m{\A sa \s* 5 \z}xms) {
+    # confusing and tricky, seems to work
     my @stash = map { /(.{5,})!$/; $1; }   # fun!
                 @found;
     @found = grep { !/.{5,}!$/ } @found;
+    for my $w (@stash) {
+        delete $is_found{$w};
+    }
+    $cmd = "@stash";
+}
+elsif ($cmd =~ m{\A sa \s+ ([a-z]+) \s* \z}xmsi) {
+    # confusing and tricky, seems to work
+    my $s = $1;
+    my @stash = map { /(.*)!\z/; }
+                grep { /$s.*!/; }
+                @found;
+    @found = grep { !/$s.*!\z/; } @found;
     for my $w (@stash) {
         delete $is_found{$w};
     }
@@ -3761,12 +3783,29 @@ EOH
     $html .= "<text x=$ind1 y=$y class=glets fill=$col_let>p</text>\n";
     my $x = $ind2;
     $y -= 4;
-    my $npangrams_found = grep { $is_found{$_} } @pangrams;
+    my $npangrams_found = 0;
+    my $npangrams_stashed = 0;
+    for my $w (@found) {
+        if ($is_pangram{$w}) {
+            ++$npangrams_found;
+        }
+        else {
+            my $x = $w;
+            $x =~ s{!\z}{}xms;
+            if ($is_pangram{$x}) {
+                ++$npangrams_stashed;
+            }
+        }
+    }
     for my $i (1 .. $npangrams_found) {
         $html .= "<circle cx=$x cy=$y r=$dotr2 fill=#00C0C0></circle>\n";
         $x += $between_dots;
     }
-    for my $i ($npangrams_found+1 .. $npangrams) {
+    for my $i (1 .. $npangrams_stashed) {
+        $html .= "<circle cx=$x cy=$y r=$dotr2 fill=#AAF0F0></circle>\n";
+        $x += $between_dots;
+    }
+    for my $i ($npangrams_found+$npangrams_stashed+1 .. $npangrams) {
         $html .= "<circle cx=$x cy=$y r=$dotr1 fill=$col_let></circle>\n";
         $x += $between_dots;
     }
@@ -3969,6 +4008,7 @@ $heading
 <input type=hidden name=mobile_Device value=$mobile_Device>
 <input type=hidden name=show_WordList value=$show_WordList>
 <input type=hidden name=show_BingoTable value=$show_BingoTable>
+<input type=hidden name=only_clues value=$only_clues>
 <input type=hidden name=bonus_mode value=$bonus_mode>
 <input type=hidden name=which_wl value=$which_wl>
 <input type=hidden name=forum_mode value=$forum_mode>
