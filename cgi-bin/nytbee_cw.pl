@@ -17,6 +17,7 @@ my $date = shift;
 my $date_obj = date($date);
 my $max = shift;
 my $seven = shift;
+my $my_screen_name = shift;
 my %words;  # hash of hash
             # keys: donut/lexicon/bonus, word
             # value: count of how many times the word was found
@@ -122,7 +123,7 @@ if ($date_obj ne $today) {
     print "Final results for " . $date_obj->format("%D") . ":<p>\n";
 }
 my $sp = '&nbsp;' x 2;
-print "<table cellpadding=0>\n";
+print "<table cellpadding=0 border=0>\n";
 # Is this correct??? No.
 for my $aref (sort {
                   $a->[1] <=> $b->[1]
@@ -153,12 +154,14 @@ for my $aref (sort {
     }
     ++$tot{$type};
     if ($tot{$type} <= $max) {
-        print "<tr><td>&nbsp;&nbsp;</td><td class='lt entry'>$uuid_screen_name{$uid}</td><td class=entry>$sp$n</td>";
+        my $sn = $uuid_screen_name{$uid};
+        my $star = ($sn eq $my_screen_name)? "<td style='text-align: left; color: red; font-size: 20pt;'>&nbsp;*</td>": '';
+        print "<tr><td>&nbsp;&nbsp;</td><td class='lt entry'>$sn</td><td class=entry>$sp$n</td>";
         print "<td class=entry>$only{$uid}{$name{$type}}</td>";
         if ($type == 1) {
             print "<td class=entry>$boa_score{$uid}</td>";
         }
-        print "</tr>\n";
+        print "$star</tr>\n";
     }
 }
 print "</table>\n";

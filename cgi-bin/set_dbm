@@ -18,5 +18,7 @@ if ($val =~ m{\A f:(\S+) \z}xms) {
 }
 use DB_File;
 my %hash;
-tie %hash, 'DB_File', $hash_file;
+tie %hash, 'DB_File', $hash_file or die "no tie!";
 $hash{$key} = $val;
+use BeeUtil 'JON';
+JON "key $key val $val => $hash{$key}";

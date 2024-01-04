@@ -18,6 +18,7 @@ nytbee_list.pl \
 nytbee_time.pl \
 nytbee_activity.pl \
 nytbee_log.pl \
+nytbee_bbx.pl \
 indexize \
 de_indexize \
 get_pangrams \

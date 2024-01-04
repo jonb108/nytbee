@@ -1130,7 +1130,8 @@ if ($cmd eq 'pg') {
                   :         "You have $n point$pl over Genius.";
         my $nextra = grep { m{[$ext_sig]\z}xms } @found;
         my $to_qb = @ok_words - @found + $nextra;
-        $message .= "<br>$to_qb more words to Queen Bee.";
+        my $pl2 = $to_qb == 1? '': 's';
+        $message .= "<br>$to_qb more word$pl2 to Queen Bee.";
     }
     else {
         my $pl = $n == 1? '': 's';
@@ -3100,7 +3101,7 @@ elsif ($cmd =~ m{\A cw \s* (\d*) \z}xms) {
         # search the day's log and extra word files to identify
         # the top 5 (10?) locations in Donut, Lexicon, and Bonus words.
         # The C stands for Community or Competitive.
-        $message .= `$cgi_dir/nytbee_cw.pl $date $max $seven`;
+        $message .= `$cgi_dir/nytbee_cw.pl $date $max $seven $screen_name`;
     }
     $cmd = '';
 }
@@ -3231,6 +3232,13 @@ elsif ($cmd =~ m{\A bb([a-z])\z}xmsi) {
     $message = join '',
                map { "$_<br>\n" }
                `egrep -i '^[$seven$let]{6,}\$' osx_usd_words-48.txt | grep $let`;
+}
+# an undocumented cheat for Bonus words of screen name with letter
+elsif ($cmd =~ m{\A bb([a-z]) \s (\w+)\z}xmsi) {
+    my $let = $1;
+    my $screen_name = $2;
+    $cmd = '';
+    $message = `$cgi_dir/nytbee_bbx.pl $date $let $screen_name`;
 }
 elsif ($cmd eq 'ow') {
     $cmd = '';

@@ -94,22 +94,28 @@ while (my $line = <$in>) {
         $genius_for{$screen_name} ||= '';
         if (! exists $hints_for{$screen_name}) {
             my $uuid = $full_uuid{$r_uuid11};
-            my %cur_puzzles = %{ eval $cur_puzzles_store{$uuid} };
-            my @terms = split ' ', $cur_puzzles{$date};
-            $hints_for{$screen_name} = $terms[1];   # => 1 OVERALL_HINTS
-            # bonus is *, donut is -
-            if ($screen_name eq $my_screen_name) {
-                my @bonus = grep { /[*]$/ } @terms;
-                $nbonus = @bonus;
-                my %additional_letters;
-                for my $w (@bonus) {
-                    my $x = $w;
-                    $x =~ s{[$seven]}{}xmsg;
-                    $additional_letters{substr($x, 0, 1)} = 1;
+            if ($uuid) {
+                my %cur_puzzles = %{ eval $cur_puzzles_store{$uuid} };
+                my @terms = split ' ', $cur_puzzles{$date};
+                $hints_for{$screen_name} = $terms[1];   # => 1 OVERALL_HINTS
+                # bonus is *, donut is -
+                if ($screen_name eq $my_screen_name) {
+                    my @bonus = grep { /[*]$/ } @terms;
+                    $nbonus = @bonus;
+                    my %additional_letters;
+                    for my $w (@bonus) {
+                        my $x = $w;
+                        $x =~ s{[$seven]}{}xmsg;
+                        $additional_letters{substr($x, 0, 1)} = 1;
+                    }
+                    $boa = keys %additional_letters;
+                    $ndonut = grep { /[-]$/ } @terms;
+                    $nlexicon = grep { /[+]$/ } @terms;
                 }
-                $boa = keys %additional_letters;
-                $ndonut = grep { /[-]$/ } @terms;
-                $nlexicon = grep { /[+]$/ } @terms;
+            }
+            else {
+                $hints_for{$screen_name} = 1;   # ??
+                JON "no full uuid for $r_uuid11 :(";
             }
         }
     }
@@ -168,11 +174,20 @@ for my $sn (keys %rank_for) {
         my $uuid11 = $screen_name_uuid{$sn};
         my $full_uuid = $full_uuid{$uuid11};
         # check $@ and return value 
-        my %cur_puzzles = %{ eval $cur_puzzles_store{$full_uuid} };
-        my $nwords = grep { /^[a-z]+$/ }
-                     split ' ', $cur_puzzles{$date};
-        my $left = $qb_nwords - $nwords;
-        $queen_minus_for{$sn} = $left;
+        # this needs help...
+        if ($full_uuid && exists $cur_puzzles_store{$full_uuid}) {
+            my $s = eval $cur_puzzles_store{$full_uuid};
+            if (! $@) {
+                my %cur_puzzles = %{ $s };
+                my $nwords = grep { /^[a-z]+$/ }
+                             split ' ', $cur_puzzles{$date};
+                my $left = $qb_nwords - $nwords;
+                $queen_minus_for{$sn} = $left;
+            }
+        }
+        else {
+            JON "no cur puzzles for $uuid11 => $full_uuid";
+        }
     }
 }
 my $share = '';
