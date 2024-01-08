@@ -731,9 +731,14 @@ or 5+ letter words that do not fit in with minimal Bingo.
 You can &#8220;stash&#8221; these words
 so you don&#8217;t forget them!
 <ul>
-<span class=cmd>SW</span> CONDITION ADDICT DICTA
+<span class=cmd>SW CONDITION ADDICT DICTA</spaN>
 </ul>
 <span class=cmd>SW</span> stands for <span class=cmd>S</span>tash <span class=cmd>W</span>ords.
+<p>
+The <span class=cmd>SW</span> can be entered <i>at the end</i>, if you wish.
+<ul>
+<span class=cmd>CONDITION ADDICT DICTA SW</span>
+</ul>
 <p>
 Note that if you see a Bonus or Donut word
 it&#8217;s okay to enter them <i>whenever</i> you wish.
@@ -746,7 +751,7 @@ forget the 4 letter words you entered!  There is a command to help:
 <ul>
 <span class=cmd>SWA</span>
 </ul>
-This will stash <span class=cmd>a</span>ll of your puzzle words and reset your Hint total to 0.
+This will stash <span class=cmd>a</span>ll of your puzzle words.
 <p>
 The words in the Stash are shown below the Donut, Lexicon, and Bonus words.
 Something like this:
@@ -772,7 +777,7 @@ your remembered 4 letter stash words with:
 Note that words are checked before stashing.  Only valid puzzle
 words are stashed.  Extra words will be added as usual.
 <p>
-For power users there is one more stash command:
+For power users there is a variant on the <span class=cmd>SA</span> command:
 <ul>
 <span class=cmd>SA XX</span>
 </ul>
@@ -780,24 +785,29 @@ XX can be any letters you wish.   Any words in the stash
 that <i>contain</i> an XX will be UNstashed.  This would be useful if
 you saw a pangram during minimal bingo and stashed it and then you wanted
 to enter the pangram when doing maximal bingo.  Without this command
-you would have to re-enter it.  For example, if the pangram for the
-above puzzle is ADDICTION and the stash contained:
+you would have to re-enter it.  For example, the pangram for the
+above puzzle is ADDICTION. If the stash contained:
 <ul>
-ACIDIC ADDICTION ANACONDA CICADA 
+ACIDIC ADDICT ADDICTION ANACONDA CICADA 
 </ul>
-you could UNstash ADDICTION with:
+you could unstash ADDICTION with:
 <ul>
-<span class=cmd>SA CT</span>
+<span class=cmd>SA IO</span> or <span class=cmd>SA DD</span>
 </ul>
 For Power Users: The XX is actually a <a target=_blank href='https://perldoc.perl.org/perlretut'>Perl regular expression</a> so with this in the stash:
 <ul>
-CHALLAH CHALLENGE HALL HANG LEECH
+CHALLAH CHALLENGE HALL HANG LEECH TENT
 </ul>
 You could unstash CHALLENGE with:
 <ul>
 <span class=cmd>SA E$</span>
 </ul>
-as it is the only word that ends in E.
+because it is the only word that ends in E.
+And you could unstash LEECH with:
+<ul>
+<span class=cmd>SA ^L</span>
+</ul>
+because it is the only word that begins with L.
 <a name=donut></a>
 <h2>Donut, Lexicon, and Bonus Words
 <a class=top href=#toc><img src=pics/top.gif height=25></a>

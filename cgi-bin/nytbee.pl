@@ -1283,11 +1283,8 @@ elsif ($cmd =~ m{\A d(p|r|5|[a-z]\d+|[a-z][a-z]) \z}xms) {
     $cmd = '';
 }
 elsif ($cmd eq 'swa') {
-    # add all puzzle words to the stash
-    # and clear the hints.
+    # add ALL puzzle words to the stash
     s/([a-z])$/$1!/ for @found;   # fun!
-    $nhints = 0;
-    # do not clear $n_overall_hints
     $message = 'Stashed';
     $cmd = '';
 }
@@ -1295,7 +1292,10 @@ elsif ($cmd eq 'sw') {
     # a no op - ignore
     $cmd = '';
 }
-elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms) {
+elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms  # sw at the front
+       ||
+       $cmd =~ m{\A ([a-z ]*) \s+ sw \z}xms  # sw at the end
+) {
     # adding words to the stash.
     # we first check the words.
     # give errors for unqualified words and
