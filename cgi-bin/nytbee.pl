@@ -1350,7 +1350,8 @@ elsif ($cmd =~ m{\A sa \s* 5 \z}xms) {
     }
     $cmd = "@stash";
 }
-elsif ($cmd =~ m{\A sa \s+ ([a-z]+) \s* \z}xmsi) {
+# sa with a regexp
+elsif ($cmd =~ m{\A sa \s+ (.+) \z}xmsi) {
     # confusing and tricky, seems to work
     my $s = $1;
     my @stash = map { /(.*)!\z/; }

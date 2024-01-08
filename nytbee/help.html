@@ -218,7 +218,9 @@ Great
 </pre>
 </ul>
 </td></tr>
-<tr><td><span class=cmd>ST</span></td><td>Toggle the showing of puzzle <span class=cmd>st</span>atus: numeric or graphical. Default is numeric.<p>
+<tr><td>
+<a name=st></a>
+<span class=cmd>ST</span></td><td>Toggle the showing of puzzle <span class=cmd>st</span>atus: numeric or graphical. Default is numeric.<p>
 The numeric status looks like this:
 <p>
 <img src=pics/nstatus.png height=90>
@@ -583,7 +585,7 @@ Not all puzzles are Bingo puzzles but there are many.
 In the first 1530 puzzles in the <a href=#nyt_archive>archive</a>
 650 were Bingo puzzles.
 The <span class=cmd>I</span> command will tell you if a puzzle is a Bingo as
-does the graphical status (see the command <span class=cmd>ST</span>).
+does the graphical status (<a href=#st>see the command <span class=cmd>ST</span></a>).
 When you enter a word that completes a Bingo you get a congratulatory message.
 There are 4 levels of Bingo achievement:
 <ul>
@@ -787,6 +789,15 @@ you could UNstash ADDICTION with:
 <ul>
 <span class=cmd>SA CT</span>
 </ul>
+For Power Users: The XX is actually a <a target=_blank href='https://perldoc.perl.org/perlretut'>Perl regular expression</a> so with this in the stash:
+<ul>
+CHALLAH CHALLENGE HALL HANG LEECH
+</ul>
+You could unstash CHALLENGE with:
+<ul>
+<span class=cmd>SA E$</span>
+</ul>
+as it is the only word that ends in E.
 <a name=donut></a>
 <h2>Donut, Lexicon, and Bonus Words
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -846,7 +857,7 @@ in the <a href=#lexicon>large lexicon</a>.
 <a name=bonus></a>
 <h3>Bonus</h3>
 When seeking questing looking for words in the allowed list
-how often have you muttered the phrase &#8220;<span class=green>If I only had an E...</span>&#8221;?
+how often have you muttered the phrase &#8220;<span class=green>If only I had an E...</span>&#8221;?
 For this, there are <i>Bonus</i> words.  A Bonus word is at least 6
 letters long, uses some of the 7 letters
 (<i>not</i> necessarily including the center one),
@@ -1793,8 +1804,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2066 puzzles with
-a total of 9949 different words!
+2070 puzzles with
+a total of 9950 different words!
 <p>
 Which puzzles from the large archive to play?
 You can get one at random with the <span class=cmd>NR</span> command or you could
@@ -1929,10 +1940,14 @@ A <b>color</b> is composed of <span class=red>3</span> bytes (red, green, blue) 
 A <b>color scheme</b> has a color for each of <span class=red>9</span> areas so there are 16,777,216<sup>9</sup> = 10<sup>65</sup> different color schemes.<br>
 <p>
 Summarizing:<ul>
-<span style='font-size: 34pt'>2<sup>8<sup>3<sup>9</sup></sup></sup></span> = 1.053122916686e65, approximately.
+<span style='font-size: 34pt'>2<sup>8<sup>3<sup>9</sup></sup></sup></span> = 1.053122916686 * 10<sup>65</sup>, approximately.
 </ul>
 How fun is that! &#128522;
 <p>
+For even more fun, using <a target=_blank href='https://en.wikipedia.org/wiki/Dc_(computer_program)'>dc</a>, the arbitrary-precision arithmetic calculator, the actual answer is:
+<ul>
+105312291668557186697918027683670432318895095400549111254310977536
+</ul>
 <a name=hotlink></a>
 <span class=red>&dagger;&dagger;&dagger;</span><br>
 This post in the HiveMind on August 14, 2023 shows that being able to click on words in the Puzzle, Donut, Lexicon, Bonus and Stash lists to get definitions of
