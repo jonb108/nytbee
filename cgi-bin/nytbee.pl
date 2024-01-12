@@ -978,6 +978,12 @@ sub do_define {
         my @words = grep { !$is_found{$_} && ($n4 || length >= 5)  }
                     @ok_words;
         if (! @words) {
+            # no more 5+ letter words
+            # there may be 4 letter words
+            @words = grep { !$is_found{$_} }
+                        @ok_words;
+        }
+        if (! @words) {
             $msg .= 'No more words.';
         }
         else {
