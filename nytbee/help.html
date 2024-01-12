@@ -403,6 +403,7 @@ Most of us mere mortals need some kind of help to get to Amazing or Genius.
 <tr><td><span class=cmd>1</span></td><td>Show a random entry from the Hint Table.</td></tr>
 <tr><td><span class=cmd>2</span></td><td>Show a random entry from the Two Letter List.
 <tr><td colspan=2>These two will work even if the full Table and List are not shown.<p></td></tr>
+<tr><td colspan=2>Note: The Define and reVeal commands below will skip words that have already been found.<p></td></tr>
 <tr><td colspan=2 class=green>Definitions/Clues</td></tr>
 <tr><td><span class=cmd>DP</span></td><td>Define the Pangrams.</td></tr>
 <tr><td><span class=cmd>DB8</span></td><td>Define the words beginning with B of length 8.</td></tr>
@@ -430,7 +431,6 @@ the clues and the definitions.  The default is to show both.
 <tr><td><span class=cmd>V3B8</span></td><td>Reveal the first 3 letters of the words beginning with B of length 8.</td></tr>
 <tr><td><span class=cmd>V4GA</span></td><td>Reveal the first 4 letters (and the length) of the words beginning with GA.</td></tr>
 <tr><td colspan=2>Using <span class=cmd>E</span> instead of <span class=cmd>V</span> reveals letters at the front and at the End of the word.  Commands that would reveal the entire word (like V4B4) are silently ignored (as are commands like V1B8 or V2GA).</td></tr>
-<tr><td colspan=2>Both define and reveal commands skip words that have already been found.<p></td></tr>
 </table>
 <a name=table_list></a>
 <h2>The Hint Table and the Two Letter List
@@ -742,6 +742,9 @@ or<br>
 <span class=cmd>CONDITION ADDICT DICTA S</span>
 </ul>
 <p>
+Note that words are checked before stashing.  Only valid puzzle
+words are stashed.  Extra words will be added as usual.
+<p>
 Note that if you see a Bonus or Donut word
 it&#8217;s okay to enter them <i>whenever</i> you wish.
 The <span class=cmd>C Y</span> command will <i>not</i> clear them.
@@ -774,16 +777,13 @@ your remembered 4 letter stash words with:
 <ul>
 <span class=cmd>SA</span>
 </ul>
-<span class=cmd>SA</span> stands for <span class=cmd>S</span>tash <span class=cmd>A</span>dd.
+<span class=cmd>SA</span> stands for <span class=cmd>S</span>tash <span class=cmd>A</span>dd.  <i>All</i> words will be UNstashed.
 <p>
-Note that words are checked before stashing.  Only valid puzzle
-words are stashed.  Extra words will be added as usual.
-<p>
-For power users there is a variant on the <span class=cmd>SA</span> command:
+There is a variant on the <span class=cmd>SA</span> command:
 <ul>
 <span class=cmd>SA XX</span>
 </ul>
-XX can be any letters you wish.   Any words in the stash
+XX can be any letters you wish.   Only the words in the stash
 that <i>contain</i> an XX will be UNstashed.  This would be useful if
 you saw a pangram during minimal bingo and stashed it and then you wanted
 to enter the pangram when doing maximal bingo.  Without this command
@@ -792,11 +792,20 @@ above puzzle is ADDICTION. If the stash contained:
 <ul>
 ACIDIC ADDICT ADDICTION ANACONDA CICADA 
 </ul>
-you could unstash ADDICTION with:
+you could UNstash ADDICTION with:
 <ul>
-<span class=cmd>SA IO</span> or <span class=cmd>SA DD</span>
+<span class=cmd>SA TI</span><br>
+or<br>
+<span class=cmd>SA IO</span>
 </ul>
-For Power Users: The XX is actually a <a target=_blank href='https://perldoc.perl.org/perlretut'>Perl regular expression</a> so with this in the stash:
+<p>
+Another (and likely easier way) to UNstash a word is to first click
+on it to get its definition.  Above the definition there will be
+a link labeled 'UNstash'.  Click on it do the deed.
+<ul>
+<img src=pics/unstash.png height=100 border=1>
+</ul>
+For power users: In the command <span class=cmd>SA XX</span> the XX is actually a <a target=_blank href='https://perldoc.perl.org/perlretut'>Perl regular expression</a> so with this in the stash:
 <ul>
 CHALLAH CHALLENGE HALL HANG LEECH TENT
 </ul>
@@ -1816,7 +1825,7 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2074 puzzles with
+2075 puzzles with
 a total of 9957 different words!
 <p>
 Which puzzles from the large archive to play?

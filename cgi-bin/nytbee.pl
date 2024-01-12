@@ -975,9 +975,8 @@ sub do_define {
                 last WORD;
             }
         }
-        my @words = grep { !$is_found{$_} && ($n4 || length > 5)  }
+        my @words = grep { !$is_found{$_} && ($n4 || length >= 5)  }
                     @ok_words;
-JON "words = @words";
         if (! @words) {
             $msg .= 'No more words.';
         }
@@ -1367,6 +1366,7 @@ elsif ($cmd =~ m{\A sa \s* 5 \z}xms) {
 elsif ($cmd =~ m{\A sa \s+ (.+) \z}xmsi) {
     # confusing and tricky, seems to work
     my $s = $1;
+    $s =~ s{\$}{\\b}xms;
     my @stash = map { /(.*)!\z/; }
                 grep { /$s.*!/; }
                 @found;
@@ -1401,8 +1401,13 @@ elsif ($cmd =~ m{\A d \s+ ([a-z ]+) \z}xms) {
     my $words = $1;
     my @words = split ' ', $words;
     for my $word (@words) {
-        $message .= qq!<br><span class=cursor_black onclick="full_def('$word');"><span class=letter>\U$word</span>:!
-                 .  ul(define($word, 1, 0))
+        my $st = '';
+        if (in_stash($word)) {
+            $st = qq!<span class=alink style='margin-left: 2in;' onclick="issue_cmd('$word');">UNstash</span>!;
+        }
+        $message .= "<br><span class=letter>\U$word\E</span>$st"
+                 .  qq!<span class=cursor_black onclick="full_def('$word');">!
+                 .  ul(define($word, 1, 1))
                  .  '</span>'
                  ;
     }
