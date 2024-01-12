@@ -963,8 +963,21 @@ sub do_define {
     }
     elsif ($term eq 'r') {
         # a random word that has not yet been found
-        my @words = grep { !$is_found{$_} }
+        #
+        # if there are no 4 letter words in the @found array
+        # then this will be like a D5.
+        #
+        my $n4 = 0;
+        WORD:
+        for my $w (@found) {
+            if (length $w == 4) {
+                $n4 = 1;
+                last WORD;
+            }
+        }
+        my @words = grep { !$is_found{$_} && ($n4 || length > 5)  }
                     @ok_words;
+JON "words = @words";
         if (! @words) {
             $msg .= 'No more words.';
         }
@@ -1294,7 +1307,7 @@ elsif ($cmd eq 'sw') {
 }
 elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms  # sw at the front
        ||
-       $cmd =~ m{\A ([a-z ]*) \s+ sw \z}xms  # sw at the end
+       $cmd =~ m{\A ([a-z ]*) \s+ sw? \z}xms # sw or s at the end
 ) {
     # adding words to the stash.
     # we first check the words.

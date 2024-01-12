@@ -407,7 +407,7 @@ Most of us mere mortals need some kind of help to get to Amazing or Genius.
 <tr><td><span class=cmd>DP</span></td><td>Define the Pangrams.</td></tr>
 <tr><td><span class=cmd>DB8</span></td><td>Define the words beginning with B of length 8.</td></tr>
 <tr><td><span class=cmd>DGA</span></td><td>Define the words beginning with GA.</td></tr>
-<tr><td><span class=cmd>DR</span></td><td>Define a random word from the list of words not yet found.</td></tr>
+<tr><td><span class=cmd>DR</span></td><td>Define a random word from the list of words not yet found.  Note that if there are no 4 letter words in the found list the <span class=cmd>DR</span> command will do a <span class=cmd>D5</span> to only include 5+ letter words.  This will help when trying for GN4L.</td></tr>
 <tr><td colspan=2><span class=cmd>D&nbsp;&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.
 You can ask for definitions of <i>any</i> word - not just the ones in the puzzle.
 No hints are tallied.
@@ -735,9 +735,11 @@ so you don&#8217;t forget them!
 </ul>
 <span class=cmd>SW</span> stands for <span class=cmd>S</span>tash <span class=cmd>W</span>ords.
 <p>
-The <span class=cmd>SW</span> can be entered <i>at the end</i>, if you wish.
+More conveniently, the <span class=cmd>SW</span> (or just an S) could be entered <i>at the end</i>, if you wish:
 <ul>
-<span class=cmd>CONDITION ADDICT DICTA SW</span>
+<span class=cmd>CONDITION ADDICT DICTA SW</span><br>
+or<br>
+<span class=cmd>CONDITION ADDICT DICTA S</span>
 </ul>
 <p>
 Note that if you see a Bonus or Donut word
@@ -1814,8 +1816,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2070 puzzles with
-a total of 9950 different words!
+2074 puzzles with
+a total of 9957 different words!
 <p>
 Which puzzles from the large archive to play?
 You can get one at random with the <span class=cmd>NR</span> command or you could
