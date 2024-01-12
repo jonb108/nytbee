@@ -1405,7 +1405,7 @@ elsif ($cmd =~ m{\A d \s+ ([a-z ]+) \z}xms) {
         if (in_stash($word)) {
             $st = qq!<span class=alink style='margin-left: 2in;' onclick="issue_cmd('$word');">UNstash</span>!;
         }
-        $message .= "<br><span class=letter>\U$word\E</span>$st"
+        $message .= qq!<br><span class='letter' style='cursor: pointer' onclick="full_def('$word');">\U$word\E</span>$st!
                  .  qq!<span class=cursor_black onclick="full_def('$word');">!
                  .  ul(define($word, 1, 1))
                  .  '</span>'
