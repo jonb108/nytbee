@@ -2066,7 +2066,8 @@ sub check_word {
                 return "bonus";
             }
             elsif (in_wordnik($w)) {
-                if (my $root = an_S_or_ES_word($w)) {
+                my $root = an_S_or_ES_word($w);
+                if ($root && $w !~ m{less\z}xmsi) {
                     return "Sorry, this word is just a plural OR a 3rd person singular simple present indicative form of " . red($root) . ".";
                 }
                 else {
@@ -3538,25 +3539,29 @@ if ($message) {
     $message .= '<p>';
     $has_message = 1;
 }
-my $create_add
-    = "<a class=alink onclick='set_focus();' target=_blank href='$log/nytbee/mkpuz.html'>"
-    . "Create Puzzle</a>";
+my $create_add = '';
 my $add_clues_form = '';
-if ($date =~ m{\A \d}xms) {
-    my $add_edit = index($puzzle_has_clues{$date}, $uuid) >= 0? 'Edit': 'Add';
-    $create_add
-        .= "&nbsp;&nbsp;<span class=alink onclick='add_clues();'>$add_edit Clues</span>";
-    $add_clues_form = <<"EOH";
-<form target=_blank
-      id=add_clues
-      action=$log/cgi-bin/nytbee_mkclues.pl
-      method=POST
->
-<input type=hidden id=date name=date value=$date>
-<input type=hidden id=found name=found value='@found'>
-</form>
-EOH
-}
+#
+# disabled for now
+#
+
+#$create_add = "<a class=alink onclick='set_focus();' target=_blank href='$log/nytbee/mkpuz.html'>"
+#            . "Create Puzzle</a>";
+#if ($date =~ m{\A \d}xms) {
+#    my $add_edit = index($puzzle_has_clues{$date}, $uuid) >= 0? 'Edit': 'Add';
+#    $create_add
+#        .= "&nbsp;&nbsp;<span class=alink onclick='add_clues();'>$add_edit Clues</span>";
+#    $add_clues_form = <<"EOH";
+#<form target=_blank
+#      id=add_clues
+#      action=$log/cgi-bin/nytbee_mkclues.pl
+#      method=POST
+#>
+#<input type=hidden id=date name=date value=$date>
+#<input type=hidden id=found name=found value='@found'>
+#</form>
+#EOH
+#}
 
 # now to display everything
 # cgi-bin/style.css?
@@ -3573,7 +3578,7 @@ my $heading = $show_Heading? <<"EOH": '';
      <img width=53 src=$log/nytbee/pics/bee-logo.png onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
 </div>
 <div class=float-child3>
-    <div style="text-align: center"><span class=help><a class=alink target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span>&nbsp;&nbsp;<span class=help><a target=_blank class=alink href='$log/nytbee/cmds.html'>Cmds</a><br><span class=create_add'>$create_add</span><br><a class='alink' onclick="issue_cmd('F');">Forum $num_msgs</a></div>
+    <div style="text-align: center"><span class=help><a class=alink target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span>&nbsp;&nbsp;<span class=help><a target=_blank class=alink href='$log/nytbee/cmds.html'>Cmds</a><br><!-- <span class=create_add'>$create_add</span><br>--><a class='alink' onclick="issue_cmd('F');">Forum $num_msgs</a></div>
 </div>
 <br><br><br>
 EOH

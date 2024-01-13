@@ -8,6 +8,7 @@ our @EXPORT_OK = qw/
     get_person
     add_update_person
     get_clues
+    get_clue_numbers
 /;
 use JSON::PP qw/
     encode_json
@@ -170,6 +171,39 @@ EOS
     my $json = encode_json(\%clues_for_json);
 
     return \%prior_clues_for, $json;
+}
+
+sub get_clue_numbers {
+    my ($person_id) = @_;
+
+    # WORDS
+    my $sth_words = $dbh->prepare(<<"EOS");
+        SELECT count(distinct word)
+          FROM bee_clue
+         WHERE person_id = ?
+EOS
+    $sth_words->execute($person_id); 
+    my ($nwords) = $sth_words->fetchrow_array();
+
+    # CLUES
+    my $sth_clues = $dbh->prepare(<<"EOS");
+        SELECT count(*)
+          FROM bee_clue
+         WHERE person_id = ?
+EOS
+    $sth_clues->execute($person_id); 
+    my ($nclues) = $sth_clues->fetchrow_array();
+
+    # DATES
+    my $sth_dates = $dbh->prepare(<<"EOS");
+        SELECT count(distinct date)
+          FROM bee_clue
+         WHERE person_id = ?
+EOS
+    $sth_dates->execute($person_id); 
+    my ($ndates) = $sth_dates->fetchrow_array();
+
+    return $nwords, $nclues, $ndates;
 }
 
 1;

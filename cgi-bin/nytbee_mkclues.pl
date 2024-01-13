@@ -23,6 +23,7 @@ use Bee_DBH qw/
     $dbh
     get_person
     get_clues
+    get_clue_numbers
 /;
 use CGI;
 use CGI::Carp qw/
@@ -32,10 +33,18 @@ use CGI::Carp qw/
 
 my $q = CGI->new();
 my $uuid = cgi_header($q);
+my $all_words = $q->path_info() eq '/today'? 1: 0;
+if ($all_words) {
+    # 9060f4f4-b124-11ee-b0d4-ac0cb0d5d1d5
+    my @f = split '-', $uuid;
+    if (@f == 5) {
+        print "<meta http-equiv='refresh' content='0; URL=https://logicalpoetry.com/nytbee/new_sn_id.html'/>\n";
+        exit;
+    }
+}
 
 my $cgi = "$log/cgi-bin";
 my $date;
-my $all_words = $q->path_info() eq '/today'? 1: 0;
 #
 # the directory logicalpoetry.com/mkclues has an index.html
 # file that redirects to logicalpoetry.com/cgi-bin/nytbee_mkclues.pl/today
@@ -76,6 +85,15 @@ if ($nnf) {
 }
 
 my ($person_id, $name, $location) = get_person($uuid);
+my $name_numbers = '';
+my ($nclues, $nwords, $ndates) = get_clue_numbers($person_id);
+if ($name) {
+    $name_numbers = <<"EOH";
+Welcome back, $name.
+<p>
+You have given a total of $nclues clues for $nwords distinct words in $ndates different puzzles!
+EOH
+}
 
 my %clue_for;
 my $got_clues = 0;
@@ -139,6 +157,7 @@ function cycle(w) {
 <form name=form action='$cgi/nytbee_mkclues2.pl' onsubmit="return check_name_location();" method=POST>
 <input type=hidden name=date value='$date'>
 <input type=hidden name=all_words value='$all_words'>
+$name_numbers
 <p>
 $nnf_disp
 You do not have to give clues for all of the words.  You can return
