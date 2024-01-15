@@ -100,7 +100,7 @@ print <<"EOH";
 <html>
 <head>
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
-<script src="$log/nytbee/js/nytbee6.js"></script>
+<script src="$log/nytbee/js/nytbee7.js"></script>
 <script>
 $cycle_function
 </script>

@@ -4032,7 +4032,7 @@ body {
 }
 </style>
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_${css}style.css'/>
-<script src="$log/nytbee/js/nytbee6.js"></script>
+<script src="$log/nytbee/js/nytbee7.js"></script>
 </head>
 <body onload='init(); $focus'>
 $heading

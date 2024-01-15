@@ -96,7 +96,7 @@ function show_copied(id) {
 }
 function full_def(word) {
     window.open('https://wordnik.com/words/' + word,
-                'wordnik', 'width=1000');
+                '_blank', 'width=1000');
     set_focus();
 }
 function popup_define(word, height, width) {
