@@ -3570,6 +3570,7 @@ if (my $nm = $num_msgs{$date}) {
     $num_msgs = " <span class=red>$nm</span>";
 }
 
+my $forum_s = $forum_mode? '<s>Forum</s>': 'Forum';
 my $heading = $show_Heading? <<"EOH": '';
 <div class=float-child1>
     <a target=_blank class=alink onclick="set_focus();" href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date$clues_are_present
@@ -3578,7 +3579,7 @@ my $heading = $show_Heading? <<"EOH": '';
      <img width=53 src=$log/nytbee/pics/bee-logo.png onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
 </div>
 <div class=float-child3>
-    <div style="text-align: center"><span class=help><a class=alink target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span>&nbsp;&nbsp;<span class=help><a target=_blank class=alink href='$log/nytbee/cmds.html'>Cmds</a><br><!-- <span class=create_add'>$create_add</span><br>--><a class='alink' onclick="issue_cmd('F');">Forum $num_msgs</a></div>
+    <div style="text-align: center"><span class=help><a class=alink target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span>&nbsp;&nbsp;<span class=help><a target=_blank class=alink href='$log/nytbee/cmds.html'>Cmds</a><br><!-- <span class=create_add'>$create_add</span><br>--><a class='alink' onclick="issue_cmd('F');">$forum_s $num_msgs</a></div>
 </div>
 <br><br><br>
 EOH
@@ -3671,6 +3672,7 @@ EOH
         }
         else {
             # not Donut, not Bonus
+            my $forum_s = $forum_mode? '<s>Forum</s>': 'Forum';
             my $st = "style='color: $colors{alink}'";
             $letters .= <<"EOH";
 <span class='pos11 cursor_black' $st onclick="stash_lets();">Stash</span>
@@ -3684,7 +3686,7 @@ EOH
 <span class='pos23 cursor_black' $st onclick="issue_cmd('BN');">Bonus</span>
 <span class='pos31 cursor_black' $st onclick="issue_cmd('TOP');">Top</span>
 <span class='pos32 cursor_black'><a class='cursor_black' $st target=_blank href='$log/nytbee/help.html#toc'">Help</a></span>
-<span class='pos33 cursor_black' $st onclick="issue_cmd('F');">Forum $num_msgs</span>
+<span class='pos33 cursor_black' $st onclick="issue_cmd('F');">$forum_s $num_msgs</span>
 EOH
         }
     }
