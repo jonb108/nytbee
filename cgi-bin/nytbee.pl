@@ -1329,6 +1329,8 @@ elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms  # sw at the front
             else {
                 @found = map { s{\A $w \z}{$w!}xms; $_; } @found;
                 ++$nwords_stashed;
+                # add to list for highlighting
+                $is_new_word{$w} = 1;
             }
         }
         else {
@@ -1407,11 +1409,22 @@ elsif ($cmd =~ m{\A d \s+ ([a-z ]+) \z}xms) {
     my $words = $1;
     my @words = split ' ', $words;
     for my $word (@words) {
-        my $st = '';
+        my ($cmd, $label);
         if (in_stash($word)) {
-            $st = qq!<span class=alink style='margin-left: 2in;' onclick="issue_cmd('$word');">UNstash</span>!;
+            $cmd = $word;
+            $label = 'UNstash';
         }
-        $message .= qq!<br><span class='letter' style='cursor: pointer' onclick="full_def('$word');">\U$word\E</span>$st!
+        else {
+            $cmd = "sw $word";
+            $label = 'Stash';
+        }
+        $message .= <<"EOM"
+<br>
+<span class='letter' style='cursor: pointer'
+      onclick="full_def('$word');">\U$word\E</span>
+<span class=alink style='margin-left: 2in;'
+      onclick="issue_cmd('$cmd');">$label</span>
+EOM
                  .  qq!<span class=cursor_black onclick="full_def('$word');">!
                  .  ul(define($word, 1, 1))
                  .  '</span>'
