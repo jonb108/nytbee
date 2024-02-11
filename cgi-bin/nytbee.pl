@@ -1414,18 +1414,21 @@ elsif ($cmd =~ m{\A d \s+ ([a-z ]+) \z}xms) {
             $cmd = $word;
             $label = 'UNstash';
         }
-        else {
+        # do not offer Stash for Extra words 
+        elsif ($is_ok_word{$word}) {
             $cmd = "sw $word";
             $label = 'Stash';
         }
-        $message .= <<"EOM"
+        $message .= <<"EOM";
 <br>
 <span class='letter' style='cursor: pointer'
       onclick="full_def('$word');">\U$word\E</span>
+EOM
+        $message .= <<"EOM" if $cmd;
 <span class=alink style='margin-left: 2in;'
       onclick="issue_cmd('$cmd');">$label</span>
 EOM
-                 .  qq!<span class=cursor_black onclick="full_def('$word');">!
+        $message .=  qq!<span class=cursor_black onclick="full_def('$word');">!
                  .  ul(define($word, 1, 1))
                  .  '</span>'
                  ;
