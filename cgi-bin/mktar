@@ -15,6 +15,7 @@ get_clues.pl \
 get_nytbee.pl \
 nyt_puzzles.txt \
 nytbee_list.pl \
+nytbee_fcp.pl \
 nytbee_time.pl \
 nytbee_activity.pl \
 nytbee_log.pl \

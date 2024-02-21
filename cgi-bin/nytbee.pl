@@ -1578,6 +1578,10 @@ elsif (my ($pat) = $cmd =~ m{\A lcp \s*(\S*) \z}xms) {
     }
     $cmd = '';
 }
+elsif ($cmd =~ m{\A fcp \s+ (.*)}xms) {
+    $message = `$cgi_dir/nytbee_fcp.pl $1`;
+    $cmd = '';
+}
 elsif ($cmd eq 'ycp') {
     my $s = `cd $comm_dir; grep -l '$uuid' *.txt`;
     my @nums = sort { $b <=> $a }
