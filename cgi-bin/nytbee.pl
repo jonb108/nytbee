@@ -201,6 +201,19 @@ sub log_it {
     my ($msg) = @_;
     append_file "beelog/$ymd", substr($uuid, 0, 11) . " = $msg\n";
 }
+# is the word already in the file?
+sub own_word {
+    my ($type, $date, $w) = @_;
+    open my $in, '<', "$type/$date";
+    while (my $word = <$in>) {
+        chomp $word;
+        if ($word eq $w) {
+            return '';
+        }
+    }
+    close $in;
+    return "Own ";
+}
 sub add_3word {
     my ($type, $date, $w) = @_;
     append_file("$type/$date",  "$w\n");
@@ -358,6 +371,8 @@ my $show_BingoTable = exists $params{show_BingoTable}?
                              $params{show_BingoTable}: 0;
 my $bonus_mode      = exists $params{bonus_mode}?
                              $params{bonus_mode}: 0;
+my $donut_mode      = exists $params{donut_mode}?
+                             $params{donut_mode}: 0;
 my $only_clues      = exists $params{only_clues}?
                              $params{only_clues}: 0;
 my $forum_mode      = exists $params{forum_mode}?
@@ -1221,13 +1236,11 @@ elsif ($cmd eq 'oc') {
 }
 elsif ($cmd eq 'bn') {
     $bonus_mode = ! $bonus_mode;
-    $which_wl = $bonus_mode? 'b': 'pdlbs';
+    $donut_mode = 0;
     $cmd = '';
 }
 elsif ($cmd eq 'dn') {
-    # Donut mode is not separate from $which_wl
-    # which is awkward...
-    $which_wl = $which_wl eq 'd'? 'pdlbs': 'd';
+    $donut_mode = ! $donut_mode;
     $bonus_mode = 0;
     $cmd = '';
 }
@@ -2183,27 +2196,30 @@ sub consider_word {
             }
             $is_found{$w} = 1;
             if ($mess eq 'donut') {
+                my $own = own_word('donut', $date, $w);
                 $not_okay_words .= "<span class=not_okay>"
                                 .  def_word(uc($w), $w)
-                                .  "</span>: Donut word $thumbs_up<br>"
+                                .  "</span>: Donut ${own}word $thumbs_up<br>"
                                 .  pangram_check($w, 6);
                 add_3word('donut', $date, $w);
                 log_it('*donut');
                 $w .= '-';
             }
             elsif ($mess eq 'lexicon') {
+                my $own = own_word('lexicon', $date, $w);
                 $not_okay_words .= "<span class=not_okay>"
                                 .  def_word(uc($w), $w)
-                                .  "</span>: Lexicon word $thumbs_up<br>"
+                                .  "</span>: Lexicon ${own}word $thumbs_up<br>"
                                 .  pangram_check($w, 7);
                 add_3word('lexicon', $date, $w);
                 log_it('*lexicon');
                 $w .= '+';
             }
             elsif ($mess eq 'bonus') {
+                my $own = own_word('bonus', $date, $w);
                 $not_okay_words .= "<span class=not_okay>"
                                 .  def_word(uc($w), $w)
-                                .  "</span>: Bonus word $thumbs_up<br>"
+                                .  "</span>: Bonus ${own}word $thumbs_up<br>"
                                 .  pangram_check($w, 8, $seven);
                 add_3word('bonus', $date, $w);
                 log_it('*bonus');
@@ -2588,12 +2604,13 @@ if ($show_WordList) {
     }
     else {
         $extra_words .= dlb_row('Donut:',   \@donut)
-            unless $bonus_mode || $which_wl !~ /d/;
+            if ($donut_mode || $which_wl =~ /d/) && ! $bonus_mode;
         $extra_words .= dlb_row('Lexicon:', \@lexicon)
-            unless $bonus_mode || $which_wl !~ /l/;
-        $extra_words .= dlb_row('Bonus:',   \@bonus) if $bonus_mode || $which_wl =~ /b/;
+            unless $bonus_mode || $donut_mode || $which_wl !~ /l/;
+        $extra_words .= dlb_row('Bonus:',   \@bonus)
+            if ($bonus_mode || $which_wl =~ /b/) && ! $donut_mode;
         $extra_words .= dlb_row('Stash:',   \@stash)
-            unless $bonus_mode || $which_wl !~ /s/;
+            unless $bonus_mode || $donut_mode || $which_wl !~ /s/;
         if ($extra_words) {
             # convert rows to a table...
             $extra_words = '<p>'
@@ -2837,7 +2854,7 @@ else {
     }
 }
 $found_words = "<div class=found_words>$found_words</div>";
-if ($bonus_mode) {
+if ($bonus_mode || $donut_mode) {
     $found_words = '';
 }
 if (! $show_WordList || $which_wl !~ /p/) {
@@ -3952,7 +3969,7 @@ EOH
 
 my $status = $show_GraphicStatus? graphical_status()
             :                     "Score: $score $rank_image $disp_nhints";
-if ($bonus_mode || $which_wl eq'd') {
+if ($bonus_mode || $donut_mode) {
     $status = '';
 }
 my $css = $mobile? 'mobile_': '';
@@ -4070,6 +4087,7 @@ $heading
 <input type=hidden name=show_BingoTable value=$show_BingoTable>
 <input type=hidden name=only_clues value=$only_clues>
 <input type=hidden name=bonus_mode value=$bonus_mode>
+<input type=hidden name=donut_mode value=$donut_mode>
 <input type=hidden name=which_wl value=$which_wl>
 <input type=hidden name=forum_mode value=$forum_mode>
 <input type=hidden name=show_RankImage value=$show_RankImage>
