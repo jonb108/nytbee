@@ -2594,23 +2594,27 @@ if ($show_WordList) {
                @stash;
         
     if ($word_col) {
-        $extra_words .= one_col('Donut:',  \@donut  ) unless $which_wl =~ /d/;
-        $extra_words .= one_col('Lexicon', \@lexicon) unless $which_wl =~ /l/;
-        $extra_words .= one_col('Bonus',   \@bonus  ) unless $which_wl =~ /b/;
-        $extra_words .= one_col('Stash',   \@stash  ) unless $which_wl =~ /s/;
+        $extra_words .= one_col('Donut:',  \@donut  )
+                if $donut_mode || (!$bonus_mode && $which_wl =~ /d/);
+        $extra_words .= one_col('Lexicon', \@lexicon)
+                if !$bonus_mode && !$donut_mode && $which_wl =~ /l/;
+        $extra_words .= one_col('Bonus',   \@bonus  )
+                if $bonus_mode || (!$donut_mode && $which_wl =~ /b/);
+        $extra_words .= one_col('Stash',   \@stash  )
+                if !$bonus_mode && !$donut_mode && $which_wl =~ /s/;
         if ($extra_words) {
             $extra_words = "<br>$extra_words";
         }
     }
     else {
         $extra_words .= dlb_row('Donut:',   \@donut)
-            if ($donut_mode || $which_wl =~ /d/) && ! $bonus_mode;
+                if $donut_mode || (!$bonus_mode && $which_wl =~ /d/);
         $extra_words .= dlb_row('Lexicon:', \@lexicon)
-            unless $bonus_mode || $donut_mode || $which_wl !~ /l/;
+                if !$bonus_mode && !$donut_mode && $which_wl =~ /l/;
         $extra_words .= dlb_row('Bonus:',   \@bonus)
-            if ($bonus_mode || $which_wl =~ /b/) && ! $donut_mode;
+                if $bonus_mode || (!$donut_mode && $which_wl =~ /b/);
         $extra_words .= dlb_row('Stash:',   \@stash)
-            unless $bonus_mode || $donut_mode || $which_wl !~ /s/;
+                if !$bonus_mode && !$donut_mode && $which_wl =~ /s/;
         if ($extra_words) {
             # convert rows to a table...
             $extra_words = '<p>'
@@ -3629,7 +3633,7 @@ if ($hive == 1) {        # bee hive honeycomb
         $letters =~ s{LET$i}{$six[$i-1]}xmsg;
     }
     $letters =~ s{CENTER_HEX}{$colors{center_hex}}xmsg;
-    my $s = $which_wl eq 'd'? 'center_hex': 'center_text';
+    my $s = $donut_mode? 'center_hex': 'center_text';
     $letters =~ s{CENTER_TEXT}{$colors{$s}}xmsg;
     $letters =~ s{DONUT_HEX}{$colors{donut_hex}}xmsg;
     $letters =~ s{DONUT_TEXT}{$colors{donut_text}}xmsg;
@@ -3695,7 +3699,7 @@ EOH
 <span class=bonus_lets>$bonus_table</span>
 EOH
         }
-        elsif ($which_wl eq 'd') {
+        elsif ($donut_mode) {
             $letters .= <<"EOH";
 <span class=lets id=lets></span>
 <span class='pos11 alink' onclick="stash_lets();">Stash</span>
@@ -3739,7 +3743,7 @@ EOS
         $letters = "<div $style id=lets></div>";
         $letters .= "<table style='margin-top: .7in; width: 100%'><tr>\n";
         for my $c (@seven_let) {
-            unless ($which_wl eq 'd' && $c eq uc $center) {
+            unless ($donut_mode && $c eq uc $center) {
                 my $class = $c eq uc $center? 'red2 biglet': 'biglet';
                 $letters .= "<td class='$class' width='14.28%'>"
                          .  qq!<span onclick="add_let('$c')">$c</span>!
@@ -3761,7 +3765,7 @@ EOS
         my $sp = '&nbsp;' x 2;
         for my $c (@seven_let) {
             if ($c eq uc $center) {
-                if ($which_wl ne 'd') {
+                if ($donut_mode) {
                     $letters .= "<span class=red2>$c$sp</span> ";
                 }
             }
