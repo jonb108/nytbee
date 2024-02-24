@@ -3765,7 +3765,7 @@ EOS
         my $sp = '&nbsp;' x 2;
         for my $c (@seven_let) {
             if ($c eq uc $center) {
-                if ($donut_mode) {
+                if (! $donut_mode) {
                     $letters .= "<span class=red2>$c$sp</span> ";
                 }
             }
