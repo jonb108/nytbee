@@ -1336,7 +1336,7 @@ elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms  # sw at the front
     my $nwords_stashed = 0;
     for my $w (@words) {
         if ($is_found{$w}) {
-            if (grep { /$w!/ } @found) {
+            if (grep { /\b$w!/ } @found) {
                 $not_okay_words .= red(uc $w) . ": already stashed";
             }
             else {
