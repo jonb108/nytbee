@@ -3751,11 +3751,12 @@ EOS
             }
         }
         $letters .= "</tr></table>\n";
+        my $the_cmd = $donut_mode? 'CW': 'DR';
+        my $the_lab = $donut_mode? 'Standings': 'Define';
         $letters .= "<table style='width: 100%; margin-bottom: 10mm'><tr>"
                  .  "<td class=h3cmd onclick='del_let()'>Delete</td>"
                  .  "<td class=h3cmd onclick='stash_lets()'>Stash</td>"
-                 #.  "<td class='h3cmd'><a style='color: white' target=_blank href='$log/nytbee/help.html#toc'>Help</a></td>"
-                 .  qq!<td class=h3cmd onclick="issue_cmd('DR');">Define</td>!
+                 .  qq!<td class=h3cmd onclick="issue_cmd('$the_cmd');">$the_lab</td>!
                  .  "<td class=h3cmd onclick='sub_lets()'>Enter</td>"
                  .  "</tr></table>"
                  ;
