@@ -1364,6 +1364,19 @@ elsif ($cmd eq 'xpf') {
     $message = "@found";
     $cmd = '';
 }
+elsif ($cmd eq 's45') {
+    @found = map {
+                my $l = length;
+                my ($w) = m{([a-z]+)!}xmsi;
+                 $l == 4        ? "$_!"
+                : !$w && $l >= 5? $_
+                : $l > 5        ? $w
+                :                 $_;
+             }
+             @found;
+    $message = "You can now strive for GN4L.";
+    $cmd = '';
+}
 elsif ($cmd eq 'sa') {
     my @stash = map { /(.*)!$/; $1; }   # fun!
                 @found;
@@ -2296,13 +2309,19 @@ sub consider_word {
                         if ($min) {
                             $not_okay_words .= 'AND with a MINIMUM score! '
                                             .  ($thumbs_up x 4)
-                                            .  '<br>';
+                                            .  "<p>"
+                                            .  qq!<span class=pointer style='color: $colors{alink}' onclick="issue_cmd('SWA')">On to Max Bingo</span>!
+                                            ;
                             $bingo_score += 4;                
                         }
                         if ($max) {
                             $not_okay_words .= 'AND with a MAXIMUM score! '
                                             .  ($thumbs_up x 4)
-                                            .  '<br>';
+                                            .  "<p>"
+                                            .  qq!<span class=pointer style='color: $colors{alink}' onclick="issue_cmd('S45');">On to GN4L</span>!
+                                            # s45 = stash any four letter words
+                                            # and unstash any 5 letter words
+                                            ;
                             $bingo_score += 8;                
                         }
                         log_it("bingo $date $bingo_score $n_overall_hints");
@@ -2642,7 +2661,7 @@ if ($show_WordList) {
     }
 }
 my $bingo_table = '';
-if ($show_BingoTable) {
+if (!$donut_mode && !$bonus_mode && $show_BingoTable) {
     $bingo_table = <<'EOH';
 <!-- BINGO TABLE -->
 EOH
@@ -3628,7 +3647,7 @@ EOH
 my $letters = '';
 if ($hive == 1) {        # bee hive honeycomb
     $letters = svg_hex($mobile);
-    $letters =~ s{LET0}{$Center}xmsg;
+    $letters =~ s{LET0}{$donut_mode? ' ': $Center}xmsge;
     for my $i (1 .. 6) {
         $letters =~ s{LET$i}{$six[$i-1]}xmsg;
     }
@@ -3637,6 +3656,7 @@ if ($hive == 1) {        # bee hive honeycomb
     $letters =~ s{CENTER_TEXT}{$colors{$s}}xmsg;
     $letters =~ s{DONUT_HEX}{$colors{donut_hex}}xmsg;
     $letters =~ s{DONUT_TEXT}{$colors{donut_text}}xmsg;
+    $letters =~ s{BACKGROUND}{$colors{background}}xms;
 
     if (index($seven, 'i') >= 0) {
         $letters =~ s{

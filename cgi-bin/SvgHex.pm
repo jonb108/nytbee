@@ -6,6 +6,52 @@ our @EXPORT_OK = qw/
     svg_hex
 /;
 
+=comment
+
+one hex arrangement:
+
+  L
+A   M
+O   R
+  D
+
+M
+139.3923,77.4782
+160.8923,40.2391
+203.8923,40.2391
+225.3923,77.4782
+203.8923,114.7173
+160.8923,114.7173
+
+R
+139.3923,157.9564
+160.8923,120.7173
+203.8923,120.7173
+225.3923,157.9564
+203.8923,195.1955
+160.8923,195.1955
+
+225.3923,77.4782 M rightmost point
+225.3923,157.9564 R rightmost point
+
+203.8923,114.7173 M bottom right
+203.8923,120.7173 R top right
+203.8923,117.7173 between the two
+    could find exact intersection point but ...
+
+<polygon points='225.3923,77.4782, 225.3923,157.9564, 203.7923,117.7173'
+         style='fill:black'
+         BLANK
+/>
+if ($mobile) 
+    BLANK => onclick="add_let(' ')"
+else
+    BLANK => 
+
+Maybe the fill:black is not needed?
+
+=cut
+
 sub svg_hex {
     my ($mobile) = @_;
     my $s = <<'EOH';
@@ -20,7 +66,7 @@ CURSOR
 </style>
 <svg
 style="margin-left: .4in"
-width="225.392304845413"
+width="250.392304845413"
 height="235.434554176385"
 >
 <polygonAL0
@@ -93,16 +139,28 @@ height="235.434554176385"
     fill="DONUT_TEXT"
     class=svglets
 >LET6</text>
+BLANK
 </svg>
 <p>
 EOH
     if ($mobile) {
         $s =~ s{AL(\d)}{\nonclick="add_let('LET$1')"\n}xmsg;
         $s =~ s<CURSOR><polygon, text { cursor: pointer; } >xms;
+        $s =~ s{BLANK}{
+<polygon points="225.3923,77.4782
+                 250.3923,77.4782
+                 250.3923,157.9564
+                 225.3923,157.9564
+                 203.0923,117.7173"
+         onclick="add_let(' ')"
+         style='fill:BACKGROUND'
+></polygon>
+              }xms;
     }
     else {
         $s =~ s{AL(\d)}{}xmsg;
         $s =~ s<CURSOR><polygon, text { cursor: default; } >xms;
+        $s =~ s{BLANK}{}xms;
     }
     return $s;
 }
