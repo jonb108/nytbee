@@ -3683,11 +3683,6 @@ sub click_td {
                "<span class='bonus_let cursor_black' style='color: $color'"
              . qq! onclick="add_redlet('$l')">$disp_l</span>!);
 }
-sub green_square {
-    return td({ style => 'text-align: center' },
-              qq!<span class='cursor_black' onclick='add_redlet(" ")'>!
-            . "&#129001;</span>");
-}
         if ($bonus_mode) {
             my @blets = grep { !/[$seven]/ } 'a' .. 'z';
             # determine which additional letters have
@@ -3700,8 +3695,7 @@ sub green_square {
             my $row1 = Tr(map({ click_td(uc, $used_in_bonus{$_}) }
                               @blets[0 .. 9]));
             my $row2 = Tr(map({ click_td(uc, $used_in_bonus{$_}) }
-                              @blets[10 .. 18]),
-                          green_square());
+                              @blets[10 .. 18]));
             my $bonus_table = <<"EOH";
 <table cellpadding=0 cellspacing=10>
 $row1
