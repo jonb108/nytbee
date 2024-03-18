@@ -3769,7 +3769,7 @@ EOS
         my $the_lab = $donut_mode? 'Standings': 'Define';
         $letters .= "<table style='width: 100%; margin-bottom: 10mm'><tr>"
                  .  "<td class=h3cmd onclick='del_let()'>Delete</td>"
-                 .  "<td class=h3cmd onclick='stash_lets()'>Stash</td>"
+                 .  qq!<td class=h3cmd onclick="issue_cmd('H');">Hexagon</td>!
                  .  qq!<td class=h3cmd onclick="issue_cmd('$the_cmd');">$the_lab</td>!
                  .  "<td class=h3cmd onclick='sub_lets()'>Enter</td>"
                  .  "</tr></table>"
