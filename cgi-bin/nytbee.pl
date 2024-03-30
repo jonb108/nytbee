@@ -1401,10 +1401,10 @@ elsif ($cmd =~ m{\A sa \s+ (.+) \z}xmsi) {
     # confusing and tricky, seems to work
     my $s = $1;
     $s =~ s{\$}{\\b}xms;
-    my @stash = map { /(.*)!\z/; }
-                grep { /$s.*!/; }
+    my @stash = map { m/(.*)!\z/xms; }
+                grep { m/$s.*!/xms; }
                 @found;
-    @found = grep { !/$s.*!\z/; } @found;
+    @found = grep { !m/$s.*!\z/xms; } @found;
     for my $w (@stash) {
         delete $is_found{$w};
     }
