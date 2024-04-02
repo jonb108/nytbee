@@ -1234,6 +1234,10 @@ elsif ($cmd eq 'oc') {
     $message = $only_clues? 'Only clues': 'Both clues and definitions';
     $cmd = '';
 }
+elsif ($cmd eq 'dl') {
+    $message = `$cgi_dir/nytbee_dl.pl '$uuid' '$screen_name'`;
+    $cmd = '';
+}
 elsif ($cmd eq 'bn') {
     $bonus_mode = ! $bonus_mode;
     $donut_mode = 0;
