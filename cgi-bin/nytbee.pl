@@ -1374,6 +1374,7 @@ elsif ($cmd eq 's45') {
                 :                 $_;
              }
              @found;
+    $show_BingoTable = 0;
     $message = "You can now strive for GN4L.";
     $cmd = '';
 }
