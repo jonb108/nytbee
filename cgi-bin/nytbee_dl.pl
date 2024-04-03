@@ -22,11 +22,16 @@ my %cur_puzzles = %{ eval $cur_puzzles_store{$uuid} };
 
 my $ext_sig = '!*+-';   # extra word sigils
                         # ! stash * bonus + lexicon - donut
+my $npuzzles = 0;
+my $nwords = 0;
+
+my ($letters, $center, %is_pangram, $npp, @ok_words);
+
 my $rank_name;
 my @found;
-my %is_pangram;
 my @ranks;
 my $max_score;
+
 sub compute_score_and_rank {
     my $score = 0;
     WORD:
@@ -53,48 +58,64 @@ sub compute_score_and_rank {
     }
 }
 
-my $npuzzles = 0;
-my $nwords = 0;
 my $list = "$screen_name-$today_d8-list.csv";
 my $full = "$screen_name-$today_d8-full.csv";
-open my $out1, '>', "../nytbee/downloads/$list";
+my $down = "nytbee/downloads";
+open my $out1, '>', "../$down/$list";
 print {$out1} "date,rank,all pangrams\n";
-open my $out2, '>', "../nytbee/downloads/$full";
+open my $out2, '>', "../$down/$full";
 print {$out2} "date,letters,center,rank,all pangrams,puzzle,donut,lexicon,bonus,stash\n";
 for my $dt (sort keys %cur_puzzles) {
     ++$npuzzles;
-    # get the allowed list and see if all
+    # get the letters, center, and the allowed list and see if all
     # of the pangrams have been found
-    # split on pipe, shift two
-    my ($s, $t) = split m{[|]}xms, $nyt_puzzles{$dt};
-    my ($letters, $center) = split ' ', $s;
-    my @ok_words = split ' ', $t;
-    my @w = split ' ', $s;
-    shift @w; shift @w;
-    my $np = @w;
-    %is_pangram = map { $_ => 1 } @w;
+    if (my ($cp_num) = $dt =~ m{\ACP(\d+)}xms) {
+        # community puzzle
+        my $cp_href = do "community_puzzles/$cp_num.txt";
+        $letters = $cp_href->{seven};
+        $center = $cp_href->{center};
+        my @pw = @{$cp_href->{pangrams}};
+        $npp = @pw;
+        %is_pangram = map { $_ => 1 } @pw;
+        @ok_words = @{$cp_href->{words}};
+    }
+    else {
+        # split on pipe, shift two
+        my ($s, $t) = split m{[|]}xms, $nyt_puzzles{$dt};
+        ($letters, $center) = split ' ', $s;
+        my @w = split ' ', $s;
+        shift @w; shift @w;
+        $npp = @w;
+        %is_pangram = map { $_ => 1 } @w;
+        @ok_words = split ' ', $t;
+    }
+    # now get the words that were entered
     my @words = grep { !/\A-?[0-9]/xms } split ' ', $cur_puzzles{$dt};
     $nwords += @words;
     @found = grep { !/[$ext_sig]\z/xms } @words;
+
+    # determine the ranks
     $max_score = 0;
     for my $w (@ok_words) {
         $max_score += word_score($w, $is_pangram{$w});
     }
     @ranks = (
-        { name => 'Beginner',   pct =>   0, value => 0 },
-        { name => 'Good Start', pct =>   2, value => int(.02*$max_score + 0.5) },
-        { name => 'Moving Up',  pct =>   5, value => int(.05*$max_score + 0.5) },
-        { name => 'Good',       pct =>   9, value => int(.08*$max_score + 0.5) },
-        { name => 'Solid',      pct =>  15, value => int(.15*$max_score + 0.5) },
-        { name => 'Nice',       pct =>  25, value => int(.25*$max_score + 0.5) },
-        { name => 'Great',      pct =>  40, value => int(.40*$max_score + 0.5) },
-        { name => 'Amazing',    pct =>  50, value => int(.50*$max_score + 0.5) },
-        { name => 'Genius',     pct =>  70, value => int(.70*$max_score + 0.5) },
-        { name => 'Queen Bee',  pct => 100, value => $max_score },
+    { name => 'Beginner',   pct =>   0, value => 0 },
+    { name => 'Good Start', pct =>   2, value => int(.02*$max_score + 0.5) },
+    { name => 'Moving Up',  pct =>   5, value => int(.05*$max_score + 0.5) },
+    { name => 'Good',       pct =>   9, value => int(.08*$max_score + 0.5) },
+    { name => 'Solid',      pct =>  15, value => int(.15*$max_score + 0.5) },
+    { name => 'Nice',       pct =>  25, value => int(.25*$max_score + 0.5) },
+    { name => 'Great',      pct =>  40, value => int(.40*$max_score + 0.5) },
+    { name => 'Amazing',    pct =>  50, value => int(.50*$max_score + 0.5) },
+    { name => 'Genius',     pct =>  70, value => int(.70*$max_score + 0.5) },
+    { name => 'Queen Bee',  pct => 100, value => $max_score },
     );
     my $npf = grep { $is_pangram{$_} } @found;
+    # $npp = number of pangrams in the puzzle
+    # $npf = number of pangrams in the found list
     compute_score_and_rank();
-    my $p = $np == $npf? 'p': 'n';
+    my $p = $npp == $npf? 'p': 'n';
     print {$out1} "$dt,$rank_name,$p\n";
     print {$out2} "$dt,$letters,$center,$rank_name,$p,";
     my (@puzzle, @donut, @bonus, @lexicon, @stash);
@@ -127,8 +148,15 @@ for my $dt (sort keys %cur_puzzles) {
 }
 close $out1;
 close $out2;
-print "$npuzzles puzzles, $nwords total words<p>";
-print "Links to download your puzzle files:<p>";
-print "<a style='margin-left: 1in' class=alink href='https://logicalpoetry.com/nytbee/downloads/$list' download>List</a>";
-print "&nbsp;" x 6;
-print "<a class=alink href='https://logicalpoetry.com/nytbee/downloads/$full' download>Full</a>";
+print <<"EOH";
+$npuzzles puzzles, $nwords total words
+<p>
+Links to download your puzzle files:
+<p>
+<a style='margin-left: 1in'
+   class=alink
+   href='https://logicalpoetry.com/$down/$list' download>List</a>
+<a style='margin-left: .5in'
+   class=alink
+   href='https://logicalpoetry.com/$down/$full' download>Full</a>
+EOH
