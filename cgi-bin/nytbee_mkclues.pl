@@ -161,7 +161,8 @@ $name_numbers
 <p>
 $nnf_disp
 You do not have to give clues for all of the words.  You can return
-here to update and revise your clues.
+here to update and revise your clues.  Please <i><b>DO</b></i> add clues for the
+words.   They are a gift to the people who will play your puzzle!
 <p>
 Clicking on the words will show a brief dictionary definition.
 Clicking on that brief defintion will give a <i>complete</i> definition.

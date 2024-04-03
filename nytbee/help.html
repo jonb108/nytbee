@@ -64,6 +64,7 @@ And I have.  The complete source code for this project is on
 <a href=#stash>The Stash</a><br>
 <a href=#donut>Donut, Lexicon, and Bonus Words</a><br>
 <a href=#archival_and_community>Archival and Community Puzzles</a><br>
+<a href=#accumulated>Your Accumulated Puzzles</a><br>
 <a href=#forum>Discussion Forum</a><br>
 <a href=#colors>Colors</a><br>
 <a href=#clues>Clues for Puzzles</a><br>
@@ -316,6 +317,9 @@ example:
 <ul>
     <span class=cmd>ID</span> <span class=green>GERTIE4/30</span>
 </ul>
+Note that the identity string is <i>case-sensitive</i>.  As you type it you
+will only see capital letters but the case of your typing does matter.
+<p>
 Now if your web data and browser history is cleared
 or you use a different browser
 you can easily re-establish your identity by <b>RE</b>-entering the above command.
@@ -1115,6 +1119,54 @@ This will take a link
 to the puzzle and copy it to the system clipboard.
 The link can then be pasted from the clipboard into a text message
 or an email.
+<a name=accumulated></a>
+<h2>Your Accumulated Puzzles
+<a class=top href=#toc><img src=pics/top.gif height=25></a>
+</h2>
+If you continue to play and play and never remove your puzzles with the
+above <span class=cmd>XA</span> command the puzzles will accumulate.
+The <span class=cmd>L</span> command lists all of them.
+Some people like to see the accumulation as it gives them 
+a sense of abundance and accomplishment.  Others like to tidy up
+from time to time and keep their space clear.
+<p>
+There is no guarantee that your accumulated puzzles
+will not be lost (inadvertently oops) or tidied up for
+you (to save disk space?).  If you would like to keep a permanent record
+of the many puzzles you have played there is the
+command <span class=cmd>DL</span> (for <span class=cmd>D</span>own<span class=cmd>L</span>oad).
+It will generate downloadable comma-separated files of your puzzles and display, for example:
+<ul>
+80 puzzles, 8147 total words
+<p>
+Links to download your puzzle files:
+<p>
+<span style='margin-left: 1in' class=blue>List</span>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+<span class=blue>Full</span>
+</ul>
+The <span class=blue>List</span> link will download a file
+with 3 columns: date, rank, all pangrams.  'all pangrams' is either
+p or n &mdash; p means you that you found all of the pangrams;
+n that you didn&#8217;t.
+<p>
+The <span class=blue>Full</span> link will download a file with
+10 columns: date, letters, center, rank, all pangrams,
+puzzle, donut, lexicon, bonus, stash.
+The last 5 columns contain all of the words you found
+in each category.  The words are space separated.
+This will give you everything that you could conceivably want, yes? &#128522;
+<p>
+These two files have a .csv suffix and can be loaded into a spreadsheet.
+Spreadsheet wizards can adjust the formatting
+to display the 5 word columns with narrower widths and wrapped text.
+<p>
+The <span class=cmd>DL</span> command will <i>not</i> remove the puzzles.
+You can do that, if you wish, with the <span class=cmd>XA</span> command,
+at your leisure.
 <a name=forum></a>
 <h2>Discussion Forum
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -1484,6 +1536,11 @@ You do not need to include <i>all</i> common ordinary words.
 This is your own custom personalized puzzle and you can make your own rules!
 <li>Give clues for the words, if you wish.  See the <a href=#clues>previous section</a> for
 more details on entering the clues.
+Note that it is a nice gesture to add clues for your puzzle. The clues are a gift to
+the people playing your puzzle and another opportunity for you to be clever &#128522;.
+It also increases the chance that your puzzle will be included in the
+puzzles recommended with
+the <span class=cmd>RCP</span> command.
 <li>Final steps:
 <p>Your name and location.<br>
 A title and description for your puzzle (optional).<br>
@@ -1507,6 +1564,7 @@ where ## is your puzzle number.  This link can be shared.
 The <span class=cmd>LCP</span> command lists the community puzzles.
 <p>
 The <span class=cmd>RCP</span> command lists puzzles that I <span class=cmd>r</span>ecommend because I find them interesting, clever, or an unusual challenge.
+Puzzles with clues are more likely to be included.
 <p>
 The command <span class=cmd>YCP</span> will list the community puzzles
 that you have created.  You can click on the <span class=blue>CP##</span> link

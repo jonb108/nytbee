@@ -52,13 +52,17 @@ sub compute_score_and_rank {
         $rank_name = 'Queen Bee';
     }
 }
+
+my $npuzzles = 0;
+my $nwords = 0;
 my $list = "$screen_name-$today_d8-list.csv";
 my $full = "$screen_name-$today_d8-full.csv";
 open my $out1, '>', "../nytbee/downloads/$list";
-print {$out1} "date,rank,all_pangrams\n";
+print {$out1} "date,rank,all pangrams\n";
 open my $out2, '>', "../nytbee/downloads/$full";
-print {$out2} "date,letters,center,rank,all_pangrams,puzzle,donut,lexicon,bonus,stash\n";
+print {$out2} "date,letters,center,rank,all pangrams,puzzle,donut,lexicon,bonus,stash\n";
 for my $dt (sort keys %cur_puzzles) {
+    ++$npuzzles;
     # get the allowed list and see if all
     # of the pangrams have been found
     # split on pipe, shift two
@@ -70,6 +74,7 @@ for my $dt (sort keys %cur_puzzles) {
     my $np = @w;
     %is_pangram = map { $_ => 1 } @w;
     my @words = grep { !/\A-?[0-9]/xms } split ' ', $cur_puzzles{$dt};
+    $nwords += @words;
     @found = grep { !/[$ext_sig]\z/xms } @words;
     $max_score = 0;
     for my $w (@ok_words) {
@@ -122,6 +127,7 @@ for my $dt (sort keys %cur_puzzles) {
 }
 close $out1;
 close $out2;
+print "$npuzzles puzzles, $nwords total words<p>";
 print "Links to download your puzzle files:<p>";
 print "<a style='margin-left: 1in' class=alink href='https://logicalpoetry.com/nytbee/downloads/$list' download>List</a>";
 print "&nbsp;" x 6;
