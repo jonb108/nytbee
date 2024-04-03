@@ -7,5 +7,13 @@ use DB_File;
 my %hash;
 tie %hash, 'DB_File', $ARGV[0];
 while (my ($k, $v) = each %hash) {
-    print "$k => $v\n";
+    if (defined $k && defined $v) {
+        print "$k => $v\n";
+    }
+    elsif (defined $k && ! defined $v) {
+        print "no def v $k\n";
+    }
+    else {
+        print "problem: k '$k' and v '$v'\n";
+    }
 }

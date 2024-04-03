@@ -336,7 +336,7 @@ log_it($cmd) if $cmd;
 # is there a 'message of the day' that the user
 # has not yet seen?
 if (! $cmd) {
-    if ($message_for{$uuid}) {
+    if (defined $message_for{$uuid}) {
         my ($n, $date) = split ' ', $message_for{$uuid};
         ++$n;
         if (-f "messages/$n") {
@@ -355,7 +355,10 @@ if (! $cmd) {
         # this user has seen no messages at all
         # and needs to see the first message
         $message_for{$uuid} = "1 " . $today->as_d8();
-        $message .= str_sub(scalar(read_file("messages/1")));
+        if (defined $message_for{$uuid}) {
+            # some problem with the message_for dbm file :(
+            $message .= str_sub(scalar(read_file("messages/1")));
+        }
     }
 }
 
