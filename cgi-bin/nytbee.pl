@@ -190,10 +190,32 @@ my $focus = $mobile? '': 'set_focus();';
 # make the nyt_puzzles.txt file downloadable!
 #
 
+# 18d7edac-6fee-11ed-a97e-8c36b52268c0
+# 0123456789012345678901234567890
+#           1         2         3
+sub long_form {
+    my ($uuid) = @_;
+    return substr($uuid,  8, 1) eq '-'
+        && substr($uuid, 13, 1) eq '-'
+        && substr($uuid, 18, 1) eq '-'
+        && substr($uuid, 23, 1) eq '-';
+}
+
 my %cur_puzzles;
 my $cps = $cur_puzzles_store{$uuid};
 if ($cps) {
     %cur_puzzles = %{ eval $cps };    # the key point #1 (see below for #2)
+    # to be continued ...
+    #if (long_form($uuid) && keys %cur_puzzles > 2) {
+    #    # present a different page
+    #    # (they may have a screen name that was not assigned)
+    #    # keep their settings and current puzzles
+    #    # and exit;
+    #    my $base = join '|', @base;
+    #    # $screen_name =~ m{ \A ($base)\d+ \z }xms
+    #    print "It's time to set a screen name and an identity string!";
+    #    exit;
+    #}
 }
 # otherwise this is a brand new user...
 
@@ -217,35 +239,6 @@ sub own_word {
 sub add_3word {
     my ($type, $date, $w) = @_;
     append_file("$type/$date",  "$w\n");
-}
-sub str_sub {
-    my ($msg) = @_;
-    if ($msg !~ m{%(\w+)%}xms) {
-        return $msg;
-    }
-    my $var = $1;
-    if ($var eq 'change_screen_name') {
-        my $base = join '|', @base;
-        if ($screen_name =~ m{
-                \A
-                $base\d+
-                \z
-            }xms
-        ) {
-            my $s = <<"EOM";
-<p>
-Maybe now is a good time change your assigned screen name of $screen_name
-to something more fun, clever, or reflective of 'who you are'.
-The <span class=cmd>SN</span> command is explained <a target=_blank 
-href='https://logicalpoetry.com/nytbee/help.html#screen_names'>here</a>.
-EOM
-            $msg =~ s{%change_screen_name%}{$s}xms;
-        }
-        else {
-            $msg =~ s{%change_screen_name%}{}xms;
-        }
-    }
-    return $msg;
 }
 
 #
@@ -333,35 +326,6 @@ my $cmd = lc($params{hidden_new_words} || $params{new_words});
 $cmd = trim($cmd);
 log_it($cmd) if $cmd;
 
-# is there a 'message of the day' that the user
-# has not yet seen?
-if (! $cmd) {
-    if (defined $message_for{$uuid}) {
-        my ($n, $date) = split ' ', $message_for{$uuid};
-        ++$n;
-        if (-f "messages/$n") {
-            # there IS another message the user should see
-            # but has at least one day passed since they saw
-            # the last message?
-            $date = date($date);
-            if ($date < $today) {
-                # yes.
-                $message .= str_sub(scalar(read_file("messages/$n")));
-                $message_for{$uuid} = "$n " . $today->as_d8();
-            }
-        }
-    }
-    else {
-        # this user has seen no messages at all
-        # and needs to see the first message
-        $message_for{$uuid} = "1 " . $today->as_d8();
-        if (defined $message_for{$uuid}) {
-            # some problem with the message_for dbm file :(
-            $message .= str_sub(scalar(read_file("messages/1")));
-        }
-    }
-}
-
 my $mobile_Device   = exists $params{mobile_Device}?
                              $params{mobile_Device}: $mobile;
 my $show_Heading    = exists $params{show_Heading}?
@@ -382,6 +346,10 @@ my $forum_mode      = exists $params{forum_mode}?
                              $params{forum_mode}: 0;
 my $show_RankImage  = exists $params{show_RankImage}?
                              $params{show_RankImage}: 1;
+# the graphic status is wrongly
+# inserted into the message_dbm file.
+# rename it and only put the graphic status there?
+#
 #my $show_GraphicStatus = exists $params{show_GraphicStatus}?
 #                             $params{show_GraphicStatus}: 0;
 my $show_GraphicStatus = 0;
@@ -1175,21 +1143,6 @@ if ($cmd eq 'pg') {
     }
     $cmd = '';
 }
-elsif ($cmd eq 'hi') {
-    my $base = join '|', @base;
-    if ($screen_name =~ m{
-            \A
-            $base\d+
-            \z
-        }xms
-    ) {
-        $message = "Sorry, the HI (History) command is only for people that have chosen their own screen name.  Please do that with the <span class=cmd>SN</span> command. Read about it <a target=_blank href='/nytbee/help.html#screen_names'>here</a>.";
-    }
-    else {
-        $message = `$cgi_dir/nytbee_hi.pl $uuid $screen_name`;
-    }
-    $cmd = '';
-}
 elsif ($cmd eq 'ht') {
     if (! $ht_chosen) {
         $ht_chosen = 1;
@@ -1966,27 +1919,6 @@ elsif ($cmd eq 'rcp') {
     }
     $message .= table({ cellpadding => 3 }, $msg);
     $cmd = '';
-}
-elsif ($cmd =~ m{\A wp \s* ([\d/]+)}xms) {
-    my $base = join '|', @base;
-    if ($screen_name =~ m{
-            \A
-            $base\d+
-            \z
-        }xms
-    ) {
-        $message = "Sorry, the <span class=cmd>WP</span> command is only for those who have set a personalized screen name.  You can do this with the <span class=cmd>SN</span> command!";
-    }
-    else {
-        system "$cgi_dir/who_played $date" if $date !~ /CP/;
-        $message = `$cgi_dir/nytbee_wp.pl $1 $screen_name 0`;
-    }
-    $cmd = ''
-}
-elsif ($cmd =~ m{\A wpa \s* ([\d/]+)}xms) {
-    system "$cgi_dir/who_played $date" if $date !~ /CP/;
-    $message = `$cgi_dir/nytbee_wp.pl $1 $screen_name 1`;
-    $cmd = ''
 }
 
 # so we have dealt with the various commands. (not really...)
@@ -3357,27 +3289,6 @@ elsif ($cmd eq 'ow') {
         $message .= '</tr>';
     }
     $message .= '</table>';
-}
-elsif ($cmd =~ m{\A m(\d+)? \z}xms) {
-    my ($n, $date);
-    if ($1) {
-        $n = $1;
-    }
-    else {
-        if ($message_for{$uuid}) {
-            ($n, $date) = split ' ', $message_for{$uuid};
-        }
-        else {
-            $n = 1;
-        }
-    }
-    if (! -f "messages/$n") {
-        $message .= "No such message of the day.";
-    }
-    else {
-        $message .= str_sub(scalar(read_file("messages/$n")));
-    }
-    $cmd = '';
 }
 elsif ($cmd eq 'id') {
     # show the $uuid so the user can save it

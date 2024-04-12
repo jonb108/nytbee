@@ -192,7 +192,6 @@ There is also the word <span class="color: blue">HiveMind</span> which is a link
 <tr><td><span class=cmd>R</span></td><td>Show the <span class=cmd>r</span>ankings - from Beginner to ... Amazing to Genius to Queen Bee.  It also shows how many points are needed to get to the next rank.</td></tr>
 <tr><td><span class=cmd>W</span></td><td>Show the found words in the order they were found.</td></tr>
 <tr><td><span class=cmd>SC</span></td><td>Show how the score was tallied and how many words remain to be found.  A thin line shows where you first asked for a hint.</td></tr>
-<tr><td><span class=cmd>M</span></td><td>Show the latest Message of the Day.  These messages will be shown periodically to give tips, tricks, and other information.</td></tr>
 <tr><td><span class=cmd>TOP</span></td><td>
 Show the <a href=#screen_names>screen names</a> of people who have achieved
 the ranks of Queen Bee down to Good Start for <i>today's</i> puzzle.
@@ -1697,7 +1696,9 @@ Give up and show the words you have not yet found. <span class=cmd>G&nbsp;&nbsp;
 <h2>Articles about the NYT Spelling Bee
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
-<a target=nytbee href='https://www.nytimes.com/spotlight/spelling-bee-forum'>The archive of the Forum - the central communication hub of the HiveMind.</a><p>
+<a target=nytbee href='https://www.nytimes.com/spotlight/spelling-bee-forum'>The archive of the Forum - the central communication hub of the HiveMind.</a><br>
+There is also the &#8220;HiveMind&#8221; link in the output of the <span class=cmd>I</span> (info) command which brings up the HiveMind forum discussion for the puzzle.
+<p>
 
 <a target=nytbee href='https://www.nytimes.com/2023/09/11/crosswords/getting-to-genius-part-1.html'>Getting to Genius, Part 1: Spelling Bee for Beginners</a><br>
 <a target=nytbee href='https://www.nytimes.com/2023/09/11/crosswords/getting-to-genius-part-2.html'>Getting to Genius, Part 2</a>
@@ -1713,6 +1714,9 @@ Give up and show the words you have not yet found. <span class=cmd>G&nbsp;&nbsp;
 <a target=nytbee href='https://slate.com/culture/2021/08/nyt-spelling-bee-sam-ezersky.html'>Insider Secrets of the Spelling Bee</a> - An interview with Sam Ezersky<p>
 
 <a target=nytbee href='https://www.youtube.com/watch?v=g2A9t8Ozg_s'>YouTube - Deb Amlen, Sam Ezersky, and William Jackson Harper play the Spelling Bee</a><p>
+
+<a target=nytbee href='https://www.nytimes.com/2024/04/01/crosswords/spelling-bee-hints.html'>These Spelling Bee Hint Writers Want to Help You Get to Genius</a><br>
+Kitt Richards was interviewed for this article.  Kitt uses <a href='https://logicalpoetry.com/mkclues'>this software</a> to help format her clues.
 <a name=other></a>
 <h2>Other NYT Bee Projects
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -1722,6 +1726,13 @@ many clever software engineers.
 <p>
 <h3>Games You Can Play</h3>
 <a target=nytbee href='https://quordle-wordle.com/spelling-bee'>https://quordle-wordle.com/spelling-bee</a> This site took all of the NYT puzzles and lets you play one of them at random.  You can't choose one by date.  No Hint Table or Two Letter List.  The list of found words is vertical which is less than helpful.
+There are some annoying ads.
+<p>
+<a target=nytbee href='https://contrabee.com'>Contra Bee</a> 
+A love note to spelling bee.  This site takes the daily NYT Bee and asks you to
+enter Donut words.  It has an &#8220;official&#8221; list of Donut words and you try
+to get to Genius rank by finding all the words in the list.  You can play
+yesterday&#8217;s puzzle as well.
 <p>
 <a target=nytbee href='https://bee.ignoble.dev'>bee.ignoble.dev {} Bee</a> 
 - Generates a daily puzzle (not NYT) from the <a target=_blank href='http://aspell.net'>English Aspell Dictionary</a>.  There are puzzles going back to
@@ -1729,7 +1740,7 @@ many clever software engineers.
 words increases through the week until Friday puzzles have more than
 120 words.  Saturday puzzles have more than 120 words excluding the letters s and d.
 Can sort the found words in 3 ways.
-It has a "spoiler" mechanism to reveal all words.
+It has a &#8220;spoiler&#8221; mechanism to reveal all words.
 I found a bug in the scoring: Some 4 letter words score more than 4!??
 It keeps a tally of how many words of each length you need and have found.
 <p>
@@ -1913,8 +1924,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2156 puzzles with
-a total of 10049 different words!
+2166 puzzles with
+a total of 10081 different words!
 <p>
 Which puzzles from the large archive to play?
 You can get one at random with the <span class=cmd>NR</span> command or you could

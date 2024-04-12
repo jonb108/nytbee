@@ -45,8 +45,6 @@ nytbee_clues_by.pl \
 nytbee_define.pl \
 nytbee_cw.pl \
 nytbee_top.pl \
-nytbee_wp.pl \
-who_played \
 mktar \
 go \
 dump_dbm \
