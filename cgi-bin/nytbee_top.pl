@@ -49,8 +49,8 @@ if (! open $in, '<', "beelog/$date") {
     exit;
 }
 # Bingo is complicated! :) :(
-my (%min_bingo_score_for, %min_bingo_hints_for); # < 8
-my (%max_bingo_score_for, %max_bingo_hints_for); # >= 8
+my (%min_bingo_score_for); # < 8
+my (%max_bingo_score_for); # >= 8
 my (%bingo_score_for, %bingo_hints_for);
 
 my %genius_for;
@@ -140,16 +140,20 @@ while (my $line = <$in>) {
         }
         if ($bingo_score < 8) {
             # min bingo
-            if (! exists $min_bingo_score_for{$screen_name}) {
+            if (! exists $min_bingo_score_for{$screen_name}
+                || $min_bingo_score_for{$screen_name} < $bingo_score
+            ) {
                 $min_bingo_score_for{$screen_name} = $bingo_score;
-                $min_bingo_hints_for{$screen_name} = $bingo_hints;
+                $bingo_hints_for{$screen_name} = $bingo_hints;
             }
         }
         else {
             # max bingo
-            if (! exists $max_bingo_score_for{$screen_name}) {
+            if (! exists $max_bingo_score_for{$screen_name}
+                || $min_bingo_score_for{$screen_name} < $bingo_score
+            ) {
                 $max_bingo_score_for{$screen_name} = $bingo_score;
-                $max_bingo_hints_for{$screen_name} = $bingo_hints;
+                $bingo_hints_for{$screen_name} = $bingo_hints;
             }
         }
     }
@@ -157,11 +161,9 @@ while (my $line = <$in>) {
 # tally up the bingo scores
 for my $screen_name (keys %min_bingo_score_for) {
     $bingo_score_for{$screen_name} = $min_bingo_score_for{$screen_name};
-    $bingo_hints_for{$screen_name} = $min_bingo_hints_for{$screen_name};
 }
 for my $screen_name (keys %max_bingo_score_for) {
     $bingo_score_for{$screen_name} += $max_bingo_score_for{$screen_name};
-    $bingo_hints_for{$screen_name} += $max_bingo_hints_for{$screen_name};
 }
 #
 # for the Genius people see how close
