@@ -198,26 +198,39 @@ sub long_form {
     return substr($uuid,  8, 1) eq '-'
         && substr($uuid, 13, 1) eq '-'
         && substr($uuid, 18, 1) eq '-'
-        && substr($uuid, 23, 1) eq '-';
+        && substr($uuid, 23, 1) eq '-'? 1: 0;
+}
+
+# is the screen_name base+num?
+sub assigned_sn {
+    my ($sn) = @_;
+    if (! $sn) {
+        return 1;
+    }
+    my $base = join '|', @base;
+    return $sn =~ m{\A ($base)\d+ \z}xms? 1: 0;
 }
 
 my %cur_puzzles;
 my $cps = $cur_puzzles_store{$uuid};
 if ($cps) {
     %cur_puzzles = %{ eval $cps };    # the key point #1 (see below for #2)
-    # to be continued ...
-    #if (long_form($uuid) && keys %cur_puzzles > 2) {
+    #my $lf = long_form($uuid);
+    #my $sn = assigned_sn($screen_name);
+    # to be continued
+    #if (($lf || $sn) && keys %cur_puzzles > 2) {
     #    # present a different page
     #    # (they may have a screen name that was not assigned)
+    #    # ask for a screen_name and an identity string
     #    # keep their settings and current puzzles
     #    # and exit;
-    #    my $base = join '|', @base;
-    #    # $screen_name =~ m{ \A ($base)\d+ \z }xms
-    #    print "It's time to set a screen name and an identity string!";
+    #    system("$cgi_dir/new_sn_is.pl '$screen_name' '$sn' '$uuid' '$lf'");
     #    exit;
     #}
 }
-# otherwise this is a brand new user...
+else {
+    # otherwise this is a brand new user...
+}
 
 sub log_it {
     my ($msg) = @_;

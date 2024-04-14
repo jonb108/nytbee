@@ -64,7 +64,7 @@ my $down = "nytbee/downloads";
 open my $out1, '>', "../$down/$list";
 print {$out1} "date,rank,all pangrams\n";
 open my $out2, '>', "../$down/$full";
-print {$out2} "date,letters,center,rank,all pangrams,puzzle,donut,lexicon,bonus,stash\n";
+print {$out2} "date,letters,center,rank,all pangrams,num_hints,puzzle,donut,lexicon,bonus,stash\n";
 for my $dt (sort keys %cur_puzzles) {
     ++$npuzzles;
     # get the letters, center, and the allowed list and see if all
@@ -89,6 +89,8 @@ for my $dt (sort keys %cur_puzzles) {
         %is_pangram = map { $_ => 1 } @w;
         @ok_words = split ' ', $t;
     }
+    # the number of hints *overall* is the second number
+    my ($nhints) = $cur_puzzles{$dt} =~ m{\A \s* \d+ \s+ (\d+)}xms;
     # now get the words that were entered
     my @words = grep { !/\A-?[0-9]/xms } split ' ', $cur_puzzles{$dt};
     $nwords += @words;
@@ -117,7 +119,7 @@ for my $dt (sort keys %cur_puzzles) {
     compute_score_and_rank();
     my $p = $npp == $npf? 'p': 'n';
     print {$out1} "$dt,$rank_name,$p\n";
-    print {$out2} "$dt,$letters,$center,$rank_name,$p,";
+    print {$out2} "$dt,$letters,$center,$rank_name,$p,$nhints,";
     my (@puzzle, @donut, @bonus, @lexicon, @stash);
     for my $w (sort @words) {
         if ($w !~ s{([$ext_sig])\z}{}xms) {
