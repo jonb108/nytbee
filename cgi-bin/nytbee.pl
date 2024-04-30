@@ -1404,7 +1404,9 @@ elsif (my ($gt, $item) = $cmd =~ m{\A \s* [#] \s*([>]?)(\d*|[a-z]?) \s* \z}xms) 
     }
     $cmd = '';
 }
-elsif ($cmd =~ m{\A d \s+ ([a-z ]+) \z}xms) {
+elsif (   $cmd =~ m{\A d \s+ ([a-z ]+) \z}xms
+       || $cmd =~ m{(\A [a-z ]+) \s+ d \z}xms
+) {
     # dictionary definitions of full words not clues
     my $words = $1;
     my @words = split ' ', $words;
