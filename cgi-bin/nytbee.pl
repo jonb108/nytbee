@@ -1405,7 +1405,9 @@ elsif (my ($gt, $item) = $cmd =~ m{\A \s* [#] \s*([>]?)(\d*|[a-z]?) \s* \z}xms) 
     $cmd = '';
 }
 elsif (   $cmd =~ m{\A d \s+ ([a-z ]+) \z}xms
-       || $cmd =~ m{(\A [a-z ]+) \s+ d \z}xms
+       || $cmd =~ m{(\A [a-z ]{3,}) \s+ d \z}xms
+                              # {3,} to protect against 'co d'
+                              # being interpreted as a define request
 ) {
     # dictionary definitions of full words not clues
     my $words = $1;
@@ -3756,7 +3758,7 @@ sub graphical_status {
     my $ind2 = 28;
     my $between_lines = 22;
     my $between_dots = 11;
-    my $dotr1 = 2;
+    my $dotr1 = 3;
     my $dotr2 = 5;
     my $col_let = $colors{letter};
     my $html = "";
@@ -3813,30 +3815,54 @@ EOH
     $html .= "<text x=$ind1 y=$y class=glets fill=$col_let>p</text>\n";
     my $x = $ind2;
     $y -= 4;
+    my $npp = 0;        # number of perfect pangrams
+    for my $p (@pangrams) {
+        if (length $p == 7) {
+            ++$npp;
+        }
+    }
     my $npangrams_found = 0;
     my $npangrams_stashed = 0;
+    my $npp_found = 0;
+    my $npp_stashed = 0;
     for my $w (@found) {
         if ($is_pangram{$w}) {
             ++$npangrams_found;
+            if (length $w == 7) {
+                ++$npp_found;
+            }
         }
         else {
             my $x = $w;
             $x =~ s{!\z}{}xms;
             if ($is_pangram{$x}) {
                 ++$npangrams_stashed;
+                if (length $x == 7) {
+                    ++$npp_stashed;   
+                }
             }
         }
     }
+    $npp -= $npp_found + $npp_stashed;
     for my $i (1 .. $npangrams_found) {
         $html .= "<circle cx=$x cy=$y r=$dotr2 fill=#00C0C0></circle>\n";
+        if ($i <= $npp_found) {
+            $html .= "<circle cx=$x cy=$y r=2 fill=red></circle>\n";
+        }
         $x += $between_dots;
     }
     for my $i (1 .. $npangrams_stashed) {
         $html .= "<circle cx=$x cy=$y r=$dotr2 fill=#AAF0F0></circle>\n";
+        if ($i <= $npp_stashed) {
+            $html .= "<circle cx=$x cy=$y r=2 fill=red></circle>\n";
+        }
         $x += $between_dots;
     }
-    for my $i ($npangrams_found+$npangrams_stashed+1 .. $npangrams) {
+    for my $i (1 .. ($npangrams - ($npangrams_found+$npangrams_stashed))) {
         $html .= "<circle cx=$x cy=$y r=$dotr1 fill=$col_let></circle>\n";
+        if ($i <= $npp) {
+            $html .= "<circle cx=$x cy=$y r=2 fill=red></circle>\n";
+        }
         $x += $between_dots;
     }
     $y += 4;
