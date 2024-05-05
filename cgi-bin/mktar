@@ -75,6 +75,8 @@ status.pl \
 fix_cur \
 ini \
 fin \
+new_sn_is.pl \
+get_new_sn_is.pl \
 buddy.txt
 
 # these will not change

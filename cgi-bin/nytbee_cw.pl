@@ -11,6 +11,7 @@ use Date::Simple qw/
 /;
 use BeeUtil qw/
     my_today
+    JON
 /;
 my $today = my_today();
 my $date = shift;
@@ -47,9 +48,9 @@ while (my $line = <$log>) {
     next LINE if index($cmd, '= ') == -1;
     $cmd = substr($cmd, 2);
     next LINE if index($cmd, 'd ') == 0;
-    next LINE if $cmd =~ m{\d}xms;
+    #next LINE if $cmd =~ m{\d}xms;
     next LINE if length($cmd) < 4;
-    my @words = $cmd =~ m{[a-z]{4,}}xmsg;
+    my @words = $cmd =~ m{\b[a-z]{4,}\b}xmsg;
     WORD:
     for my $w (@words) {
         for my $t (@types) {
@@ -67,7 +68,7 @@ my %boa_score;   # key: uuid
                  # value: boa score
 for my $u (keys %tally) {
     my %boa_lets;
-    for my $b (keys %{$tally{$u}{bonus}}) {
+    for my $b (sort keys %{$tally{$u}{bonus}}) {
         $b =~ s{[$seven]}{}xmsg;
         $boa_lets{substr($b, 0, 1)}++;
     }

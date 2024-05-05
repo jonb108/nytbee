@@ -215,18 +215,17 @@ my %cur_puzzles;
 my $cps = $cur_puzzles_store{$uuid};
 if ($cps) {
     %cur_puzzles = %{ eval $cps };    # the key point #1 (see below for #2)
-    #my $lf = long_form($uuid);
-    #my $sn = assigned_sn($screen_name);
-    # to be continued
-    #if (($lf || $sn) && keys %cur_puzzles > 2) {
-    #    # present a different page
-    #    # (they may have a screen name that was not assigned)
-    #    # ask for a screen_name and an identity string
-    #    # keep their settings and current puzzles
-    #    # and exit;
-    #    system("$cgi_dir/new_sn_is.pl '$screen_name' '$sn' '$uuid' '$lf'");
-    #    exit;
-    #}
+    my $lf = long_form($uuid);
+    my $sn = assigned_sn($screen_name);
+    if (0 && ($lf || $sn) && keys %cur_puzzles > 2) {
+        # present a different page
+        # (they may have a screen name that was not assigned)
+        # ask for a screen_name and an identity string
+        # keep their settings and current puzzles
+        # and exit;
+        system("$cgi_dir/new_sn_is.pl '$screen_name' '$sn' '$uuid' '$lf'");
+        exit;
+    }
 }
 else {
     # otherwise this is a brand new user...
@@ -1687,6 +1686,39 @@ elsif ($cmd eq 'f7') {
     $message .= table({ cellpadding => 2}, @rows);
     $cmd = '';
 }
+elsif ($cmd eq 'b>') {
+    # bonus words in increasing length
+    my @bonus;
+    for my $w (@found) {
+        if ($w =~ m{\A (.*)[* ]\z}xms) {
+            push @bonus, ucfirst $1;
+        }
+    }
+    @bonus = map { $_->[1] }
+             sort {
+                $a->[0] <=> $b->[0]
+                ||
+                $a->[1] cmp $b->[1]
+             }
+             map { [ length, $_ ] }
+             @bonus;
+    my $prev_len = 0;
+    for my $w (@bonus) {
+        my $l = length $w;
+        if ($l > $prev_len) {
+            if ($message) {
+                $message .= "</ul>";
+            }
+            $message .= $l . "<ul>";
+            $prev_len = $l;
+        }
+        $message .= "$w<br>";
+    }
+    if ($message) {
+        $message .= "</ul>";
+    }
+    $cmd = '';
+}
 elsif ($cmd =~ m{\A ft \s+ ([a-z]+) \z}xms) {
     my $word = $1;
     # when did this word first appear?
@@ -1953,7 +1985,6 @@ if (   $cmd ne '1'
     && $cmd ne 'abw'
     && $cmd ne 'i'
     && $cmd !~ m{\A cw\s*\d* \z}xms
-    && $cmd !~ m{\A m\d* \z}xms
     && $cmd !~ m{\A sn\b }xms
     && $cmd !~ m{\A ([+][+]|[-][-])cp }xms
 ) {
@@ -1984,13 +2015,15 @@ sub check_screen_name {
     $screen_name = "$name$i";
     $uuid_screen_name{$uuid11} = $screen_name;
     $screen_name_uuid{$screen_name} = $uuid11;
-    my $url = 'https://logicalpoetry.com/nytbee/help.html#screen_names';
-    $message .= "<div class=red>"
-             . "You have been assigned a screen name of $screen_name.<br>"
-             . "You can change it with the SN command.<br>"
-             . "Read all about screen names <a target=_blank href='$url'>here</a>."
-             . "</div><p>"
-             ;
+    #
+    # dead code...
+    #my $url = 'https://logicalpoetry.com/nytbee/help.html#screen_names';
+    #$message .= "<div class=red>"
+    #         . "You have been assigned a screen name of $screen_name.<br>"
+    #         . "You can change it with the SN command.<br>"
+    #         . "Read all about screen names <a target=_blank href='$url'>here</a>."
+    #         . "</div><p>"
+    #         ;
 }
 
 sub pangram_check {
