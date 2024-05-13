@@ -15,6 +15,10 @@ if (! $uuid11) {
 my %full_uuid;
 tie %full_uuid, 'DB_File', 'full_uuid.dbm';
 my $uuid = $full_uuid{$uuid11};
+if (! $uuid) {
+    print "no full uuid for $uuid11??\n";
+    exit;
+}
 my %cur_puzzles_store;
 tie %cur_puzzles_store, 'DB_File', 'cur_puzzles_store.dbm';
 my %puzzles = %{ eval $cur_puzzles_store{$uuid} };

@@ -3,6 +3,9 @@
 use strict;
 use warnings;
 my ($screen_name, $sn, $uuid, $lf, $cur_game) = @ARGV;
+open my $log, '>>', 'sn_is_log.txt';
+print {$log} "$screen_name - $uuid = in dialog\n";
+close $log;
 my $disp_screen_name;
 if ($sn) {
     # the screen name was a boring assigned one
@@ -86,8 +89,14 @@ Greetings$disp_screen_name,
 It's great that you are enjoying the Enhanced NYT Bee.<br>
 Please set two simple things.  You can then continue your game.
 <p>
-Neither of these two things need you to share <i>any</i> personal
-information at all.
+The <b>Screen Name</b> is used to publicly identify you when reporting
+how everyone is doing on the puzzle (the <span class=cmd>TOP</span> and <span class=cmd>CW</span> commands).  It can be in mixed case &ndash; like 'BeeCool'
+<p>
+The <b>Identity String</b> is used when storing your
+list of games and your choice of colors.
+This string is private.  It can be <i>anything</i> but make it easily remembered!
+<p>
+Note that you do not need to share <i>any</i> personal information.
 <p>
 <form name=form
       action='https://logicalpoetry.com/cgi-bin/get_new_sn_is.pl'
@@ -101,17 +110,6 @@ information at all.
 <tr><th>&nbsp;</td><td><input class=green type=submit value='Submit'></td></tr>
 </table>
 </form>
-<p>
-The <b>Screen Name</b> is used to publicly identify you when reporting
-how everyone is doing on the puzzle (the <span class=cmd>TOP</span> and <span class=cmd>CW</span> commands).  It can be in mixed case &ndash; like 'BeeCool'
-<p>
-The <b>Identity String</b> is used when storing your
-list of games and your choice of colors.
-If you use a different browser or clear your web data
-you can enter your identity string
-(with the <span class=cmd>ID</span> command) and your
-settings and games will be restored.
-This string is private.  It can be <i>anything</i> but make it easily remembered!
 <p>
 You can read more about these two things by
 <a target=_blank href='https://logicalpoetry.com/nytbee/help.html#screen_names'>clicking here</a>.
