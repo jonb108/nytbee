@@ -1846,6 +1846,10 @@ elsif ($cmd eq 'pa') {
     }
     $cmd = '';
 }
+elsif ($cmd =~ m{\A wg \s+ (\S+) \s* (a)?\z}xms) {
+    $message = `$cgi_dir/nytbee_wg.pl '$1' $2`;
+    $cmd = '';
+}
 elsif ($date !~ m{\A CP }xms && $cmd =~ m{\A xxl \s+ (\S+) \z}xms) {
     my $sn = $1;
     $message = `$cgi_dir/nytbee_log.pl -s $date '$sn'`;
