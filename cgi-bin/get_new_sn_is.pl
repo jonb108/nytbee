@@ -7,6 +7,7 @@ my $q = CGI->new;
 my $uuid = $q->param('uuid');
 my $screen_name = $q->param('screen_name');
 my $identity_string = $q->param('identity_string');
+my $cur_game = $q->param('cur_game');
 for ($screen_name, $identity_string) {
     s{\A \s*|\s* \z}{}xmsg;     # trim leading and trailing blanks
 }
@@ -37,6 +38,41 @@ use BeeDBM qw/
     %message_for
 /;
 
+my $style = <<'EOH';
+<style>
+body {
+    margin: .5in;
+    font-size: 18pt;
+}
+.back {
+    text-decoration: underline;
+    color: "blue";
+    cursor: pointer;
+    onclick="window.history.back();
+}
+</style>
+EOH
+sub oops {
+    my ($msg) = @_;
+    print $q->header();
+    print <<"EOH";
+$style
+$msg
+<p>
+<span class=back onclick="window.history.back();">
+Go back</span> and try again.
+EOH
+    exit;
+}
+
+# duplicates?
+if (exists $screen_name_uuid{$screen_name}) {
+    oops "Sorry, the screen name '$screen_name' is already taken.<p>";
+}
+if (exists $uuid_screen_name{$identity_string}) {
+    oops "Sorry, the identity string '$identity_string' is already taken.<p>";
+}
+
 $cur_puzzles_store{$identity_string} = $cur_puzzles_store{$uuid};
 delete $cur_puzzles_store{$uuid};
 
@@ -60,5 +96,5 @@ my $uuid_cookie = $q->cookie(
     -value    => $identity_string,
     -expires => '+20y',
 );
-print $q->header(-cookie => $uuid_cookie);
-print "Thank you.  You can <a href='https://logicalpoetry.com/nytbee'>resume playing</a> the game!\n";
+print $q->header(-cookie => $uuid_cookie), $style;
+print "Thank you.  You can <a href='https://logicalpoetry.com/cgi-bin/nytbee.pl/$cur_game'>resume playing</a> the game!\n";

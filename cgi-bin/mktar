@@ -78,7 +78,3 @@ fin \
 new_sn_is.pl \
 get_new_sn_is.pl \
 buddy.txt
-
-# these will not change
-#JSON/PP.pm
-#Date

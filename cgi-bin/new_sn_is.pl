@@ -2,7 +2,7 @@
 # new_sn_is = New Screen Name and Identity String
 use strict;
 use warnings;
-my ($screen_name, $sn, $uuid, $lf) = @ARGV;
+my ($screen_name, $sn, $uuid, $lf, $cur_game) = @ARGV;
 my $disp_screen_name;
 if ($sn) {
     # the screen name was a boring assigned one
@@ -83,14 +83,18 @@ function check_strings() {
 Greetings$disp_screen_name,
 <img style='margin-left: 1in' src=https://logicalpoetry.com/nytbee/pics/bee-logo.png>
 <p>
-It's great that you continue to enjoy the Enhanced NYT Bee.<br>
-Please set (or confirm) two simple things.  Then you can continue to play.
+It's great that you are enjoying the Enhanced NYT Bee.<br>
+Please set two simple things.  You can then continue your game.
+<p>
+Neither of these two things need you to share <i>any</i> personal
+information at all.
 <p>
 <form name=form
-      action=https://logicalpoetry.com/cgi-bin/get_new_sn_is.pl
+      action='https://logicalpoetry.com/cgi-bin/get_new_sn_is.pl'
       onsubmit="return check_strings()"
 >
 <input type=hidden name=uuid value='$uuid'>
+<input type=hidden name=cur_game value='$cur_game'>
 <table cellpadding=5>
 <tr><th>Screen Name</th><td><input type=text name=screen_name id=screen_name size=20 value='$screen_name'></td></tr>
 <tr><th>Identity String</th><td><input type=text name=identity_string id=identity_string size=20 value='$identity_string'></td></tr>
@@ -98,21 +102,16 @@ Please set (or confirm) two simple things.  Then you can continue to play.
 </table>
 </form>
 <p>
-The <b>screen name</b> is used to publicly identify you when reporting
-how everyone is doing on the puzzle (the <span class=cmd>TOP</span> and <span class=cmd>CW</span> commands).
+The <b>Screen Name</b> is used to publicly identify you when reporting
+how everyone is doing on the puzzle (the <span class=cmd>TOP</span> and <span class=cmd>CW</span> commands).  It can be in mixed case &ndash; like 'BeeCool'
 <p>
-The <b>identity string</b> is used when storing your
-colors, status display, and to keep your list of games.
+The <b>Identity String</b> is used when storing your
+list of games and your choice of colors.
 If you use a different browser or clear your web data
 you can enter your identity string
 (with the <span class=cmd>ID</span> command) and your
 settings and games will be restored.
-This string is private.  Make it easily remembered and unique to you.
-Perhaps a nickname plus a day/month (like Gertie4/30)?
-<p>
-Note that neither of these need you to reveal <i>any</i> personal
-information like your actual name, an email address,
-a phone number, or your location.
+This string is private.  It can be <i>anything</i> but make it easily remembered!
 <p>
 You can read more about these two things by
 <a target=_blank href='https://logicalpoetry.com/nytbee/help.html#screen_names'>clicking here</a>.

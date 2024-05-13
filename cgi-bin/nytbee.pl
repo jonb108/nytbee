@@ -1,4 +1,6 @@
 #!/usr/bin/perl
+# tidy up the show clue and add clue forms
+# and the create_add link
 use strict;
 use warnings;
 use CGI;
@@ -190,42 +192,10 @@ my $focus = $mobile? '': 'set_focus();';
 # make the nyt_puzzles.txt file downloadable!
 #
 
-# 18d7edac-6fee-11ed-a97e-8c36b52268c0
-# 0123456789012345678901234567890
-#           1         2         3
-sub long_form {
-    my ($uuid) = @_;
-    return substr($uuid,  8, 1) eq '-'
-        && substr($uuid, 13, 1) eq '-'
-        && substr($uuid, 18, 1) eq '-'
-        && substr($uuid, 23, 1) eq '-'? 1: 0;
-}
-
-# is the screen_name base+num?
-sub assigned_sn {
-    my ($sn) = @_;
-    if (! $sn) {
-        return 1;
-    }
-    my $base = join '|', @base;
-    return $sn =~ m{\A ($base)\d+ \z}xms? 1: 0;
-}
-
 my %cur_puzzles;
 my $cps = $cur_puzzles_store{$uuid};
 if ($cps) {
     %cur_puzzles = %{ eval $cps };    # the key point #1 (see below for #2)
-    my $lf = long_form($uuid);
-    my $sn = assigned_sn($screen_name);
-    if (0 && ($lf || $sn) && keys %cur_puzzles > 2) {
-        # present a different page
-        # (they may have a screen name that was not assigned)
-        # ask for a screen_name and an identity string
-        # keep their settings and current puzzles
-        # and exit;
-        system("$cgi_dir/new_sn_is.pl '$screen_name' '$sn' '$uuid' '$lf'");
-        exit;
-    }
 }
 else {
     # otherwise this is a brand new user...
@@ -362,9 +332,9 @@ my $show_RankImage  = exists $params{show_RankImage}?
 # inserted into the message_dbm file.
 # rename it and only put the graphic status there?
 #
-#my $show_GraphicStatus = exists $params{show_GraphicStatus}?
-#                             $params{show_GraphicStatus}: 0;
-my $show_GraphicStatus = 0;
+my $show_GraphicStatus = exists $params{show_GraphicStatus}?
+                             $params{show_GraphicStatus}: 0;
+#my $show_GraphicStatus = 0;
 if ($message_for{$uuid}) {
     my ($n, $date, $status) = split ' ', $message_for{$uuid};
     if ($status == 1) {
@@ -835,6 +805,7 @@ else {
                                 # at the very beginning!
     @found     = ();
 }
+
 if ($cmd eq 'q' || $cmd eq '?') {
     # define the last word
     my $word = $found[-1];
@@ -3592,6 +3563,42 @@ my $add_clues_form = '';
 #EOH
 #}
 
+# 18d7edac-6fee-11ed-a97e-8c36b52268c0
+# 0123456789012345678901234567890
+#           1         2         3
+sub long_form {
+    my ($uuid) = @_;
+    return substr($uuid,  8, 1) eq '-'
+        && substr($uuid, 13, 1) eq '-'
+        && substr($uuid, 18, 1) eq '-'
+        && substr($uuid, 23, 1) eq '-'? 1: 0;
+}
+
+# is the screen_name base+num?
+sub assigned_sn {
+    my ($sn) = @_;
+    if (! $sn) {
+        return 1;
+    }
+    my $base = join '|', @base;
+    return $sn =~ m{\A ($base)\d+ \z}xms? 1: 0;
+}
+
+my $lf = long_form($uuid);
+my $sn = assigned_sn($screen_name);
+if (0
+    && ($lf || $sn)
+    && keys %cur_puzzles > 2
+    && @found > 3
+) {
+    # present a different page.
+    # ask for a screen_name and an identity string.
+    # make sure to keep their settings and current puzzles.
+    # and exit;
+    system("$cgi_dir/new_sn_is.pl '$screen_name' '$sn' '$uuid' '$lf' '$date'");
+    exit;
+}
+
 # now to display everything
 # cgi-bin/style.css?
 my $num_msgs = '';
@@ -4103,7 +4110,7 @@ $heading
 <input type=hidden name=which_wl value=$which_wl>
 <input type=hidden name=forum_mode value=$forum_mode>
 <input type=hidden name=show_RankImage value=$show_RankImage>
-<!-- <input type=hidden name=show_GraphicStatus value=$show_GraphicStatus> -->
+<input type=hidden name=show_GraphicStatus value=$show_GraphicStatus>
 $letters
 <div style="width: 640px">$message</div>
 <input type=hidden name=hidden_new_words id=hidden_new_words>
