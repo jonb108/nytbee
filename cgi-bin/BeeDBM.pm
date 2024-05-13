@@ -16,14 +16,13 @@ our @EXPORT_OK = qw/
     %osx_usd_words_48
     %first_appeared
     %definition_of
-    %message_for
+    %settings_for
     %uuid_colors_for
     %full_uuid
     %added_words
 /;
 
 use DB_File;
-use DB_File::Lock;
 
 our %end_time_for;
 tie %end_time_for, 'DB_File', 'end_time_for.dbm';
@@ -59,8 +58,7 @@ tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
 # value is seven center pangrams... | words
 
 our %cur_puzzles_store;
-tie %cur_puzzles_store, 'DB_File::Lock', 'cur_puzzles_store.dbm',
-                        O_CREAT|O_RDWR, 0666, $DB_HASH, 'write';
+tie %cur_puzzles_store, 'DB_File', 'cur_puzzles_store.dbm';
 # a better way of storing the current puzzle list for *everyone*
 # key is the uuid ("session" id)
 # value is a Data::Dumper created *string* representing a hash
@@ -123,13 +121,11 @@ tie %definition_of, 'DB_File', 'definition_of.dbm';
 # a hash with keys of the words in the NYTBee
 # value is a simple definition from worknik.com
 
-our %message_for;
-tie %message_for, 'DB_File', 'message_for.dbm';
+our %settings_for;
+tie %settings_for, 'DB_File', 'settings_for.dbm';
 # key is the uuid ("session" id)
-# value is "# date 1/0"
-# the number of the last message (in directory message/)
-# the user saw and the date they saw it
-# the last number is for status = 1 is graphical, 0 is numeric
+# value is "0/1" for graphical status 
+# and room for further expansion
 
 our %uuid_colors_for;
 tie %uuid_colors_for, 'DB_File', 'uuid_colors_for.dbm';

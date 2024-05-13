@@ -1,6 +1,4 @@
 #!/usr/bin/perl
-# tidy up the show clue and add clue forms
-# and the create_add link
 use strict;
 use warnings;
 use CGI;
@@ -55,7 +53,7 @@ use BeeDBM qw/
     %osx_usd_words_48
     %first_appeared
     %definition_of
-    %message_for
+    %settings_for
     %full_uuid
     %added_words
 /;
@@ -70,7 +68,6 @@ use Date::Simple qw/
     date
 /;
 use DB_File;
-use DB_File::Lock;
 use Data::Dumper qw/
     Dumper
 /;
@@ -328,19 +325,6 @@ my $forum_mode      = exists $params{forum_mode}?
                              $params{forum_mode}: 0;
 my $show_RankImage  = exists $params{show_RankImage}?
                              $params{show_RankImage}: 1;
-# the graphic status is wrongly
-# inserted into the message_dbm file.
-# rename it and only put the graphic status there?
-#
-my $show_GraphicStatus = exists $params{show_GraphicStatus}?
-                             $params{show_GraphicStatus}: 0;
-#my $show_GraphicStatus = 0;
-if ($message_for{$uuid}) {
-    my ($n, $date, $status) = split ' ', $message_for{$uuid};
-    if ($status == 1) {
-        $show_GraphicStatus = 1;
-    }
-}
 
 my $forum_post_to_edit = 0;
 
@@ -1208,9 +1192,7 @@ elsif ($cmd eq 'im') {
     $cmd = '';
 }
 elsif ($cmd eq 'st') {
-    $show_GraphicStatus = $show_GraphicStatus? 0: 1;
-    my ($n, $date, $status) = split ' ', $message_for{$uuid};
-    $message_for{$uuid} = "$n $date $show_GraphicStatus";
+    $settings_for{$uuid} = ! $settings_for{$uuid};
     $cmd = '';
 }
 # do we have a reveal command?
@@ -3539,29 +3521,10 @@ if ($message) {
     $message .= '<p>';
     $has_message = 1;
 }
-my $create_add = '';
-my $add_clues_form = '';
+
 #
 # disabled for now
 #
-
-#$create_add = "<a class=alink onclick='set_focus();' target=_blank href='$log/nytbee/mkpuz.html'>"
-#            . "Create Puzzle</a>";
-#if ($date =~ m{\A \d}xms) {
-#    my $add_edit = index($puzzle_has_clues{$date}, $uuid) >= 0? 'Edit': 'Add';
-#    $create_add
-#        .= "&nbsp;&nbsp;<span class=alink onclick='add_clues();'>$add_edit Clues</span>";
-#    $add_clues_form = <<"EOH";
-#<form target=_blank
-#      id=add_clues
-#      action=$log/cgi-bin/nytbee_mkclues.pl
-#      method=POST
-#>
-#<input type=hidden id=date name=date value=$date>
-#<input type=hidden id=found name=found value='@found'>
-#</form>
-#EOH
-#}
 
 # 18d7edac-6fee-11ed-a97e-8c36b52268c0
 # 0123456789012345678901234567890
@@ -3615,7 +3578,7 @@ my $heading = $show_Heading? <<"EOH": '';
      <img width=53 src=$log/nytbee/pics/bee-logo.png onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
 </div>
 <div class=float-child3>
-    <div style="text-align: center"><span class=help><a class=alink target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span>&nbsp;&nbsp;<span class=help><a target=_blank class=alink href='$log/nytbee/cmds.html'>Cmds</a><br><!-- <span class=create_add'>$create_add</span><br>--><a class='alink' onclick="issue_cmd('F');">$forum_s $num_msgs</a></div>
+    <div style="text-align: center"><span class=help><a class=alink target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span>&nbsp;&nbsp;<span class=help><a target=_blank class=alink href='$log/nytbee/cmds.html'>Cmds</a><br><a class='alink' onclick="issue_cmd('F');">$forum_s $num_msgs</a></div>
 </div>
 <br><br><br>
 EOH
@@ -3986,11 +3949,10 @@ EOH
     return $html;
 }
 
-my $status = $show_GraphicStatus? graphical_status()
-            :                     "Score: $score $rank_image $disp_nhints";
-if ($bonus_mode || $donut_mode) {
-    $status = '';
-}
+my $status =
+    ($bonus_mode || $donut_mode)? ''
+   :$settings_for{$uuid}        ? graphical_status()
+   :                              "Score: $score $rank_image $disp_nhints";
 my $css = $mobile? 'mobile_': '';
 my $new_words_size = $mobile? 30: 40;
 my $row1_top  = 40 + ($show_Heading? 79: 0);
@@ -4110,7 +4072,6 @@ $heading
 <input type=hidden name=which_wl value=$which_wl>
 <input type=hidden name=forum_mode value=$forum_mode>
 <input type=hidden name=show_RankImage value=$show_RankImage>
-<input type=hidden name=show_GraphicStatus value=$show_GraphicStatus>
 $letters
 <div style="width: 640px">$message</div>
 <input type=hidden name=hidden_new_words id=hidden_new_words>
@@ -4131,7 +4092,7 @@ $status$hint_table_list
 $forum_html
 </form>
 </body>
-$show_clue_form$add_clues_form
+$show_clue_form
 <script src="$log/nytbee/js/fastclick.js"></script>
 <script>
 if ('addEventListener' in document) {
