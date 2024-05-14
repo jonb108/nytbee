@@ -3553,8 +3553,7 @@ sub assigned_sn {
 
 my $lf = long_form($uuid);
 my $sn = assigned_sn($screen_name);
-if (0
-    && ($lf || $sn)
+if (($lf || $sn)
     && keys %cur_puzzles > 2
     && @found > 3
 ) {
