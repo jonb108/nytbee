@@ -3115,6 +3115,7 @@ elsif ($cmd eq 'top') {
     check_screen_name();
     untie %uuid_screen_name;
     untie %screen_name_uuid;
+    untie %cur_puzzles_store;
     my $nwords = @ok_words;
     $message .= `$cgi_dir/nytbee_top.pl $date $nwords $seven $screen_name`;
     $cmd = '';

@@ -95,6 +95,9 @@ while (my $line = <$in>) {
         if (! exists $hints_for{$screen_name}) {
             my $uuid = $full_uuid{$r_uuid11};
             if ($uuid) {
+                if (! exists $cur_puzzles_store{$uuid}) {
+                    next LINE; # ???? What's wrong????
+                }
                 my %cur_puzzles = %{ eval $cur_puzzles_store{$uuid} };
                 my @terms = split ' ', $cur_puzzles{$date};
                 $hints_for{$screen_name} = $terms[1];   # => 1 OVERALL_HINTS

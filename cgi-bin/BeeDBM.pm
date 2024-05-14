@@ -23,6 +23,7 @@ our @EXPORT_OK = qw/
 /;
 
 use DB_File;
+use DB_File::Lock;
 
 our %end_time_for;
 tie %end_time_for, 'DB_File', 'end_time_for.dbm';
@@ -58,7 +59,8 @@ tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
 # value is seven center pangrams... | words
 
 our %cur_puzzles_store;
-tie %cur_puzzles_store, 'DB_File', 'cur_puzzles_store.dbm';
+tie %cur_puzzles_store, 'DB_File::Lock', 'cur_puzzles_store.dbm',
+                         O_CREAT|O_RDWR, 0666, $DB_HASH, 'write';
 # a better way of storing the current puzzle list for *everyone*
 # key is the uuid ("session" id)
 # value is a Data::Dumper created *string* representing a hash
