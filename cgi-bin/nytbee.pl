@@ -3554,7 +3554,7 @@ sub assigned_sn {
 
 my $lf = long_form($uuid);
 my $sn = assigned_sn($screen_name);
-if (($lf || $sn)
+if (0 && ($lf || $sn)
     && keys %cur_puzzles > 2
     && @found > 3
 ) {
@@ -3682,9 +3682,9 @@ EOH
 
 <span class='pos22 cursor_black' $st onclick="del_let();">Delete</span>
 <span class='pos23 cursor_black' $st onclick="issue_cmd('BN');">Bonus</span>
-<span class='pos31 cursor_black' $st onclick="issue_cmd('TOP');">Top</span>
-<span class='pos32 cursor_black'><a class='cursor_black' $st target=_blank href='$log/nytbee/help.html#toc'">Help</a></span>
-<span class='pos33 cursor_black' $st onclick="issue_cmd('F');">$forum_s $num_msgs</span>
+<span id=pos31 class='pos31 cursor_black' $st onclick="issue_cmd('TOP');">Top</span>
+<span id=pos32 class='pos32 cursor_black'><a class='cursor_black' $st target=_blank href='$log/nytbee/help.html#toc'">Help</a></span>
+<span id=pos33 class='pos33 cursor_black' $st onclick="issue_cmd('F');">$forum_s $num_msgs</span>
 EOH
         }
     }
@@ -4056,7 +4056,7 @@ body {
 }
 </style>
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_${css}style.css'/>
-<script src="$log/nytbee/js/nytbee7.js"></script>
+<script src="$log/nytbee/js/nytbee8.js"></script>
 </head>
 <body onload='init(); $focus'>
 $heading
