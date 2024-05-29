@@ -92,7 +92,7 @@ print <<"EOH";
 <html>
 <head>
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
-<script src="$log/nytbee/js/nytbee8.js"></script>
+<script src="$log/nytbee/js/nytbee9.js"></script>
 </head>
 <body>
 <h1>Editing $date <span class=step_name>Info</span></h1>

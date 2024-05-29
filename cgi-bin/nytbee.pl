@@ -3711,10 +3711,10 @@ EOS
         my $the_cmd = $donut_mode? 'CW': 'DR';
         my $the_lab = $donut_mode? 'Standings': 'Define';
         $letters .= "<table style='width: 100%; margin-bottom: 10mm'><tr>"
-                 .  "<td class=h3cmd onclick='del_let()'>Delete</td>"
-                 .  qq!<td class=h3cmd onclick="issue_cmd('H');">Hexagon</td>!
-                 .  qq!<td class=h3cmd onclick="issue_cmd('$the_cmd');">$the_lab</td>!
-                 .  "<td class=h3cmd onclick='sub_lets()'>Enter</td>"
+                 .  "<td class='h3cmd alink' onclick='del_let()'>Delete</td>"
+                 .  qq!<td class='h3cmd alink' onclick="issue_cmd('H');">Hexagon</td>!
+                 .  qq!<td class='h3cmd alink' onclick="issue_cmd('$the_cmd');">$the_lab</td>!
+                 .  "<td class='h3cmd alink' onclick='sub_lets()'>Enter</td>"
                  .  "</tr></table>"
                  ;
     }
@@ -4056,7 +4056,7 @@ body {
 }
 </style>
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_${css}style.css'/>
-<script src="$log/nytbee/js/nytbee8.js"></script>
+<script src="$log/nytbee/js/nytbee9.js"></script>
 </head>
 <body onload='init(); $focus'>
 $heading
