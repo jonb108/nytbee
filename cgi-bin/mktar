@@ -69,6 +69,7 @@ definitions.txt \
 messages \
 mkforum \
 show_forum.pl \
+same_7.pl \
 forum_flag.pl \
 fmod.pl \
 get_post.pl \

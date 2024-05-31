@@ -1602,41 +1602,7 @@ elsif ($cmd eq 'cl') {
 }
 elsif ($cmd eq 'f7') {
     # look for same 7
-    my %is_in_list = map { $_->[0] => 1 } my_puzzles();
-    my @puz;
-    while (my ($dt, $puz) = each %puzzle) {
-        if (substr($puz, 0, 7) eq $seven) {
-            push @puz, [ $dt, uc substr($puz, 8, 1)
-                              . (     $dt eq $date? ' ' . red('*')
-                                 :$is_in_list{$dt}? ' *'
-                                 :                  ''
-                                )
-                       ];
-        }
-    }
-    my @rows;
-    for my $p (sort { $a->[0] cmp $b->[0] } @puz) {
-        my $date = $p->[0];
-        push @rows,
-            Tr(td(qq!<span class=alink onclick="issue_cmd('$date');">!
-                  . slash_date($date) . "</span>"),
-               td({ class => 'lt' }, $p->[1])
-              );
-    }
-    # also search the community puzzles
-    my $s = `cd $comm_dir; grep -l "'seven' => '$seven'" *.txt`;
-    for my $n ($s =~ m{(\d+)}xmsg) {
-        my $cpn = "CP$n";
-        my $href = do "$comm_dir/$n.txt";
-        my $cur =     $date eq $cpn? ' ' . red('*')
-                 :$is_in_list{$cpn}? ' *'
-                 :                     '';
-        push @rows,
-            Tr(td(qq!<span class=link onclick="issue_cmd('$cpn');">$cpn</span>!),
-               td({ class => 'lt' }, uc $href->{center} . $cur),
-              );
-     }
-    $message .= table({ cellpadding => 2}, @rows);
+    $message = `$cgi_dir/same_7.pl $seven $date @ok_words`;
     $cmd = '';
 }
 elsif ($cmd eq 'b>') {
