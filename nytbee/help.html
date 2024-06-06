@@ -75,6 +75,7 @@ And I have.  The complete source code for this project is on
 <a href=#without>Without a Subscription?</a><br>
 <a href=#same>Same 7 Letters</a><br>
 <a href=#nyt_archive>NYT Archival Puzzles</a><br>
+<a href=#cheat>The Many Ways to &#8220;Cheat&#8221;</a><br>
 <a href=#known_issues>Known Issues</a><br>
 <a href=#acknowledgements>Acknowledgements</a><br>
 <a href=#footnotes>Footnotes</a>
@@ -928,7 +929,7 @@ which had never occurred in an NYT Spelling Bee before - how fun is that! &#1285
 Note that <span class=purple>Arming</span>, <span class=green>Grammarian</span>, and <span class=purple>Margin</span> are <i>pangram</i> donut words because
 they use all 6 letters.  <span class=purple>Arming</span> and <span class=purple>Margin</span> are <i>perfect</i> pangram donut words because they are 6 letters long.  
 <p>
-Donut Words are deemed acceptable if they occur in the <a href=#lexicon>large lexicon</a>
+Donut Words are deemed acceptable if they occur in the <a href=#lexicon>large lexicon <span class=red>&dagger;&dagger;&dagger;&dagger;</span></a>
 or have appeared before in an NYT Bee Puzzle
 OR if they have a definition at
 <a target=_blank href='https://wordnik.com'>wordnik.com</a>.
@@ -1994,8 +1995,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2215 puzzles with
-a total of 10155 different words!
+2220 puzzles with
+a total of 10157 different words!
 <p>
 Which puzzles from the large archive to play?
 You can get one at random with the <span class=cmd>NR</span> command or you could
@@ -2045,6 +2046,95 @@ and <a href=#lexicon>large lexicon</a> words for a pattern with this site:
 <ul>
 <a target=_blank href='https://logicalpoetry.com/cgi-bin/regexp.pl'>Bee Word Search</a>
 </ul>
+<a name=cheat></a>
+<h2>The Many Ways to &#8220;Cheat&#8221;
+<a class=top href=#toc><img src=pics/top.gif height=25></a>
+</h2>
+There are many ways to play this silly game. Aside from the normal puzzle there
+are many <a href=#games>games within the game</a>.
+<p>
+Most
+people play by trying to find all the words in the
+puzzle&#8217;s &#8220;allowed list&#8221; ALL BY THEMSELVES &ndash; using no
+other source than their own mind and memory.
+This is admirable.  But we are not all so dedicated or pure nor do we have
+the time it takes!
+This is what the <a href=#hint_commands>hints and clues and definitions</a>
+are for &ndash; to give us a bit of help.  
+You <i>are</i> charged for this assistance by the accumulation of
+&#8220;hint points&#8221;.
+With this help we can get to Genius or Queen Bee.  This kind of help is not
+really <i>cheating</i>.
+<p>
+It you <i>DO</i> want to cheat using more sneaky means there are many ways:
+<ol>
+<li>You can consult the <a href=#answers>many web sites</a> that
+reveal the entire list of allowed words.
+<li>You can use a different <span class=cmd>ID</span>, play the game, and use the <span class=cmd>G Y</span> command
+to reveal the words.  Then switch back to your own <span class=cmd>ID</span>
+and enter the words.
+<li>Use the <span class=cmd>I</span> command which shows the people who have created a set
+of clues (e.g. The &#128029;&#8217;s Knees).  Clicking on their name will show
+all of their clues and not charge you any hint points.
+<li>You can consult the HiveMind forum on the NYT site.  There are
+many people there who offer their list of clues.
+<li>The NYT site offers the Hint Table and Two Letter List which
+you can consult without being charged any hints.  These resources
+are not normally dynamic (as in this enhanced Bee &ndash; with the
+<span class=cmd>HT</span> and <span class=cmd>TL</span> commands) 
+but there IS the Spelling Bee Buddy
+which (through some clever magic) makes them dynamic &ndash;
+updating as you find words.
+<li>If you bring up the Bee on the NYT website and you
+know how to see the HTML/Javascript source of the page you can
+see the list of words &ndash; without any hint points charged.
+<li>Use the <span class=cmd>F7</span> command to see if there
+are other puzzles that use the same 7 letters.  There is usually
+a different center letter in these puzzles but many of the words in their
+allowed list might also be words (or Donut words) in the current puzzle.
+You can use the <span class=cmd>G YP</span> command to reveal the words
+in these other puzzles
+and then copy-paste them into the current puzzle &ndash; without being
+charged any hint points.
+<li>If you are literate with <a target=_blank href='https://en.wikipedia.org/wiki/Regular_expression'>regular expressions</a> you can enter this on OSX
+in the Terminal application:
+<p>
+<pre>
+    % egrep '^[abcdefg]{4,}$' /usr/share/dict/words | grep g
+</pre>
+abcdefg above should be replaced by the seven letters in the
+puzzle.  g is the center letter.
+<p>
+The above command will show all qualifying puzzle words that occur
+in the <a href=#lexicon>large lexicon</a>. 
+Not all will be in the allowed list as there
+are many rare and obscure words in that lexicon.
+<li>One way to NOT effectively cheat is to ask chatGPT to help you.
+It is remarkably stupid at this task no matter how cleverly you ask it.
+<li>There are probably other ways to cheat.  <script>abcd('Let me know')</script> and I&#8217;ll add
+to this list. &#128522;
+</ol>
+The <span class=cmd>TOP</span> command shows who has
+achieved the various ranks.  It also shows how many hints were needed.
+If you decide to &#8220;cheat&#8221; so that your hint count remains at zero
+<i>you know</i> what you have done.  There <i>is</i> a certain illicit pleasure
+in this but it is not for everyone.
+<p>
+<h3>Donut and Bonus Words</h3>
+It is not so easy to cheat with Donut and Bonus words because
+there is no &#8220;official&#8221; list.  This is part of their charm.
+<p>
+Here is one way to cheat with Donut words (in the OSX Terminal with regular expressions):
+<pre>
+    % egrep '^[abcdef]{4,}$' /usr/share/dict/words
+</pre>
+where abcdef are the 6 donut letters.
+<p>
+Here is one way to cheat with Bonus words (in the OSX Terminal with regular expressions):
+<pre>
+    % egrep '^[abcdefgj]{6,}$' /usr/share/dict/words | grep j
+</pre>
+The above will find Bonus words with an additional letter J.
 <a name=known_issues></a>
 <h2>Known Issues
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
