@@ -2080,9 +2080,11 @@ sub check_word {
     if (! exists $is_ok_word{$w}) {
         if (   $osx_usd_words_47{$w}
             || $added_words{$w}
+            || in_wordnik($w)
         ) {
             # we'll keep the word but not
             # count it for the score of the puzzle
+            $added_words{$w} = 1;
             return 'lexicon';
         }
         return "not in word list";
@@ -2156,6 +2158,9 @@ sub consider_word {
                 # put it in the stash
                 $is_new_word{$w} = 1;
                 $is_found{$w} = 1; 
+                if ($is_pangram{$w}) {
+                    $not_okay_words .= "Pangram! $thumbs_up stashed<br>";
+                }
                 if (! in_stash($w)) {
                     $w .= '!';
                 }
