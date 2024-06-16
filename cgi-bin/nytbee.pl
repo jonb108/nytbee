@@ -2507,10 +2507,18 @@ if ($show_WordList) {
     @lexicon = map {
                    my $w = $_;
                    my $uw = ucfirst $w;
-                   my $s = $is_new_word{$w}?
-                               "<span class=new_word>$uw</span>"
-                          :    $uw
-                          ;
+                   my $nchars = uniq_chars(lc $w);
+                   my $s;
+                   if ($nchars == 7) {
+                       my $color = length $w == 7? 'purple': 'green';
+                       $s = "<span class=$color>$uw</span>";
+                   }
+                   elsif ($is_new_word{lc $w}) {
+                       $s = "<span class=new_word>$uw</span>";
+                   }
+                   else {
+                       $s = $uw;
+                   }
                    def_word($s, $w);
                } 
                @lexicon;

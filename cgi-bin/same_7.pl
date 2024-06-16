@@ -18,7 +18,7 @@ for my $l (@lines) {
         \A
            (\d{8})      # date
            [ ] => [ ]   #  => 
-           .{7} [ ] (.) # center
+           .{7} [ ] (.) # letters center
            .* [|] (.*)  # | words
         \z
     }xms;
