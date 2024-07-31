@@ -80,6 +80,7 @@ height="235.434554176385"
     class=svglets
 >LET0</text>
 <polygonAL1
+    id=donut
     points="69.6962,37.2391,91.1962,-0.0000,134.1962,-0.0000,155.6962,37.2391,134.1962,74.4782,91.1962,74.4782"
     fill="DONUT_HEX"
     ></polygon>
@@ -130,6 +131,7 @@ height="235.434554176385"
     class=svglets
 >LET5</text>
 <polygonAL6
+    id=donut_hex
     points="139.3923,77.4782,160.8923,40.2391,203.8923,40.2391,225.3923,77.4782,203.8923,114.7173,160.8923,114.7173"
     fill="DONUT_HEX"
     ></polygon>
@@ -147,12 +149,13 @@ EOH
         $s =~ s{AL(\d)}{\nonclick="add_let('LET$1')"\n}xmsg;
         $s =~ s<CURSOR><polygon, text { cursor: pointer; } >xms;
         $s =~ s{BLANK}{
-<polygon points="225.3923,77.4782
+<polygon id=pentagon
+         points="225.3923,77.4782
                  250.3923,77.4782
                  250.3923,157.9564
                  225.3923,157.9564
                  203.0923,117.7173"
-         onclick="add_let(' ')"
+         onclick="add_let(' '); blink_pink('pentagon', 'BACKGROUND');"
          style='fill:BACKGROUND'
 ></polygon>
               }xms;

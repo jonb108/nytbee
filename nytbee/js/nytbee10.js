@@ -131,3 +131,10 @@ function edit_post(id) {
     hnw.value = 'FE' + id;
     main.submit();
 }
+function blink_pink(the_id, color) {
+    var p = document.getElementById(the_id);
+    p.style = 'fill:rgb(255,217, 231)';
+    setTimeout(() => {
+        p.style = 'fill:' + color;
+    }, 200);
+}

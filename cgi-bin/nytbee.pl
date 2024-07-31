@@ -1289,6 +1289,12 @@ elsif ($cmd eq 'xpf') {
     $message = "@found";
     $cmd = '';
 }
+elsif ($cmd =~ m{\A im \s+ (\w+) \s* \z}xms) {
+    my $term = $1;
+    # https://www.google.com/search?sca_esv=1&sca_upv=1&biw=1010&bih=635&q=juice&udm=2
+    $message = "Image of $term";
+    $cmd = '';
+}
 elsif ($cmd eq 's45') {
     @found = map {
                 my $l = length;
@@ -3578,7 +3584,7 @@ if ($hive == 1) {        # bee hive honeycomb
     $letters =~ s{CENTER_TEXT}{$colors{$s}}xmsg;
     $letters =~ s{DONUT_HEX}{$colors{donut_hex}}xmsg;
     $letters =~ s{DONUT_TEXT}{$colors{donut_text}}xmsg;
-    $letters =~ s{BACKGROUND}{$colors{background}}xms;
+    $letters =~ s{BACKGROUND}{$colors{background}}xmsg;
 
     if (index($seven, 'i') >= 0) {
         $letters =~ s{
@@ -4035,7 +4041,7 @@ body {
 }
 </style>
 <link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_${css}style.css'/>
-<script src="$log/nytbee/js/nytbee9.js"></script>
+<script src="$log/nytbee/js/nytbee10.js"></script>
 </head>
 <body onload='init(); $focus'>
 $heading
