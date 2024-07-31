@@ -3574,7 +3574,7 @@ EOH
 
 my $letters = '';
 if ($hive == 1) {        # bee hive honeycomb
-    $letters = svg_hex($mobile);
+    $letters = svg_hex($mobile, $donut_mode);
     $letters =~ s{LET0}{$donut_mode? ' ': $Center}xmsge;
     for my $i (1 .. 6) {
         $letters =~ s{LET$i}{$six[$i-1]}xmsg;

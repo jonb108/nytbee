@@ -53,7 +53,7 @@ Maybe the fill:black is not needed?
 =cut
 
 sub svg_hex {
-    my ($mobile) = @_;
+    my ($mobile, $donut_mode) = @_;
     my $s = <<'EOH';
 <!-- SEVEN HEXAGONS -->
 <style>
@@ -70,6 +70,7 @@ width="250.392304845413"
 height="235.434554176385"
 >
 <polygonAL0
+    id=center
     points="69.6962,117.7173,91.1962,80.4782,134.1962,80.4782,155.6962,117.7173,134.1962,154.9564,91.1962,154.9564"
     fill="CENTER_HEX"
     ></polygon>
@@ -80,7 +81,6 @@ height="235.434554176385"
     class=svglets
 >LET0</text>
 <polygonAL1
-    id=donut
     points="69.6962,37.2391,91.1962,-0.0000,134.1962,-0.0000,155.6962,37.2391,134.1962,74.4782,91.1962,74.4782"
     fill="DONUT_HEX"
     ></polygon>
@@ -131,7 +131,6 @@ height="235.434554176385"
     class=svglets
 >LET5</text>
 <polygonAL6
-    id=donut_hex
     points="139.3923,77.4782,160.8923,40.2391,203.8923,40.2391,225.3923,77.4782,203.8923,114.7173,160.8923,114.7173"
     fill="DONUT_HEX"
     ></polygon>
@@ -146,6 +145,9 @@ BLANK
 <p>
 EOH
     if ($mobile) {
+        if ($donut_mode) {
+            $s =~ s{AL0}{\nonclick="add_let('LET0'); blink_pink('center','CENTER_HEX');\n"}xms;
+        }
         $s =~ s{AL(\d)}{\nonclick="add_let('LET$1')"\n}xmsg;
         $s =~ s<CURSOR><polygon, text { cursor: pointer; } >xms;
         $s =~ s{BLANK}{

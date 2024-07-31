@@ -14,8 +14,8 @@ function empty(s) {
 function add_let(c) {
     lets.innerHTML += c;
     if (c == ' ') {
-        var dis = document.getElementById('pos31').style.display;
-        if (dis != 'none') {
+        var dis = document.getElementById('pos31');
+        if (dis && dis.style.display != 'none') {
             for (num = 1; num <= 3; ++num) {
                 document.getElementById('pos3' + num).style.display = 'none';
             }
