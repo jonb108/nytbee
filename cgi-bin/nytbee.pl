@@ -543,7 +543,18 @@ elsif ($cmd eq 't') {
     $cmd = '';
 }
 elsif ($cmd eq 'y') {
-    $date = ($today-1)->as_d8();
+    if ($date =~ m{cp}xmsi) {
+        $date = ($today-1)->as_d8();
+    }
+    else {
+        my $new_date = (date($date)-1)->as_d8();
+        if ($new_date < $first->as_d8()) {
+            $message = 'The first NYT Spelling Bee Puzzle was on May 9, 2018.';
+        }
+        else {
+            $date = $new_date;
+        }
+    }
     $new_puzzle = 1;
     $cmd = '';
 }
@@ -1125,18 +1136,18 @@ elsif ($cmd eq 'tl') {
     $cmd = '';
 }
 elsif ($cmd eq 'he') {
-    $show_Heading = ! $show_Heading;
+    $show_Heading = $show_Heading? 0: 1;
     $cmd = '';
 }
 elsif ($cmd eq 'mo') {
-    $mobile_Device = ! $mobile_Device;
-    $show_Heading = ! $mobile_Device;
+    $mobile_Device = $mobile_Device? 0: 1;
+    $show_Heading = $mobile_Device? 0: 1;
     $mobile = $mobile_Device;
     $focus = $mobile? '': 'set_focus();';
     $cmd = '';
 }
 elsif ($cmd eq 'wl') {
-    $show_WordList = ! $show_WordList;
+    $show_WordList = $show_WordList? 0: 1;
     $which_wl = 'pdlbs';
     $cmd = '';
 }
@@ -1149,11 +1160,11 @@ elsif ($cmd =~ m{\A wl \s* ([pdlbsa]+)}xms) {
     $cmd = '';
 }
 elsif ($cmd eq 'bt') {
-    $show_BingoTable = ! $show_BingoTable;
+    $show_BingoTable = $show_BingoTable? 0: 1;
     $cmd = '';
 }
 elsif ($cmd eq 'oc') {
-    $only_clues = ! $only_clues;
+    $only_clues = $only_clues? 0: 1;
     $message = $only_clues? 'Only clues': 'Both clues and definitions';
     $cmd = '';
 }
@@ -1162,12 +1173,12 @@ elsif ($cmd eq 'dl') {
     $cmd = '';
 }
 elsif ($cmd eq 'bn') {
-    $bonus_mode = ! $bonus_mode;
+    $bonus_mode = $bonus_mode? 0: 1;
     $donut_mode = 0;
     $cmd = '';
 }
 elsif ($cmd eq 'dn') {
-    $donut_mode = ! $donut_mode;
+    $donut_mode = $donut_mode? 0: 1;
     $bonus_mode = 0;
     $cmd = '';
 }
@@ -1184,15 +1195,15 @@ elsif ($cmd =~ m{\A fe \s* (\d+) \z}xms) {
     $cmd = '';
 }
 elsif ($cmd eq 'f') {
-    $forum_mode = ! $forum_mode;
+    $forum_mode = $forum_mode? 0: 1;
     $cmd = '';
 }
 elsif ($cmd eq 'im') {
-    $show_RankImage = ! $show_RankImage;
+    $show_RankImage = $show_RankImage? 0: 1;
     $cmd = '';
 }
 elsif ($cmd eq 'st') {
-    $settings_for{$uuid} = ! $settings_for{$uuid};
+    $settings_for{$uuid} = $settings_for{$uuid}? 0: 1;
     $cmd = '';
 }
 # do we have a reveal command?
