@@ -38,7 +38,7 @@ if ($all_words) {
     # 9060f4f4-b124-11ee-b0d4-ac0cb0d5d1d5
     my @f = split '-', $uuid;
     if (@f == 5) {
-        print "<meta http-equiv='refresh' content='0; URL=https://logicalpoetry.com/nytbee/new_sn_id.html'/>\n";
+        print "<meta http-equiv='refresh' content='0; URL=https://ultrabee.org/new_sn_id.html'/>\n";
         exit;
     }
 }
@@ -46,8 +46,8 @@ if ($all_words) {
 my $cgi = "$log/cgi-bin";
 my $date;
 #
-# the directory logicalpoetry.com/mkclues has an index.html
-# file that redirects to logicalpoetry.com/cgi-bin/nytbee_mkclues.pl/today
+# the directory ultrabee.org/mkclues has an index.html
+# file that redirects to ultrabee.org/cgi-bin/nytbee_mkclues.pl/today
 
 if ($all_words) {
     $date = my_today()->as_d8();

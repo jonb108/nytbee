@@ -607,7 +607,6 @@ if (! $message && $path_info =~ m{cp(\d+)}xmsi) {
 }
 
 my $show_date;
-my $clues_are_present = '';
 my $cp_href;
 
 sub no_puzzle {
@@ -624,14 +623,11 @@ if ($date =~ m{\A\d}xms) {
         no_puzzle $date;
     }
     $show_date = $show_date->format("%B %e, %Y");
+    $show_date = "<a target=_blank class=alink onclick='set_focus();' href='https://www.nytimes.com/subscription'>NYT</a> $show_date";
     my $puzzle = $puzzle{$date};
     if (! $puzzle) {
         no_puzzle $show_date;
     }
-    if ($puzzle_has_clues{$date}) {
-        $clues_are_present = " <span class=red2>*</span>";
-    }
-
     my ($s, $t) = split /[|]/, $puzzle;
     ($seven, $center, @pangrams) = split ' ', $s;
     $Center = uc $center;
@@ -1957,7 +1953,7 @@ sub check_screen_name {
     $screen_name_uuid{$screen_name} = $uuid11;
     #
     # dead code...
-    #my $url = 'https://logicalpoetry.com/nytbee/help.html#screen_names';
+    #my $url = 'https://ultrabee.org/help.html#screen_names';
     #$message .= "<div class=red>"
     #         . "You have been assigned a screen name of $screen_name.<br>"
     #         . "You can change it with the SN command.<br>"
@@ -2583,25 +2579,25 @@ if ($show_WordList) {
                                  . "<!-- DONUT LEXICON BONUS WORDS -->\n"
                                  . table($extra_words);
         }
-        if ($bonus_mode && ! $mobile) {
-            my @other = grep { !/[$seven]/ } 'a' .. 'z';
-            my @bonus = grep { m{[*]\z}xms } @found;
-            chop @bonus;    # the *
-            my $all = join '', @bonus;
-            $all =~ s{[$seven]}{}xmsg;
-            my $lets = '<p>';
-            for my $o (@other) {
-                if (index($all, $o) >= 0) {
-                    $lets .= "<span class=green>\u$o</span>";
-                }
-                else {
-                    $lets .= uc $o;
-                }
-                $lets .= ' ';
-            }
-            $extra_words = "$lets$extra_words";
-        }
     }
+}
+if ($bonus_mode && ! $mobile) {
+    my @other = grep { !/[$seven]/ } 'a' .. 'z';
+    my @bonus = grep { m{[*]\z}xms } @found;
+    chop @bonus;    # the *
+    my $all = join '', @bonus;
+    $all =~ s{[$seven]}{}xmsg;
+    my $lets = '<p>';
+    for my $o (@other) {
+        if (index($all, $o) >= 0) {
+            $lets .= "<span class=green>\u$o</span>";
+        }
+        else {
+            $lets .= uc $o;
+        }
+        $lets .= ' ';
+    }
+    $extra_words = "$lets$extra_words";
 }
 my $bingo_table = '';
 if (!$donut_mode && !$bonus_mode && $show_BingoTable) {
@@ -3485,7 +3481,7 @@ my $image = '';
 if (7 <= $rank && $rank <= 9) {
     my $name = lc $ranks[$rank]->{name};
     $name =~ s{\s.*}{}xms;  # for queen bee
-    $image = "<img src=$log/nytbee/pics/$name.png>";
+    $image = "<img src=$log/pics/$name.png>";
 }
 my $rank_image = $show_RankImage?
         "<span class='rank_name rank$rank'>$rank_name</span>$image<br>"
@@ -3572,13 +3568,13 @@ if (my $nm = $num_msgs{$date}) {
 my $forum_s = $forum_mode? '<s>Forum</s>': 'Forum';
 my $heading = $show_Heading? <<"EOH": '';
 <div class=float-child1>
-    <a target=_blank class=alink onclick="set_focus();" href='https://www.nytimes.com/subscription'>NY Times</a> Spelling Bee<br>$show_date$clues_are_present
+    UltraBee<br>$show_date
 </div>
 <div class=float-child2>
-     <img width=53 src=$log/nytbee/pics/bee-logo.png onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
+     <img width=53 src=$log/pics/bee-logo.png onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
 </div>
 <div class=float-child3>
-    <div style="text-align: center"><span class=help><a class=alink target=nytbee_help onclick="set_focus();" href='$log/nytbee/help.html#toc'>Help</a></span>&nbsp;&nbsp;<span class=help><a target=_blank class=alink href='$log/nytbee/cmds.html'>Cmds</a><br><a class='alink' onclick="issue_cmd('F');">$forum_s $num_msgs</a></div>
+    <div style="text-align: center"><span class=help><a class=alink target=nytbee_help onclick="set_focus();" href='$log/help.html#toc'>Help</a></span>&nbsp;&nbsp;<span class=help><a target=_blank class=alink href='$log/cmds.html'>Cmds</a><br><a class='alink' onclick="issue_cmd('F');">$forum_s $num_msgs</a></div>
 </div>
 <br><br><br>
 EOH
@@ -3679,7 +3675,7 @@ EOH
 <span class='pos22 cursor_black' $st onclick="del_let();">Delete</span>
 <span class='pos23 cursor_black' $st onclick="issue_cmd('BN');">Bonus</span>
 <span id=pos31 class='pos31 cursor_black' $st onclick="issue_cmd('TOP');">Top</span>
-<span id=pos32 class='pos32 cursor_black'><a class='cursor_black' $st target=_blank href='$log/nytbee/help.html#toc'">Help</a></span>
+<span id=pos32 class='pos32 cursor_black'><a class='cursor_black' $st target=_blank href='$log/help.html#toc'">Help</a></span>
 <span id=pos33 class='pos33 cursor_black' $st onclick="issue_cmd('F');">$forum_s $num_msgs</span>
 EOH
         }
@@ -3973,7 +3969,7 @@ print <<"EOH";
 <html>
 <head>
 <meta charset='UTF-8'>
-<title>Spelling Bee - $show_date</title>
+<title>UltraBee - $show_date</title>
 <style>
 body {
     background: $colors{background};
@@ -4051,8 +4047,8 @@ body {
     cursor: black;
 }
 </style>
-<link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_${css}style.css'/>
-<script src="$log/nytbee/js/nytbee10.js"></script>
+<link rel='stylesheet' type='text/css' href='$log/css/cgi_${css}style.css'/>
+<script src="$log/js/nytbee10.js"></script>
 </head>
 <body onload='init(); $focus'>
 $heading
@@ -4093,7 +4089,7 @@ $forum_html
 </form>
 </body>
 $show_clue_form
-<script src="$log/nytbee/js/fastclick.js"></script>
+<script src="$log/js/fastclick.js"></script>
 <script>
 if ('addEventListener' in document) {
     document.addEventListener('DOMContentLoaded', function() {

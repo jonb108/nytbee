@@ -36,7 +36,7 @@ if (@chars > 7) {
 
 my @pangrams;
 
-my $bee = '/home4/logical9/www/nytbee';
+my $bee = '/home4/logical9/www/ultrabee';
 
 sub get_pangrams {
     my ($f) = @_;

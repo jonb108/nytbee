@@ -84,7 +84,7 @@ function check_strings() {
 </head>
 <body>
 Greetings$disp_screen_name,
-<img style='margin-left: 1in' src=https://logicalpoetry.com/nytbee/pics/bee-logo.png>
+<img style='margin-left: 1in' src=https://ultrabee.org/pics/bee-logo.png>
 <p>
 It's great that you are enjoying the Enhanced NYT Bee.<br>
 Please set two simple things.  You can then continue your game.

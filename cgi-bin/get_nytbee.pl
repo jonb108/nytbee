@@ -10,8 +10,8 @@ use BeeUtil qw/
     get_html
 /;
 
-my $bin = '/home4/logical9/www/cgi-bin';
-my $bee = '/home4/logical9/www/nytbee';
+my $bin = '/home4/logical9/www/ultrabee/cgi-bin';
+my $bee = '/home4/logical9/www/ultrabee';
 
 use DB_File::Lock;
 my %puzzle;

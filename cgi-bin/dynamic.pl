@@ -130,7 +130,7 @@ You are entering single words instead of
 select/copy/pasting words from the NYT app.
 There's another place to play the game that you may find interesting:<p>
 <ul>
-    <span class=link onclick='play();'>https://logicalpoetry.com/nytbee</span>
+    <span class=link onclick='play();'>https://UltraBee.org</span>
 </ul>
 <p>
 This place <i>also</i> has a dynamic grid in addition to many
@@ -156,7 +156,7 @@ EOH
     $new_form = <<"EOH";
 <form id=nytbee
       target=_blank
-      action='https://logicalpoetry.com/cgi-bin/nytbee.pl'
+      action='https://ultrabee.org/cgi-bin/nytbee.pl'
       method=POST
 >
 <input type=hidden name=date value='$today_d8'>
@@ -296,7 +296,7 @@ function set_focus() {
     document.form.words.focus();
 }
 function help_win() {
-    window.open('https://logicalpoetry.com/nytbee/dyn_help.html', 'help',
+    window.open('https://ultrabee.org/dyn_help.html', 'help',
                 'popup=1, width=400, height=470, left=700');
 }
 function play() {

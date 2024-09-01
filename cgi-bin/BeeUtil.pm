@@ -36,9 +36,9 @@ use Date::Simple qw/
 /;
 use DB_File;
 
-our $log     = 'https://logicalpoetry.com';
-our $cgi     = 'https://logicalpoetry.com/cgi-bin';
-our $cgi_dir = '/home4/logical9/www/cgi-bin';
+our $log     = 'https://ultrabee.org';
+our $cgi     = 'https://ultrabee.org/cgi-bin';
+our $cgi_dir = '/home4/logical9/www/ultrabee/cgi-bin';
 our $thumbs_up = '&#128077;';
 
 #
@@ -59,24 +59,6 @@ sub cgi_header {
         # only load this module if it is needed
         require UUID::Tiny;
         $uuid = UUID::Tiny::create_uuid_as_string(1);
-    }
-    # does the following actually work?
-    elsif ($cmd && $cmd =~ m{\A idk \s+ (\S+) \s* \z}xms) {
-        my $new_uuid = $1;
-        # get the puzzle store (and message #) for $uuid
-        # and copy it to the new uuid.
-        #
-        my %cur_puzzles_store;
-        tie %cur_puzzles_store, 'DB_File', 'cur_puzzles_store.dbm';
-        my $puz = $cur_puzzles_store{$uuid};
-
-        my %message_for;
-        tie %message_for, 'DB_File', 'message_for.dbm';
-        my $msg = $message_for{$uuid};
-
-        $uuid = $new_uuid;
-        $cur_puzzles_store{$uuid} = $puz;
-        $message_for{$uuid} = $msg;
     }
     my $uuid_cookie = $q->cookie(
         -name    => 'uuid',

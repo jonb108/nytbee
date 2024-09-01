@@ -104,4 +104,4 @@ my $uuid_cookie = $q->cookie(
     -expires => '+20y',
 );
 print $q->header(-cookie => $uuid_cookie), $style;
-print "Thank you.  You can <a href='https://logicalpoetry.com/cgi-bin/nytbee.pl/$cur_game'>resume playing</a> the game!\n";
+print "Thank you.  You can <a href='https://ultrabee.org/cgi-bin/nytbee.pl/$cur_game'>resume playing</a> the game!\n";

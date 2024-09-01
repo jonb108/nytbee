@@ -10,7 +10,7 @@ my $fname = $n == 1? 'nyt_pangrams.html'
            :         'osx_usd_words-7-nyt-goo.html'
            ;
 my @words;
-open my $in, '<', "/home4/logical9/www/nytbee/$fname";
+open my $in, '<', "/home4/logical9/www/ultrabee/$fname";
 LINE:
 while (my $line = <$in>) {
     if ($line eq "<pre>\n") {
@@ -56,7 +56,7 @@ print map {
 print <<"EOH";
 <a id=more
    class=more
-   href='https://logicalpoetry.com/cgi-bin/rand5.pl/$n'
+   href='https://ultrabee.org/cgi-bin/rand5.pl/$n'
 >More</a>
 <script>document.getElementById('more').focus();</script>
 EOH

@@ -98,18 +98,18 @@ close $in;
 close $bingo_file;
 my $npuzzles = @puzzle_rows;
 my $nwords = keys %freq;
-my $s = read_file("../nytbee/help.html");
+my $s = read_file("../help.html");
 $s =~ s{^\d+ \s+ puzzles \s+ with}
        {$npuzzles puzzles with}xms;
 $s =~ s{^a \s+ total \s+ of \s+ \d+ \s+ different \s+ words}
        {a total of $nwords different words}xms;
-write_file("../nytbee/help.html", $s);
+write_file("../help.html", $s);
 
 my %first_appeared;
 use DB_File;
 tie %first_appeared, 'DB_File', 'first_appeared.dbm';
 
-open my $word_file, '>', '../nytbee/list/words.txt';
+open my $word_file, '>', '../list/words.txt';
 for my $w (sort keys %freq) {
     print {$word_file} "$w\n";
     push @word_rows, {
@@ -159,7 +159,7 @@ my @files = (
 #
 # clear the field
 #
-unlink <../nytbee/list/*.html>;
+unlink <../list/*.html>;
 
 for my $o (qw/ asc desc /) {
     $order = $o;
@@ -178,7 +178,7 @@ for my $o (qw/ asc desc /) {
                 @puzzle_rows = reverse @puzzle_rows;
             }
         }
-        my $fname = "../nytbee/list/$f->{fname}-$order.html";
+        my $fname = "../list/$f->{fname}-$order.html";
         open my $out, '>', $fname;
         my $heading = $type eq 'word'? 'Words in the NYT Spelling Bee'
                      :                 'NYT Spelling Bee Puzzles';
@@ -186,7 +186,7 @@ for my $o (qw/ asc desc /) {
         print {$out} <<"EOH";
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='https://logicalpoetry.com/nytbee/css/list.css'/>
+<link rel='stylesheet' type='text/css' href='https://ultrabee.org/css/list.css'/>
 </head>
 <body>
 <h1>$heading</h1>
@@ -258,7 +258,7 @@ EOH
         close $out;
     }
 }
-chdir '../nytbee/list';
+chdir '../list';
 for my $f (<*.html>) {
     my $g = $f;
     $g =~ s{.html}{-full.html}xms;

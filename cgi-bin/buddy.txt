@@ -14,7 +14,10 @@ on the phone at the same time.
 https://www.nytimes.com/interactive/2023/upshot/spelling-bee-buddy.html
 is the address of the buddy.   You need to log in.
 
-Before I think the whole game was downloaded and did not do any server round trips.   Now it has to tell the server after every word is played so it can notify any buddies that have registered as wanting to know.
+Before I think the whole game was downloaded and did not
+do any server round trips.   Now it has to tell the server
+after every word is played so it can notify any buddies
+that have registered as wanting to know.
 
 My Bee has the grid and two letter list on the same page.
 And each word(s) entered DOES get sent to the server and the entire

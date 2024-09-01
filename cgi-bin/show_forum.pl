@@ -37,7 +37,7 @@ EOS
         $post_text =~ s{<br>}{\n}xmsg;
     }
 }
-my $pics = '../nytbee/pics';
+my $pics = '../pics';
 my $height = 'height=20';
 print <<"EOH";
 <script>
@@ -59,7 +59,7 @@ function getIt() {
 }
 
 function flag(i) {
-    var url = 'https://logicalpoetry.com/cgi-bin/forum_flag.pl?id=' + i;
+    var url = 'https://ultrabee.org/cgi-bin/forum_flag.pl?id=' + i;
     xmlhttp.open('GET', url, true);
     xmlhttp.onreadystatechange = getIt;
     xmlhttp.send(null);
@@ -117,7 +117,7 @@ while (my $href = $get_msgs_sth->fetchrow_hashref()) {
     my ($e, $x) = ('', '');
     if ($href->{screen_name} eq $screen_name) {
         $e = "<span class=cursor_black id=e$id onclick='edit_post($id);'><img src=$pics/pencil.png $height></span> ";
-        $x = "<span class=cursor_black id=x$id onclick='del_post($id);'><img src=../nytbee/pics/trashcan.png height=20></span> ";
+        $x = "<span class=cursor_black id=x$id onclick='del_post($id);'><img src=$pics/trashcan.png height=20></span> ";
     }
     print <<"EOH";
 <span class=stamp>$href->{screen_name}&nbsp;&nbsp;$t</span> <span style='float: right'>$e$x$flag</span><br>

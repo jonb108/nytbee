@@ -60,7 +60,7 @@ sub compute_score_and_rank {
 
 my $list = "$screen_name-$today_d8-list.csv";
 my $full = "$screen_name-$today_d8-full.csv";
-my $down = "nytbee/downloads";
+my $down = "downloads";
 open my $out1, '>', "../$down/$list";
 print {$out1} "date,rank,all pangrams\n";
 open my $out2, '>', "../$down/$full";
@@ -157,8 +157,8 @@ Links to download your puzzle files:
 <p>
 <a style='margin-left: 1in'
    class=alink
-   href='https://logicalpoetry.com/$down/$list' download>List</a>
+   href='https://ultrabee.org/$down/$list' download>List</a>
 <a style='margin-left: .5in'
    class=alink
-   href='https://logicalpoetry.com/$down/$full' download>Full</a>
+   href='https://ultrabee.org/$down/$full' download>Full</a>
 EOH
