@@ -137,10 +137,10 @@ my $prior_clues = %$href_prior_clues_for?
 if ($json ne '{}') {
     $prior_clues .= " If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=$log/pics/cycle.jpg> icon.";
 }
-
 print <<"EOH";
 <html>
 <head>
+<title>UltraBee - Clues for $show_date</title>
 <link rel='stylesheet' type='text/css' href='$log/css/cgi_style.css'/>
 <script src="$log/js/nytbee10.js"></script>
 <script>
@@ -161,8 +161,7 @@ $name_numbers
 <p>
 $nnf_disp
 You do not have to give clues for all of the words.  You can return
-here to update and revise your clues.  Please <i><b>DO</b></i> add clues for the
-words.   They are a gift to the people who will play your puzzle!
+here to update and revise your clues.
 <p>
 Clicking on the words will show a brief dictionary definition.
 Clicking on that brief defintion will give a <i>complete</i> definition.

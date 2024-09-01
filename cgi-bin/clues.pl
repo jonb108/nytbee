@@ -108,10 +108,13 @@ $cycle_function
 <body>
 <h1>Creating a<br>Community Puzzle<br>Step <span class=red>4</span> <span class=step_name>Clues</span></h1>
 Optionally, provide clues for each word.
+Please DO add some clues.<br>
+They
+are a gift for people who are doing your puzzle.
 <div class=description2>
 $prior_clues
 You can click on the words to get a dictionary definition.
-You may, instead, wish to give clues that are ambiguous, clever, wordplay &#128522; - like clues for a crossword.
+You may, instead, wish to give clues that are ambiguous, clever, wordplay &#128522; - like clues for a crossword.  
 </div>
 <p>
 <form name=form action=$log/cgi-bin/get_clues.pl method=POST>
