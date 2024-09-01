@@ -91,8 +91,8 @@ my $publish_checked = $href->{publish} eq 'yes'? 'checked': '';
 print <<"EOH";
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
-<script src="$log/nytbee/js/nytbee10.js"></script>
+<link rel='stylesheet' type='text/css' href='$log/css/cgi_style.css'/>
+<script src="$log/js/nytbee10.js"></script>
 </head>
 <body>
 <h1>Editing $date <span class=step_name>Info</span></h1>

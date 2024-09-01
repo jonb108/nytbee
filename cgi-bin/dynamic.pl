@@ -289,7 +289,7 @@ if ($nrows > 0) {
 print <<"EOH";
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='$log/nytbee/css/dyn_style.css'/>
+<link rel='stylesheet' type='text/css' href='$log/css/dyn_style.css'/>
 </head>
 <script>
 function set_focus() {

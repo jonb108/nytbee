@@ -135,14 +135,14 @@ my ($href_prior_clues_for, $json)
 my $prior_clues = %$href_prior_clues_for?
     "<p>You have given clues for some of the words before.": '';
 if ($json ne '{}') {
-    $prior_clues .= " If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=$log/nytbee/pics/cycle.jpg> icon.";
+    $prior_clues .= " If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=$log/pics/cycle.jpg> icon.";
 }
 
 print <<"EOH";
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
-<script src="$log/nytbee/js/nytbee10.js"></script>
+<link rel='stylesheet' type='text/css' href='$log/css/cgi_style.css'/>
+<script src="$log/js/nytbee10.js"></script>
 <script>
 var clues_for = $json;
 function cycle(w) {
@@ -184,7 +184,7 @@ for my $w (@words) {
             if (ref $href_prior_clues_for->{$w}) {
                 # there is more than one prior clue
                 $clue = $href_prior_clues_for->{$w}->[0];
-                $cycle_td = td(qq!<img class=cursor onclick='cycle("$w");' src='/nytbee/pics/cycle.jpg'>!);
+                $cycle_td = td(qq!<img class=cursor onclick='cycle("$w");' src='/pics/cycle.jpg'>!);
             }
             else {
                 $clue = $href_prior_clues_for->{$w};

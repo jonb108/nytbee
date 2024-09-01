@@ -48,7 +48,7 @@ append_file 'beelog/' . ymd(), substr($uuid, 0, 11) . " edited CP$n\n";
 print <<"EOH";
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
+<link rel='stylesheet' type='text/css' href='$log/css/cgi_style.css'/>
 </head>
 <body>
 You have edited your Community Puzzle #$n.

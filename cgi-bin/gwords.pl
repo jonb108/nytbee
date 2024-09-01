@@ -29,7 +29,7 @@ my $regex = qr{[^$seven]}xms;
 print <<"EOH";
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
+<link rel='stylesheet' type='text/css' href='$log/css/cgi_style.css'/>
 </head>
 <body>
 <h1>Creating a<br>Community Puzzle<br>Step <span class=red>3</span> <span class=step_name>Words</span></h1>

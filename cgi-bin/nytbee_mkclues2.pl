@@ -125,7 +125,7 @@ EOS
     print <<"EOH";
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
+<link rel='stylesheet' type='text/css' href='$log/css/cgi_style.css'/>
 </head>
 <body>
 You offered no clues at all.   You can close this window.

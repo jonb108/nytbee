@@ -29,7 +29,7 @@ use BeeUtil qw/
 print <<"EOH";
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
+<link rel='stylesheet' type='text/css' href='$log/css/cgi_style.css'/>
 </head>
 <body>
 EOH

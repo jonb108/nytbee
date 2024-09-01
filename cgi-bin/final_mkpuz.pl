@@ -66,7 +66,7 @@ for my $word (sort keys %{$clue_href}) {
 print <<"EOH";
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
+<link rel='stylesheet' type='text/css' href='$log/css/cgi_style.css'/>
 </head>
 <body>
 You have created Community Puzzle #$n.

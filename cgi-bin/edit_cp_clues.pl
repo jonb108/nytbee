@@ -69,13 +69,13 @@ my ($href_prior_clues_for, $json)
 
 my $cycle = '';
 if ($json ne '{}') {
-    $cycle .= " If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=/nytbee/pics/cycle.jpg> icon.<p>";
+    $cycle .= " If there is more than one clue for a word you can cycle through them by clicking the <img height=25 src=/pics/cycle.jpg> icon.<p>";
 }
 
 print <<"EOH";
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
+<link rel='stylesheet' type='text/css' href='$log/css/cgi_style.css'/>
 <script>
 var newwin;
 function popup_define(word, height, width) {
@@ -121,7 +121,7 @@ for my $w (@ok_words) {
         if (ref $href_prior_clues_for->{$w}) {
             # there is more than one prior clue
             $clue = $href_prior_clues_for->{$w}[0];
-            $cycle_td = td(qq!<img class=cursor onclick='cycle("$w");' src='/nytbee/pics/cycle.jpg'>!);
+            $cycle_td = td(qq!<img class=cursor onclick='cycle("$w");' src='/pics/cycle.jpg'>!);
         }
         else {
             $clue = $href_prior_clues_for->{$w};

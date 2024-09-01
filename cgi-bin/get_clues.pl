@@ -70,8 +70,8 @@ for my $w (@words) {
 print <<"EOH";
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='$log/nytbee/css/cgi_style.css'/>
-<script src="$log/nytbee/js/nytbee10.js"></script>
+<link rel='stylesheet' type='text/css' href='$log/css/cgi_style.css'/>
+<script src="$log/js/nytbee10.js"></script>
 </head>
 <body>
 <h1>Creating a<br>Community Puzzle<br>Step <span class=red>5</span> <span class=step_name>Name and Location</span></h1>
