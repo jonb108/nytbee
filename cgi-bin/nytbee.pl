@@ -3965,11 +3965,14 @@ if ($forum_mode) {
     $status =
     $hint_table_list = '';
 }
+my $title_date = $date =~ m{\A CP}xms? $date
+                :                      'NYT '
+                                       . date($date)->format('%B %e, %Y');
 print <<"EOH";
 <html>
 <head>
 <meta charset='UTF-8'>
-<title>UltraBee - $show_date</title>
+<title>UltraBee - $title_date</title>
 <style>
 body {
     background: $colors{background};
