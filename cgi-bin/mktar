@@ -81,4 +81,7 @@ fin \
 new_sn_is.pl \
 get_new_sn_is.pl \
 who_played \
+rd_dynamic.pl \
+rd_nytbee.pl \
+rd_nytbee_mkclues.pl \
 buddy.txt
