@@ -52,6 +52,9 @@ sub cgi_header {
     if ($cmd && $cmd =~ m{\A id \s+ (\S+) \s* \z}xmsi) {
         $uuid = $1;
     }
+    elsif ($q->path_info() =~ m{\A / ID(.*) \z}xms) {
+        $uuid = $1;
+    }
     else {
         $uuid = $q->cookie('uuid');
     }
