@@ -59,6 +59,7 @@ edit_cp_final.pl \
 cp_del_clues.pl \
 goo10k-47.txt \
 set_uuid.pl \
+set_sn_id.pl \
 osx_usd_words-47.txt \
 word_pangram.pl \
 dynamic.pl \

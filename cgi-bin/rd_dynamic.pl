@@ -16,3 +16,6 @@ print <<"EOF";
 </body>
 </html>
 EOF
+open my $out, '>>', 'redirects.txt';
+print {$out} scalar(localtime), " dynamic\n";
+close $out;
