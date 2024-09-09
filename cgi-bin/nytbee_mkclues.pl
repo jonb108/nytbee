@@ -153,7 +153,7 @@ function cycle(w) {
 </script>
 </head>
 <body>
-<h2>Clues for the NYT Puzzle<a target=nytbee_help class=help href='$log/nytbee/help.html#clues'>Help</a><br>on $show_date</h2>
+<h2>Clues for the NYT Puzzle<a target=nytbee_help class=help href='$log/help.html#clues'>Help</a><br>on $show_date</h2>
 <form name=form action='$cgi/nytbee_mkclues2.pl' onsubmit="return check_name_location();" method=POST>
 <input type=hidden name=date value='$date'>
 <input type=hidden name=all_words value='$all_words'>
