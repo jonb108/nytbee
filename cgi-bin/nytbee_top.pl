@@ -220,7 +220,7 @@ if ($rank_for{$my_screen_name}) {
     }
 }
 if ($share) {
-    $share = "Enhanced NYT Bee\\n$disp_date\\n$share";
+    $share = "UltraBee\\n$disp_date\\n$share";
 }
 print scalar(keys %rank_for) . " people";
 print qq!<a style='margin-left: 1in; font-size: 15pt;' class=alink onclick="navigator.clipboard.writeText('$share');alert('You can now paste your score from the clipboard.');set_focus();">Share your score.</a></p>!;
