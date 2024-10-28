@@ -1162,7 +1162,7 @@ elsif ($cmd eq 'tl') {
 elsif ($cmd eq 't3') {
     if (! $t3_chosen) {
         $t3_chosen = 1;
-        add_hints(10);
+        add_hints(15);
     }
     $cmd = '';
 }
