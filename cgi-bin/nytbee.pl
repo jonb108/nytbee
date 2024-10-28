@@ -1234,7 +1234,7 @@ elsif ($cmd eq 'im') {
     $cmd = '';
 }
 elsif ($cmd eq 'st') {
-    $settings_for{$uuid} = $settings_for{$uuid}? 0: 1;
+    $settings_for{$uuid} = ($settings_for{$uuid} + 1) %3;
     $cmd = '';
 }
 # do we have a reveal command?
@@ -3843,6 +3843,7 @@ EOH
 }
 
 sub graphical_status {
+    my ($plus_numbers) = @_;
     my $ind1 = 2;
     my $ind2 = 28;
     my $between_lines = 22;
@@ -4034,12 +4035,23 @@ EOH
     }
 
     $html .= "</svg>\n";
+    if ($plus_numbers) {
+        my $pct = int($nfound*100/$nwords);
+        my $spct = int($score_pct);
+        my $diff = $nwords - $nfound;
+        my $sdiff = $max_score - $score;
+        my $pl = $nfound == 1? '': 's';
+        my $spl = $score == 1? '': 's';
+        $html .= "<p>$nfound word$pl of $nwords total, $pct%, $diff more to find<br>";
+        $html .= "$score point$spl of $max_score total, $spct%, $sdiff more to find" ;
+    }
     return $html;
 }
 
 my $status =
     ($bonus_mode || $donut_mode)? ''
-   :$settings_for{$uuid}        ? graphical_status()
+   :$settings_for{$uuid} == 1   ? graphical_status()
+   :$settings_for{$uuid} == 2   ? graphical_status(1)
    :                              "Score: $score $rank_image $disp_nhints";
 my $css = $mobile? 'mobile_': '';
 my $new_words_size = $mobile? 30: 40;
