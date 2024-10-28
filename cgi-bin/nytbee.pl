@@ -573,8 +573,10 @@ elsif ($cmd eq 'n' || $cmd eq 'p') {
 }
 elsif (   $cmd ne '1'
        && $cmd ne '2'
+       && $cmd ne '3'
        && $cmd ne '52'
        && $cmd ne '51'
+       && $cmd ne '53'
        && $cmd =~ m{\A ([\d/-]+) \z}xms
 ) {
     my $new_date = $1;
@@ -623,6 +625,7 @@ if ($date =~ m{\A\d}xms) {
         no_puzzle $date;
     }
     $show_date = $show_date->format("%B %e, %Y");
+    $show_date = qq!<span class=alink onclick="issue_cmd('I');">$show_date</span>!;
     $show_date = "<a target=_blank class=alink onclick='set_focus();' href='https://www.nytimes.com/subscription'>NYT</a> $show_date";
     my $puzzle = $puzzle{$date};
     if (! $puzzle) {
@@ -640,6 +643,7 @@ else {
     # Community Puzzles
     # $date is CP\d+
     $show_date = $date;
+    $show_date = qq!<span class=alink onclick="issue_cmd('I');">$show_date</span>!;
     my ($n) = $date =~ m{(\d+)}xms;
     my $fname = "$comm_dir/$n.txt";
     if (! -f $fname) {
@@ -759,6 +763,7 @@ my (@found,     # includes valid puzzle words, lexicon+ words, donut- words
     $n_overall_hints,
     $ht_chosen,
     $tl_chosen,
+    $t3_chosen,
     $score_at_first_hint,
     $score,
     $rank_name,
@@ -783,7 +788,7 @@ if (exists $cur_puzzles{$date}) {
     my ($ap, $rank);    # all pangrams is not needed here...
                         # rank is recomputed
     ($nhints, $n_overall_hints, $ap, $ht_chosen,
-     $tl_chosen, $rank, $score_at_first_hint,
+     $tl_chosen, $t3_chosen, $rank, $score_at_first_hint,
      @found)
         = split ' ', $cur_puzzles{$date};
 }
@@ -792,6 +797,7 @@ else {
     $n_overall_hints = 0;
     $ht_chosen = 0;
     $tl_chosen = 0;
+    $t3_chosen = 0;
     $score_at_first_hint = -1;  # -1 since we may ask for a hint
                                 # at the very beginning!
     @found     = ();
@@ -848,7 +854,7 @@ compute_score_and_rank();
 #
 # fullword is true only if we have given the entire word
 # like 'd juice'
-# and not dp, dx1, dx, or dxy
+# and not dp, dx1, dx, dxy, or d-xyz
 #
 # if fullword we don't tally hints and we don't mask the word
 sub define {
@@ -1009,6 +1015,28 @@ sub do_define {
         }
         $cmd = '';
     }
+    elsif ($term =~ m{\A [-]([a-z][a-z][a-z]) \z}xms) {
+        my $lets = $1;
+        if ($lets =~ $letter_regex) {
+            $msg .= ul(red(uc $cmd) . ": \U$1\E is not in \U$seven");
+        }
+        else {
+            $msg .= '';
+            for my $w (get_words($lets)) {
+                my $def = define($w, 0);
+                add_hints(3) unless $def =~ $no_def;
+                if ($def) {
+                    $msg .= ul($def) . '--';
+                }
+            }
+            $msg =~ s{--\z}{}xms;
+            $msg =~ s{--}{$line<br>}xmsg;
+            if ($msg) {
+                $msg = "\U$lets\E:<br>$msg";
+            }
+        }
+        $cmd = '';
+    }
     $message = $msg;
 }
 
@@ -1131,6 +1159,13 @@ elsif ($cmd eq 'tl') {
     }
     $cmd = '';
 }
+elsif ($cmd eq 't3') {
+    if (! $t3_chosen) {
+        $t3_chosen = 1;
+        add_hints(10);
+    }
+    $cmd = '';
+}
 elsif ($cmd eq 'he') {
     $show_Heading = $show_Heading? 0: 1;
     $cmd = '';
@@ -1241,7 +1276,7 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     $message .= ul(table({ cellpadding => 4}, $rows));
     $cmd = '';
 }
-elsif ($cmd =~ m{\A d(p|r|5|[a-z]\d+|[a-z][a-z]) \z}xms) {
+elsif ($cmd =~ m{\A d(p|r|5|[a-z]\d+|[a-z][a-z]|[-][a-z][a-z][a-z]) \z}xms) {
     do_define($1);
     $cmd = '';
 }
@@ -1434,6 +1469,7 @@ elsif ($cmd =~ m{\A c \s+ y \s*(a?) \z}xms) {
     # do not clear $n_overall_hints
     $ht_chosen = 0;
     $tl_chosen = 0;
+    $t3_chosen = 0;
     $score_at_first_hint = -1;
     $cmd = '';
 }
@@ -1913,8 +1949,10 @@ my @new_words;
 # this is awkward --- needs refactoring!
 if (   $cmd ne '1'
     && $cmd ne '2'
+    && $cmd ne '3'
     && $cmd ne '51'
     && $cmd ne '52'
+    && $cmd ne '53'
     && $cmd ne 'id'
     && $cmd ne 'top'
     && $cmd !~ m{\A n?[dlb]w \z}xms
@@ -2836,6 +2874,7 @@ EOH
 #
 my %sums;
 my %two_lets;
+my %three_lets;
 my $max_len = 0;
 my %first_char;
 WORD:
@@ -2857,9 +2896,9 @@ for my $w (@ok_words) {
     ++$sums{1}{$l};
     ++$sums{1}{1};
 
-    # and the two letter list
-    my $c2 = substr($w, 0, 2);
-    ++$two_lets{$c2};
+    # the two and three letter list
+    ++$two_lets{substr($w, 0, 2)};
+    ++$three_lets{substr($w, 0, 3)};
 }
 
 # how many Non-zero columns and rows?
@@ -2878,7 +2917,7 @@ for my $c (@seven) {
 
 # we unfortunately may have determined the bingo
 # status once before - see show_BingoTable above.
-my $bingo = keys %first_char == 7? ', Bingo': '';
+my $bingo = keys %first_char == 7? qq!, <a class=alink onclick="issue_cmd('BT');">Bingo</a>!: '';
 
 # now that #we have computed %sums and %two_lets
 # perhaps $cmd was not words to add after all...
@@ -2934,6 +2973,36 @@ elsif ($cmd eq '52') {
     }
     else {
         $message .= "No more 5+ letter words.";
+    }
+    $cmd = '';
+}
+elsif ($cmd eq '3') {
+    my @words = grep { !$is_found{$_}}
+                @ok_words;
+    if (@words) {
+        add_hints(1);
+        my $word = $words[ rand @words ];
+        my $l3 = substr($word, 0, 3);
+        my $n = grep { m{\A $l3}xms } @words;
+        $message .= "\U$l3" . ($n > 1? "-$n": '');
+    }
+    else {
+        $message .= 'No more words.';
+    }
+    $cmd = '';
+}
+elsif ($cmd eq '53') {
+    my @words = grep { !$is_found{$_} && length > 4}
+                @ok_words;
+    if (@words) {
+        add_hints(1);
+        my $word = $words[ rand @words ];
+        my $l3 = substr($word, 0, 3);
+        my $n = grep { m{\A $l3}xms } @words;
+        $message .= "\U$l3" . ($n > 1? "-$n": '');
+    }
+    else {
+        $message .= 'No more 5+ words.';
     }
     $cmd = '';
 }
@@ -3469,10 +3538,24 @@ if ($tl_chosen) {
         if ($i < $#two
             && substr($two[$i], 0, 1) ne substr($two[$i+1], 0, 1)
         ) {
-            $two_lets .= "<p>";
+            $two_lets .= "<br>";
         }
         else {
             $two_lets .= '&nbsp;&nbsp;';
+        }
+    }
+}
+# three letter tallies
+my $three_lets = '';
+if ($t3_chosen) {
+    for my $w3 (sort keys %three_lets) {
+        my $n = $three_lets{$w3};
+        if ($n) {
+            my $s = uc $w3;
+            if ($n > 1) {
+                $s .= "-$n";
+            }
+            $three_lets .= qq!<span class='pointer' style='color: $colors{alink}' onclick='issue_cmd("D-$w3")'>$s</span><br>!
         }
     }
 }
@@ -3507,7 +3590,7 @@ for my $p (@pangrams) {
 
 $cur_puzzles{$date} = join ' ',
     $nhints, $n_overall_hints, $all_pangrams, $ht_chosen,
-    $tl_chosen, $rank, $score_at_first_hint,
+    $tl_chosen, $t3_chosen, $rank, $score_at_first_hint,
     @found
     ;
 $cur_puzzles_store{$uuid} = Dumper(\%cur_puzzles);  # the key point #2
@@ -3727,29 +3810,36 @@ EOS
     }
 }
 
-my $hint_table_list = '';
-if ($ht_chosen && $sums{1}{1} != 0) {
+my $hint_table_list = <<'EOH';
+<style>
+.hints {
+    margin-top: 4mm;
+}
+</style>
+EOH
+if ($ht_chosen && $sums{1}{1} != 0 && ! $bonus_mode) {
     $hint_table_list .= <<"EOH";
 <!-- HINT TABLE -->
-<div class=float-child4>
-    <div id=hint_table class=hint_table>
-    $hint_table
-    </div>
+<div class=hints>
+$hint_table
 </div>
 EOH
 }
-if ($tl_chosen && $sums{1}{1} != 0) {
+if ($tl_chosen && $sums{1}{1} != 0 && ! $bonus_mode) {
     $hint_table_list .= <<"EOH";
 <!-- TWO LETTER LIST -->
-<div class=float-child5>
-    <div id=two_lets class=two_lets>
-    $two_lets
-    </div>
+<div class=hints>
+$two_lets
 </div>
 EOH
 }
-if ($bonus_mode) {
-    $hint_table_list = '';
+if ($three_lets && ! $bonus_mode) {
+    $hint_table_list .= <<"EOH";
+<!-- THREE LETTER LIST -->
+<div class=hints>
+$three_lets
+</div>
+EOH
 }
 
 sub graphical_status {
@@ -3798,20 +3888,22 @@ EOH
         for my $w (grep { !m{[$ext_sig]\z}xms } @found) {
             ++$first_found{uc substr($w, 0, 1)};
         }
-        $html .= "<text x=$ind1 y=$y class=glets fill=$col_let>b</text>\n";
+        my $click = qq!style='cursor: pointer' onclick="issue_cmd('BT')"!;
+        $html .= "<text $click x=$ind1 y=$y class=glets fill=$col_let>b</text>\n";
         my $x = $ind2;
         for my $c (map { uc } @seven) {
             my ($color, $class) = ($col_let, 'glets');
             if ($first_found{$c}) {
                 ($color, $class) = ('#8E008E', 'bold_glets');
             }
-            $html .= "<text x=$x y=$y class=$class fill=$color>$c</text>\n";
+            $html .= "<text $click x=$x y=$y class=$class fill=$color>$c</text>\n";
             $x += 20;
         }
         $y += $between_lines;
     }
 
-    $html .= "<text x=$ind1 y=$y class=glets fill=$col_let>p</text>\n";
+    my $click = qq!onclick="issue_cmd('I')"!;
+    $html .= "<text $click x=$ind1 y=$y class=glets fill=$col_let>p</text>\n";
     my $x = $ind2;
     $y -= 4;
     my $npp = 0;        # number of perfect pangrams
@@ -3868,7 +3960,7 @@ EOH
     $y += $between_lines;
 
     my $w_ind = $ind1-2;
-    $html .= "<text x=$w_ind y=$y class=glets fill=$col_let>w</text>\n";
+    $html .= "<text $click x=$w_ind y=$y class=glets fill=$col_let>w</text>\n";
     $x = $ind2;
     $y -= 4;
     my $nfound = grep { !m{[$ext_sig]\z}xms } @found;
@@ -3888,7 +3980,7 @@ EOH
     $y += 4;
     $y += $between_lines;
 
-    $html .= "<text x=$ind1 y=$y class=glets fill=$col_let>s</text>\n";
+    $html .= "<text $click x=$ind1 y=$y class=glets fill=$col_let>s</text>\n";
 
     # a black line from 0 to max_score
     $y -=5; # centered on the S
@@ -3925,7 +4017,7 @@ EOH
 
     # hints
     if ($nhints) {
-        $html .= "<text x=$ind1 y=$y class=glets fill=$col_let>h</text>\n";
+        $html .= "<text $click x=$ind1 y=$y class=glets fill=$col_let>h</text>\n";
         $x = $ind2;
         $y -= 5;
         HINT:
@@ -3964,6 +4056,7 @@ if ($forum_mode) {
     $extra_words =
     $status =
     $hint_table_list = '';
+    $three_lets = '';
 }
 my $title_date = $date =~ m{\A CP}xms? $date
                 :                      'NYT '

@@ -39,7 +39,7 @@ There are several <a href=#videos>videos</a> to show how it works.
 <p>
 Give it a try and <script>abcd('let me know');</script> what you think.
 <p>
-My name is Jon Bjornstad.  I live in Davis, CA.  I am 74 years old.
+My name is Jon Bjornstad.  I live in Davis, CA.  I am 75 years old.
 I retired from the corporate software world a few years ago
 but I still very much enjoy the art of programming.
 In short, I am an old Perl hacker.
@@ -266,6 +266,7 @@ Great
 The numeric status looks like this:
 <p>
 <img src=pics/nstatus.png height=90>
+<a name=graphical></a>
 <p>
 The graphical status looks like this:
 <p>
@@ -278,6 +279,8 @@ s - score<br>
 h - hints<br>
 <p>
 The bingo line will appear only if the puzzle is a <a href=#bingo>Bingo</a>.
+You can click on the bingo line to toggle the Bingo Table (the command <span class=cmd>BT</span>).
+<p>
 If the number of hints exceeds the number of words
 the line of dots will be truncated and a <span style="font-size: 20pt">+</span> will be appended.
 <p>
@@ -510,17 +513,20 @@ and reach the stratospheric height of the Queen Bee rank.
 Most of us mere mortals need some kind of help to get to Amazing or Genius.
 <p>
 <table cellpadding=5>
-<tr><td><span class=cmd>HT</span></td><td>Show the Hint Table.</td></tr>
+<tr><td width=10%><span class=cmd>HT</span></td><td>Show the Hint Table.</td></tr>
 <tr><td><span class=cmd>TL</span></td><td>Show the Two Letter List.</td></tr>
-<tr><td colspan=2>The Hint Table and the Two Letter List are explained <a href=#table_list>below</a>.</td></tr>
+<tr><td><span class=cmd>T3</span></td><td>Show the Three Letter List.</td></tr>
+<tr><td colspan=2>The Hint Table, Two Letter List, and Three Letter List  are explained <a href=#table_list>below</a>.</td></tr>
 <tr><td><span class=cmd>1</span></td><td>Show a random entry from the Hint Table.</td></tr>
 <tr><td><span class=cmd>2</span></td><td>Show a random entry from the Two Letter List.
-<tr><td colspan=2>These two will work even if the full Table and List are not shown.<p></td></tr>
+<tr><td><span class=cmd>3</span></td><td>Show a random entry from the Three Letter List.
+<tr><td colspan=2>These three will work even if the full Table and Lists are not shown.<p></td></tr>
 <tr><td colspan=2>Note: The Define and reVeal commands below will skip words that have already been found.<p></td></tr>
 <tr><td colspan=2 class=green>Definitions/Clues</td></tr>
 <tr><td><span class=cmd>DP</span></td><td>Define the Pangrams.</td></tr>
 <tr><td><span class=cmd>DB8</span></td><td>Define the words beginning with B of length 8.</td></tr>
 <tr><td><span class=cmd>DGA</span></td><td>Define the words beginning with GA.</td></tr>
+<tr><td><span class=cmd>D-MIN</span></td><td>Define the words beginning with MIN.</td></tr>
 <tr><td><span class=cmd>DR</span></td><td>Define a random word from the list of words not yet found.  Note that if there are no 4 letter words in the found list the <span class=cmd>DR</span> command will do a <span class=cmd>D5</span> to only include 5+ letter words.  This will help when trying for <a href=#gn4l>GN4L</a>.</td></tr>
 <tr><td colspan=2><span class=cmd>D&nbsp;&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.
 You can ask for definitions of <i>any</i> word - not just the ones in the puzzle.
@@ -555,8 +561,10 @@ the clues and the definitions.  The default is to show both.
 <tr><td><span class=cmd>V4GA</span></td><td>Reveal the first 4 letters (and the length) of the words beginning with GA.</td></tr>
 <tr><td colspan=2>Using <span class=cmd>E</span> instead of <span class=cmd>V</span> reveals letters at the front and at the End of the word.  Commands that would reveal the entire word (like V4B4) are silently ignored (as are commands like V1B8 or V2GA).</td></tr>
 </table>
+<p>
+Note that there is no <span class=cmd>V4MIN</span> (or <span class=cmd>E4MIN</span>) command to reveal 4 letters of words beginning with MIN as this would be just <i>too much</i>.  Yes, this <i>is</i> the <span style='color: red'>Ultra</span>Bee but one has to have <i>some</i> limit, right? &#128522;
 <a name=table_list></a>
-<h2>The Hint Table and the Two Letter List
+<h2>The Hint Table, Two Letter List, and Three Letter List
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
 <p>
@@ -568,9 +576,9 @@ The <span class=blue>5</span> in the <b>M</b> row and the <b>6</b> column means 
 <p>
 The <span class=green>Two Letter List</span> (invoked with the <span class=cmd>TL</span> command) looks like this:
 <ul>
-<img src=pics/two_letter_list.png>
+<img src=pics/two_letter_list.png width=250>
 </ul>
-The <span class=blue>GE-4</span> means that the puzzle has <b>4</b> words beginning with <b>GE</b>.
+The <span class=blue>MI-7</span> means that the puzzle has <b>7</b> words beginning with <b>MI</b>.
 <p>
 There are <span class=red>two important things</span> 
 about the table and list.
@@ -583,7 +591,7 @@ get definitions <i>and clues</i> for the words.
 </ol>
 <p>
 For those who work on the puzzle at nytimes.com or with
-the NYT mobile app and would like the Table and List
+the NYT mobile app and would like the Hint Table and Two Letter List
 to be dynamic there <i>is</i> a solution:
 <ul>
 <a target=nytbee href='https://ultrabee.org/bee'>ultrabee.org/bee</a>
@@ -593,6 +601,15 @@ and hit Return.   The Table and List will show
 <i>only</i> the missing words.  This applies, of course, only
 to today’s puzzle.   Duplicate, invalid, and stray words will be
 silently ignored.
+<p>
+The <span class=green>Three Letter List</span> is invoked with the <span class=cmd>T3</span> command and looks like this:
+<ul>
+<img src=pics/three_letter_list.png width=150>
+</ul>
+The <span class=blue>HAL-3</span> means that there are <b>3</b> words beginning with <b>HAL</b>.  As you might expect, you can click on the <span class=blue>HAL-3</span> to get brief definitions (and/or clues).  This list is dynamic as well.
+<p>
+The Three Letter List is not a standard part of the NYT Puzzle.  It <i>is</i> often provided by various people in the HiveMind comments.
+It almost gives <i>too</i> many hints since you only need to add one letter to get the 4 letter words!
 <a name=hint></a>
 <h2>Hint Strategy
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -608,9 +625,13 @@ The number of hints are tallied like so:
 <ul>
 <table cellpadding=5>
 <tr><th>Hint Command</th><th align=left colspan=2>&nbsp;&nbsp;# hints</th></tr>
+<tr><td><span class=cmd>T3</span></td><td align=right>15</td></tr>
 <tr><td><span class=cmd>HT</span></td><td align=right>10</td></tr>
 <tr><td><span class=cmd>TL</span></td><td align=right>5</td></tr>
-<tr><td><span class=cmd>D</span></td><td align=right>3</td><td>for each word</td></tr>
+<tr><td><span class=cmd>DP</span></td><td align=right>3</td><td>for each word</td></tr>
+<tr><td><span class=cmd>DB8</span></td><td align=right>3</td><td>for each word</td></tr>
+<tr><td><span class=cmd>DGA</span></td><td align=right>3</td><td>for each word</td></tr>
+<tr><td><span class=cmd>D-MIN</span></td><td align=right>3</td><td>for each word</td></tr>
 <tr><td><span class=cmd>V,E</span></td><td align=right>2</td><td>for each word</td></tr>
 <tr><td><span class=cmd>1</span></td><td align=right>1</td></tr>
 <tr><td><span class=cmd>2</span></td><td align=right>1</td></tr>
@@ -774,6 +795,9 @@ In this puzzle the word INCONVENIENCE (13) is longer than <span class=green>INCO
 As in the <a href=#table_list>Hint Table</a> the numbers in the BT table are <i>links</i> - to show a brief definition of the word(s). <span class=cmd>BT</span> is a toggle - the default is off.
 If a puzzle is not a Bingo no table will be shown.
 <p>
+If you are using the <a href=#graphical>graphical status</a> note that you can click on the
+'b' (bingo) line to toggle the Bingo Table on and off.
+<p>
 If you enjoy Bingo games there is the command <span class=cmd>NRB</span> which will start a <span class=cmd>N</span>ew <span class=cmd>R</span>andom <span class=cmd>B</span>ingo puzzle from the NYT <a href='#nyt_archive'>archive</a>.
 <p>
 The <span class=cmd>TOP</span> command shows Bingo achievement scores that are tallied like this:
@@ -812,6 +836,7 @@ and here are a few commands to help:
 <tr><td><span class=cmd>D5</span></td><td>Define a random word not yet found that has 5 or more letters.  Note that if you only have 5+ letter words in your found list the DR command will do much the same as the D5 command.</td></tr>
 <tr><td><span class=cmd>51</span></td><td>Show a random non-zero entry from the Hint Table where the length is 5 or more.</td></tr>
 <tr><td><span class=cmd>52</span></td><td>Show a random entry from the Two Letter List of words with a length of 5 or more.</td></tr>
+<tr><td><span class=cmd>53</span></td><td>Show a random entry from the Three Letter List of words with a length of 5 or more.</td></tr>
 </table>
 <p>
 When you achieve GN4L you get a congratulatory message:
@@ -1217,7 +1242,7 @@ Commands to access the large NY Times <a href=#nyt_archive>Archive</a> of Spelli
 <p>
 <table cellpadding=5>
 <tr><td><span class=cmd>NR</span></td><td><span class=cmd>N</span>ew NYT puzzle from a <span class=cmd>R</span>andom date.</td></tr>
-<tr><td><span class=cmd>&lt;date&gt;</span></td><td>New NYT puzzle from the given date.  You can enter dates in several ways: 10/20/19 or 9/23 (current year) or 15 (current month - but not 1 or 2 for the 1st or 2nd).  Dates must be on or after May 9, 2018.</td></tr>
+<tr><td><span class=cmd>&lt;date&gt;</span></td><td>New NYT puzzle from the given date.  You can enter dates in several ways: 10/20/19 or 9/23 (current year) or 15 (current month - but not 1, 2, or 3 for the 1st, 2nd, or 3rd).  Dates must be on or after May 9, 2018.</td></tr>
 <tr><td><span class=cmd>T</span></td><td>Return to today’s NYT puzzle.</td></tr>
 <tr><td><span class=cmd>Y</span></td><td>From today's puzzle move to yesterday’s NYT puzzle.  If on another NYT puzzle date it will move to the day before.</td></tr>
 <tr><td><span class=cmd>-1, -7</span></td><td>Move to yesterday’s puzzle (-1) or the puzzle from a week ago (-7).</td></tr>
@@ -2037,8 +2062,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2331 puzzles with
-a total of 10326 different words!
+2365 puzzles with
+a total of 10377 different words!
 <p>
 Tallies are made of the many puzzles and words.
 See this table of the puzzles:
