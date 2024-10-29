@@ -4042,8 +4042,25 @@ EOH
         my $sdiff = $max_score - $score;
         my $pl = $nfound == 1? '': 's';
         my $spl = $score == 1? '': 's';
-        $html .= "<p>$nfound word$pl of $nwords total, $pct%, $diff more to find<br>";
-        $html .= "$score point$spl of $max_score total, $spct%, $sdiff more to find" ;
+        my $space = '&nbsp;' x 3;
+        my $href = { align => 'right' };
+        my @rows;
+        push @rows,
+            Tr(td($href, $nfound), 
+               td("word$pl of"),
+               td($href, $nwords),
+               td($href, "$space$pct%"),
+               td($href, "$space$diff"),
+               td('more to find'),
+            ),
+            Tr(td($href, $score), 
+               td("point$spl of"),
+               td($href, $max_score),
+               td($href, "$space$spct%"),
+               td($href, "$space$sdiff"),
+               td('more to find'),
+            );
+        $html .= table(@rows);
     }
     return $html;
 }
