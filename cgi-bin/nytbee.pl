@@ -4036,12 +4036,19 @@ EOH
 
     $html .= "</svg>\n";
     if ($plus_numbers) {
+        my @stash_words = map { s/!\z//; $_; } grep { m{!\z}xms } @found;
+        my $stash_score = 0;
+        for my $w (@stash_words) {
+            $stash_score += word_score($w, $is_pangram{$w});
+        }
+        $nfound += $nstash;
         my $pct = int($nfound*100/$nwords);
-        my $spct = int($score_pct);
         my $diff = $nwords - $nfound;
-        my $sdiff = $max_score - $score;
+        my $sc = $score + $stash_score;
+        my $spct = int($sc*100/$max_score);
+        my $sdiff = $max_score - $sc;
         my $pl = $nfound == 1? '': 's';
-        my $spl = $score == 1? '': 's';
+        my $spl = $sc == 1? '': 's';
         my $space = '&nbsp;' x 3;
         my $href = { align => 'right' };
         my @rows;
@@ -4053,7 +4060,7 @@ EOH
                td($href, "$space$diff"),
                td('more to find'),
             ),
-            Tr(td($href, $score), 
+            Tr(td($href, $sc), 
                td("point$spl of"),
                td($href, $max_score),
                td($href, "$space$spct%"),
