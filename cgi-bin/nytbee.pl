@@ -3541,19 +3541,26 @@ if ($tl_chosen) {
             $two_lets .= "<br>";
         }
         else {
-            $two_lets .= '&nbsp;&nbsp;';
+            $two_lets .= '&nbsp;&nbsp;&nbsp;';
         }
     }
 }
 # three letter tallies
 my $three_lets = '';
 if ($t3_chosen) {
+    my $prev = '';
     for my $w3 (sort keys %three_lets) {
         my $n = $three_lets{$w3};
         if ($n) {
             my $s = uc $w3;
             if ($n > 1) {
                 $s .= "-$n";
+            }
+            my $end = '<br>';
+            my $fl = substr($s, 0, 1);  # first letter
+            if ($prev ne $fl) {
+                $three_lets .= "<p>";
+                $prev = $fl;
             }
             $three_lets .= qq!<span class='pointer' style='color: $colors{alink}' onclick='issue_cmd("D-$w3")'>$s</span><br>!
         }
