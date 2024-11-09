@@ -3824,7 +3824,7 @@ my $hint_table_list = <<'EOH';
 }
 </style>
 EOH
-if ($ht_chosen && $sums{1}{1} != 0 && ! $bonus_mode) {
+if ($ht_chosen && $sums{1}{1} != 0 && ! ($bonus_mode || $donut_mode)) {
     $hint_table_list .= <<"EOH";
 <!-- HINT TABLE -->
 <div class=hints>
@@ -3832,7 +3832,7 @@ $hint_table
 </div>
 EOH
 }
-if ($tl_chosen && $sums{1}{1} != 0 && ! $bonus_mode) {
+if ($tl_chosen && $sums{1}{1} != 0 && ! ($bonus_mode || $donut_mode)) {
     $hint_table_list .= <<"EOH";
 <!-- TWO LETTER LIST -->
 <div class=hints>
@@ -3840,7 +3840,7 @@ $two_lets
 </div>
 EOH
 }
-if ($three_lets && ! $bonus_mode) {
+if ($three_lets && ! ($bonus_mode || $donut_mode)) {
     $hint_table_list .= <<"EOH";
 <!-- THREE LETTER LIST -->
 <div class=hints>
