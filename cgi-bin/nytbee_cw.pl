@@ -19,6 +19,8 @@ my $date_obj = date($date);
 my $max = shift;
 my $seven = shift;
 my $my_screen_name = shift;
+my $bonus_mode = shift;
+my $donut_mode = shift;
 my %words;  # hash of hash
             # keys: donut/lexicon/bonus, word
             # value: count of how many times the word was found
@@ -32,6 +34,12 @@ my %tally;  # hash of hash of hash
             # keys: uid, donut/lexicon/bonus, word
             # value: 1
 my @types = qw/ donut lexicon bonus /;
+if ($bonus_mode) {
+    @types = ('bonus');
+}
+elsif ($donut_mode) {
+    @types = ('donut');
+}
 for my $t (@types) {
     open my $tf, '<', "$t/$date";
     while (my $w = <$tf>) {
@@ -158,7 +166,7 @@ for my $aref (sort {
         my $sn = $uuid_screen_name{$uid};
         my $star = ($sn eq $my_screen_name)? "<td style='text-align: left; color: red; font-size: 20pt;'>&nbsp;*</td>": '';
         print "<tr><td>&nbsp;&nbsp;</td><td class='lt entry'>$sn</td><td class=entry>$sp$n</td>";
-        print "<td class=entry>$only{$uid}{$name{$type}}</td>";
+        print "<td class=entry>&nbsp;&nbsp;$only{$uid}{$name{$type}}</td>";
         if ($type == 1) {
             print "<td class=entry>$boa_score{$uid}</td>";
         }

@@ -3196,7 +3196,7 @@ elsif ($cmd =~ m{\A cw \s* (\d*) \z}xms) {
         # search the day's log and extra word files to identify
         # the top 5 (10?) locations in Donut, Lexicon, and Bonus words.
         # The C stands for Community or Competitive.
-        $message .= `$cgi_dir/nytbee_cw.pl $date $max $seven $screen_name`;
+        $message .= `$cgi_dir/nytbee_cw.pl $date $max $seven $screen_name $bonus_mode $donut_mode`;
     }
     $cmd = '';
 }
