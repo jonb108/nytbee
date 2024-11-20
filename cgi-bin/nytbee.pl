@@ -2375,7 +2375,7 @@ if (! $prefix && ! $pattern && ! $limit && ! @words_found) {
 sub dlb_row {
     my ($name, $aref) = @_;
     return '' unless @$aref;
-    return Tr(td({ class => 'dlb_name' }, $name),
+    return Tr(td({ class => 'dlb_name' }, "$name &nbsp;"),
               td({ class => 'dlb mess' },
                  "@$aref "
                . span({ class => 'gray' }, scalar(@$aref))));
@@ -2592,11 +2592,11 @@ if ($show_WordList) {
     if ($word_col) {
         $extra_words .= one_col('Donut:',  \@donut  )
                 if $donut_mode || (!$bonus_mode && $which_wl =~ /d/);
-        $extra_words .= one_col('Lexicon', \@lexicon)
+        $extra_words .= one_col('Lexicon:', \@lexicon)
                 if !$bonus_mode && !$donut_mode && $which_wl =~ /l/;
-        $extra_words .= one_col('Bonus',   \@bonus  )
+        $extra_words .= one_col('Bonus:',   \@bonus  )
                 if $bonus_mode || (!$donut_mode && $which_wl =~ /b/);
-        $extra_words .= one_col('Stash',   \@stash  )
+        $extra_words .= one_col('Stash:',   \@stash  )
                 if !$bonus_mode && !$donut_mode && $which_wl =~ /s/;
         if ($extra_words) {
             $extra_words = "<br>$extra_words";
@@ -3288,13 +3288,19 @@ elsif ($cmd eq 'boa') {
     }
     my @bonus = sort grep { m{[*]\z}xms } @found;
     chop @bonus;    # the *
+    my %bb_lets;
     for my $bw (@bonus) {
         my $x = $bw;
         $x =~ s{[$seven]}{}xmsg;
+        my $a = substr($x, 0, 1);
+        if (substr($bw, 0, 1) eq $a) {
+            $bb_lets{$a} = 1;
+        }
         $bw = ucfirst $bw;
         $bw =~ s{([^$seven])}{<span class=red1>$1</span>}xmsgi;
-        push @{$bwords_with{substr($x, 0, 1)}}, $bw;
+        push @{$bwords_with{$a}}, $bw;
     }
+    my $bb_score = scalar keys %bb_lets;
     $message = "<table>\n";
     my $boa_score = 0;
     for my $l (sort keys %bwords_with) {
@@ -3307,8 +3313,10 @@ elsif ($cmd eq 'boa') {
                  . (join ' ', @words)
                  . '</td></tr>';
     }
-    $message .= "</table>\n";
-    $message .= "<br>$boa_score";
+    $message .= "</table><p>\n";
+    $message .= table(Tr(td('BOA:'), td($boa_score)),
+                      Tr(td('BB:'),  td($bb_score )),
+                     );
     $message = "<ul>$message</ul>";
 }
 # an undocumented cheat for Donut words
@@ -3339,7 +3347,7 @@ elsif ($cmd eq 'ow') {
     $cmd = '';
     $message = 'These words were found only by you:<br><br><table>';
     for my $type (qw/ donut lexicon bonus /) {
-        $message .= "<tr><td class=rt valign=top>\u$type:</td>";
+        $message .= "<tr><td class=rt valign=top>\u$type:&nbsp;</td>";
         my %words;
         if (open my $in, '<', "$type/$date") {
             while (my $w = <$in>) {

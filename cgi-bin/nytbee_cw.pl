@@ -72,15 +72,21 @@ while (my $line = <$log>) {
 # we have all the information we need
 # about who found what words.
 # next figure out BOA values for each person
-my %boa_score;   # key: uuid
-                 # value: boa score
+my %boa_score;   # key: uuid, value: boa score
+my %bb_score;    # key: uuid, value: bb score
 for my $u (keys %tally) {
-    my %boa_lets;
+    my (%boa_lets, %bb_lets);
     for my $b (sort keys %{$tally{$u}{bonus}}) {
+        my $w = $b;
         $b =~ s{[$seven]}{}xmsg;
-        $boa_lets{substr($b, 0, 1)}++;
+        my $a = substr($b, 0, 1);
+        $boa_lets{$a}++;
+        if (substr($w, 0, 1) eq $a) {
+            ++$bb_lets{$a};
+        }
     }
     $boa_score{$u} = scalar(keys %boa_lets);
+    $bb_score{$u}  = scalar(keys %bb_lets);
 }
 # and OW values for each
 my %only;   # keys: uuid, type
@@ -108,7 +114,8 @@ for my $u (keys %tally) {
     for my $t (@types) {
         my $n = scalar keys %{$tally{$u}{$t}};
         if ($n) {
-            push @counts, [ $u, $order{$t}, $n, $only{$u}{$t}, $boa_score{$u} ];
+            push @counts, [ $u, $order{$t}, $n,
+                            $only{$u}{$t}, $boa_score{$u}, $bb_score{$u} ];
         }
     }
 }
@@ -143,12 +150,15 @@ for my $aref (sort {
                   ||
                   $b->[4] <=> $a->[4]
                   ||
+                  $b->[5] <=> $a->[5]
+                  ||
                   $a->[0] cmp $b->[0]
               } @counts
 ) {
     my ($uid, $type, $n) = @$aref;
     if ($type ne $prev) {
-        my $colspan = ($type != 1)? 3: 2;
+        #my $colspan = ($type != 1)? 3: 2;
+        my $colspan = 2;
         print "<tr><td colspan=$colspan class='lt head'>"
             . ucfirst $name{$type}
             . "</td>";
@@ -156,6 +166,12 @@ for my $aref (sort {
             print "<td>#</td>"
                 . "<td>${sp}ow</td>"
                 . "<td>${sp}boa</td>"
+                . "<td>${sp}bb</td>"
+                ;
+        }
+        elsif ($type == 2 && $donut_mode) {
+            print "<td>#</td>"
+                . "<td>${sp}ow</td>"
                 ;
         }
         print "</tr>\n";
@@ -169,6 +185,7 @@ for my $aref (sort {
         print "<td class=entry>&nbsp;&nbsp;$only{$uid}{$name{$type}}</td>";
         if ($type == 1) {
             print "<td class=entry>$boa_score{$uid}</td>";
+            print "<td class=entry>$bb_score{$uid}</td>";
         }
         print "$star</tr>\n";
     }
