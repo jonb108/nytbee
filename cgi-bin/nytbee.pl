@@ -1463,8 +1463,9 @@ elsif ($cmd =~ m{\A g \s+ yp? \z}xms) {
 }
 elsif ($cmd =~ m{\A c \s+ y \s*(a?) \z}xms) {
     my $all = $1;
-    @found = $all? (): grep { /[$ext_sig]\z/ } @found;
+    @found = $all? (): grep { /[*+-]\z/ } @found;
                        # leave the Extra words in place
+                       # but include the stash words
     $nhints = 0;
     # do not clear $n_overall_hints
     $ht_chosen = 0;
