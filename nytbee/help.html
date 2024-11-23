@@ -1143,11 +1143,15 @@ The onscreen keyboard occupies a lot of the screen real estate.
 When you toggle Bonus Mode ON
 the mobile display will look like this:
 <p>
-<img src=pics/teenage.png style="width: 80%" border=1>
+<img src=pics/doodad.png style="width: 80%" border=1>
 <p>
 The 19 (26-7=19) additional letters are put in a table.
 Tap on them to append to the word.
-If a Bonus word has been found using a letter it will be <span class=green>green</span>.
+If a Bonus word has been found using a letter it will
+be <span style='color: lightgreen'>lightgreen</span>.
+If there is a Bonus word that <i>begins</i> with the
+letter, that letter will be shown in <span class=green>green</span>.
+Such words are called Bingo Bonus words.
 There are also command links for
 <span class=cmd>Stash</span>,
 <span class=cmd>Own</span>,
@@ -1808,7 +1812,7 @@ in the other puzzles that occur in the current puzzle.</td></tr>
 <tr><td><span class=cmd>Wn</span></td><td>Show the found words of length n.</td></tr>
 <tr><td><span class=cmd>W&nbsp;&nbsp;&lt;prefix&gt;</span></td><td>Show the found words that start with &lt;prefix&gt;.</td></tr>
 <tr><td><span class=cmd>W/&lt;pattern&gt;</span></td><td>Show the found words that match the pattern.<br>For example, W/OO will show the found words that contain OO - like OOZE, LOOT, or TATTOO. For <i>Super</i> Power Users: The pattern is a <a target=nytbee href='https://perldoc.perl.org/perlrequick'>Perl Regular Expression</a> with the /x flag.</td></tr>
-<tr><td><span class=cmd>W!/&lt;pattern&gt;</span></td><td>Show the found words that do NOT match the pattern.  This can be used to see the words that do <i>not</i> end in ING or ED by entering this command: <span style="color: red; margin-left: .2in; font-family: Courier">W!/(ING|ED)$</span></td></tr>
+<tr><td><span class=cmd>W!/&lt;pattern&gt;</span></td><td>Show the found words that do NOT match the pattern.  To see the words that do <i>not</i> end in ING or ED enter this command:<div style="color: red; margin-left: .2in; font-family: Courier; margin-top: 2mm; margin-bottom: 2mm">W!/(ING|ED)$</div></td></tr>
 <tr><td><span class=cmd>1W</span></td><td>Show the found words in a single column.  This may be more convenient if you wish to copy/paste the word list.</td></tr>
 <tr><td><span class=cmd>SL</span></td><td>Show the groups of found words that share the <span class=cmd>s</span>ame <span class=cmd>l</span>etters.</td></tr>
 <tr><td><span class=cmd>FT</span></td><td>Show the found words that are appearing for the <span class=cmd>f</span>irst <span class=cmd>t</span>ime in this puzzle.</td></tr>
@@ -2095,8 +2099,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2389 puzzles with
-a total of 10410 different words!
+2391 puzzles with
+a total of 10418 different words!
 <p>
 Tallies are made of the many puzzles and words.
 See this table of the puzzles:

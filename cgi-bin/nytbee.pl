@@ -2197,9 +2197,10 @@ sub consider_word {
             }
             elsif ($mess eq 'bonus') {
                 my $own = own_word('bonus', $date, $w);
+                my $bingo = index($seven, substr($w, 0, 1)) < 0? 'Bingo ': '';
                 $not_okay_words .= "<span class=not_okay>"
                                 .  def_word(uc($w), $w)
-                                .  "</span>: Bonus ${own}word $thumbs_up<br>"
+                                .  "</span>: ${bingo}Bonus ${own}word $thumbs_up<br>"
                                 .  pangram_check($w, 8, $seven);
                 add_3word('bonus', $date, $w);
                 log_it('*bonus');
@@ -2624,17 +2625,22 @@ if ($bonus_mode && ! $mobile) {
     my @other = grep { !/[$seven]/ } 'a' .. 'z';
     my @bonus = grep { m{[*]\z}xms } @found;
     chop @bonus;    # the *
-    my $all = join '', @bonus;
-    $all =~ s{[$seven]}{}xmsg;
+    my $all = join '~', '', @bonus;
+        # the '' places a needed ~ at the front
+    #$all =~ s{[$seven]}{}xmsg;
     my $lets = '<p>';
     for my $o (@other) {
-        if (index($all, $o) >= 0) {
-            $lets .= "<span class=green>\u$o</span>";
+        my $color;
+        if (index($all, "~$o") >= 0) {
+            $color = "green";  # Bingo Bonus
+        }
+        elsif (index($all, $o) >= 0) {
+            $color = "lightgreen";  # Bonus
         }
         else {
-            $lets .= uc $o;
+            $color = $colors{letter};
         }
-        $lets .= ' ';
+        $lets .= "<span style='color: $color'>\u$o</span> ";
     }
     $extra_words = "$lets$extra_words";
 }
@@ -3706,8 +3712,10 @@ if ($hive == 1) {        # bee hive honeycomb
         # all positioned absolutely as well
 # subroutines inside an if.  why not? :)
 sub click_td {
-    my ($l, $color) = @_;
-    $color = $color? 'green': $colors{letter};
+    my ($l, $bonus, $bingo) = @_;
+    my $color = $bingo? 'green'
+              : $bonus? 'lightgreen'
+              :         $colors{letter};
     # tried putting text-align: center in bonus_let style
     # didn't work 
     # this is messy.  better to use a class instead of a style...
@@ -3720,15 +3728,22 @@ sub click_td {
         if ($bonus_mode) {
             my @blets = grep { !/[$seven]/ } 'a' .. 'z';
             # determine which additional letters have
-            # been used in a Bonus word
+            # been used in a Bonus word and which start
+            # with the additional letter
             my %used_in_bonus;
-            for my $b (grep { m{[*]\z}xms } @found) {
+            my %bingo_bonus;
+            for my $w (grep { m{[*]\z}xms } @found) {
+                my $b = $w;
                 $b =~ s{[$seven]}{}xmsg;
-                $used_in_bonus{substr($b, 0, 1)}++;
+                my $c = substr($b, 0, 1);
+                $used_in_bonus{$c}++;
+                $bingo_bonus{$c}++ if substr($w, 0, 1) eq $c;
             }
-            my $row1 = Tr(map({ click_td(uc, $used_in_bonus{$_}) }
+            my $row1 = Tr(map({ click_td(uc,
+                                    $used_in_bonus{$_}, $bingo_bonus{$_}) }
                               @blets[0 .. 9]));
-            my $row2 = Tr(map({ click_td(uc, $used_in_bonus{$_}) }
+            my $row2 = Tr(map({ click_td(uc,
+                                    $used_in_bonus{$_}, $bingo_bonus{$_}) }
                               @blets[10 .. 18]));
             my $bonus_table = <<"EOH";
 <table cellpadding=0 cellspacing=10>
