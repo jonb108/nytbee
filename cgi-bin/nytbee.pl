@@ -3934,7 +3934,7 @@ EOH
         $y += $between_lines;
     }
 
-    my $click = qq!onclick="issue_cmd('I')"!;
+    my $click = qq!style="cursor: pointer" onclick="issue_cmd('F7')"!;
     $html .= "<text $click x=$ind1 y=$y class=glets fill=$col_let>p</text>\n";
     my $x = $ind2;
     $y -= 4;
@@ -3968,23 +3968,23 @@ EOH
     }
     $npp -= $npp_found + $npp_stashed;
     for my $i (1 .. $npangrams_found) {
-        $html .= "<circle cx=$x cy=$y r=$dotr2 fill=#00C0C0></circle>\n";
+        $html .= "<circle $click cx=$x cy=$y r=$dotr2 fill=#00C0C0></circle>\n";
         if ($i <= $npp_found) {
-            $html .= "<circle cx=$x cy=$y r=2 fill=red></circle>\n";
+            $html .= "<circle $click cx=$x cy=$y r=2 fill=red></circle>\n";
         }
         $x += $between_dots;
     }
     for my $i (1 .. $npangrams_stashed) {
-        $html .= "<circle cx=$x cy=$y r=$dotr2 fill=#AAF0F0></circle>\n";
+        $html .= "<circle $click cx=$x cy=$y r=$dotr2 fill=#AAF0F0></circle>\n";
         if ($i <= $npp_stashed) {
-            $html .= "<circle cx=$x cy=$y r=2 fill=red></circle>\n";
+            $html .= "<circle $click cx=$x cy=$y r=2 fill=red></circle>\n";
         }
         $x += $between_dots;
     }
     for my $i (1 .. ($npangrams - ($npangrams_found+$npangrams_stashed))) {
-        $html .= "<circle cx=$x cy=$y r=$dotr1 fill=$col_let></circle>\n";
+        $html .= "<circle $click cx=$x cy=$y r=$dotr1 fill=$col_let></circle>\n";
         if ($i <= $npp) {
-            $html .= "<circle cx=$x cy=$y r=2 fill=red></circle>\n";
+            $html .= "<circle $click cx=$x cy=$y r=2 fill=red></circle>\n";
         }
         $x += $between_dots;
     }
@@ -3992,27 +3992,28 @@ EOH
     $y += $between_lines;
 
     my $w_ind = $ind1-2;
-    $html .= "<text $click x=$w_ind y=$y class=glets fill=$col_let>w</text>\n";
+    $click = qq!style="cursor: pointer" onclick="issue_cmd('I')"!;
+    $html .= qq!<text $click x=$w_ind y=$y class=glets fill=$col_let>w</text>\n!;
     $x = $ind2;
     $y -= 4;
     my $nfound = grep { !m{[$ext_sig]\z}xms } @found;
     my $nstash = grep { m{!\z}xms } @found;
     for my $i (1 .. $nfound) {
-        $html .= "<circle cx=$x cy=$y r=$dotr2 fill=green></circle>\n";
+        $html .= "<circle $click cx=$x cy=$y r=$dotr2 fill=green></circle>\n";
         $x += $between_dots;
     }
     for my $i (1 .. $nstash) {
-        $html .= "<circle cx=$x cy=$y r=$dotr2 fill=#70aa70></circle>\n";
+        $html .= "<circle $click cx=$x cy=$y r=$dotr2 fill=#70aa70></circle>\n";
         $x += $between_dots;
     }
     for my $i ($nfound+$nstash+1 .. $nwords) {
-        $html .= "<circle cx=$x cy=$y r=$dotr1 fill=$col_let></circle>\n";
+        $html .= "<circle $click cx=$x cy=$y r=$dotr1 fill=$col_let></circle>\n";
         $x += $between_dots;
     }
     $y += 4;
     $y += $between_lines;
 
-    $html .= "<text $click x=$ind1 y=$y class=glets fill=$col_let>s</text>\n";
+    $html .= "<text x=$ind1 y=$y class=glets fill=$col_let>s</text>\n";
 
     # a black line from 0 to max_score
     $y -=5; # centered on the S
