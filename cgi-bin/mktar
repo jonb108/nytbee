@@ -87,4 +87,5 @@ who_played \
 rd_dynamic.pl \
 rd_nytbee.pl \
 rd_nytbee_mkclues.pl \
+fix_full_uuid.pl \
 buddy.txt
