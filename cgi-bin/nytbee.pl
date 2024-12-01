@@ -803,6 +803,24 @@ else {
     @found     = ();
 }
 
+# shall we show a message about doing ID and SN?
+if (assigned_sn($screen_name)
+    && $date eq $today->as_d8()
+    && @found == 0
+    && my_puzzles() > 3
+) {
+    $message = <<"EOM";
+Greetings,
+<p>
+$screen_name is the screen name you were randomly assigned.
+Please choose your own private identity string and public screen name.
+It is all explained in the help file <a target=_blank href='https://ultrabee.org/help.html#screen_names'>here</a>.
+<p>
+Thank you
+<p>
+EOM
+}
+
 if ($cmd eq 'q' || $cmd eq '?') {
     # define the last word
     my $word = $found[-1];
@@ -3651,7 +3669,7 @@ sub assigned_sn {
 
 my $lf = long_form($uuid);
 my $sn = assigned_sn($screen_name);
-if (0 && ($lf || $sn)
+if (0 && ($lf || $sn)       # not any more...
     && keys %cur_puzzles > 2
     && @found > 3
 ) {
