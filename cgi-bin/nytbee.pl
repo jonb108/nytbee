@@ -1497,8 +1497,16 @@ elsif (   $cmd =~ m{\A d \s+ ([a-z ]+) \z}xms
       onclick="full_def('$word');">\U$word\E</span>
 EOM
         $message .= <<"EOM" if $cmd;
-<span class=alink style='margin-left: 2in;'
+<span class=alink style='margin-left: 1in;'
       onclick="issue_cmd('$cmd');">$label</span>
+EOM
+        $message .= <<"EOM";
+<a class=alink
+   onclick='set_focus()'
+   target=_blank
+   style='margin-left: 1in;'
+   href='https://google.com/search?q=$word'>
+Search</a>
 EOM
         $message .=  qq!<span class=cursor_black onclick="full_def('$word');">!
                  .  ul(define($word, 1, 1))
@@ -2376,8 +2384,16 @@ sub consider_word {
         }
     }
     else {
+        # Report the error and make a link on the word to
+        # do a web search for $w:
+        #
+        #    http://google.com/search?q=$w
+        #
         $not_okay_words .= "<span class=not_okay>"
-                        .  uc($w)
+                        .  "<a target=_blank onclick='set_focus()'"
+                        .  " href='https://google.com/search?q=$w'>"
+                        .  "<span style='color: red'>" . uc($w) . "</span>"
+                        .  "</a>"
                         .  "</span>: $mess<br>";
     }
     return $w =~ m{!\z}xms? 1: 0;
