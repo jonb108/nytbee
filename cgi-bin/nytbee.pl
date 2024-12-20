@@ -924,6 +924,8 @@ sub define {
 sub do_define {
     my ($term) = @_;
 
+    my $nhints = $only_clues? 2: 3;
+
     load_nyt_clues;
     my $msg = '';
     my $line = "&mdash;" x 4;
@@ -932,7 +934,7 @@ sub do_define {
         for my $p (grep { !$is_found{$_} } @pangrams) {
             ++$npangrams;
             my $def = define($p, 0);
-            add_hints(3) unless $def =~ $no_def;
+            add_hints($nhints) unless $def =~ $no_def;
             if ($def) {
                 $msg .= ul($def) . '--';
             }
@@ -998,7 +1000,7 @@ sub do_define {
             $msg = '';
             for my $w (get_words($let, $len)) {
                 my $def = define($w, 0);
-                add_hints(3) unless $def =~ $no_def;
+                add_hints($nhints) unless $def =~ $no_def;
                 if ($def) {
                     $msg .= ul($def) .  '--';
                 }
@@ -1020,7 +1022,7 @@ sub do_define {
             $msg .= '';
             for my $w (get_words($lets)) {
                 my $def = define($w, 0);
-                add_hints(3) unless $def =~ $no_def;
+                add_hints($nhints) unless $def =~ $no_def;
                 if ($def) {
                     $msg .= ul($def) . '--';
                 }
@@ -1042,7 +1044,7 @@ sub do_define {
             $msg .= '';
             for my $w (get_words($lets)) {
                 my $def = define($w, 0);
-                add_hints(3) unless $def =~ $no_def;
+                add_hints($nhints) unless $def =~ $no_def;
                 if ($def) {
                     $msg .= ul($def) . '--';
                 }
@@ -1457,7 +1459,7 @@ elsif (my ($gt, $item) = $cmd =~ m{\A \s* [#] \s*([>]?)(\d*|[a-z]?) \s* \z}xms) 
                 @ok_words;
     if (! $item) {
         # no hints added
-        $message .= scalar(@words);
+        $message .= scalar(@words) . '<br>';
     }
     elsif ($item =~ m{\A\d+\z}xms) {
         my $n = grep { $gt? length > $item: length == $item } @words;
