@@ -3144,6 +3144,9 @@ if ($cmd eq 'i') {
     elsif ($np_tot < $genius) {
         $gn4l = ', ' . red("No GN4L-NP");
     }
+    if (! $show_Heading) {
+        $message .= date($date)->format("%B %e, %Y") . '<br>';
+    }
     $message .= "Words: $nwords, Points: $max_score, "
              . "Pangrams: $npangrams$perfect$bingo$gn4l";
     if ($date =~ m{\A CP}xms) {
@@ -3157,9 +3160,6 @@ EOH
         $need_show_clue_form = 1;
     }
     else {
-        if (! $show_Heading) {
-            $message .= "<br>$show_date";
-        }
         load_nyt_clues;
         if (%nyt_cluer_name_of) {
             my @names;
