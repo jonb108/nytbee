@@ -126,8 +126,8 @@ tie %definition_of, 'DB_File', 'definition_of.dbm';
 our %settings_for;
 tie %settings_for, 'DB_File', 'settings_for.dbm';
 # key is the uuid ("session" id)
-# value is "0/1" for graphical status 
-# and room for further expansion
+# value is 3 integers 0-2  0-1  0-2
+# for status_display, only_clues, pw_feedback
 
 our %uuid_colors_for;
 tie %uuid_colors_for, 'DB_File', 'uuid_colors_for.dbm';

@@ -119,6 +119,44 @@ sub now_secs {
     return 60*60*$hour + 60*$minute + $second;
 }
 
+my ($status_display, $only_clues, $pw_feedback);
+sub redo_settings {
+    my ($how) = @_;
+    if ($how eq 'in') {
+        # initialize
+        if (exists $settings_for{$uuid}) {
+                # can remove at some point soon
+            my $x = $settings_for{$uuid};
+            if ($x =~ m{\A \d \z}xms) {
+                $status_display = $x;
+                $only_clues = $pw_feedback = 0;
+            }
+            else {
+                # leave this... and shift
+                ($status_display, $only_clues, $pw_feedback)
+                    = split ' ', $settings_for{$uuid};
+                return;
+            }
+        }
+        else {
+            ($status_display, $only_clues, $pw_feedback)
+                = (0, 0, 0);
+        }
+    }
+    elsif ($how eq 'st') {
+        $status_display = ($status_display + 1) % 3;
+    }
+    elsif ($how eq 'oc') {
+        $only_clues = $only_clues? 0: 1;
+    }
+    elsif ($how eq 'pf') {
+        $pw_feedback = ($pw_feedback + 1) % 3;
+    }
+    # reset it in the .dbm file
+    $settings_for{$uuid} = "$status_display $only_clues $pw_feedback";
+}
+redo_settings('in');
+
 my $end_time = $end_time_for{$uuid11};
 if ($end_time) {
     my $now = now_secs();
@@ -319,8 +357,6 @@ my $bonus_mode      = exists $params{bonus_mode}?
                              $params{bonus_mode}: 0;
 my $donut_mode      = exists $params{donut_mode}?
                              $params{donut_mode}: 0;
-my $only_clues      = exists $params{only_clues}?
-                             $params{only_clues}: 0;
 my $forum_mode      = exists $params{forum_mode}?
                              $params{forum_mode}: 0;
 my $show_RankImage  = exists $params{show_RankImage}?
@@ -1265,8 +1301,17 @@ elsif ($cmd eq 'bt') {
     $cmd = '';
 }
 elsif ($cmd eq 'oc') {
-    $only_clues = $only_clues? 0: 1;
-    $message = $only_clues? 'Only clues': 'Both clues and definitions';
+    redo_settings('oc');
+    $message = $only_clues? 'Only clues'
+              :             'Both clues and definitions';
+    $cmd = '';
+}
+elsif ($cmd eq 'pf') {
+    redo_settings('pf');
+    $message = $pw_feedback == 0? "Silent"
+              :$pw_feedback == 1? "Flash"
+              :                   "Inline"
+              ;
     $cmd = '';
 }
 elsif ($cmd eq 'dl') {
@@ -1304,7 +1349,7 @@ elsif ($cmd eq 'im') {
     $cmd = '';
 }
 elsif ($cmd eq 'st') {
-    $settings_for{$uuid} = ($settings_for{$uuid} + 1) %3;
+    redo_settings('st');
     $cmd = '';
 }
 # do we have a reveal command?
@@ -4142,9 +4187,9 @@ EOH
 
 my $status =
     ($bonus_mode || $donut_mode)? ''
-   :$settings_for{$uuid} == 1   ? graphical_status()
-   :$settings_for{$uuid} == 2   ? graphical_status(1)
-   :                              "Score: $score $rank_image $disp_nhints";
+   :$status_display == 1   ? graphical_status()
+   :$status_display == 2   ? graphical_status(1)
+   :                         "Score: $score $rank_image $disp_nhints";
 my $css = $mobile? 'mobile_': '';
 my $new_words_size = $mobile? 30: 40;
 my $row1_top  = 40 + ($show_Heading? 79: 0);
@@ -4266,7 +4311,6 @@ $heading
 <input type=hidden name=mobile_Device value=$mobile_Device>
 <input type=hidden name=show_WordList value=$show_WordList>
 <input type=hidden name=show_BingoTable value=$show_BingoTable>
-<input type=hidden name=only_clues value=$only_clues>
 <input type=hidden name=bonus_mode value=$bonus_mode>
 <input type=hidden name=donut_mode value=$donut_mode>
 <input type=hidden name=which_wl value=$which_wl>
