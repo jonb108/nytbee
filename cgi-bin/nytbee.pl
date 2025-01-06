@@ -125,18 +125,9 @@ sub redo_settings {
     if ($how eq 'in') {
         # initialize
         if (exists $settings_for{$uuid}) {
-                # can remove at some point soon
-            my $x = $settings_for{$uuid};
-            if ($x =~ m{\A \d \z}xms) {
-                $status_display = $x;
-                $only_clues = $pw_feedback = 0;
-            }
-            else {
-                # leave this... and shift
-                ($status_display, $only_clues, $pw_feedback)
-                    = split ' ', $settings_for{$uuid};
-                return;
-            }
+            ($status_display, $only_clues, $pw_feedback)
+                = split ' ', $settings_for{$uuid};
+            return;
         }
         else {
             ($status_display, $only_clues, $pw_feedback)
@@ -2264,8 +2255,19 @@ sub check_word {
         }
         return "not in word list";
     }
-    return '';
+    return '';      # the word is in the allowed list
 }
+
+sub p_word {
+    my ($w) = @_;
+    red("\U$w\E")
+    .  ": Puzzle word +"
+    . word_score($w, $is_pangram{$w})
+    . "<br>"
+    ;
+}
+
+my $points_added = 0;
 
 #
 # check the word
@@ -2334,6 +2336,9 @@ sub consider_word {
                 # put it in the stash
                 $is_new_word{$w} = 1;
                 $is_found{$w} = 1; 
+                if ($pw_feedback == 2) {        # Inline
+                    $not_okay_words .= p_word($w);
+                }
                 if ($is_pangram{$w}) {
                     $not_okay_words .= "Pangram! $thumbs_up stashed<br>";
                 }
@@ -2342,6 +2347,13 @@ sub consider_word {
                 }
             }
             else {
+                # a valid puzzle word
+                if ($pw_feedback == 2) {
+                    $not_okay_words .= p_word($w);
+                }
+                elsif ($pw_feedback == 1) {
+                    $points_added += word_score($w, $is_pangram{$w});
+                }
                 if ($is_pangram{$w}) {
                     $not_okay_words .= "Pangram! $thumbs_up<br>";
                 }
@@ -3875,6 +3887,10 @@ EOH
 EOH
         }
     }
+    else {
+        # not mobile - still need span id=lets
+        $letters .= "<span class=lets id=lets></span>\n";
+    }
 }
 elsif ($hive == 2) {    # straight line letters
     if ($mobile) {
@@ -4210,6 +4226,18 @@ if ($forum_mode) {
 my $title_date = $date =~ m{\A CP}xms? $date
                 :                      'NYT '
                                        . date($date)->format('%B %e, %Y');
+my $pwf_script = '';
+if ($pw_feedback == 1 && $points_added > 0 && $hive != 2) {
+    $pwf_script = <<"EOJ";
+<script>
+init();
+add_let('+$points_added');
+setTimeout(() => {
+    lets.innerHTML = "";
+}, 1300);
+</script>
+EOJ
+}
 print <<"EOH";
 <html>
 <head>
@@ -4297,7 +4325,7 @@ body {
 }
 </style>
 <link rel='stylesheet' type='text/css' href='$log/css/cgi_${css}style.css'/>
-<script src="$log/js/nytbee10.js"></script>
+<script src="$log/js/nytbee11.js"></script>
 </head>
 <body onload='init(); $focus'>
 $heading
@@ -4318,7 +4346,10 @@ $heading
 <input type=hidden name=show_RankImage value=$show_RankImage>
 $letters
 <div style="width: 640px">$message</div>
-<input type=hidden name=hidden_new_words id=hidden_new_words>
+<input type=hidden
+       name=hidden_new_words
+       id=hidden_new_words
+>
 <input class=new_words
        type=text
        size=$new_words_size
@@ -4345,5 +4376,6 @@ if ('addEventListener' in document) {
     }, false);
 }
 </script>
+$pwf_script
 </html>
 EOH

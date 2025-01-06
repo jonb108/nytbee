@@ -31,7 +31,7 @@ print "Content-Type: text/html; charset=ISO-8859-1\n\n";
 <html>
 <head>
 <title>$WORD</title>
-<script src="https://ultrabee.org/js/nytbee10.js"></script>
+<script src="https://ultrabee.org/js/nytbee11.js"></script>
 <style>
 body {
     font-family: Arial;

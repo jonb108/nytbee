@@ -12,15 +12,26 @@ function empty(s) {
     return s.trim().length === 0;
 }
 function add_let(c) {
-    lets.innerHTML += c;
+    if (c.substring(0, 1) == '+') {
+        lets.style.color = 'black'; 
+        lets.style.fontSize = '20pt'; 
+        lets.innerHTML += c;
+        setTimeout(() => {
+            lets.style.color = 'green'; 
+            lets.style.fontSize = '28pt'; 
+        }, 1300);
+    }
+    else {
+        lets.innerHTML += c;
+    }
     if (c == ' ') {
-        var dis = document.getElementById('pos31').style.display;
-        if (dis != 'none') {
+        var dis = document.getElementById('pos31');
+        if (dis && dis.style.display != 'none') {
             for (num = 1; num <= 3; ++num) {
                 document.getElementById('pos3' + num).style.display = 'none';
             }
         }
-        else {
+        else if (lets.innerHTML.length > 16) {
             lets.style.fontSize = '24px';
         }
     }
@@ -130,4 +141,11 @@ function edit_post(id) {
     document.getElementById('e' + id).style.pointerEvents = "none";
     hnw.value = 'FE' + id;
     main.submit();
+}
+function blink_pink(the_id, color) {
+    var p = document.getElementById(the_id);
+    p.style = 'fill:rgb(255,217, 231)';
+    setTimeout(() => {
+        p.style = 'fill:' + color;
+    }, 200);
 }
