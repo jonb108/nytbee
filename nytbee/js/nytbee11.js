@@ -13,11 +13,9 @@ function empty(s) {
 }
 function add_let(c) {
     if (c.substring(0, 1) == '+') {
-        lets.style.color = 'black'; 
         lets.style.fontSize = '20pt'; 
         lets.innerHTML += c;
         setTimeout(() => {
-            lets.style.color = 'green'; 
             lets.style.fontSize = '28pt'; 
         }, 1300);
     }
