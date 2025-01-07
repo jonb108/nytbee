@@ -2259,10 +2259,10 @@ sub check_word {
 }
 
 sub p_word {
-    my ($w) = @_;
+    my ($w, $stashed) = @_;
     red("\U$w\E")
-    .  ": Puzzle word +"
-    . word_score($w, $is_pangram{$w})
+    .  ": Puzzle word "
+    . ($stashed? 'stashed': '+' . word_score($w, $is_pangram{$w}))
     . "<br>"
     ;
 }
@@ -2337,7 +2337,7 @@ sub consider_word {
                 $is_new_word{$w} = 1;
                 $is_found{$w} = 1; 
                 if ($pw_feedback == 2) {        # Inline
-                    $not_okay_words .= p_word($w);
+                    $not_okay_words .= p_word($w, 1);
                 }
                 if ($is_pangram{$w}) {
                     $not_okay_words .= "Pangram! $thumbs_up stashed<br>";

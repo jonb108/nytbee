@@ -1838,6 +1838,36 @@ These commands are of more limited use.  Some of them were added just for the be
 <table cellpadding=5>
 <tr><td><span class=cmd>MO</span></td><td>Toggle into "mobile mode". Useful when playing on an iPad or Tablet with a touch screen.  The 7 letters in the hexagon become tappable.</td></tr>
 <tr><td><span class=cmd>LG</span></td><td>Show a time-stamped <span class=cmd>l</span>o<span class=cmd>g</span> of your activity on the day of the NYT Puzzle.  The times are 24 hour format U.S. West Coast Pacific Time</td><tr>
+<tr><td><span class=cmd>PF</span></td><td>PF stands for
+<span class=cmd>P</span>uzzle <span class=cmd>F</span>eedback.
+By default, when you enter a puzzle word (a word
+in the “allowed list”) there is no feedback, no acknowledgment,
+no “atta boy, way to go! &#128077;”.
+One exception is when you have entered a pangram.
+The word <i>is</i> always shown in an
+<span style='color: orange'>orange color</span>
+in the list of puzzle words.
+<p>
+The <span class=cmd>PF</span> command remedies this silence.
+It will cycle through three stages:
+<ul style='margin-bottom: 0px'>
+<li>Silent – the default
+<li>Flash – the number of points that you have added to the total will be flashed for 1.3 seconds to the right of the Letter Hexagons.  Like this:
+<br>
+<img src=pics/flash.png width=60%>
+<br>
+This is similar to what happens in the New York Times app or
+web application.  There, however, it is accompanied by a rather lame
+Good!, Nice!, or Awesome!.
+<li>Inline – the feedback will be inline with the other atta boys:
+<br>
+<img src=pics/inline.png width=60%>
+</ul>
+Like your <span class=cmd>ST</span> status choice your
+<span class=cmd>PF</span> puzzle feedback choice is 
+associated with your <span class=cmd>ID</span>
+and will be preserved across the days.
+<td></tr>
 <tr><td><a name=lm></a><span class=cmd>LM #mins</span></td><td>Set a <span class=cmd>l</span>i<span class=cmd>m</span>it of how much longer you want to play.
 <span class=cmd>LM 10</span> will allow you to play for 10 more minutes.
 <span class=cmd>LM</span> without a number will show how much time remains.
@@ -1851,13 +1881,16 @@ This command may prove helpful for those who feel that they
 are spending too much time on this silly game.
 </td><tr>
 <tr><td><span class=cmd>PA</span></td><td><span class=cmd>Pa</span>use your <span class=cmd>LM</span> time limit.  Any action will resume the time.  This would be useful if you only want to play for 30 minutes today but would like to do it in three 10 minute sessions throughout the day.</td></tr>
-<tr><td><span class=cmd>AC</span></td><td>Show a stacked bar graph of <i>everyone’s</i> <span class=cmd>ac</span>tivity through the day.  <span style='color: green'>Green</span>: #words, <span class=red1>Red</span>: #commands, <span style='color: blue'>Blue</span>: #dynamic grid queries.  The X-axis is hours since midnight, U.S. Pacific Time.  The Y-axis is number of commands issued.  Monitoring began on December 22, 2022. </td></tr>
+<tr><td><span class=cmd>AC</span></td><td>Show a stacked bar graph of <i>everyone’s</i> <span class=cmd>ac</span>tivity through the day.  <span style='color: green'>Green</span>: #words, <span class=red1>Red</span>: #commands, <span style='color: blue'>Blue</span>: #dynamic grid queries.  The X-axis is hours since midnight, U.S. Pacific Time.  The Y-axis is number of commands issued.  Monitoring began on December 22, 2022.   It looks like this:
+<p>
+<img src=pics/ac.png width=100%>
+</td></tr>
 <tr><td><span class=cmd>H</span></td><td>Toggle the presentation
-of the 7 letters  - either <span class=cmd>H</span>exagon or Inline Letters:<br>
+of the 7 letters  - either the Letter <span class=cmd>H</span>exagons or Inline Letters:<br>
 <img height=250 src=pics/df_honeycomb.png>&nbsp;&nbsp;<img style='margin-bottom: .8in' height=90 src=pics/df_inline.png>
 </td></tr>
 <tr><td><span class=cmd>R%</span></td><td>Show the <span class=cmd>r</span>ankings with the percentage of the maximum score.</td></tr>
-<tr><td><span class=cmd>-&lt;word&gt;</span></td><td>Remove the word from the found list. (That’s a dash or hyphen or - or minus sign before the word.) This might be used if you are trying for GOTN: <a href=#gn4l>Genius On the Nose</a>.<br><br></td></tr>
+<tr><td><span class=cmd>-&lt;word&gt;</span></td><td>Remove the word from the found list. (That’s a dash or hyphen or - or minus sign before the word.) This might be used if you are trying for GOTN: <a href=#gn4l>Genius On the Nose</a>.  Better than removing the word would be to stash it – by clicking on the word for a definition and then choosing <span class=blue>Stash</span>.<br><br></td></tr>
 <tr><td colspan=2>Instead of the full Hint Table</td></tr>
 <tr><td><span class=cmd>#</span></td><td>How many words remain to be found?</td></tr>
 <tr><td><span class=cmd>#B</span></td><td>How many words beginning with B remain to be found?</td></tr>
@@ -2177,7 +2210,7 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2434 puzzles with
+2436 puzzles with
 a total of 10473 different words!
 <p>
 Tallies are made of the many puzzles and words.
