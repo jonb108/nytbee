@@ -35,10 +35,10 @@ my %tally;  # hash of hash of hash
             # value: 1
 my @types = qw/ donut lexicon bonus /;
 if ($bonus_mode) {
-    @types = ('bonus');
+    @types = (qw/ bonus donut /);
 }
 elsif ($donut_mode) {
-    @types = ('donut');
+    @types = (qw/ donut bonus /);
 }
 for my $t (@types) {
     open my $tf, '<', "$t/$date";
@@ -105,6 +105,12 @@ my @arr = qw/
     donut   2
     lexicon 3
 /;
+if ($donut_mode) {
+    @arr = qw/
+        donut 1
+        bonus 2
+    /;
+}
 my %order = @arr;
 my %name = reverse @arr;
     # this hash happens to be one-to-one...
