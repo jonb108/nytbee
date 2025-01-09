@@ -1839,18 +1839,17 @@ These commands are of more limited use.  Some of them were added just for the be
 <tr><td><span class=cmd>LG</span></td><td>Show a time-stamped <span class=cmd>l</span>o<span class=cmd>g</span> of your activity on the day of the NYT Puzzle.  The times are 24 hour format U.S. West Coast Pacific Time</td><tr>
 <tr><td><span class=cmd>PF</span></td><td>PF stands for
 <span class=cmd>P</span>uzzle <span class=cmd>F</span>eedback.
-By default, when you enter a puzzle word (a word
-in the “allowed list”) there is no feedback, no acknowledgment,
-no “attaboy, way to go! &#128077;”.
-One exception is when you have entered a pangram.
-The word <i>is</i> always shown in an
+Puzzle words you enter are shown in an
 <span style='color: orange'>orange color</span>
 in the list of puzzle words.
-<p>
-The <span class=cmd>PF</span> command remedies this silence.
-It will cycle through three stages:
+The <span class=cmd>PF</span> command controls
+what other kind of feedback you will get.
+It cycles through three choices:
 <ul style='margin-bottom: 0px'>
-<li>Silent – the default
+<li>Inline – This is the default setting.
+The feedback will be inline with the other “attaboys”:
+<br>
+<img src=pics/inline.png width=60%>
 <li>Flash – the number of points that you have added to the total will be flashed to the right of the Letter Hexagons.  Like this:
 <br>
 <img src=pics/flash.png width=60%>
@@ -1858,14 +1857,12 @@ It will cycle through three stages:
 This is similar to what happens in the New York Times app or
 web application.  There, however, it is accompanied by a rather lame
 Good!, Nice!, or Awesome!.
-<li>Inline – the feedback will be inline with the other attaboys:
-<br>
-<img src=pics/inline.png width=60%>
+<li>Silent – No feedback at all.  Silence is golden.
 </ul>
 Like your <span class=cmd>ST</span> status choice your
 <span class=cmd>PF</span> puzzle feedback choice is 
 associated with your <span class=cmd>ID</span>
-and will be preserved across the days.
+and will be preserved across the days and different browsers.
 <td></tr>
 <tr><td><a name=lm></a><span class=cmd>LM #mins</span></td><td>Set a <span class=cmd>l</span>i<span class=cmd>m</span>it of how much longer you want to play.
 <span class=cmd>LM 10</span> will allow you to play for 10 more minutes.
@@ -2209,7 +2206,7 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2437 puzzles with
+2438 puzzles with
 a total of 10474 different words!
 <p>
 Tallies are made of the many puzzles and words.

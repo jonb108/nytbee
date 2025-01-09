@@ -1299,9 +1299,9 @@ elsif ($cmd eq 'oc') {
 }
 elsif ($cmd eq 'pf') {
     redo_settings('pf');
-    $message = $pw_feedback == 0? "Silent"
+    $message = $pw_feedback == 0? "Inline"
               :$pw_feedback == 1? "Flash"
-              :                   "Inline"
+              :                   "Silent"
               ;
     $cmd = '';
 }
@@ -2336,7 +2336,7 @@ sub consider_word {
                 # put it in the stash
                 $is_new_word{$w} = 1;
                 $is_found{$w} = 1; 
-                if ($pw_feedback == 2) {        # Inline
+                if ($pw_feedback == 0) {        # Inline
                     $not_okay_words .= p_word($w, 1);
                 }
                 if ($is_pangram{$w}) {
@@ -2348,7 +2348,7 @@ sub consider_word {
             }
             else {
                 # a valid puzzle word
-                if ($pw_feedback == 2) {
+                if ($pw_feedback == 0) {
                     $not_okay_words .= p_word($w);
                 }
                 elsif ($pw_feedback == 1) {
