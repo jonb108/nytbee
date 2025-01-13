@@ -91,18 +91,6 @@ function set_focus() {
     nw.focus();
     return true;
 }
-// for obscuring my email address
-function xyz(s) {
-    var out = '';
-    for (let i = 0; i < s.length; ++i) {
-        out += String.fromCharCode(s.charCodeAt(i)-1);
-    }
-    return out;
-}
-function abcd(efg) {
-    document.write(xyz('=b!isfg>(nbjmup;Kpo!Ckpsotube!=kpo/ckpsotubeAhnbjm/dpn?@tvckfdu>OZU!Cff(?'));
-    document.write(efg + "</a>");
-}
 function copy_uuid_to_clipboard(uuid) {
     navigator.clipboard.writeText(uuid);
     show_copied('uuid');

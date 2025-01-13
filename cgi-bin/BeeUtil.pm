@@ -229,7 +229,7 @@ sub mark_up {
     $s =~ s{[*]([^*]*)[*]}{<b>$1</b>}xmsg;
     $s =~ s{[_]([^_]*)[_]}{<u>$1</u>}xmsg;
     $s =~ s{(http\S*)}{<a target=_blank href='$1'>$1</a>}xmsg;
-    $s =~ s{(\S*[@]\S*)}{<a target=_blank href='mailto:$1'>$1</a>}xmsg;
+    $s =~ s{([\w._]+[@]\S*)}{<a target=_blank href='mailto:$1'>$1</a>}xmsg;
     return $s;
 }
 
