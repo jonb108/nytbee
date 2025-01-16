@@ -144,9 +144,10 @@ EOH
 if ($date_obj ne $today) {
     print "Final results for " . $date_obj->format("%D") . ":<p>\n";
 }
+# Big hack.  Needs rethinking.
 my $sp = '&nbsp;' x 2;
+my $ow_printed = 0;
 print "<table cellpadding=0 border=0>\n";
-# Is this correct??? No.
 for my $aref (sort {
                   $a->[1] <=> $b->[1]
                   ||
@@ -168,10 +169,14 @@ for my $aref (sort {
         print "<tr><td colspan=$colspan class='lt head'>"
             . ucfirst $name{$type}
             . "</td>";
-        if ($type == 1) {
+        if ($donut_mode || ($type != 3 && ! $ow_printed)) {
             print "<td>#</td>"
-                . "<td>${sp}ow</td>"
-                . "<td>${sp}boa</td>"
+                . "<td>${sp}ow</td>";
+            $ow_printed = 1;
+
+        }
+        if (($donut_mode && $type == 2) || (! $donut_mode && $type == 1)) {
+            print "<td>${sp}boa</td>"
                 . "<td>${sp}bb</td>"
                 ;
         }
@@ -189,7 +194,7 @@ for my $aref (sort {
         my $star = ($sn eq $my_screen_name)? "<td style='text-align: left; color: red; font-size: 20pt;'>&nbsp;*</td>": '';
         print "<tr><td>&nbsp;&nbsp;</td><td class='lt entry'>$sn</td><td class=entry>$sp$n</td>";
         print "<td class=entry>&nbsp;&nbsp;$only{$uid}{$name{$type}}</td>";
-        if ($type == 1) {
+        if (($donut_mode && $type == 2) || (! $donut_mode && $type == 1)) {
             print "<td class=entry>$boa_score{$uid}</td>";
             print "<td class=entry>$bb_score{$uid}</td>";
         }
