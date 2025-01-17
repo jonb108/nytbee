@@ -12,7 +12,8 @@ function empty(s) {
     return s.trim().length === 0;
 }
 function add_let(c) {
-    if (c.substring(0, 1) == '+') {
+    var x = c.substring(0, 1);
+    if (x == '+' || x == '-') {
         lets.style.fontSize = '20pt'; 
         lets.innerHTML += c;
         setTimeout(() => {

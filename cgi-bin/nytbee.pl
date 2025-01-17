@@ -1174,6 +1174,8 @@ sub do_reveal {
     }
 }
 
+my $points_added = 0;
+
 if ($cmd eq 'pg') {
     my $n = $ranks[8]{value} - $score;
     if ($n <= 0) {
@@ -1413,10 +1415,19 @@ elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms  # sw at the front
                 $not_okay_words .= red(uc $w) . ": already stashed";
             }
             else {
+                # we are stashing a puzzle word we already found
                 @found = map { s{\A $w \z}{$w!}xms; $_; } @found;
                 ++$nwords_stashed;
                 # add to list for highlighting
                 $is_new_word{$w} = 1;
+                if ($pw_feedback == 0) {
+                    $message .= ul(red(uc $w)
+                             . ': Puzzle word stashed -' 
+                             .  word_score($w, $is_pangram{$w}));
+                }
+                elsif ($pw_feedback == 1) {
+                    $points_added -= word_score($w, $is_pangram{$w});
+                }
             }
         }
         else {
@@ -2267,8 +2278,6 @@ sub p_word {
     ;
 }
 
-my $points_added = 0;
-
 #
 # check the word
 # and either add it, stash it, or give an error message.
@@ -2468,6 +2477,15 @@ for my $w (@new_words) {
             @found = grep { !m{\A $xword [!]?}xms } @found;
             delete $is_found{$xword};
             ++$n_minus;
+            # puzzle feedback?
+            my $ws = word_score($xword, $is_pangram{$xword});
+            if ($pw_feedback == 0) {
+                $message .= ul(red(uc $xword)
+                         . ": Puzzle word removed -$ws<br>");
+            }
+            elsif ($pw_feedback == 1) {
+                $points_added -= $ws;
+            }
         }
         else {
             $not_okay_words = "<span class=not_okay>"
@@ -4227,11 +4245,14 @@ my $title_date = $date =~ m{\A CP}xms? $date
                 :                      'NYT '
                                        . date($date)->format('%B %e, %Y');
 my $pwf_script = '';
-if ($pw_feedback == 1 && $points_added > 0 && $hive != 2) {
+if ($pw_feedback == 1 && $points_added != 0 && $hive != 2) {
+    if ($points_added > 0) {
+        $points_added = "+$points_added";
+    }
     $pwf_script = <<"EOJ";
 <script>
 init();
-add_let('+$points_added');
+add_let('$points_added');
 setTimeout(() => {
     lets.innerHTML = "";
 }, 1300);
