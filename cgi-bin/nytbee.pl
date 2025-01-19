@@ -1421,7 +1421,7 @@ elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms  # sw at the front
                 # add to list for highlighting
                 $is_new_word{$w} = 1;
                 if ($pw_feedback == 0) {
-                    $message .= ul(red(uc $w)
+                    $message .= ul(def_word(red(uc $w), $w)
                              . ': Puzzle word stashed -' 
                              .  word_score($w, $is_pangram{$w}));
                 }
@@ -2271,7 +2271,7 @@ sub check_word {
 
 sub p_word {
     my ($w, $stashed) = @_;
-    red("\U$w\E")
+    def_word(red("\U$w\E"), $w)
     .  ": Puzzle word "
     . ($stashed? 'stashed': '+' . word_score($w, $is_pangram{$w}))
     . "<br>"
