@@ -196,7 +196,7 @@ for my $aref (sort {
         print "<td class=entry>&nbsp;&nbsp;$only{$uid}{$name{$type}}</td>";
         if (($donut_mode && $type == 2) || (! $donut_mode && $type == 1)) {
             print "<td class=entry>$boa_score{$uid}</td>";
-            print "<td class=entry>$bb_score{$uid}</td>";
+            print "<td class=entry>$bb_score{$uid}</td>" if $bb_score{$uid};
         }
         print "$star</tr>\n";
     }

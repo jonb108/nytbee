@@ -66,7 +66,6 @@ regexp.pl \
 word_pangram.pl \
 dynamic.pl \
 rand5.pl \
-admin.pl \
 show_activity.pl \
 ipstack.txt \
 definitions.txt \
