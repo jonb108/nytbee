@@ -9,6 +9,7 @@ use BeeUtil qw/
     extra_let
     ymd
     uniq_chars
+    uniq_words
     cgi_header
     my_today
     red
@@ -1282,6 +1283,9 @@ elsif ($cmd eq 'mo') {
 }
 elsif ($cmd eq 'wl') {
     $show_WordList = $show_WordList? 0: 1;
+    if (!$show_WordList) {
+        $message .= "Hiding all found words.<br>WL will show them again.";
+    }
     $which_wl = 'pdlbs';
     $cmd = '';
 }
@@ -1290,6 +1294,33 @@ elsif ($cmd =~ m{\A wl \s* ([pdlbsa]+)}xms) {
     $which_wl = $1;
     if ($which_wl =~ /a/) {
         $which_wl = 'pdlbs';
+        $message .= "Showing all words.";
+    }
+    else {
+        my @x;
+        my %name_for = qw/
+            p Puzzle
+            d Donut
+            l Lexicon
+            b Bonus
+            s Stash
+        /;
+        for my $l (split //, $which_wl) {
+            push @x, $name_for{$l};
+        }
+        @x = uniq_words @x;
+        my $x;
+        if (@x == 1) {
+            $x = $x[0];
+        }
+        elsif (@x == 2) {
+            $x = join ' and ', @x;
+        }
+        else {
+            $x = join ', ', @x;
+            $x =~ s{,([^,]*)\z}{, and$1}xms;
+        }
+        $message .= "Showing only $x words.<br>WLA will show All.";
     }
     $cmd = '';
 }
