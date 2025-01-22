@@ -99,13 +99,8 @@ my @base = qw/
     Buzz
 /;
 my $q = CGI->new();
-my $hive = $q->param('hive') || $q->cookie('hive') || 1;
-my $hive_cookie = $q->cookie(
-    -name    => 'hive',
-    -value    => $hive,
-    -expires => '+20y',
-);
-my $uuid = cgi_header($q, $hive_cookie);
+my $hive = $q->param('hive') || 1;
+my $uuid = cgi_header($q);
 my %colors = get_colors($uuid);
 my $uuid11 = substr($uuid, 0, 11);
 # unfortunate ... - premature optimization :(
@@ -1448,6 +1443,14 @@ elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms  # sw at the front
         if ($is_found{$w}) {
             if (grep { /\b$w!/ } @found) {
                 $not_okay_words .= red(uc $w) . ": already stashed";
+            }
+            elsif (my ($x) = grep { /\b$w[*+-]/ } @found) {
+                my $type = $x =~ m{[-]\z}xms? 'Donut'
+                          :$x =~ m{[+]\z}xms? 'Lexicon'
+                          :                   'Bonus'
+                          ;
+                $message .= red(uc($w))
+                         . " is a $type word not a puzzle word so it cannot be stashed!";
             }
             else {
                 # we are stashing a puzzle word we already found
