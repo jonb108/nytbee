@@ -4031,26 +4031,28 @@ sub graphical_status {
 EOH
     my $y = $between_lines;
     if ($bingo) {
+        $html .= qq!<g onclick="issue_cmd('BT')">!;
+            # the g element of SVG is for grouping
         my %first_found;
         for my $w (grep { !m{[$ext_sig]\z}xms } @found) {
             ++$first_found{uc substr($w, 0, 1)};
         }
-        my $click = qq!style='cursor: pointer' onclick="issue_cmd('BT')"!;
-        $html .= "<text $click x=$ind1 y=$y class=glets fill=$col_let>b</text>\n";
+        $html .= "<text x=$ind1 y=$y class=glets fill=$col_let>b</text>\n";
         my $x = $ind2;
         for my $c (map { uc } @seven) {
             my ($color, $class) = ($col_let, 'glets');
             if ($first_found{$c}) {
                 ($color, $class) = ('#8E008E', 'bold_glets');
             }
-            $html .= "<text $click x=$x y=$y class=$class fill=$color>$c</text>\n";
+            $html .= "<text x=$x y=$y class=$class fill=$color>$c</text>\n";
             $x += 20;
         }
+        $html .= "</g>";
         $y += $between_lines;
     }
 
-    my $click = qq!style="cursor: pointer" onclick="issue_cmd('F7')"!;
-    $html .= "<text $click x=$ind1 y=$y class=glets fill=$col_let>p</text>\n";
+    $html .= qq!<g onclick="issue_cmd('F7')">!;
+    $html .= "<text x=$ind1 y=$y class=glets fill=$col_let>p</text>\n";
     my $x = $ind2;
     $y -= 4;
     my $npp = 0;        # number of perfect pangrams
@@ -4083,48 +4085,50 @@ EOH
     }
     $npp -= $npp_found + $npp_stashed;
     for my $i (1 .. $npangrams_found) {
-        $html .= "<circle $click cx=$x cy=$y r=$dotr2 fill=#00C0C0></circle>\n";
+        $html .= "<circle cx=$x cy=$y r=$dotr2 fill=#00C0C0></circle>\n";
         if ($i <= $npp_found) {
-            $html .= "<circle $click cx=$x cy=$y r=2 fill=red></circle>\n";
+            $html .= "<circle cx=$x cy=$y r=2 fill=red></circle>\n";
         }
         $x += $between_dots;
     }
     for my $i (1 .. $npangrams_stashed) {
-        $html .= "<circle $click cx=$x cy=$y r=$dotr2 fill=#AAF0F0></circle>\n";
+        $html .= "<circle cx=$x cy=$y r=$dotr2 fill=#AAF0F0></circle>\n";
         if ($i <= $npp_stashed) {
-            $html .= "<circle $click cx=$x cy=$y r=2 fill=red></circle>\n";
+            $html .= "<circle cx=$x cy=$y r=2 fill=red></circle>\n";
         }
         $x += $between_dots;
     }
     for my $i (1 .. ($npangrams - ($npangrams_found+$npangrams_stashed))) {
-        $html .= "<circle $click cx=$x cy=$y r=$dotr1 fill=$col_let></circle>\n";
+        $html .= "<circle cx=$x cy=$y r=$dotr1 fill=$col_let></circle>\n";
         if ($i <= $npp) {
-            $html .= "<circle $click cx=$x cy=$y r=2 fill=red></circle>\n";
+            $html .= "<circle cx=$x cy=$y r=2 fill=red></circle>\n";
         }
         $x += $between_dots;
     }
+    $html .= "</g>";
     $y += 4;
     $y += $between_lines;
 
     my $w_ind = $ind1-2;
-    $click = qq!style="cursor: pointer" onclick="issue_cmd('I')"!;
-    $html .= qq!<text $click x=$w_ind y=$y class=glets fill=$col_let>w</text>\n!;
+    $html .= qq!<g onclick="issue_cmd('I')">!;
+    $html .= qq!<text x=$w_ind y=$y class=glets fill=$col_let>w</text>\n!;
     $x = $ind2;
     $y -= 4;
     my $nfound = grep { !m{[$ext_sig]\z}xms } @found;
     my $nstash = grep { m{!\z}xms } @found;
     for my $i (1 .. $nfound) {
-        $html .= "<circle $click cx=$x cy=$y r=$dotr2 fill=green></circle>\n";
+        $html .= "<circle cx=$x cy=$y r=$dotr2 fill=green></circle>\n";
         $x += $between_dots;
     }
     for my $i (1 .. $nstash) {
-        $html .= "<circle $click cx=$x cy=$y r=$dotr2 fill=#70aa70></circle>\n";
+        $html .= "<circle cx=$x cy=$y r=$dotr2 fill=#70aa70></circle>\n";
         $x += $between_dots;
     }
     for my $i ($nfound+$nstash+1 .. $nwords) {
-        $html .= "<circle $click cx=$x cy=$y r=$dotr1 fill=$col_let></circle>\n";
+        $html .= "<circle cx=$x cy=$y r=$dotr1 fill=$col_let></circle>\n";
         $x += $between_dots;
     }
+    $html .= "</g>";
     $y += 4;
     $y += $between_lines;
 
@@ -4165,7 +4169,7 @@ EOH
 
     # hints
     if ($nhints) {
-        $html .= "<text $click x=$ind1 y=$y class=glets fill=$col_let>h</text>\n";
+        $html .= "<text x=$ind1 y=$y class=glets fill=$col_let>h</text>\n";
         $x = $ind2;
         $y -= 5;
         HINT:
@@ -4196,24 +4200,36 @@ EOH
         my $sdiff = $max_score - $sc;
         my $pl = $nfound == 1? '': 's';
         my $spl = $sc == 1? '': 's';
+        my $hpl = $nhints == 1? '': 's';
         my $space = '&nbsp;' x 3;
-        my $href = { align => 'right' };
+        my $rt = { style => 'text-align: right'};
+        my $lf = { style => 'text-align: left'};
         my @rows;
         push @rows,
-            Tr(td($href, $nfound), 
+            Tr(td($rt, $nfound), 
                td("word$pl of"),
-               td($href, $nwords),
-               td($href, "$space$pct%"),
-               td($href, "$space$diff"),
+               td($rt, $nwords),
+               td($rt, "$space$pct%"),
+               td($rt, "$space$diff"),
                td('more to find'),
             ),
-            Tr(td($href, $sc), 
+            Tr(td($rt, $sc), 
                td("point$spl of"),
-               td($href, $max_score),
-               td($href, "$space$spct%"),
-               td($href, "$space$sdiff"),
+               td($rt, $max_score),
+               td($rt, "$space$spct%"),
+               td($rt, "$space$sdiff"),
                td('more to find'),
-            );
+            )
+            ;
+            if ($score != 0) {
+                push @rows,
+                   Tr(td($rt, $nhints),
+                      td($lf, "hint$hpl"),
+                      td({ colspan => 4, style => 'text-align: left' },
+                         sprintf("hints/score: %.2f", $nhints/$score)
+                      )
+                   );
+            }
         $html .= table(@rows);
     }
     return $html;
