@@ -802,8 +802,12 @@ sub in_stash {
     return grep { $_ eq "$w!" } @found;
 }
 
+my $n_hints_added = 0;
 sub add_hints {
     my ($n) = @_;
+    $n_hints_added += $n;
+        # could be more than once - like DCO to define
+        # multiple words beginning with CO
     if ($n > 0 && $score_at_first_hint < 0) {
         $score_at_first_hint = $score;
     }
@@ -4221,7 +4225,7 @@ EOH
                td('more to find'),
             )
             ;
-            if ($score != 0) {
+            if ($nhints && $score != 0) {
                 push @rows,
                    Tr(td($rt, $nhints),
                       td($lf, "hint$hpl"),
@@ -4260,15 +4264,23 @@ if ($forum_mode) {
 my $title_date = $date =~ m{\A CP}xms? $date
                 :                      'NYT '
                                        . date($date)->format('%B %e, %Y');
-my $pwf_script = '';
-if ($pw_feedback == 1 && $points_added != 0 && $hive != 2) {
-    if ($points_added > 0) {
-        $points_added = "+$points_added";
+my $flash_script = '';
+if ($pw_feedback == 1
+    && ($points_added != 0 || $n_hints_added != 0)
+    && $hive != 2
+) {
+    my $s = '';
+    if ($points_added) {
+        $s = (($points_added > 0)? '+': '')
+           . $points_added;
     }
-    $pwf_script = <<"EOJ";
+    if ($n_hints_added) {
+        $s = "+$n_hints_added hints";
+    }
+    $flash_script = <<"EOJ";
 <script>
 init();
-add_let('$points_added');
+add_let('$s');
 setTimeout(() => {
     lets.innerHTML = "";
 }, 1300);
@@ -4413,6 +4425,6 @@ if ('addEventListener' in document) {
     }, false);
 }
 </script>
-$pwf_script
+$flash_script
 </html>
 EOH
