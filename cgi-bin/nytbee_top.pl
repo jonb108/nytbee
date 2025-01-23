@@ -41,7 +41,7 @@ $disp_date =~ s{\A (....)(..)(..) \z}{$2/$3/$1}xms;
 my $qb_nwords = shift;
 my $seven = shift;
 my $my_screen_name = shift;
-my ($nbonus, $ndonut, $nlexicon, $boa);
+my ($nbonus, $ndonut, $nlexicon, $boa, $bb);
 my $sp = '&nbsp;' x 2;
 my $in;
 if (! open $in, '<', "beelog/$date") {
@@ -106,12 +106,18 @@ while (my $line = <$in>) {
                     my @bonus = grep { /[*]$/ } @terms;
                     $nbonus = @bonus;
                     my %additional_letters;
+                    my %bb_word;
                     for my $w (@bonus) {
                         my $x = $w;
                         $x =~ s{[$seven]}{}xmsg;
-                        $additional_letters{substr($x, 0, 1)} = 1;
+                        my $c = substr($x, 0, 1);
+                        if ($c eq substr($w, 0, 1)) {
+                            $bb_word{$c} = 1;
+                        }
+                        $additional_letters{$c} = 1;
                     }
                     $boa = keys %additional_letters;
+                    $bb  = keys %bb_word;
                     $ndonut = grep { /[-]$/ } @terms;
                     $nlexicon = grep { /[+]$/ } @terms;
                 }
@@ -210,7 +216,7 @@ if ($rank_for{$my_screen_name}) {
     $share .= "\\n";
     $share .= "$hints_for{$my_screen_name} Hints\\n";
     if ($nbonus) {
-        $share .= "$nbonus Bonus, $boa BOA\\n";
+        $share .= "$nbonus Bonus, $boa BOA, $bb BB\\n";
     }
     if ($ndonut) {
         $share .= "$ndonut Donut\\n";

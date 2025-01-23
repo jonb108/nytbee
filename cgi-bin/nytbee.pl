@@ -1818,24 +1818,26 @@ elsif ($cmd eq 'f7') {
     $message = `$cgi_dir/same_7.pl $seven $date @ok_words`;
     $cmd = '';
 }
-elsif ($cmd eq 'b>') {
-    # bonus words in increasing length
-    my @bonus;
+elsif ($cmd =~ m{\A ([bd])[>] \z}xms) {
+    my $type = $1;
+    my $c = $type eq 'b'? '*': '-';
+    # bonus/donut words in increasing length
+    my @words;
     for my $w (@found) {
-        if ($w =~ m{\A (.*)[* ]\z}xms) {
-            push @bonus, ucfirst $1;
+        if ($w =~ m{\A (.*)[$c]\z}xms) {
+            push @words, ucfirst $1;
         }
     }
-    @bonus = map { $_->[1] }
+    @words = map { $_->[1] }
              sort {
                 $a->[0] <=> $b->[0]
                 ||
                 $a->[1] cmp $b->[1]
              }
              map { [ length, $_ ] }
-             @bonus;
+             @words;
     my $prev_len = 0;
-    for my $w (@bonus) {
+    for my $w (@words) {
         my $l = length $w;
         if ($l > $prev_len) {
             if ($message) {
