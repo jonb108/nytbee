@@ -131,7 +131,7 @@ sub redo_settings {
         }
     }
     elsif ($how eq 'st') {
-        $status_display = ($status_display + 1) % 3;
+        $status_display = ($status_display + 1) % 4;
     }
     elsif ($how eq 'oc') {
         $only_clues = $only_clues? 0: 1;
@@ -176,7 +176,6 @@ if (exists $uuid_screen_name{$uuid11}) {
 
 my $mobile = $params{mobile_Device}
              || $ENV{HTTP_USER_AGENT} =~ m{iPhone|Android}xms;
-#$mobile = 1;
 my $focus = $mobile? '': 'set_focus();';
 
 #
@@ -334,6 +333,8 @@ my $mobile_Device   = exists $params{mobile_Device}?
                              $params{mobile_Device}: $mobile;
 my $show_Heading    = exists $params{show_Heading}?
                              $params{show_Heading}: !$mobile;
+my $show_Links      = exists $params{show_Links}?
+                             $params{show_Links}: !$mobile;
 my $show_WordList   = exists $params{show_WordList}?
                              $params{show_WordList}: 1;
 my $which_wl        = exists $params{which_wl}?
@@ -1267,6 +1268,10 @@ elsif ($cmd eq 't3') {
 }
 elsif ($cmd eq 'he') {
     $show_Heading = $show_Heading? 0: 1;
+    $cmd = '';
+}
+elsif ($cmd eq 'ln') {
+    $show_Links = $show_Links? 0: 1;
     $cmd = '';
 }
 elsif ($cmd eq 'mo') {
@@ -3830,7 +3835,7 @@ my $heading = $show_Heading? <<"EOH": '';
      <img width=53 src=$log/pics/bee-logo.png onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
 </div>
 <div class=float-child3>
-    <div style="text-align: center"><span class=help><a class=alink target=nytbee_help onclick="set_focus();" href='$log/help.html#toc'>Help</a></span>&nbsp;&nbsp;<span class=help><a target=_blank class=alink href='$log/cmds.html'>Cmds</a><br><a class='alink' onclick="issue_cmd('F');">$forum_s $num_msgs</a></div>
+    <div style="text-align: center"><a class=alink target=nytbee_help onclick="set_focus();" href='$log/help.html#toc'>Help</a>&nbsp;&nbsp;<a target=_blank class=alink href='$log/cmds.html'>Cmds</a><br><a class='alink' onclick="issue_cmd('F');" title='F'>$forum_s $num_msgs</a></div>
 </div>
 <br><br><br>
 EOH
@@ -3858,6 +3863,7 @@ if ($hive == 1) {        # bee hive honeycomb
         {qq!<text$1x="! . ($2+6) . "$3>I<"}xmse;
     }
 
+    my $st = "style='color: $colors{alink}'";
     if ($mobile) {
         # enter, wordlets, delete, define
         # all positioned absolutely as well
@@ -3928,7 +3934,6 @@ EOH
         else {
             # not Donut, not Bonus
             my $forum_s = $forum_mode? '<s>Forum</s>': 'Forum';
-            my $st = "style='color: $colors{alink}'";
             $letters .= <<"EOH";
 <span class='pos11 cursor_black' $st onclick="stash_lets();">Stash</span>
 <span class='pos12 cursor_black' $st onclick="issue_cmd('DR');">Define</span>
@@ -3948,6 +3953,25 @@ EOH
     else {
         # not mobile - still need span id=lets
         $letters .= "<span class=lets id=lets></span>\n";
+        # and we have the various links as well
+        if ($show_Links) {
+            my $donut = $donut_mode? '<s>Donut</s>': 'Donut';
+            my $bonus = $bonus_mode? '<s>Bonus</s>': 'Bonus';
+            $letters .= <<"EOH";
+<span class='pos11 cursor_black alink' $st onclick="issue_cmd('DR');" title='DR'>Define</span>
+<span class='pos12 cursor_black alink' $st onclick="issue_cmd('OW');" title='OW'>Own</span>
+<span class='pos21 cursor_black alink' $st onclick="issue_cmd('TOP');" title='TOP'>Top</span>
+<span class='pos22 cursor_black alink' $st onclick="issue_cmd('CW');" title='CW'>Standings</span>
+<span class='pos31 cursor_black alink' $st onclick="issue_cmd('DN');" title='DN'>$donut</span>
+<span class='pos32 cursor_black alink' $st onclick="issue_cmd('BN');" title='BN'>$bonus</span>
+EOH
+            if ($bingo) {
+                my $bgo = $show_BingoTable? '<s>Bingo</s>': 'Bingo';
+                $letters .= <<"EOH";
+<span class='pos33 cursor_black alink' $st onclick="issue_cmd('BT');" title='BT'>$bgo</span>
+EOH
+            }
+        }
     }
 }
 elsif ($hive == 2) {    # straight line letters
@@ -4276,7 +4300,7 @@ EOH
 }
 
 my $status =
-    ($bonus_mode || $donut_mode)? ''
+    ($bonus_mode || $donut_mode || $status_display == 3)? ''
    :$status_display == 1   ? graphical_status()
    :$status_display == 2   ? graphical_status(1)
    :                         "Score: $score $rank_image $disp_nhints";
@@ -4343,6 +4367,7 @@ body {
 .alink {
     color: $colors{alink};
     cursor: pointer;
+    font-size: 16pt;
 }
 /* the 2 row x 3 col grid at the top when in mobile mode */
 .pos11 {
@@ -4421,6 +4446,7 @@ $heading
 <input type=hidden name=seven_let value='@seven_let'>
 <input type=hidden name=hive value=$hive>
 <input type=hidden name=show_Heading value=$show_Heading>
+<input type=hidden name=show_Links value=$show_Links>
 <input type=hidden name=mobile_Device value=$mobile_Device>
 <input type=hidden name=show_WordList value=$show_WordList>
 <input type=hidden name=show_BingoTable value=$show_BingoTable>
