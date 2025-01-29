@@ -1447,7 +1447,7 @@ elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms  # sw at the front
     for my $w (@words) {
         if ($is_found{$w}) {
             if (grep { /\b$w!/ } @found) {
-                $not_okay_words .= red(uc $w) . ": already stashed";
+                $not_okay_words .= red(uc $w) . ": already stashed<br>";
             }
             elsif (my ($x) = grep { /\b$w[*+-]/ } @found) {
                 my $type = $x =~ m{[-]\z}xms? 'Donut'
@@ -1481,7 +1481,7 @@ elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms  # sw at the front
         # we give this message because we are not
         # showing the Stash word list in Bonus mode.
         my $pl = $nwords_stashed == 1? '': 's';
-        $not_okay_words .= "$nwords_stashed word$pl stashed";
+        $not_okay_words .= "$nwords_stashed word$pl stashed<br>";
     }
     $n_minus = $nwords_stashed;     # for the possible On the Nose message
     $cmd = '';
