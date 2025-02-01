@@ -115,19 +115,19 @@ sub now_secs {
     return 60*60*$hour + 60*$minute + $second;
 }
 
-my ($status_display, $only_clues, $pw_feedback);
+my ($status_display, $only_clues, $pw_feedback, $no_define);
 sub redo_settings {
     my ($how) = @_;
     if ($how eq 'in') {
         # initialize
         if (exists $settings_for{$uuid}) {
-            ($status_display, $only_clues, $pw_feedback)
+            ($status_display, $only_clues, $pw_feedback, $no_define)
                 = split ' ', $settings_for{$uuid};
             return;
         }
         else {
-            ($status_display, $only_clues, $pw_feedback)
-                = (0, 0, 0);
+            ($status_display, $only_clues, $pw_feedback, $no_define)
+                = (0, 0, 0, 0);
         }
     }
     elsif ($how eq 'st') {
@@ -136,11 +136,14 @@ sub redo_settings {
     elsif ($how eq 'oc') {
         $only_clues = $only_clues? 0: 1;
     }
+    elsif ($how eq 'nd') {
+        $no_define = $no_define? 0: 1;
+    }
     elsif ($how eq 'pf') {
         $pw_feedback = ($pw_feedback + 1) % 3;
     }
     # reset it in the .dbm file
-    $settings_for{$uuid} = "$status_display $only_clues $pw_feedback";
+    $settings_for{$uuid} = "$status_display $only_clues $pw_feedback $no_define";
 }
 redo_settings('in');
 
@@ -1332,6 +1335,12 @@ elsif ($cmd eq 'oc') {
     redo_settings('oc');
     $message = $only_clues? 'Only clues'
               :             'Both clues and definitions';
+    $cmd = '';
+}
+elsif ($cmd eq 'nd') {
+    redo_settings('nd');
+    $message = $no_define? 'NO Define Link'
+              :            'Define Link';
     $cmd = '';
 }
 elsif ($cmd eq 'pf') {
@@ -3931,9 +3940,12 @@ EOH
         else {
             # not Donut, not Bonus
             my $forum_s = $forum_mode? '<s>Forum</s>': 'Forum';
+            my $define = $no_define? '': <<"EOH";
+<span class='pos12 cursor_black' $st onclick="issue_cmd('DR');">Define</span>
+EOH
             $letters .= <<"EOH";
 <span class='pos11 cursor_black' $st onclick="stash_lets();">Stash</span>
-<span class='pos12 cursor_black' $st onclick="issue_cmd('DR');">Define</span>
+$define
 <span class='pos13 cursor_black' $st onclick="issue_cmd('DN');">Donut</span>
 <span class='pos21 cursor_black' $st onclick="sub_lets();">Enter</span>
 
@@ -3954,8 +3966,11 @@ EOH
         if ($show_Links) {
             my $donut = $donut_mode? '<s>Donut</s>': 'Donut';
             my $bonus = $bonus_mode? '<s>Bonus</s>': 'Bonus';
-            $letters .= <<"EOH";
+            my $define = $no_define? '': <<"EOH";
 <span class='pos11 cursor_black alink' $st onclick="issue_cmd('DR');" title='DR'>Define</span>
+EOH
+            $letters .= <<"EOH";
+$define
 <span class='pos12 cursor_black alink' $st onclick="issue_cmd('OW');" title='OW'>Own</span>
 <span class='pos21 cursor_black alink' $st onclick="issue_cmd('TOP');" title='TOP'>Top</span>
 <span class='pos22 cursor_black alink' $st onclick="issue_cmd('CW');" title='CW'>Standings</span>
@@ -3990,8 +4005,8 @@ EOS
             }
         }
         $letters .= "</tr></table>\n";
-        my $the_cmd = $donut_mode? 'CW': 'DR';
-        my $the_lab = $donut_mode? 'Standings': 'Define';
+        my $the_cmd = $donut_mode? 'CW'       : $no_define? 'TOP': 'DR';
+        my $the_lab = $donut_mode? 'Standings': $no_define? 'Top': 'Define';
         $letters .= "<table style='width: 100%; margin-bottom: 10mm'><tr>"
                  .  "<td class='h3cmd alink' onclick='del_let()'>Delete</td>"
                  .  qq!<td class='h3cmd alink' onclick="issue_cmd('H');">Hexagon</td>!
