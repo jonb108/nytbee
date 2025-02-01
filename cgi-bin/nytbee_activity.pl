@@ -31,9 +31,7 @@ while (my $line = <$in>) {
     ) {
         next LINE;
     }
-    if (   index($line, ' = *') >= 0
-        || (index($line, ' = rank') >= 0 && $line =~ m{rank\d})
-    ) {
+    if (index($line, ' = rank') >= 0 && $line =~ m{rank\d}) {
         next LINE;
     }
     if (index($line, ' = ') >= 0) {
