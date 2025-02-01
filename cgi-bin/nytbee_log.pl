@@ -63,7 +63,7 @@ my $saved_time = '';
 LINE:
 while (my $line = <$in>) {
     chomp $line;
-    if (index($line, "$uuid11 = ") >= 0 && index($line, " = *") == -1) {
+    if (index($line, "$uuid11 = ") >= 0) {
         if ($saved_time) {
             print "<span class=gray>$saved_time</span><br>\n";
             $saved_time = '';

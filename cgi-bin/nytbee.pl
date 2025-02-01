@@ -2361,7 +2361,6 @@ sub consider_word {
                                 .  "</span>: Donut ${own}word $thumbs_up<br>"
                                 .  pangram_check($w, 6);
                 add_3word('donut', $date, $w);
-                log_it('*donut');
                 $w .= '-';
             }
             elsif ($mess eq 'lexicon') {
@@ -2371,7 +2370,6 @@ sub consider_word {
                                 .  "</span>: Lexicon ${own}word $thumbs_up<br>"
                                 .  pangram_check($w, 7);
                 add_3word('lexicon', $date, $w);
-                log_it('*lexicon');
                 $w .= '+';
             }
             elsif ($mess eq 'bonus') {
@@ -2382,7 +2380,6 @@ sub consider_word {
                                 .  "</span>: ${bingo}Bonus ${own}word $thumbs_up<br>"
                                 .  pangram_check($w, 8, $seven);
                 add_3word('bonus', $date, $w);
-                log_it('*bonus');
                 $w .= '*';      # * in the found list marks bonus words
             }
             elsif ($stashing) {
