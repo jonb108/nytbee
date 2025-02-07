@@ -1,35 +1,36 @@
 <pre>
 # add or take away recommended community puzzles
-+CP##
--CP##
+~+CP##
+~-CP##
 
 # a community puzzle will be featured instead of the NYT puzzle
-FCP <date> <cp#>
+~FCP [date] [cp#]
 
-    like this: FCP 4/5 60
-           or: FCP 5/6/2024 199
+    like this: ~FCP 4/5 60
+           or: ~FCP 5/6/2024 199
 
 # cheat for Bonus words with letter x
-BBx
+~Bx
 
 # show Bonus words with letter x found by screen name
-BBx <screen_name>
+~Bx [screen_name]
 
 # cheat for Donut words
-XXD
+~D
 
 # show log for screen_name
-XXL <screen_name>
+~L [screen_name]
 
 # display 6 outer letters in fixed places
-LE abcdef
+~LE abcdef
 
-# display @found for the current game
-XPF
-XPF <screen_name>
+# display @found
+~PF
 
-# how many games?   for this command the screen name must have
-#                   _ in front of internal capitals
-WG <screen_name>      just the #
-WG <screen_name> a    # plus all dates
+# how many games?   screen name with _ in front of internal capitals
+~WG [screen_name]      just the #
+~WG [screen_name] a    # plus all dates
+
+# Activity for a screen name
+~AC [screen_name]
 </pre>

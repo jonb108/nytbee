@@ -1495,7 +1495,7 @@ elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms  # sw at the front
     $n_minus = $nwords_stashed;     # for the possible On the Nose message
     $cmd = '';
 }
-elsif ($cmd eq 'xpf') {
+elsif ($cmd eq '~pf') {
     # undocumented
     $message = "@found";
     $cmd = '';
@@ -1761,7 +1761,8 @@ elsif (my ($pat) = $cmd =~ m{\A lcp \s*(\S*) \z}xms) {
     }
     $cmd = '';
 }
-elsif ($cmd =~ m{\A fcp \s+ (.*)}xms) {
+elsif ($cmd =~ m{\A [~]fcp \s+ (.*)}xms) {
+    # undocumented
     $message = `$cgi_dir/nytbee_fcp.pl $1`;
     $cmd = '';
 }
@@ -1926,7 +1927,8 @@ elsif ($cmd eq 'h') {
     $hive = $hive == 1? 2: 1;
     $cmd = '';
 }
-elsif ($cmd =~ m{\A le \s+ (\S{6}) \s* \z}xms) {
+elsif ($cmd =~ m{\A [~]le \s+ (\S{6}) \s* \z}xms) {
+    # undocumented
     # $1 is oooooo (all 6 outer letters)
     my @lets = split //, uc $1;
     my $six = join '', sort @six;
@@ -2041,11 +2043,13 @@ elsif ($cmd eq 'pa') {
     }
     $cmd = '';
 }
-elsif ($cmd =~ m{\A wg \s+ (\S+) \s* (a)?\z}xms) {
+elsif ($cmd =~ m{\A [~]wg \s+ (\S+) \s* (a)?\z}xms) {
+    # undocumented
     $message = `$cgi_dir/nytbee_wg.pl '$1' $2`;
     $cmd = '';
 }
-elsif ($date !~ m{\A CP }xms && $cmd =~ m{\A xxl \s+ (\S+) \z}xms) {
+elsif ($date !~ m{\A CP }xms && $cmd =~ m{\A [~]l \s+ (\S+) \z}xms) {
+    # undocumented
     my $sn = $1;
     $message = `$cgi_dir/nytbee_log.pl -s $date '$sn'`;
     $cmd = '';
@@ -2055,12 +2059,15 @@ elsif ($date !~ m{\A CP }xms && $cmd eq 'lg') {
     $message = `$cgi_dir/nytbee_log.pl $date '$uuid11'`;
     $cmd = '';
 }
-elsif ($date !~ m{\A CP}xms && $cmd eq 'ac') {
+elsif ($date !~ m{\A CP}xms
+       && ($cmd eq 'ac' || $cmd =~ m{\A [~]ac \s+ (.*) \z}xms)
+) {
+    my $sn = $1;        # undocumented
     if ($date < '20221222') {
         $message = 'Activity monitoring began on December 22, 2022.';
     }
     else {
-        $message = `$cgi_dir/nytbee_activity.pl $date '$colors{letter}'`;
+        $message = `$cgi_dir/nytbee_activity.pl $date '$colors{letter}' $sn`;
     }
     $cmd = '';
 }
@@ -2070,8 +2077,9 @@ elsif ($cmd eq 'ft') {
 }
 elsif (($uuid eq 'sahadev108!')
        && (my ($mode, $cp_num)
-              = $cmd =~ m{\A ([+-])cp(\d+) \z}xms)
+              = $cmd =~ m{\A [~]([+-])cp(\d+) \z}xms)
 ) {
+    # undocumented
     my $fname = "$comm_dir/$cp_num.txt";
     if (! -f $fname) {
         $message .= "No such community puzzle: CP$cp_num";
@@ -2140,7 +2148,7 @@ if (   $cmd ne '1'
     && $cmd ne 'i'
     && $cmd !~ m{\A cw\s*\d* \z}xms
     && $cmd !~ m{\A sn\b }xms
-    && $cmd !~ m{\A ([+][+]|[-][-])cp }xms
+    && $cmd !~ m{\A [~]([+]|[-])cp }xms
 ) {
     # what about $cmd eq 'i' or bw or ... ?
     # turns out it's okay ... but sloppy.
@@ -3539,7 +3547,7 @@ elsif ($cmd eq 'boa') {
     $message = "<ul>$message</ul>";
 }
 # an undocumented cheat for Donut words
-elsif ($cmd eq 'xxd') {
+elsif ($cmd eq '~d') {
     my $donut_letters = $seven;
     $donut_letters =~ s{$center}{}xms;
     $cmd = '';
@@ -3548,7 +3556,7 @@ elsif ($cmd eq 'xxd') {
                `egrep -i '^[$donut_letters]{4,}\$' osx_usd_words-47.txt`;
 }
 # an undocumented cheat for Bonus words
-elsif ($cmd =~ m{\A bb([a-z])\z}xmsi) {
+elsif ($cmd =~ m{\A [~]b([a-z])\z}xmsi) {
     my $let = $1;
     $cmd = '';
     $message = join '',
@@ -3556,7 +3564,7 @@ elsif ($cmd =~ m{\A bb([a-z])\z}xmsi) {
                `egrep -i '^[$seven$let]{6,}\$' osx_usd_words-48.txt | grep $let`;
 }
 # an undocumented cheat for Bonus words of screen name with letter
-elsif ($cmd =~ m{\A bb([a-z]) \s (\w+)\z}xmsi) {
+elsif ($cmd =~ m{\A [~]b([a-z]) \s (\w+)\z}xmsi) {
     my $let = $1;
     my $screen_name = $2;
     $cmd = '';

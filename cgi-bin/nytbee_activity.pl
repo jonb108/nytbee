@@ -4,11 +4,36 @@ use warnings;
 use v5.10;
 use BeeUtil qw/
     ymd
+    JON
 /;
+
 use List::Util qw/
     max
 /;
-my ($date, $text_color) = @ARGV;
+my ($date, $text_color, $sn) = @ARGV;
+my $uuid11 = '';
+if ($sn) {
+    # Can NOT use BeeDBM to get this hash.
+    # It causes a deadlock race of some kind. :(
+    # Why do we need a lock on some of the dbm files?
+    my %screen_name_uuid;
+    tie %screen_name_uuid, 'DB_File', 'screen_name_uuid.dbm';
+
+    # figure out the uuid11 from the screen name
+    # not so easy! given the case issues.
+    KEY:
+    while (my ($k, $v) = each %screen_name_uuid) {
+        if (lc $k eq $sn) {
+            $uuid11 = $screen_name_uuid{$k};
+            last KEY;
+        }
+    }
+    untie %screen_name_uuid;
+    if (! $uuid11) {
+        print "Unknown screen name: $sn"; exit;
+    }
+}
+
 open my $in, '<', "beelog/$date";
 my (@words, @grid, @cmds);
 my $i;
@@ -34,8 +59,12 @@ while (my $line = <$in>) {
     if (index($line, ' = rank') >= 0 && $line =~ m{rank\d}) {
         next LINE;
     }
+    my ($u11) = $line =~ m{\A (.*) [ ]=[ ]}xms;
+    if ($uuid11 && $u11 ne $uuid11) {
+        next LINE;
+    }
     if (index($line, ' = ') >= 0) {
-        if ($line =~ m{[a-z]{4,}}xms) {
+        if ($line =~ m{[ ]=[ ].*[a-z]{4,}}xms) {
             ++$words[$i];
         }
         else {
@@ -46,7 +75,7 @@ while (my $line = <$in>) {
         ++$grid[$i];
     }
     else {
-        say "UNKNOWN: $line";
+        JON "UNKNOWN: $line";
     }
 }
 close $in;
@@ -118,3 +147,4 @@ for my $i (0 .. $max-1) {
     $rect .= " />";
     print "$rect\n";
 }
+print "</svg>";
