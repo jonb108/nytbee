@@ -2060,9 +2060,9 @@ elsif ($date !~ m{\A CP }xms && $cmd eq 'lg') {
     $cmd = '';
 }
 elsif ($date !~ m{\A CP}xms
-       && ($cmd eq 'ac' || $cmd =~ m{\A [~]ac \s+ (.*) \z}xms)
+       && ($cmd eq 'ac' || $cmd eq 'mac' || $cmd =~ m{\A [~]ac \s+ (.*) \z}xms)
 ) {
-    my $sn = $1;        # undocumented
+    my $sn = $cmd eq 'mac'? lc $screen_name : lc $1;        # undocumented
     if ($date < '20221222') {
         $message = 'Activity monitoring began on December 22, 2022.';
     }
