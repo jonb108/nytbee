@@ -102,7 +102,7 @@ my $get_msgs_sth = $dbh->prepare(<<'EOS');
     SELECT *
       FROM forum
      WHERE p_date = ?
-  ORDER BY m_date desc, m_time desc
+  ORDER BY m_date desc, m_time desc, id desc
 EOS
 $get_msgs_sth->execute($p_date);
 while (my $href = $get_msgs_sth->fetchrow_hashref()) {
