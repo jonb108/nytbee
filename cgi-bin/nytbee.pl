@@ -4455,7 +4455,7 @@ body {
 }
 </style>
 <link rel='stylesheet' type='text/css' href='$log/css/cgi_${css}style.css'/>
-<script src="$log/js/nytbee11.js"></script>
+<script src="$log/js/nytbee12.js"></script>
 </head>
 <body onload='init(); $focus'>
 $heading

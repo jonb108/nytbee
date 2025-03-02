@@ -142,7 +142,7 @@ print <<"EOH";
 <head>
 <title>UltraBee - Clues for $show_date</title>
 <link rel='stylesheet' type='text/css' href='$log/css/cgi_style.css'/>
-<script src="$log/js/nytbee11.js"></script>
+<script src="$log/js/nytbee12.js"></script>
 <script>
 var clues_for = $json;
 function cycle(w) {

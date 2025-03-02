@@ -56,7 +56,7 @@ function issue_cmd(s) {
     main.submit();
 }
 function stash_lets() {
-    hnw.value = 'SW ' + lets.textContent;
+    hnw.value = 'SW ' + lets.textContent + ' ' + nw.value;
     main.submit();
 }
 function sub_lets() {
