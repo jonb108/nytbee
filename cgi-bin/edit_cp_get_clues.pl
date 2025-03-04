@@ -26,9 +26,9 @@ my $href = do $fname;
 # and now replace $href->{words}
 #                 $href->{clues}
 #                 $href->{pangrams}
-#             and $href->{created}
+#             and $href->{created}   - NO
 # all else is the same
-$href->{created}  = my_today->as_d8();
+#$href->{created}  = my_today->as_d8();
 $href->{words}    = [ split ' ', $params{words}    ];
 $href->{pangrams} = [ split ' ', $params{pangrams} ];
 

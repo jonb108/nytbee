@@ -224,6 +224,7 @@ sub screen_name {
 sub mark_up {
     my ($s) = @_;
     $s =~ s{}{<p>}xms;
+    $s =~ s{\n\n}{<p>}xms;
     $s =~ s{}{<br>}xms;
     $s =~ s{[<][^>]*[>]}{}xms;  # no HTML tags, please
     $s =~ s{[*]([^*]*)[*]}{<b>$1</b>}xmsg;

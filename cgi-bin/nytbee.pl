@@ -3278,7 +3278,7 @@ if ($cmd eq 'i') {
     elsif ($np_tot < $genius) {
         $gn4l = ', ' . red("No GN4L-NP");
     }
-    if (! $show_Heading) {
+    if (! $show_Heading && $date !~ m{\A cp}xmsi) {
         $message .= date($date)->format("%B %e, %Y") . '<br>';
     }
     $message .= "Words: $nwords, Points: $max_score, "
