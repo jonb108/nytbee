@@ -60,4 +60,4 @@ for my $f (@fnames) {
                        $sp . int(100 * ($n/$n_cur_words)) . '%'),
                 );
 }
-print table(@rows);
+print table(@rows) if @rows;

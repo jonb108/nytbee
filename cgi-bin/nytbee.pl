@@ -242,7 +242,7 @@ sub own_word {
     close $in;
     return "Own ";
 }
-sub add_3word {
+sub add_4word {
     my ($type, $date, $w) = @_;
     append_file("$type/$date",  "$w\n");
 }
@@ -2143,7 +2143,7 @@ if (   $cmd ne '1'
     && $cmd ne '53'
     && $cmd ne 'id'
     && $cmd ne 'top'
-    && $cmd !~ m{\A n?[dlb]w \z}xms
+    && $cmd !~ m{\A n?[dlbi]w \z}xms
     && $cmd ne 'abw'
     && $cmd ne 'i'
     && $cmd !~ m{\A cw\s*\d* \z}xms
@@ -2377,7 +2377,7 @@ sub consider_word {
                                 .  def_word(uc($w), $w)
                                 .  "</span>: Donut ${own}word $thumbs_up<br>"
                                 .  pangram_check($w, 6);
-                add_3word('donut', $date, $w);
+                add_4word('donut', $date, $w);
                 $w .= '-';
             }
             elsif ($mess eq 'lexicon') {
@@ -2386,7 +2386,7 @@ sub consider_word {
                                 .  def_word(uc($w), $w)
                                 .  "</span>: Lexicon ${own}word $thumbs_up<br>"
                                 .  pangram_check($w, 7);
-                add_3word('lexicon', $date, $w);
+                add_4word('lexicon', $date, $w);
                 $w .= '+';
             }
             elsif ($mess eq 'bonus') {
@@ -2396,7 +2396,7 @@ sub consider_word {
                                 .  def_word(uc($w), $w)
                                 .  "</span>: ${bingo}Bonus ${own}word $thumbs_up<br>"
                                 .  pangram_check($w, 8, $seven);
-                add_3word('bonus', $date, $w);
+                add_4word('bonus', $date, $w);
                 $w .= '*';      # * in the found list marks bonus words
             }
             elsif ($stashing) {
@@ -2408,7 +2408,8 @@ sub consider_word {
                     $not_okay_words .= p_word($w, 1);
                 }
                 if ($is_pangram{$w}) {
-                    $not_okay_words .= "Pangram! $thumbs_up stashed<br>";
+                    my $perfect = length $w == 7? 'Perfect ': '';
+                    $not_okay_words .= "${perfect}Pangram! $thumbs_up stashed<br>";
                 }
                 if (! in_stash($w)) {
                     $w .= '!';
@@ -2423,7 +2424,8 @@ sub consider_word {
                     $points_added += word_score($w, $is_pangram{$w});
                 }
                 if ($is_pangram{$w}) {
-                    $not_okay_words .= "Pangram! $thumbs_up<br>";
+                    my $perfect = length $w == 7? 'Perfect ': '';
+                    $not_okay_words .= "${perfect}Pangram! $thumbs_up<br>";
                 }
                 # it's a valid word in the allowed list
                 # has this word completed a bingo?
@@ -2511,6 +2513,13 @@ sub consider_word {
         }
     }
     else {
+        if (length $w >= 4) {
+            # for some reason ow and boa would get added
+            # without the length check
+            # this is because this whole program is a big hack
+            # that would benefit from a rethink.
+            add_4word('incorrect', $date, $w);
+        }
         # Report the error and make a link on the word to
         # do a web search for $w:
         #
@@ -2814,10 +2823,10 @@ if ($show_WordList) {
     if ($word_col) {
         $extra_words .= one_col('Donut:',  \@donut  )
                 if $donut_mode || (!$bonus_mode && $which_wl =~ /d/);
-        $extra_words .= one_col('Lexicon:', \@lexicon)
-                if !$bonus_mode && !$donut_mode && $which_wl =~ /l/;
         $extra_words .= one_col('Bonus:',   \@bonus  )
                 if $bonus_mode || (!$donut_mode && $which_wl =~ /b/);
+        $extra_words .= one_col('Lexicon:', \@lexicon)
+                if !$bonus_mode && !$donut_mode && $which_wl =~ /l/;
         $extra_words .= one_col('Stash:',   \@stash  )
                 if !$bonus_mode && !$donut_mode && $which_wl =~ /s/;
         if ($extra_words) {
@@ -2827,10 +2836,10 @@ if ($show_WordList) {
     else {
         $extra_words .= dlb_row('Donut:',   \@donut)
                 if $donut_mode || (!$bonus_mode && $which_wl =~ /d/);
-        $extra_words .= dlb_row('Lexicon:', \@lexicon)
-                if !$bonus_mode && !$donut_mode && $which_wl =~ /l/;
         $extra_words .= dlb_row('Bonus:',   \@bonus)
                 if $bonus_mode || (!$donut_mode && $which_wl =~ /b/);
+        $extra_words .= dlb_row('Lexicon:', \@lexicon)
+                if !$bonus_mode && !$donut_mode && $which_wl =~ /l/;
         $extra_words .= dlb_row('Stash:',   \@stash)
                 if !$bonus_mode && !$donut_mode && $which_wl =~ /s/;
         if ($extra_words) {
@@ -3336,7 +3345,7 @@ EOH
     }
     $cmd = '';
 }
-elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
+elsif ($cmd =~ m{\A (n)?([dlbi])w \z}xms) {
     # still need to document it
     # if today's puzzle not before 2:00 a.m. East Coast time
     # add to Cmds pdf, xlsx
@@ -3350,21 +3359,25 @@ elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
     #
     my $numeric = $1;
     my $let = uc $2;
-    if ($date eq $ymd) {
+    if ($date eq $ymd && $let ne 'I') {
         $message .= "Sorry, you cannot do \U$cmd\E for today's puzzle.<br>You will need to wait until tomorrow.";
     }
     else {
-        my $name = { qw/ D donut L lexicon B bonus / }->{$let};
+        my $name = { qw/ D donut L lexicon B bonus I incorrect/ }->{$let};
+            # fun!  learned this at Aruba
         open my $in, '<', "$name/$date";
         my %words;
+        my $total = 0;
         while (my $w = <$in>) {
             chomp $w;
             ++$words{$w};
+            ++$total;
         }
         close $in;
         my $nwords = keys %words;
         my $pl = $nwords == 1? '': 's';
-        $message .= "$nwords " . ucfirst($name) . " word$pl:<br>\n";
+        $message .= "$nwords " . ' unique ' . ucfirst($name) . " word$pl<br>\n";
+        $message .= "$total Total<p>";
         my @rows;
         my @words = $numeric? (sort {
                                    $words{$b} <=> $words{$a}
@@ -3375,7 +3388,7 @@ elsif ($cmd =~ m{\A (n)?([dlb])w \z}xms) {
                    :          (sort keys %words)
                    ;
         for my $w (@words) {
-            my $dw = def_word($w, $w);
+            my $dw = $let eq 'I'? $w: def_word($w, $w);
             my $nuchars = uniq_chars($w);
             my $lw = length $w;
             my $pangram;
