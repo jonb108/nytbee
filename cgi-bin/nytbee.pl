@@ -870,6 +870,23 @@ my %is_found = map {
                    $x => 1;
                }
                @found;
+sub own_counts {
+    my @rv;
+    for my $type (qw/ donut bonus lexicon /) {
+        my %words;
+        if (open my $in, '<', "$type/$date") {
+            while (my $w = <$in>) {
+                chomp $w;
+                ++$words{$w};
+            }
+            close $in;
+        }
+        push @rv, scalar
+                  grep { $words{$_} == 1 && $is_found{$_} }
+                  sort keys %words;
+    }
+    return @rv;
+}
 
 sub compute_score_and_rank {
     $score = 0;
@@ -3421,7 +3438,8 @@ elsif ($cmd eq 'top') {
     untie %screen_name_uuid;
     untie %cur_puzzles_store;
     my $nwords = @ok_words;
-    $message .= `$cgi_dir/nytbee_top.pl $date $nwords $seven $screen_name`;
+    my ($od, $ob, $ol) = own_counts();
+    $message .= `$cgi_dir/nytbee_top.pl $date $nwords $seven $screen_name $od $ob $ol`;
     $cmd = '';
 }
 elsif ($cmd =~ m{\A cw \s* (\d*) \z}xms) {
@@ -3589,7 +3607,7 @@ elsif ($cmd =~ m{\A [~]b([a-z]) \s (\w+)\z}xmsi) {
 elsif ($cmd eq 'ow') {
     $cmd = '';
     $message = 'These words were found only by you:<br><br><table>';
-    for my $type (qw/ donut lexicon bonus /) {
+    for my $type (qw/ donut bonus lexicon /) {
         $message .= "<tr><td class=rt valign=top>\u$type:&nbsp;</td>";
         my %words;
         if (open my $in, '<', "$type/$date") {

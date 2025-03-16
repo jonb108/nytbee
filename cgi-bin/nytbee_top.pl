@@ -35,12 +35,9 @@ my %rank_name = (
     8 => 'Genius',
     9 => 'Queen Bee',
 );
-my $date = shift;
+my ($date, $qb_nwords, $seven, $my_screen_name, $od, $ob, $ol) = @ARGV;
 my $disp_date = $date;
 $disp_date =~ s{\A (....)(..)(..) \z}{$2/$3/$1}xms;
-my $qb_nwords = shift;
-my $seven = shift;
-my $my_screen_name = shift;
 my ($nbonus, $ndonut, $nlexicon, $boa, $bb);
 my $sp = '&nbsp;' x 2;
 my $in;
@@ -203,7 +200,7 @@ for my $sn (keys %rank_for) {
 }
 my $share = '';
 if ($bingo_score_for{$my_screen_name}) {
-    $share = "Bingo $bingo_score_for{$my_screen_name}, $bingo_hints_for{$my_screen_name} Hints\\n";
+    $share = "Bingo $bingo_score_for{$my_screen_name}, $bingo_hints_for{$my_screen_name} Hint\\n";
 }
 if ($rank_for{$my_screen_name}) {
     $share .= "$rank_name{$rank_for{$my_screen_name}}";
@@ -214,15 +211,33 @@ if ($rank_for{$my_screen_name}) {
         $share .= ", $queen_minus_for{$my_screen_name} words to QB";
     }
     $share .= "\\n";
-    $share .= "$hints_for{$my_screen_name} Hints\\n";
-    if ($nbonus) {
-        $share .= "$nbonus Bonus, $boa BOA, $bb BB\\n";
-    }
+    $share .= "$hints_for{$my_screen_name} Hint\\n";
     if ($ndonut) {
-        $share .= "$ndonut Donut\\n";
+        $share .= "$ndonut Donut";
+        if ($od) {
+            $share .= ", $od Own";
+        }
+        $share .= "\\n";
+    }
+    if ($nbonus) {
+        $share .= "$nbonus Bonus";
+        if ($ob) {
+            $share .= ", $ob Own";
+        }
+        if ($boa) {
+            $share .= ", $boa BOA";
+        }
+        if ($bb) {
+            $share .= ", $bb BB";
+        }
+        $share .= "\\n";
     }
     if ($nlexicon) {
-        $share .= "$nlexicon Lexicon\\n";
+        $share .= "$nlexicon Lexicon";
+        if ($ol) {
+            $share .= ", $ol Own";
+        }
+        $share .= "\\n";
     }
 }
 if ($share) {
