@@ -1401,7 +1401,10 @@ elsif (my ($ev, $nlets, $term)
 elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     my $percent = $1;
     my $nextra = grep { m{[$ext_sig]\z}xms } @found;
-    my $rows = '';
+    my @rows;
+    push @rows, Tr(td("Score")
+                   . ($percent? td(): '')
+                   . td($score));
     for my $r (0 .. 9) {
         my $cols = td($ranks[$r]->{name});
         if ($percent) {
@@ -1423,9 +1426,9 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
             }
             $cols .= td(red('*') . $more);
         }
-        $rows .= Tr($cols);
+        push @rows, Tr($cols);
     }
-    $message .= ul(table({ cellpadding => 4}, $rows));
+    $message .= ul(table({ cellpadding => 4}, @rows));
     $cmd = '';
 }
 elsif ($cmd =~ m{\A d(p|r|5|[a-z]\d+|[a-z][a-z]|[-][a-z][a-z][a-z]) \z}xms) {
@@ -4298,10 +4301,12 @@ EOH
         my $pl = $nfound == 1? '': 's';
         my $spl = $sc == 1? '': 's';
         my $hpl = $nhints == 1? '': 's';
-        my $space = '&nbsp;' x 3;
+        my $space = '&nbsp;' x 1;
         my $rt = { style => 'text-align: right'};
         my $lf = { style => 'text-align: left'};
         my @rows;
+        my $stashed_points = $sc - $score;
+        my $sts = $stashed_points != 1? 's': '';
         push @rows,
             Tr(td($rt, $nfound), 
                td("word$pl of"),
@@ -4316,18 +4321,22 @@ EOH
                td($rt, "$space$spct%"),
                td($rt, "$space$sdiff"),
                td('more to find'),
-            )
+            ),
+            Tr(td({ colspan => 2, style => 'text-align: left ' },
+                  "score $score"),
+               td({ colspan => 4, style => 'text-align: left ' },
+                  "$stashed_points point$sts in stash"))
             ;
             if ($nhints && $score != 0) {
                 push @rows,
                    Tr(td($rt, $nhints),
                       td($lf, "hint$hpl"),
-                      td({ colspan => 4, style => 'text-align: left' },
+                      td({ colspan => 6, style => 'text-align: left' },
                          sprintf("hints/score: %.2f", $nhints/$score)
                       )
                    );
             }
-        $html .= table(@rows);
+        $html .= table({ cellpadding => 1 }, @rows);
     }
     return $html;
 }
