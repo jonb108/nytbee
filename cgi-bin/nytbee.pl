@@ -2562,17 +2562,37 @@ for my $w (@new_words) {
         # remove the word from the found list
         # do not stash it
         if ($is_found{$xword}) {
-            @found = grep { !m{\A $xword [!]?}xms } @found;
+            my @new_found;
+            my $char = '';
+            for my $w (@found) {
+                if ($w =~ m{\A $xword ([!*+-])? \z }xms) {
+                    $char = $1;
+                }
+                else {
+                    push @new_found, $w;
+                }
+            }
+            @found = @new_found;
             delete $is_found{$xword};
             ++$n_minus;
             # puzzle feedback?
-            my $ws = word_score($xword, $is_pangram{$xword});
+            # ! stash * bonus + lexicon - donut
+            my $type = $char eq '' ? 'Puzzle'
+                      :$char eq '!'? 'Stash'
+                      :$char eq '*'? 'Bonus'
+                      :$char eq '+'? 'Lexicon'
+                      :              'Donut'
+                      ;
+            my $ws = '';
+            if ($type eq 'Puzzle') {
+                my $n = word_score($xword, $is_pangram{$xword});
+                $ws = " -$n";
+                $points_added -= $n;
+                    # in case $pw_feedback is 1
+            }
             if ($pw_feedback == 0) {
                 $message .= ul(red(uc $xword)
-                         . ": Puzzle word removed -$ws<br>");
-            }
-            elsif ($pw_feedback == 1) {
-                $points_added -= $ws;
+                         . ": $type word removed$ws<br>");
             }
         }
         else {
@@ -4345,14 +4365,17 @@ EOH
                td({ colspan => 4, style => 'text-align: left ' },
                   "$stashed_points point$sts in stash"))
             ;
-            if ($nhints && $score != 0) {
-                push @rows,
-                   Tr(td($rt, $nhints),
-                      td($lf, "hint$hpl"),
-                      td({ colspan => 6, style => 'text-align: left' },
-                         sprintf("hints/score: %.2f", $nhints/$score)
-                      )
-                   );
+            if ($nhints) {
+                my @cols;
+                push @cols, td($rt, $nhints),
+                            td($lf, "hint$hpl");
+                if ($score != 0) {
+                      push @cols,
+                           td({ colspan => 6, style => 'text-align: left' },
+                              sprintf("hints/score: %.2f", $nhints/$score)
+                           );
+                }
+                push @rows, Tr(@cols);
             }
         $html .= table({ cellpadding => 1 }, @rows);
     }
