@@ -1520,12 +1520,6 @@ elsif ($cmd eq '~pf') {
     $message = "@found";
     $cmd = '';
 }
-elsif ($cmd =~ m{\A im \s+ (\w+) \s* \z}xms) {
-    my $term = $1;
-    # https://www.google.com/search?sca_esv=1&sca_upv=1&biw=1010&bih=635&q=juice&udm=2
-    $message = "Image of $term";
-    $cmd = '';
-}
 elsif ($cmd eq 's45') {
     @found = map {
                 my $l = length;
@@ -2163,7 +2157,7 @@ if (   $cmd ne '1'
     && $cmd ne '53'
     && $cmd ne 'id'
     && $cmd ne 'top'
-    && $cmd !~ m{\A n?[dlbi]w \z}xms
+    && $cmd !~ m{\A n?[dlbi]w}xms
     && $cmd ne 'abw'
     && $cmd ne 'i'
     && $cmd !~ m{\A cw\s*\d* \z}xms
@@ -3385,16 +3379,42 @@ EOH
     }
     $cmd = '';
 }
+elsif ($cmd =~ m{\A (n?iw) \s+ ([a-z]+) \z}xms) {
+    my $numeric = $1 eq 'niw';
+    my $prefix = $2;
+    open my $in, '<', "incorrect/$date";
+    my %words;
+    while (my $line = <$in>) {
+        chomp $line;
+        if ($line =~ m{\A $prefix}xms) {
+            ++$words{$line};
+        }
+    }
+    close $in;
+    my @words = $numeric? (sort {
+                               $words{$b} <=> $words{$a}
+                               ||
+                               $a cmp $b
+                           }
+                           keys %words)
+               :          (sort keys %words)
+               ;
+    my @rows;
+    for my $w (@words) {
+        push @rows, Tr(td({ class => 'lt' }, $w),
+                       td({ class => 'rt' }, $words{$w}),
+                    );
+    }
+    $message .= table(@rows);
+    $cmd = '';
+}
 elsif ($cmd =~ m{\A (n)?([dlbi])w \z}xms) {
-    # still need to document it
-    # if today's puzzle not before 2:00 a.m. East Coast time
-    # add to Cmds pdf, xlsx
     # second column of numbers is the # of people who found it
     # DW, LW, BW - sort by the word
     # NDW, NLW, NBW - sort by the numbers descending then the word
     # pangram (green), perfect pangram (purple)
-    # word is red if you found it
-    # as usual you can click on each word to get definition and
+    # word is skyblue if you found it
+    # you can click on each word to get definition and
     # then on the definition to get full wordnik definition.
     #
     my $numeric = $1;
