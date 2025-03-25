@@ -392,7 +392,7 @@ if ($cmd eq '' && $post) {
     $post =~ s{\n}{<br>}xmsg;
     $post =~ s{"}{&#34;}xmsg;
     if ($post) {    # is anything there?
-        system(qq!$cgi_dir/get_post.pl $date "$screen_name" '$post'!);
+        system(qq!$cgi_dir/get_post.pl $date "$screen_name" "$post"!);
     }
 }
 
