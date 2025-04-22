@@ -4,3 +4,5 @@ cd cgi-bin
 tar xvf ../cgi.tar
 cd ../nytbee
 tar xvf ../html.tar
+cd ..
+rm *.tar

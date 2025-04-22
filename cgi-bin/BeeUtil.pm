@@ -7,6 +7,7 @@ our @EXPORT_OK = qw/
     cgi_header
     uniq_chars
     uniq_words
+    jumble
     extra_let
     error
     word_score
@@ -107,6 +108,16 @@ sub uniq_chars {
 sub uniq_words {
     my %seen;
     return grep { !$seen{$_}++ } @_;
+}
+
+sub jumble {
+    my ($w) = @_;
+    my @chars = split '', $w;
+    my $jw = '';
+    while (@chars) {
+        $jw .= splice @chars, int(rand(@chars)), 1;
+    }
+    return $jw eq $w? jumble($w): $jw;
 }
 
 sub error {

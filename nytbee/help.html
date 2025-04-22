@@ -73,7 +73,7 @@ And I have.  The complete source code for this project is on
 <a href=#screen_names>Screen Names and Your Identity</a><br>
 <a href=#mobile>Playing on a Mobile Phone or Tablet</a><br>
 <a href=#hint_commands>Hint Commands</a><br>
-<a href=#table_list>The Hint Table, Two Letter List, and Three Letter List</a><br>
+<a href=#table_list>The Hint Table, Two Letter List, Three Letter List, and Jumble Table</a><br>
 <a href=#hint>Hint Strategy</a><br>
 <a href=#games>Games within the Game</a><br>
 <a href=#bingo>Bingo</a><br>
@@ -564,10 +564,12 @@ Most of us mere mortals need some kind of help to get to Amazing or Genius.
 <tr><td width=10%><span class=cmd>HT</span></td><td>Show the Hint Table.</td></tr>
 <tr><td><span class=cmd>TL</span></td><td>Show the Two Letter List.</td></tr>
 <tr><td><span class=cmd>T3</span></td><td>Show the Three Letter List.</td></tr>
-<tr><td colspan=2>The Hint Table, Two Letter List, and Three Letter List  are explained <a href=#table_list>below</a>.</td></tr>
+<tr><td><span class=cmd>JT</span></td><td>Show the Jumble Table.</td></tr>
+<tr><td colspan=2>The Hint Table, Two Letter List, Three Letter List, and Jumble Table are explained <a href=#table_list>below</a>.</td></tr>
 <tr><td><span class=cmd>1</span></td><td>Show a random entry from the Hint Table.</td></tr>
 <tr><td><span class=cmd>2</span></td><td>Show a random entry from the Two Letter List.
 <tr><td><span class=cmd>3</span></td><td>Show a random entry from the Three Letter List.
+<tr><td><span class=cmd>JR</span></td><td>Show a random entry from the Jumble Table.
 <tr><td colspan=2>These three will work even if the full Table and Lists are not shown.<p></td></tr>
 <tr><td colspan=2>Note: The Define and reVeal commands below will skip words that have already been found.<p></td></tr>
 </table>
@@ -577,7 +579,7 @@ Most of us mere mortals need some kind of help to get to Amazing or Genius.
 <tr><td><span class=cmd>DP</span></td><td>Define the Pangrams.</td></tr>
 <tr><td><span class=cmd>DB8</span></td><td>Define the words beginning with B of length 8.</td></tr>
 <tr><td><span class=cmd>DGA</span></td><td>Define the words beginning with GA.</td></tr>
-<tr><td><span class=cmd>D-MIN</span></td><td>Define the words beginning with MIN.</td></tr>
+<tr><td width=15%><span class=cmd>D-MIN</span></td><td>Define the words beginning with MIN.</td></tr>
 <tr><td><span class=cmd>DR</span></td><td>Define a random word from the list of words not yet found.  Note that if there are no 4 letter words in the found list the <span class=cmd>DR</span> command will do a <span class=cmd>D5</span> to only include 5+ letter words.  This will help when trying for <a href=#gn4l>GN4L</a>.</td></tr>
 <tr><td colspan=2><span class=cmd>D&nbsp;&nbsp;&lt;word&gt;</span>&nbsp;&nbsp;Define the word.
 You can ask for definitions of <i>any</i> word - not just the ones in the puzzle.
@@ -620,21 +622,21 @@ If you do not want to accidentally get definitions there is the
 <p>
 Note that there is no <span class=cmd>V4MIN</span> (or <span class=cmd>E4MIN</span>) command to reveal 4 letters of words beginning with MIN as this would be just <i>too much</i>.  Yes, this <i>is</i> the <span style='color: red'>Ultra</span>Bee but one has to have <i>some</i> limit, right? &#128522;
 <a name=table_list></a>
-<h2>The Hint Table, Two Letter List, and Three Letter List
+<h2>The Hint Table, Two Letter List, Three Letter List, and the Jumble Table
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
 <p>
 The <span class=green>Hint Table</span> (aka The Grid) (invoked with the <span class=cmd>HT</span> command) looks like this:
 <ul>
-<img src=pics/hint_table.png>
+<img src=pics/hint_table.png width=370>
 </ul>
-The <span class=blue>5</span> in the <b>M</b> row and the <b>6</b> column means that the the puzzle has <span class=blue>5</span> words beginning with <b>M</b> of length <b>6</b>.
+The <span class=blue>4</span> in the <b>T</b> row and the <b>5</b> column means that the the puzzle has <span class=blue>4</span> words beginning with <b>T</b> of length <b>5</b>.
 <p>
 The <span class=green>Two Letter List</span> (invoked with the <span class=cmd>TL</span> command) looks like this:
 <ul>
-<img src=pics/two_letter_list.png width=250>
+<img src=pics/two_letter_list.png width=280>
 </ul>
-The <span class=blue>MI-7</span> means that the puzzle has <b>7</b> words beginning with <b>MI</b>.
+The <span class=blue>TI-2</span> means that the puzzle has <b>2</b> words beginning with <b>TI</b>.
 <p>
 There are <span class=red>two important things</span> 
 about the table and list.
@@ -660,12 +662,29 @@ silently ignored.
 <p>
 The <span class=green>Three Letter List</span> is invoked with the <span class=cmd>T3</span> command and looks like this:
 <ul>
-<img src=pics/three_letter_list.png width=115>
+<img src=pics/three_letter_list.png width=500>
 </ul>
-The <span class=blue>LUL-2</span> means that there are <b>2</b> words beginning with <b>LUL</b>.  As you might expect, you can click on the <span class=blue>LUL-2</span> to get brief definitions (and/or clues).  This list is dynamic as well.
+The <span class=blue>NOR</span> means that there is 1 word beginning with <b>NOR</b>.  As you might expect, you can click on the <span class=blue>NOR</span> to get brief definitions (and/or clues).  This list is dynamic as well.
 <p>
 The Three Letter List is not a standard part of the NYT Puzzle.  It <i>is</i> often provided by various people in the HiveMind comments.
 It almost gives <i>too</i> many hints since you only need to add one letter to get the 4 letter words!
+<p>
+<a name=jumble></a>
+The <span class=green>Jumble Table</span> is invoked with the <span class=cmd>JT</span> command and looks like this:
+<ul>
+<img src=pics/jumble_table.png width=540>
+</ul>
+Words that have not yet been found are shown jumbled up (aka scrambled, shuffled, anagrammed).  The circled <span class=blue>IOHNNRT</span> is an jumbled version of TINHORN &#128522;.
+It is guaranteed that the jumbled word is not the actual word.
+As before, you can click on the jumbled words to get brief definitions (and/or clues).
+Definitions for jumbled words are charged the same number of
+hint points as clicking on entries in the other hint table and lists.
+<p>
+The commands <span class=cmd>JR</span>
+and
+<span class=cmd>5J</span> show a random jumbled word and a 5+ letter jumbled word respectively and will work whether or not the Jumble Table is present.
+<p>
+The Jumble Table was inspired by the <a target=_blank href='https://beebox.ghost.io'>Spelling Bee Toolbox</a> written by Kevin Kolb.
 <a name=hint></a>
 <h2>Hint Strategy
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -681,6 +700,7 @@ The number of hints are tallied like so:
 <ul>
 <table cellpadding=5>
 <tr><th>Hint Command</th><th align=left colspan=2>&nbsp;&nbsp;# hints</th></tr>
+<tr><td><span class=cmd>JT</span></td><td align=right>20</td></tr>
 <tr><td><span class=cmd>T3</span></td><td align=right>15</td></tr>
 <tr><td><span class=cmd>HT</span></td><td align=right>10</td></tr>
 <tr><td><span class=cmd>TL</span></td><td align=right>5</td></tr>
@@ -692,9 +712,10 @@ The number of hints are tallied like so:
 <tr><td><span class=cmd>1</span></td><td align=right>1</td></tr>
 <tr><td><span class=cmd>2</span></td><td align=right>1</td></tr>
 <tr><td><span class=cmd>3</span></td><td align=right>1</td></tr>
+<tr><td><span class=cmd>JR</span></td><td align=right>1</td></tr>
 <tr><td><span class=cmd>DR</span></td><td align=right>1</td></tr>
 <tr><td><span class=cmd>D5</span></td><td align=right>1</td></tr>
-<tr><td><span class=cmd>51, 52, 53</span></td><td align=right>1</td></tr>
+<tr><td><span class=cmd>51, 52, 53, 5J</span></td><td align=right>1</td></tr>
 <tr><td><span class=cmd>#B, #4, #&gt;4</span></td><td align=right>1</td></tr>
 <tr><td><span class=cmd>#</span></td><td align=right>0</td></tr>
 <tr><td><span class=cmd>BT</span></td><td align=right>0</td></tr>
@@ -738,7 +759,12 @@ There <i>are</i> other fun ways to play:
 <ul>
 <li>The Pangram Game - Get random games (with the command <span class=cmd>NR</span>) and find all of the pangrams.  The commands <span class=cmd>DP</span> and <span class=cmd>V1P</span> can help.  You can periodically clear
 your list of games with the <span class=cmd>XA</span> command.
-<li><a href=#gn4l>Genius No 4 Letter</a> (GN4L) - Find only 5+ letter words to reach the Genius level.  The commands <span class=cmd>51</span>, <span class=cmd>52</span>, and <span class=cmd>D5</span> can help.  You can also try for GOTN (On the Nose).
+<li><a href=#gn4l>Genius No 4 Letter</a> (GN4L) - Find only 5+ letter words to reach the Genius level.  
+The commands <span class=cmd>51</span>,
+<span class=cmd>52</span>,
+<span class=cmd>53</span>,
+<span class=cmd>5J</span>,
+and <span class=cmd>D5</span> can help.  You can also try for GOTN (On the Nose).
 <li><a href=#bingo>Bingo</a> - Get random Bingo games (with the command <span class=cmd>NRB</span>) and try for the various levels of Bingo achievement.  The command <span class=cmd>BT</span> can help.
 <li>Don’t worry about your hint total and just keep asking for hints
 (via the <span class=cmd>D</span>, <span class=cmd>V</span>, and <span class=cmd>E</span> commands) until you get to Queen Bee.   This is
@@ -758,7 +784,7 @@ and Lexicon words.
 Searching for these “Extra” words is, for me,
 a more creative and fun
 way to spend WordPlay time that is much more diverting than simply
-finding hidden words that someone else has chosen. &#128540;
+finding words that someone else has chosen and hidden from you. &#128540;
 The <span class=cmd>CW</span> command will show you how other
 people are doing with the Extra words and introduces a bit of
 <a href=#competition>fun competition</a>.
@@ -900,6 +926,7 @@ and here are a few commands to help:
 <tr><td><span class=cmd>51</span></td><td>Show a random non-zero entry from the Hint Table where the length is 5 or more.</td></tr>
 <tr><td><span class=cmd>52</span></td><td>Show a random entry from the Two Letter List of words with a length of 5 or more.</td></tr>
 <tr><td><span class=cmd>53</span></td><td>Show a random entry from the Three Letter List of words with a length of 5 or more.</td></tr>
+<tr><td><span class=cmd>5J</span></td><td>Show a random entry from the Jumble Table of words with a length of 5 or more.</td></tr>
 </table>
 <p>
 When you achieve GN4L you get a congratulatory message:
@@ -1161,9 +1188,11 @@ And here is a screenshot from the NYT Spelling Bee HiveMind Forum on that day:
 This is evidence that Donut and Bonus words are a troublesome
 issue for those who only play on the NY Times site!
 On <i>this</i> site they are an added fun competitive challenge. &#128522;
-<p>
+<h4>Types of Bonus Words</h4>
 A <span class=green>Bonus Pangram</span> is one that uses all 7 letters plus the extra one.  In the above puzzle <span class=green>ARCHITECTURE</span> would be a Bonus Pangram.
 A <span class=purple>Perfect Bonus Pangram</span> is exactly 8 letters long.
+Inspired by <a target=_blank href='https://buymenyt.com'>buymenyt.com</a>
+an <i>Super</i> Bonus word is one that has 7 or more letters and includes the puzzle’s center letter.
 There is yet <span style="color: magenta"><i>another</i></span> type of Bonus Pangram – which I will leave
 undocumented so you can have the pleasure of discovering it on your own.
 <p>
@@ -2221,6 +2250,12 @@ They have definitions – grabbed from somewhere – but not one for BIKING on 1
 <li><a target=nytbee href='https://the-frenemy.com/nyt-spelling-bee-answers-daily/'>the-frenemy.com</a> Other word puzzles as well.
 <li><a target=nytbee href='https://walkthroughs.net/nyt-spelling-bee-jan-28-2022-answers/'>walkthroughs.net</a> Just the answers.  It started on 1/28/22.  May not always be there!  Who knows why?  The url contains the date - which you will need to modify. &#128579;
 </ol>
+<h3>Other Projects</h3>
+<ol>
+<li><a target=nytbee href='https://beebox.ghost.io'>The Completely Unauthorized NYT Spelling Bee Toolbox</a> This site was the inspiration for the Jumble Table.
+Beautifully formatted.  Clicking on a jumbled word will reveal the word itself.
+<li><a target=nytbee href='https://buymenyt.com'>SpellKing (aka buymenyt.com)</a> This site was the inspiration for Super Bonus Words.  The 7 letters in these puzzles do not track the NYT daily puzzle.  They do not allow an S as an additional letter.  I guess the domain name of buymeny (Buy Me NYT) was chosen to suggest that the NY Times purchase his software just like they did with Wordle.
+</ol>
 <h3>NY Times Engineering Director</h3>
 <a target=nytbee href='nyt_engineering_director.pdf'>This page</a> is a December 9, 2021 advertisement for a job at the NY Times as Director of Engineering for the Games team - to manage 30 engineers!
 <p>
@@ -2318,8 +2353,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2513 puzzles with
-a total of 10608 different words!
+2540 puzzles with
+a total of 10634 different words!
 <p>
 Tallies are made of the many puzzles and words.
 See this table of the puzzles:

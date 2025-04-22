@@ -294,7 +294,7 @@ for my $screen_name (sort {
     if ($rank_for{$screen_name} != $prev_rank) {
         print "<tr><th class='lt green' colspan=2>$rank_name{$rank_for{$screen_name}}</th>";
         if ($rank_for{$screen_name} == 8) {
-            print "<th style='text-align: right; font-size: 13pt;'>Words<br>To QB</th>";
+            print "<th class=rt style='font-size: 13pt;'>Words<br>To QB</th>";
         }
         print "</tr>\n";
         if (! $name_hints) {
@@ -310,8 +310,8 @@ for my $screen_name (sort {
     }
     my $col3 = ($gn || $red_star)? "<td class=lt>$sp$gn$red_star</td>": '';
     print "<tr><td class=rt>$screen_name</td>"
-        . "<td align=right>$sp$hints_for{$screen_name}</td>"
-        . ($prev_rank != 8? '': "<td align=right>$queen_minus_for{$screen_name}<td>")
+        . "<td class=rt>$sp$hints_for{$screen_name}</td>"
+        . ($prev_rank != 8? '': "<td class=rt>$queen_minus_for{$screen_name}<td>")
         . "$col3</tr>\n";
 }
 print "</table>\n";

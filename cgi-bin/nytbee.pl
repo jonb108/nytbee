@@ -16,14 +16,6 @@ use BeeUtil qw/
     trim
     slash_date
     shuffle
-    ul
-    table
-    Tr
-    th
-    td
-    bold
-    div
-    span
     word_score
     JON
     $log
@@ -32,6 +24,17 @@ use BeeUtil qw/
     $thumbs_up
     get_html
     mark_up
+    jumble
+/;
+use BeeHTML qw/
+    table
+    Tr
+    td
+    th
+    div
+    span
+    ul
+    bold
 /;
 use BeeColor qw/
     set_colors
@@ -258,7 +261,7 @@ sub my_puzzles {
     map {
         [
             $_,
-            (split ' ', $cur_puzzles{$_})[2, 5]     # all_pangrams?, rank
+            (split ' ', $cur_puzzles{$_})[2, 7]     # all_pangrams?, rank
         ]
     }
     sort
@@ -791,6 +794,7 @@ my (@found,     # includes valid puzzle words, lexicon+ words, donut- words
     $ht_chosen,
     $tl_chosen,
     $t3_chosen,
+    $jt_chosen,
     $score_at_first_hint,
     $score,
     $rank_name,
@@ -818,8 +822,9 @@ sub add_hints {
 if (exists $cur_puzzles{$date}) {
     my ($ap, $rank);    # all pangrams is not needed here...
                         # rank is recomputed
-    ($nhints, $n_overall_hints, $ap, $ht_chosen,
-     $tl_chosen, $t3_chosen, $rank, $score_at_first_hint,
+    ($nhints, $n_overall_hints, $ap,
+     $ht_chosen, $tl_chosen, $t3_chosen, $jt_chosen,
+     $rank, $score_at_first_hint,
      @found)
         = split ' ', $cur_puzzles{$date};
 }
@@ -829,6 +834,8 @@ else {
     $ht_chosen = 0;
     $tl_chosen = 0;
     $t3_chosen = 0;
+    $jt_chosen = 0;
+    $rank      = 0;
     $score_at_first_hint = -1;  # -1 since we may ask for a hint
                                 # at the very beginning!
     @found     = ();
@@ -1105,6 +1112,15 @@ sub do_define {
         }
         $cmd = '';
     }
+    elsif ($term =~ m{\A [~]([a-z]+)=([a-z]+) \z}xms) {
+        $msg .= uc($2) . ':';
+        my $w = reverse $1;
+        my $def = define($w, 0);
+        add_hints($nhints) unless $def =~ $no_def;
+        if ($def) {
+            $msg .= ul($def);
+        }
+    }
     $message = $msg;
 }
 
@@ -1270,6 +1286,19 @@ elsif ($cmd eq 'ht') {
         $ht_chosen = 1;
         add_hints(10);
     }
+    $cmd = '';
+}
+elsif ($cmd eq 'jt') {
+    if (! $jt_chosen) {
+        $jt_chosen = 1;
+        add_hints(20);
+    }
+    $cmd = '';
+}
+elsif ($cmd eq 'jr') {
+    my @un_found = grep { !$is_found{$_} } @ok_words;
+    $message = uc jumble $un_found[ rand @un_found ];
+    add_hints(3);
     $cmd = '';
 }
 elsif ($cmd eq 'tl') {
@@ -1449,6 +1478,11 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     $cmd = '';
 }
 elsif ($cmd =~ m{\A d(p|r|5|[a-z]\d+|[a-z][a-z]|[-][a-z][a-z][a-z]) \z}xms) {
+    do_define($1);
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A d(~[a-z]+=[a-z]+) \z}xms) {
+    # undocumented - for the jumble table
     do_define($1);
     $cmd = '';
 }
@@ -1662,6 +1696,7 @@ elsif ($cmd =~ m{\A c \s+ y \s*(a?) \z}xms) {
     $ht_chosen = 0;
     $tl_chosen = 0;
     $t3_chosen = 0;
+    $jt_chosen = 0;
     $score_at_first_hint = -1;
     $cmd = '';
 }
@@ -1708,7 +1743,7 @@ elsif ($cmd eq 'sc') {
             }
             push @rows, Tr(td($s),
                            td($space.$sc),
-                           td($space.$tot),
+                           td({ class => 'rt' }, $space.$tot),
                            td({ class => 'lt' }, $space.$rank_name),
                           );
         }
@@ -2155,6 +2190,7 @@ if (   $cmd ne '1'
     && $cmd ne '51'
     && $cmd ne '52'
     && $cmd ne '53'
+    && $cmd ne '5j'
     && $cmd ne 'id'
     && $cmd ne 'top'
     && $cmd !~ m{\A n?[dlbi]w}xms
@@ -2406,9 +2442,11 @@ sub consider_word {
             elsif ($mess eq 'bonus') {
                 my $own = own_word('bonus', $date, $w);
                 my $bingo = index($seven, substr($w, 0, 1)) < 0? 'Bingo ': '';
+                my $super = length $w >= 7 && index($w, $center) >= 0?
+                                'Super ': '';
                 $not_okay_words .= "<span class=not_okay>"
                                 .  def_word(uc($w), $w)
-                                .  "</span>: ${bingo}Bonus ${own}word $thumbs_up<br>"
+                                .  "</span>: ${bingo}${super}Bonus ${own}word $thumbs_up<br>"
                                 .  pangram_check($w, 8, $seven);
                 add_4word('bonus', $date, $w);
                 $w .= '*';      # * in the found list marks bonus words
@@ -3137,112 +3175,44 @@ $found_words
 EOH
 }
 
-# get the HT and TL tables ready
-# DO include the Stash words
-# $sums{$c}{1} is the rightmost column (sigma)
-# $sums{1}{$l} is the bottom row       (sigma)
-#
-my %sums;
-my %two_lets;
-my %three_lets;
-my $max_len = 0;
-my %first_char;
-WORD:
-for my $w (@ok_words) {
-    my $l = length($w);
-    if ($max_len < $l) {
-        $max_len = $l;
-    }
-    my $c1 = substr($w, 0, 1);
-    ++$first_char{$c1};
-    if ($is_found{$w}) {
-        # skip it
-        next WORD;
-    }
-    ++$sums{$c1}{$l};
-
-    # the summations:
-    ++$sums{$c1}{1};
-    ++$sums{1}{$l};
-    ++$sums{1}{1};
-
-    # the two and three letter list
-    ++$two_lets{substr($w, 0, 2)};
-    ++$three_lets{substr($w, 0, 3)};
-}
-
-# how many Non-zero columns and rows?
-my $ncols = 0;
-for my $l (4 .. $max_len) {
-    if ($sums{1}{$l} != 0) {
-        ++$ncols;
-    }
-}
-my $nrows = 0;
-for my $c (@seven) {
-    if ($sums{$c}{1} != 0) {
-        ++$nrows;
-    }
-}
-
 # we unfortunately may have determined the bingo
 # status once before - see show_BingoTable above.
+my %first_char;
+for my $w (@ok_words) {
+    my $c1 = substr($w, 0, 1);
+    $first_char{$c1} = 1,
+}
 my $bingo = keys %first_char == 7? qq!, <a class=alink onclick="issue_cmd('BT');">Bingo</a>!: '';
 
-# now that #we have computed %sums and %two_lets
 # perhaps $cmd was not words to add after all...
 if ($cmd eq '1' || $cmd eq '51') {
-    my $start = $cmd eq '51'? 5: 4;
-    # find a random non-zero entry in the hint table
-    my @entries;
-    for my $l ($start .. $max_len) {
-        for my $c (@seven) {
-            if ($sums{$c}{$l}) {
-                push @entries, "\U$c$l-$sums{$c}{$l}";
-            }
-        }
-    }
-    if (@entries) {
-        # not Queen Bee yet
+    my @words = grep { !$is_found{$_} && ($cmd eq '1' || length >= 5) }
+                @ok_words;
+    if (@words) {
         add_hints(1);
-        $message .= $entries[ rand @entries ];
-    }
-    else {
-        my $len = $cmd eq '1'? '': ' 5+ letter';
-        $message .= "No more$len words.";
-    }
-    $cmd = '';
-}
-elsif ($cmd eq '2') {
-    # random non-zero entry in %two_lets
-    my @entries;
-    for my $k (sort keys %two_lets) {
-        if ($two_lets{$k}) {
-            push @entries, "\U$k-$two_lets{$k}";
-        }
-    }
-    if (@entries) {
-        # not Queen Bee yet
-        add_hints(1);
-        $message .= $entries[ rand @entries ];
+        my $word = $words[ rand @words ];
+        my $c = substr($word, 0, 1);
+        my $l = length $word;
+        my $n = grep { substr($_, 0, 1) eq $c && length == $l } @words;
+        $message .= "\U$c$l" . ($n > 1? "-$n": '');
     }
     else {
         $message .= 'No more words.';
     }
     $cmd = '';
 }
-elsif ($cmd eq '52') {
-    my @words = grep { !$is_found{$_} && length > 4 }
+elsif ($cmd eq '2') {
+    my @words = grep { !$is_found{$_}}
                 @ok_words;
     if (@words) {
         add_hints(1);
         my $word = $words[ rand @words ];
         my $l2 = substr($word, 0, 2);
         my $n = grep { m{\A $l2}xms } @words;
-        $message .= "\U$l2-$n";
+        $message .= "\U$l2" . ($n > 1? "-$n": '');
     }
     else {
-        $message .= "No more 5+ letter words.";
+        $message .= 'No more words.';
     }
     $cmd = '';
 }
@@ -3261,8 +3231,23 @@ elsif ($cmd eq '3') {
     }
     $cmd = '';
 }
+elsif ($cmd eq '52') {
+    my @words = grep { !$is_found{$_} && length >= 5 }
+                @ok_words;
+    if (@words) {
+        add_hints(1);
+        my $word = $words[ rand @words ];
+        my $l2 = substr($word, 0, 2);
+        my $n = grep { m{\A $l2}xms } @words;
+        $message .= "\U$l2-$n";
+    }
+    else {
+        $message .= "No more 5+ letter words.";
+    }
+    $cmd = '';
+}
 elsif ($cmd eq '53') {
-    my @words = grep { !$is_found{$_} && length > 4}
+    my @words = grep { !$is_found{$_} && length >= 5}
                 @ok_words;
     if (@words) {
         add_hints(1);
@@ -3270,6 +3255,19 @@ elsif ($cmd eq '53') {
         my $l3 = substr($word, 0, 3);
         my $n = grep { m{\A $l3}xms } @words;
         $message .= "\U$l3" . ($n > 1? "-$n": '');
+    }
+    else {
+        $message .= 'No more 5+ words.';
+    }
+    $cmd = '';
+}
+elsif ($cmd eq '5j') {
+    my @words = grep { !$is_found{$_} && length >= 5}
+                @ok_words;
+    if (@words) {
+        add_hints(1);
+        my $word = $words[ rand @words ];
+        $message .= uc jumble($word);
     }
     else {
         $message .= 'No more 5+ words.';
@@ -3719,113 +3717,6 @@ elsif ($cmd =~ m{\A sn \s+ (.+) \z}xms) {
     $cmd = '';
 }
 
-# the hint tables
-my $hint_table = '';
-if ($ht_chosen) {
-    my $space = '&nbsp;' x 4;
-    my @rows;
-    my @th;
-    my $dash = '&nbsp;-&nbsp;';
-    push @th, th('&nbsp;');
-    LEN:
-    for my $l (4 .. $max_len) {
-        if ($sums{1}{$l} == 0) {
-            next LEN;
-        }
-        push @th, th("$space$l");
-    }
-    if ($ncols > 1) {
-        push @th, th("$space&nbsp;&Sigma;");
-    }
-    push @rows, Tr(@th);
-    CHAR:
-    for my $c (@seven) {
-        if ($sums{$c}{1} == 0) {
-            next CHAR;
-        }
-        my @cells;
-        push @cells, th({ class => 'lt' }, uc $c);
-        LEN:
-        for my $l (4 .. $max_len) {
-            if ($sums{1}{$l} == 0) {
-                next LEN;
-            }
-            push @cells, td($sums{$c}{$l}?
-                               "<span class='pointer' style='color: $colors{alink}'"
-                               . qq! onclick="issue_cmd('D$c$l');">!
-                               . "$sums{$c}{$l}</span>"
-                           : $dash
-                          );
-        }
-        if ($sums{$c}{1} != 0 && $ncols > 1) {
-            push @cells, th($sums{$c}{1} || 0);
-        }
-        push @rows, Tr(@cells);
-    }
-    if ($nrows > 1) {
-        @th = th({ class => 'rt' }, '&Sigma;');
-        LEN:
-        for my $l (4 .. $max_len) {
-            if ($sums{1}{$l} == 0) {
-                next LEN;
-            }
-            push @th, th($sums{1}{$l} || $dash);
-        }
-        if ($ncols > 1) {
-            push @th, th($sums{1}{1} || 0);
-        }
-        push @rows, Tr(@th);
-    }
-    $hint_table = table({ cellpadding => 2 }, @rows);
-}
-
-# two letter tallies
-my $two_lets = '';
-if ($tl_chosen) {
-    my @two = grep {
-                  $two_lets{$_}
-              }
-              sort
-              keys %two_lets;
-    TWO:
-    for my $i (0 .. $#two) {
-        if ($two_lets{$two[$i]} == 0) {
-            next TWO;
-        }
-        $two_lets .= qq!<span class='pointer' style='color: $colors{alink}' onclick="issue_cmd('D$two[$i]');">!
-                  .  qq!\U$two[$i]\E-$two_lets{$two[$i]}</span>!;
-        if ($i < $#two
-            && substr($two[$i], 0, 1) ne substr($two[$i+1], 0, 1)
-        ) {
-            $two_lets .= "<br>";
-        }
-        else {
-            $two_lets .= '&nbsp;&nbsp;&nbsp;';
-        }
-    }
-}
-# three letter tallies
-my $three_lets = '';
-if ($t3_chosen) {
-    my $prev = '';
-    for my $w3 (sort keys %three_lets) {
-        my $n = $three_lets{$w3};
-        if ($n) {
-            my $s = uc $w3;
-            if ($n > 1) {
-                $s .= "-$n";
-            }
-            my $end = '<br>';
-            my $fl = substr($s, 0, 1);  # first letter
-            if ($prev ne $fl) {
-                $three_lets .= "<p>";
-                $prev = $fl;
-            }
-            $three_lets .= qq!<span class='pointer' style='color: $colors{alink}' onclick='issue_cmd("D-$w3")'>$s</span><br>!
-        }
-    }
-}
-
 my $image = '';
 if (7 <= $rank && $rank <= 9) {
     my $name = lc $ranks[$rank]->{name};
@@ -3856,7 +3747,7 @@ for my $p (@pangrams) {
 
 $cur_puzzles{$date} = join ' ',
     $nhints, $n_overall_hints, $all_pangrams, $ht_chosen,
-    $tl_chosen, $t3_chosen, $rank, $score_at_first_hint,
+    $tl_chosen, $t3_chosen, $jt_chosen, $rank, $score_at_first_hint,
     @found
     ;
 $cur_puzzles_store{$uuid} = Dumper(\%cur_puzzles);  # the key point #2
@@ -4114,36 +4005,14 @@ EOS
     }
 }
 
-my $hint_table_list = <<'EOH';
-<style>
-.hints {
-    margin-top: 4mm;
-}
-</style>
-EOH
-if ($ht_chosen && $sums{1}{1} != 0 && ! ($bonus_mode || $donut_mode)) {
-    $hint_table_list .= <<"EOH";
-<!-- HINT TABLE -->
-<div class=hints>
-$hint_table
-</div>
-EOH
-}
-if ($tl_chosen && $sums{1}{1} != 0 && ! ($bonus_mode || $donut_mode)) {
-    $hint_table_list .= <<"EOH";
-<!-- TWO LETTER LIST -->
-<div class=hints>
-$two_lets
-</div>
-EOH
-}
-if ($three_lets && ! ($bonus_mode || $donut_mode)) {
-    $hint_table_list .= <<"EOH";
-<!-- THREE LETTER LIST -->
-<div class=hints>
-$three_lets
-</div>
-EOH
+my $hint_table_list = '';
+if (! ($forum_mode || $bonus_mode || $donut_mode)
+    && ($ht_chosen || $tl_chosen || $t3_chosen || $jt_chosen)
+) {
+    my @words = grep { ! $is_found{$_} } @ok_words;
+    if (@words) {
+        $hint_table_list = `$cgi_dir/tables.pl $ht_chosen $tl_chosen $t3_chosen $jt_chosen $colors{alink} \U@words`;
+    }
 }
 
 sub graphical_status {
@@ -4399,14 +4268,14 @@ EOH
             }
         $html .= table({ cellpadding => 1 }, @rows);
     }
-    return $html;
+    return $html . "<p>";
 }
 
 my $status =
     ($bonus_mode || $donut_mode || $status_display == 3)? ''
    :$status_display == 1   ? graphical_status()
    :$status_display == 2   ? graphical_status(1)
-   :                         "Score: $score $rank_image $disp_nhints";
+   :                         "Score: $score $rank_image $disp_nhints<p>";
 my $css = $mobile? 'mobile_': '';
 my $new_words_size = $mobile? 30: 40;
 my $row1_top  = 40 + ($show_Heading? 79: 0);
@@ -4420,9 +4289,7 @@ if ($forum_mode) {
     $bingo_table =
     $found_words =
     $extra_words =
-    $status =
-    $hint_table_list = '';
-    $three_lets = '';
+    $status = '';
 }
 my $title_date = $date =~ m{\A CP}xms? $date
                 :                      'NYT '
