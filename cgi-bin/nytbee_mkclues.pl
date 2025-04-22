@@ -9,12 +9,14 @@ tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
 
 use BeeUtil qw/
     cgi_header
-    table
-    Tr
-    td
     $log
     my_today
     ymd
+/;
+use BeeHTML qw/
+    table
+    Tr
+    td
 /;
 use Date::Simple qw/
     date
