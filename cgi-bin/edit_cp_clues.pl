@@ -14,10 +14,12 @@ use BeeUtil qw/
     uniq_chars
     uniq_words
     error
+    $log
+/;
+use BeeHTML qw/
     table
     Tr
     td
-    $log
 /;
 use Bee_DBH qw/
     $dbh

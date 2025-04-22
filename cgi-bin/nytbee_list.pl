@@ -13,6 +13,8 @@ use File::Slurp qw/
 use BeeUtil qw/
     word_score
     uniq_chars
+/;
+use BeeHTML qw/
     Tr
     th
     td

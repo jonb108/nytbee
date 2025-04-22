@@ -9,14 +9,16 @@ use CGI::Carp qw/
 use BeeUtil qw/
     ymd
     cgi_header
-    table
-    Tr
-    td
-    th
     my_today
     $cgi
     word_score
     $log
+/;
+use BeeHTML qw/
+    table
+    Tr
+    td
+    th
 /;
 use DB_File;
 use DB_File::Lock;

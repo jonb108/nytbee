@@ -3,6 +3,8 @@ use warnings;
 use strict;
 use BeeUtil qw/
     slash_date
+/;
+use BeeHTML qw/
     table
     Tr
     td
