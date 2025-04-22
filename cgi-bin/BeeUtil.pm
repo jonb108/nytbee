@@ -12,14 +12,6 @@ our @EXPORT_OK = qw/
     error
     word_score
     trim
-    table
-    Tr
-    th
-    td
-    div
-    span
-    ul
-    bold
     slash_date
     shuffle
     JON
@@ -154,43 +146,6 @@ sub trim {
     #$s =~ s{\A [^a-z0-9+#-]}{}xmsgi;  # mobile H3 related? don't know why...
     $s =~ s{\A \s* | \s* \z}{}xmsg;
     return $s;
-}
-
-sub _attrs {
-    my $href = shift;
-    return ' ' . join ' ',
-           map { "$_='$href->{$_}'" }
-           keys %$href;
-}
-sub table {
-    my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
-    return "<table$attrs>@_</table>";
-}
-sub div {
-    my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
-    return "<div$attrs>@_</div>";
-}
-sub span {
-    my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
-    return "<span$attrs>@_</span>";
-}
-sub Tr {
-    my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
-    return "<tr$attrs>@_</tr>";
-}
-sub th {
-    my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
-    return "<th$attrs>@_</th>";
-}
-sub td {
-    my $attrs = ref $_[0] eq 'HASH'? _attrs(shift): '';
-    return "<td$attrs>@_</td>";
-}
-sub ul {
-    return "<ul>@_</ul>";
-}
-sub bold {
-    return "<b>@_</b>";
 }
 
 sub shuffle {
