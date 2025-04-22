@@ -138,6 +138,7 @@ print <<'EOH';
 }
 .entry {
     font-size: 16pt;
+    text-align: right;
 }
 </style>
 EOH
@@ -170,7 +171,7 @@ for my $aref (sort {
             . ucfirst $name{$type}
             . "</td>";
         if ($donut_mode || ($type != 3 && ! $ow_printed)) {
-            print "<td>#</td>"
+            print "<td class=entry>#</td>"
                 . "<td>${sp}ow</td>";
             $ow_printed = 1;
 
