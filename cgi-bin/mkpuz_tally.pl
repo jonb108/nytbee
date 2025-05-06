@@ -14,6 +14,20 @@ use warnings;
 use CGI;
 my $q = CGI->new();
 my $uuid = cgi_header($q);
+# 9060f4f4-b124-11ee-b0d4-ac0cb0d5d1d5
+my @f = split '-', $uuid;
+if (@f == 5) {
+    print <<'EOH';
+<style>
+body {
+font-size: 18pt;
+margin: .5in;
+}
+</style>
+Sorry, you must set your own ID (with the ID command) in the puzzle before you can create a puzzle!
+EOH
+    exit;
+}
 
 use BeeUtil qw/
     uniq_chars

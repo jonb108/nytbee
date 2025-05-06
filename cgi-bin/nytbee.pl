@@ -740,10 +740,8 @@ if ($cmd eq 'nooop') {
 # perhaps have the colors in nytbee_get_clues.pl or nytbee_get_cluers.pl?
 sub load_nyt_clues {
     if ($puzzle_has_clues{$date}) {
-        %nyt_clues_for
-            = %{ eval get_html "$log/cgi-bin/nytbee_get_clues.pl/$date" };
-        %nyt_cluer_name_of
-            = %{ eval get_html "$log/cgi-bin/nytbee_get_cluers.pl/$date" };
+        %nyt_clues_for     = %{ eval read_file "clues/$date" };
+        %nyt_cluer_name_of = %{ eval read_file "cluers/$date" };
         my @cluer_colors = qw /
             green
             tomato

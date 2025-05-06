@@ -13,6 +13,7 @@ use BeeUtil qw/
     trim
     $log
     ymd
+    uniq_words
 /;
 use BeeClues qw/
     display_clues
@@ -20,6 +21,9 @@ use BeeClues qw/
 use Date::Simple qw/
     date
 /;
+use Data::Dumper;
+$Data::Dumper::Terse = 1;
+$Data::Dumper::Indent = 0;
 
 my $q = CGI->new();
 my $uuid = cgi_header($q);
@@ -115,8 +119,10 @@ EOS
     if (! $word) {
         # we must have been the only one
         delete $puzzle_has_clues{$date};
+        unlink "clues/$date", "cluers/$date";
     }
     else {
+        # remove $uuid from the hash
         $puzzle_has_clues{$date} = join '|',
                                    grep { $_ ne $uuid }
                                    split /\|/,
@@ -134,11 +140,54 @@ EOH
 }
 else {
     if (exists $puzzle_has_clues{$date}) {
-        $puzzle_has_clues{$date} .= "|$uuid";
+        my @users = split /\|/, $puzzle_has_clues{$date};
+        push @users, $uuid;
+        $puzzle_has_clues{$date} = join '|', uniq_words @users;
     }
     else {
         $puzzle_has_clues{$date} = $uuid;
     }
+    # 
+    # write the text two files clues/$date and cluers/$date
+    #
+    my $sth1 = $dbh->prepare(<<'EOS');
+    
+    SELECT person_id, word, clue
+      FROM bee_clue
+     WHERE date = ?
+ ORDER BY person_id
+
+EOS
+    $sth1->execute($date);
+    my %clues;
+    while (my ($person_id, $word, $clue) = $sth1->fetchrow_array()) {
+        push @{$clues{$word}}, { person_id => $person_id, clue => $clue };
+    }
+    open my $out1, '>', "clues/$date"
+        or die "no clues/$date";
+    print {$out1} Dumper(\%clues);
+    close $out1;
+
+    my $sth2 = $dbh->prepare(<<'EOS');
+
+    SELECT id, name
+      FROM bee_person
+     WHERE id IN (SELECT distinct person_id
+                    FROM bee_clue, bee_person
+                   WHERE date = ?) 
+  ORDER BY id;
+
+EOS
+    $sth2->execute($date);
+    my %cluers;
+    while (my ($id, $name) = $sth2->fetchrow_array()) {
+        $cluers{$id} = $name;
+    }
+    open my $out2, '>', "cluers/$date"
+        or die "no clues/$date";
+    print {$out2} Dumper(\%cluers);
+    close $out2;
+
     display_clues(first          => 1,
                   all_words      => $all_words,
                   format         => 1,

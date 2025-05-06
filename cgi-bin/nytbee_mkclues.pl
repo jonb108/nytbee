@@ -40,7 +40,15 @@ if ($all_words) {
     # 9060f4f4-b124-11ee-b0d4-ac0cb0d5d1d5
     my @f = split '-', $uuid;
     if (@f == 5) {
-        print "<meta http-equiv='refresh' content='0; URL=https://ultrabee.org/new_sn_id.html'/>\n";
+        print <<'EOH';
+<style>
+body {
+    font-size: 18pt;
+    margin: .5in;
+}
+</style>
+Sorry, you must set your own ID (with the ID command) in the puzzle before you can make clues!
+EOH
         exit;
     }
 }
@@ -166,7 +174,7 @@ You do not have to give clues for all of the words.  You can return
 here to update and revise your clues.
 <p>
 Clicking on the words will show a brief dictionary definition.
-Clicking on that brief defintion will give a <i>complete</i> definition.
+Clicking on that brief definition will give a <i>complete</i> definition.
 You may, instead, wish to give clues that are more
 ambiguous, clever, wordplay &#128522; - like clues for a crossword puzzle.
 $prior_clues
