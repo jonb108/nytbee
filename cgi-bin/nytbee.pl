@@ -1479,7 +1479,7 @@ elsif ($cmd =~ m{\A d(p|r|5|[a-z]\d+|[a-z][a-z]|[-][a-z][a-z][a-z]) \z}xms) {
     do_define($1);
     $cmd = '';
 }
-elsif ($cmd =~ m{\A d(~[a-z]+=[a-z]+) \z}xms) {
+elsif ($cmd =~ m{\A d([~][a-z]+=[a-z]+) \z}xms) {
     # undocumented - for the jumble table
     do_define($1);
     $cmd = '';
@@ -2191,7 +2191,7 @@ if (   $cmd ne '1'
     && $cmd ne '5j'
     && $cmd ne 'id'
     && $cmd ne 'top'
-    && $cmd !~ m{\A n?[dlbi]w}xms
+    && $cmd !~ m{\A n?[dlbi]w \z}xms
     && $cmd ne 'abw'
     && $cmd ne 'i'
     && $cmd !~ m{\A cw\s*\d* \z}xms
