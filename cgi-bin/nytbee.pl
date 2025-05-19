@@ -2181,33 +2181,23 @@ elsif ($cmd eq 'rcp') {
 # except for 1, 2, and a few others.
 # what new words might we have instead?
 my @new_words;
-# this is awkward --- needs refactoring!
-if (   $cmd ne '1'
-    && $cmd ne '2'
-    && $cmd ne '3'
-    && $cmd ne '51'
-    && $cmd ne '52'
-    && $cmd ne '53'
-    && $cmd ne '5j'
-    && $cmd ne 'id'
-    && $cmd ne 'top'
-    && $cmd !~ m{\A n?[dlbi]w \z}xms
-    && $cmd ne 'abw'
-    && $cmd ne 'i'
-    && $cmd !~ m{\A cw\s*\d* \z}xms
-    && $cmd !~ m{\A sn\b }xms
-    && $cmd !~ m{\A [~]([+]|[-])cp }xms
-) {
-    # what about $cmd eq 'i' or bw or ... ?
-    # turns out it's okay ... but sloppy.
-    # special case ...
-    # for pasting a bunch of BW words along with numbers
-    # TODO JON REFACTOR THIS HACK!
-    #$cmd =~ s{\d}{}xmsg;    
+
+sub words_to_add {
+    my ($cmd) = @_;
+    return $cmd =~ m{\A [a-z]{4,}}xms   # begins with a 4+ letter word
+           && 
+           $cmd !~ m{\s d \z}xms        # ends with space d (define)
+           &&
+           $cmd !~ m{\A wl}xms          # not a wl... command
+           ;                            # like wlps
+}
+
+if (words_to_add($cmd)) {
     @new_words = map {
                      lc
                  }
                  split ' ', $cmd;
+    $cmd = '';      # so we stop asking ...
 }
 
 # they found a bonus, donut, or lexicon word
@@ -3183,6 +3173,8 @@ for my $w (@ok_words) {
 my $bingo = keys %first_char == 7? qq!, <a class=alink onclick="issue_cmd('BT');">Bingo</a>!: '';
 
 # perhaps $cmd was not words to add after all...
+# JON - move these!
+# first check to see if $cmd eq ''...
 if ($cmd eq '1' || $cmd eq '51') {
     my @words = grep { !$is_found{$_} && ($cmd eq '1' || length >= 5) }
                 @ok_words;
@@ -3475,7 +3467,7 @@ elsif ($cmd eq 'top') {
     untie %cur_puzzles_store;
     my $nwords = @ok_words;
     my ($od, $ob, $ol) = own_counts();
-    $message .= `$cgi_dir/nytbee_top.pl $date $nwords $seven $screen_name $od $ob $ol`;
+    $message .= `$cgi_dir/nytbee_top.pl $date $nwords $seven '$screen_name' $od $ob $ol`;
     $cmd = '';
 }
 elsif ($cmd =~ m{\A cw \s* (\d*) \z}xms) {
@@ -3493,7 +3485,7 @@ elsif ($cmd =~ m{\A cw \s* (\d*) \z}xms) {
         # search the day's log and extra word files to identify
         # the top 5 (10?) locations in Donut, Lexicon, and Bonus words.
         # The C stands for Community or Competitive.
-        $message .= `$cgi_dir/nytbee_cw.pl $date $max $seven $screen_name $bonus_mode $donut_mode`;
+        $message .= `$cgi_dir/nytbee_cw.pl $date $max $seven '$screen_name' $bonus_mode $donut_mode`;
     }
     $cmd = '';
 }
@@ -3682,8 +3674,8 @@ elsif ($cmd eq 'sn') {
 }
 elsif ($cmd =~ m{\A sn \s+ (.+) \z}xms) {
     my $new_name = lc $1;
-    if ($new_name =~ m{[<>]}xms) {
-        $message = "Sorry, the characters &lt; and &gt; are not allowed in a screen name.";
+    if ($new_name =~ m{[<>'"]}xms) {
+        $message = qq!Sorry, the characters &lt; &gt;, ', and " are not allowed in a screen name."!
     }
     elsif ($new_name =~ m{\s}xms) {
         $message = "Sorry, spaces are not allowed in a screen name.";
