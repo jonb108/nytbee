@@ -395,7 +395,7 @@ if ($cmd eq '' && $post) {
     $post =~ s{\n}{<br>}xmsg;
     $post =~ s{"}{&#34;}xmsg;
     if ($post) {    # is anything there?
-        system(qq!$cgi_dir/get_post.pl $date "$screen_name" "$post"!);
+        system("$cgi_dir/get_post.pl $date '$screen_name' '$post'");
     }
 }
 
@@ -1855,7 +1855,7 @@ elsif ($cmd eq 'l') {
 }
 elsif ($cmd eq 'cl') {
     my %is_in_list = map { $_->[0] => 1 } my_puzzles();
-    my @dates = `$cgi_dir/nytbee_clue_dates.pl $uuid`;
+    my @dates = `$cgi_dir/nytbee_clue_dates.pl '$uuid'`;
     chomp @dates;
     if (!@dates) {
         $message .= '';
@@ -2115,7 +2115,7 @@ elsif ($date !~ m{\A CP}xms
         $message = 'Activity monitoring began on December 22, 2022.';
     }
     else {
-        $message = `$cgi_dir/nytbee_activity.pl $date '$colors{letter}' $sn`;
+        $message = `$cgi_dir/nytbee_activity.pl $date '$colors{letter}' '$sn'`;
     }
     $cmd = '';
 }
@@ -4277,7 +4277,7 @@ my $bonus_lets_top   = 185 + ($show_Heading? 79: 0);
 my $row3_top = 190 + ($show_Heading? 79: 0);
 my $forum_html = '';
 if ($forum_mode) {
-    $forum_html = `$cgi_dir/show_forum.pl $date "$screen_name" $forum_post_to_edit '$colors{bg_input}' '$colors{text_input}'`;
+    $forum_html = `$cgi_dir/show_forum.pl $date '$screen_name' $forum_post_to_edit '$colors{bg_input}' '$colors{text_input}'`;
     $bingo_table =
     $found_words =
     $extra_words =
