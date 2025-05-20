@@ -1401,12 +1401,12 @@ elsif ($cmd eq 'dl') {
 }
 elsif ($cmd eq 'bn') {
     $bonus_mode = $bonus_mode? 0: 1;
-    $donut_mode = 0;
+    $donut_mode = $forum_mode = 0;
     $cmd = '';
 }
 elsif ($cmd eq 'dn') {
     $donut_mode = $donut_mode? 0: 1;
-    $bonus_mode = 0;
+    $bonus_mode = $forum_mode = 0;
     $cmd = '';
 }
 elsif ($cmd =~ m{\A fx \s* (\d+) \z}xms) {
@@ -1423,6 +1423,7 @@ elsif ($cmd =~ m{\A fe \s* (\d+) \z}xms) {
 }
 elsif ($cmd eq 'f') {
     $forum_mode = $forum_mode? 0: 1;
+    $bonus_mode = $donut_mode = 0;
     $cmd = '';
 }
 elsif ($cmd eq 'im') {
@@ -2182,9 +2183,10 @@ elsif ($cmd eq 'rcp') {
 # what new words might we have instead?
 my @new_words;
 
+# to add - or remove...
 sub words_to_add {
     my ($cmd) = @_;
-    return $cmd =~ m{\A [a-z]{4,}}xms   # begins with a 4+ letter word
+    return $cmd =~ m{\A [-]?[a-z]{4,}}xms   # begins with a 4+ letter word
            && 
            $cmd !~ m{\s d \z}xms        # ends with space d (define)
            &&
