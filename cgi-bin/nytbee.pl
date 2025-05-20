@@ -395,7 +395,7 @@ if ($cmd eq '' && $post) {
     $post =~ s{\n}{<br>}xmsg;
     $post =~ s{"}{&#34;}xmsg;
     if ($post) {    # is anything there?
-        system("$cgi_dir/get_post.pl $date '$screen_name' '$post'");
+        system(qq!$cgi_dir/get_post.pl $date "$screen_name" "$post"!);
     }
 }
 
@@ -1279,6 +1279,42 @@ elsif ($cmd =~ m{\A sco \s+ (\w+) \z}xms) {
     $message = save_colors($uuid, $name);
     $cmd = '';
 }
+elsif ($cmd eq 'sa') {
+    my @stash;
+    for my $w (@found) {
+        if ($w =~ m{ (.*)!\z }xms) {
+            push @stash, $1;
+        }
+    }
+    for my $w (@stash) {
+        delete $is_found{$w};
+    }
+    $cmd = "@stash";
+}
+elsif ($cmd =~ m{\A sa \s* 5 \z}xms) {
+    # confusing and tricky, seems to work
+    my @stash = map { /(.{5,})!$/; $1; }   # fun!
+                @found;
+    @found = grep { !/.{5,}!$/ } @found;
+    for my $w (@stash) {
+        delete $is_found{$w};
+    }
+    $cmd = "@stash";
+}
+# sa with a regexp
+elsif ($cmd =~ m{\A sa \s+ (.+) \z}xmsi) {
+    # confusing and tricky, seems to work
+    my $s = $1;
+    $s =~ s{\$}{\\b}xms;
+    my @stash = map { m/(.*)!\z/xms; }
+                grep { m/$s.*!/xms; }
+                @found;
+    @found = grep { !m/$s.*!\z/xms; } @found;
+    for my $w (@stash) {
+        delete $is_found{$w};
+    }
+    $cmd = "@stash";
+}
 elsif ($cmd eq 'ht') {
     if (! $ht_chosen) {
         $ht_chosen = 1;
@@ -1567,40 +1603,9 @@ elsif ($cmd eq 's45') {
     $message = "You can now strive for GN4L.";
     $cmd = '';
 }
-elsif ($cmd eq 'sa') {
-    my @stash = map { /(.*)!$/; $1; }   # fun!
-                @found;
-    @found = grep { !/!$/ } @found;
-    for my $w (@stash) {
-        delete $is_found{$w};
-    }
-    $cmd = "@stash";
-}
-elsif ($cmd =~ m{\A sa \s* 5 \z}xms) {
-    # confusing and tricky, seems to work
-    my @stash = map { /(.{5,})!$/; $1; }   # fun!
-                @found;
-    @found = grep { !/.{5,}!$/ } @found;
-    for my $w (@stash) {
-        delete $is_found{$w};
-    }
-    $cmd = "@stash";
-}
-# sa with a regexp
-elsif ($cmd =~ m{\A sa \s+ (.+) \z}xmsi) {
-    # confusing and tricky, seems to work
-    my $s = $1;
-    $s =~ s{\$}{\\b}xms;
-    my @stash = map { m/(.*)!\z/xms; }
-                grep { m/$s.*!/xms; }
-                @found;
-    @found = grep { !m/$s.*!\z/xms; } @found;
-    for my $w (@stash) {
-        delete $is_found{$w};
-    }
-    $cmd = "@stash";
-}
-elsif (my ($gt, $item) = $cmd =~ m{\A \s* [#] \s*([>]?)(\d*|[a-z]?) \s* \z}xms) {
+elsif (my ($gt, $item) =
+     $cmd =~ m{\A \s* [#] \s*([>]?)(\d*|[a-z]?) \s* \z}xms
+) {
     my @words = grep { !$is_found{$_} }
                 @ok_words;
     if (! $item) {
@@ -2188,7 +2193,7 @@ sub words_to_add {
     my ($cmd) = @_;
     return $cmd =~ m{\A [-]?[a-z]{4,}}xms   # begins with a 4+ letter word
            && 
-           $cmd !~ m{\s d \z}xms        # ends with space d (define)
+           $cmd !~ m{\s d \z}xms        # doesn't end with space d (define)
            &&
            $cmd !~ m{\A wl}xms          # not a wl... command
            ;                            # like wlps
