@@ -1280,12 +1280,7 @@ elsif ($cmd =~ m{\A sco \s+ (\w+) \z}xms) {
     $cmd = '';
 }
 elsif ($cmd eq 'sa') {
-    my @stash;
-    for my $w (@found) {
-        if ($w =~ m{ (.*)!\z }xms) {
-            push @stash, $1;
-        }
-    }
+    my @stash = map { /(\w+)!\z/? $1: () } @found;
     for my $w (@stash) {
         delete $is_found{$w};
     }
@@ -3132,7 +3127,7 @@ elsif ($first_time) {
             push @rows, Tr(td({class => 'lt'}, def_word($disp_w, $w)));
         }
     }
-    $found_words = ul(table({ cellpadding => 2 }, @rows));
+    $found_words = ul(table({ cellpadding => 2 }, sort @rows));
 }
 else {
     for my $w (@words_found) {
