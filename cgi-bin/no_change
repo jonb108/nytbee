@@ -1,0 +1,9 @@
+< # then there is the path_info - appended to nytbee.pl/ 
+---
+> # then there is the path_info - appended to nytbee2.pl/ 
+<      <img width=53 src=$log/pics/bee-logo.png onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
+---
+>      <img width=53 src=$log/pics/bee-logo.png onclick="navigator.clipboard.writeText('$cgi/nytbee2.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
+< <form id=main name=form method=POST action='$cgi/nytbee.pl'>
+---
+> <form id=main name=form method=POST action='$cgi/nytbee2.pl'>

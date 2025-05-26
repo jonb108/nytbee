@@ -185,7 +185,7 @@ $prior_clues
 <tr><td colspan=2>&nbsp;</td></tr>
 EOH
 for my $w (@words) {
-    my $uw = ucfirst $w;
+    my $uw = uc $w;
     my ($word_td, $clue_td, $cycle_td);
     if ($is_found{$w}) {
         my $clue;

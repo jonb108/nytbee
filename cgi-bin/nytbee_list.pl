@@ -113,7 +113,8 @@ tie %first_appeared, 'DB_File', 'first_appeared.dbm';
 
 open my $word_file, '>', '../list/words.txt';
 for my $w (sort keys %freq) {
-    print {$word_file} "$w\n";
+    my $UW = uc $w;
+    print {$word_file} "$UW\n";
     push @word_rows, {
         word   => $w,
         length => length($w),
@@ -122,6 +123,17 @@ for my $w (sort keys %freq) {
     };
 }
 close $word_file;
+open my $freq_file, '>', '../list/words_freq.txt';
+for my $w (sort {
+               $freq{$b} <=> $freq{$a}
+               ||
+               $a cmp $b
+           } keys %freq
+) {
+    my $UW = uc $w;
+    print {$freq_file} "$UW\n";
+}
+close $freq_file;
 
 my @files = (
     { fname => 'puzzle-date',

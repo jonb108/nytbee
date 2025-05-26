@@ -89,4 +89,6 @@ rd_nytbee_mkclues.pl \
 fix_full_uuid.pl \
 fixcurpuz.pl \
 tables.pl \
+dif \
+no_change \
 buddy.txt

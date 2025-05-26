@@ -1287,10 +1287,7 @@ elsif ($cmd eq 'sa') {
     $cmd = "@stash";
 }
 elsif ($cmd =~ m{\A sa \s* 5 \z}xms) {
-    # confusing and tricky, seems to work
-    my @stash = map { /(.{5,})!$/; $1; }   # fun!
-                @found;
-    @found = grep { !/.{5,}!$/ } @found;
+    my @stash = map { /(\w{5,})!\z/? $1: () }  @found;
     for my $w (@stash) {
         delete $is_found{$w};
     }
