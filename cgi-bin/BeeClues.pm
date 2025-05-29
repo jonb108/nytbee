@@ -99,7 +99,6 @@ body {
     font-weight: normal;
 }
 </style>
-<script src="$log/nytbee/js/nytbee1.js"></script>
 <script>
 function set_format(n) {
     document.getElementById('format').value = n;
@@ -134,8 +133,7 @@ EOH
     _mklink($format, 6, "x) AB");
     _mklink($format, 4, "Ax");
     _mklink($format, 5, "A");
-    my $copy = $first? "show_copied('clues');": '';
-    print qq!&nbsp;&nbsp;<span class=link onclick="clear_text();$copy">Ok</span>!;
+    print qq!&nbsp;&nbsp;<span class=link onclick="clear_text();">Ok</span>!;
     if ($first) {
         print <<"EOH";
 <p>

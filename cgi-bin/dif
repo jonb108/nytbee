@@ -9,9 +9,9 @@ my $no_change = <<'EONC';
 > <form id=main name=form method=POST action='$cgi/nytbee2.pl'>
 EONC
 $dif =~ s{---\n}{}xmsg;
-if ($dif eq $no_change) {
+if (!$dif) {
     print "no change yet\n";
 }
 else {
-    print "$dif";
+    print $dif;
 }

@@ -203,8 +203,16 @@ for my $w (@words) {
             $clue = '';
         }
         $word_td = td(qq!<span class=cursor onclick="popup_define('$w',200,500)">$uw</span>!);
+        # messing around with quotes... :(
+        if ($clue =~ m{"}xms
+            &&
+            $clue =~ m{'}xms
+        ) {
+            $clue =~ s{"}{&quot;}xmsg;
+        }
+        my $q = $clue =~ m{"}xms? "'": '"';
         $clue_td = td("<input type=text size=40 name=${w}_clue id=${w}_clue"
-                 . qq! value="$clue">!)
+                 . qq! value=$q$clue$q>!)
     }
     else {
         $word_td = td({ class => 'word_td'}, '&nbsp;');
