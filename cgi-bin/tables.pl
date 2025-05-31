@@ -16,6 +16,7 @@ td, th {
     cursor: pointer;
 }
 </style>
+<div class=table_div>
 EOH
 use BeeHTML qw/
     Tr
@@ -256,5 +257,4 @@ td {
 STYLE
     push @out, $style . table({ cellpadding => 3 }, @rows);
 }
-
-print join "-<br>", @out;
+print join("-<br>", @out) . "</div>\n";

@@ -183,6 +183,7 @@ if (exists $uuid_screen_name{$uuid11}) {
 my $mobile = $params{mobile_Device}
              || $ENV{HTTP_USER_AGENT} =~ m{iPhone|Android}xms;
 my $focus = $mobile? '': 'set_focus();';
+my $position_attr = $mobile? 'static': 'absolute';
 
 #
 # DR
@@ -1354,6 +1355,7 @@ elsif ($cmd eq 'mo') {
     $show_Heading = $mobile_Device? 0: 1;
     $mobile = $mobile_Device;
     $focus = $mobile? '': 'set_focus();';
+    $position_attr = $mobile? 'static': 'absolute';
     $cmd = '';
 }
 elsif ($cmd eq 'wl') {
@@ -1661,26 +1663,11 @@ EOM
     $message =~ s{\A <br>}{}xms;
     $cmd = '';
 }
-elsif ($cmd =~ m{\A g \s+ yp? \z}xms) {
+elsif ($cmd =~ m{\A g \s+ y \z}xms) {
     my @words = grep { !$is_found{$_} }
                 @ok_words;
-    if ($cmd =~ /p/) {
-        $cmd = "@words";
-        # as if they typed them...
-    }
-    else {
-        @words = map {
-                     $is_pangram{lc $_}? color_pg($_): $_
-                 }
-                 map { ucfirst }
-                 sort
-                 @words;
-        if (@words) {
-            $message .= "<p class=mess>@words";
-        }
-        $cmd = '';
-    }
     add_hints(@words * 5);
+    $cmd = "@words";    # as if they typed them
 }
 elsif ($cmd =~ m{\A c \s+ y \s*(a?) \z}xms) {
     my $all = $1;
@@ -3172,7 +3159,8 @@ for my $w (@ok_words) {
 my $bingo = keys %first_char == 7? qq!, <a class=alink onclick="issue_cmd('BT');">Bingo</a>!: '';
 
 # perhaps $cmd was not words to add after all...
-# JON - move these!
+# JON - move these!  Move lots of others as well.
+# Put the words_to_add near the top!!
 # first check to see if $cmd eq ''...
 if ($cmd eq '1' || $cmd eq '51') {
     my @words = grep { !$is_found{$_} && ($cmd eq '1' || length >= 5) }
@@ -3703,6 +3691,10 @@ elsif ($cmd =~ m{\A sn \s+ (.+) \z}xms) {
             }
         }
     }
+    $cmd = '';
+}
+elsif ($cmd) {
+    $message = uc(red($cmd)) . ": unknown command";
     $cmd = '';
 }
 
@@ -4319,6 +4311,11 @@ print <<"EOH";
 body {
     background: $colors{background};
     color: $colors{letter};
+}
+.table_div {
+    position: $position_attr;
+    left: 650px;
+    top: 50px;
 }
 .letter {
     color: $colors{letter};
