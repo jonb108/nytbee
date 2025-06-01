@@ -2650,19 +2650,19 @@ if (! $prefix && ! $pattern && ! $limit && ! @words_found) {
 }
 
 sub dlb_row {
-    my ($name, $aref) = @_;
+    my ($name, $aref, $show_name) = @_;
     return '' unless @$aref;
-    return Tr(td({ class => 'dlb_name' }, "$name &nbsp;"),
+    return Tr(($show_name? td({ class => 'dlb_name' }, "$name &nbsp;"): ()),
               td({ class => 'dlb mess' },
                  "@$aref "
                . span({ class => 'gray' }, scalar(@$aref))));
 }
 
 sub one_col {
-    my ($name, $aref) = @_;
+    my ($name, $aref, $show_name) = @_;
     return '' unless @$aref;
     local $" = "<br>\n";
-    return $name
+    return ($show_name? $name: '')
          . "<ul>\n@$aref</ul>\n"
 }
 
@@ -2744,7 +2744,7 @@ sub restrict {
 # we may have a $w_cmd to limit the display
 #
 my $extra_words = '';
-if ($show_WordList) {
+if (!$forum_mode && $show_WordList) {
     my @donut;
     my @lexicon;
     my @bonus;
@@ -2867,32 +2867,46 @@ if ($show_WordList) {
                @stash;
         
     if ($word_col) {
-        $extra_words .= one_col('Donut:',  \@donut  )
-                if $donut_mode || (!$bonus_mode && $which_wl =~ /d/);
-        $extra_words .= one_col('Bonus:',   \@bonus  )
-                if $bonus_mode || (!$donut_mode && $which_wl =~ /b/);
-        $extra_words .= one_col('Lexicon:', \@lexicon)
-                if !$bonus_mode && !$donut_mode && $which_wl =~ /l/;
-        $extra_words .= one_col('Stash:',   \@stash  )
+        $extra_words .= one_col('Stash:',   \@stash, 1  )
                 if !$bonus_mode && !$donut_mode && $which_wl =~ /s/;
+        $extra_words .= one_col('Lexicon:', \@lexicon, 1)
+                if !$bonus_mode && !$donut_mode && $which_wl =~ /l/;
+        $extra_words .= one_col('Donut:',   \@donut, !$donut_mode  )
+                if $donut_mode || (!$bonus_mode && $which_wl =~ /d/);
+        $extra_words .= one_col('Bonus:',   \@bonus, !$bonus_mode  )
+                if $bonus_mode || (!$donut_mode && $which_wl =~ /b/);
         if ($extra_words) {
             $extra_words = "<br>$extra_words";
         }
     }
     else {
-        $extra_words .= dlb_row('Donut:',   \@donut)
-                if $donut_mode || (!$bonus_mode && $which_wl =~ /d/);
-        $extra_words .= dlb_row('Bonus:',   \@bonus)
-                if $bonus_mode || (!$donut_mode && $which_wl =~ /b/);
-        $extra_words .= dlb_row('Lexicon:', \@lexicon)
-                if !$bonus_mode && !$donut_mode && $which_wl =~ /l/;
-        $extra_words .= dlb_row('Stash:',   \@stash)
+        $extra_words .= dlb_row('Stash:',   \@stash, 1)
                 if !$bonus_mode && !$donut_mode && $which_wl =~ /s/;
+        $extra_words .= dlb_row('Lexicon:', \@lexicon, 1)
+                if !$bonus_mode && !$donut_mode && $which_wl =~ /l/;
+        $extra_words .= dlb_row('Donut:',   \@donut, !$donut_mode)
+                if $donut_mode || (!$bonus_mode && $which_wl =~ /d/);
+        $extra_words .= dlb_row('Bonus:',   \@bonus, !$bonus_mode)
+                if $bonus_mode || (!$donut_mode && $which_wl =~ /b/);
         if ($extra_words) {
             # convert rows to a table...
-            $extra_words = '<p>'
-                                 . "<!-- DONUT LEXICON BONUS WORDS -->\n"
-                                 . table($extra_words);
+            $extra_words = "<!-- STASH LEXICON DONUT BONUS WORDS -->\n"
+                         . table($extra_words);
+            if ($donut_mode || $bonus_mode) {
+                my $style = <<'ST';
+<style>
+.dlb {
+    text-align: left;
+    font-size: 18pt;
+    width: 650px;
+}
+</style>
+ST
+                $extra_words = "$style<div class=extra_div>\n$extra_words</div>\n";
+            }
+            else {
+                $extra_words = "<p>\n$extra_words";
+            }
         }
     }
 }
@@ -4314,7 +4328,12 @@ body {
 }
 .table_div {
     position: $position_attr;
-    left: 650px;
+    left: 605px;
+    top: 50px;
+}
+.extra_div {
+    position: $position_attr;
+    left: 540px;
     top: 50px;
 }
 .letter {
