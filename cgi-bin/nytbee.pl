@@ -4328,7 +4328,7 @@ body {
 }
 .table_div {
     position: $position_attr;
-    left: 605px;
+    left: 610px;
     top: 50px;
 }
 .extra_div {
