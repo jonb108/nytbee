@@ -70,6 +70,9 @@ for my $w (@words) {
 print <<"EOH";
 <html>
 <head>
+<title>
+UltraBee - Creating a Community Puzzle - Name and Location
+</title>
 <link rel='stylesheet' type='text/css' href='$log/css/cgi_style.css'/>
 <script src="$log/js/nytbee12.js"></script>
 </head>

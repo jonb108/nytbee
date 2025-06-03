@@ -101,6 +101,9 @@ EOJ
 print <<"EOH";
 <html>
 <head>
+<title>
+UltraBee - Creating a Community Puzzle - Clues
+</title>
 <link rel='stylesheet' type='text/css' href='$log/css/cgi_style.css'/>
 <script src="$log/js/nytbee12.js"></script>
 <script>
