@@ -5,7 +5,6 @@ package BeeDBM;
 use base 'Exporter';
 our @EXPORT_OK = qw/
     %end_time_for
-    %uuid_ip
     %uuid_screen_name
     %screen_name_uuid
     %num_msgs
@@ -17,7 +16,6 @@ our @EXPORT_OK = qw/
     %first_appeared
     %definition_of
     %settings_for
-    %uuid_colors_for
     %full_uuid
     %added_words
 /;
@@ -31,11 +29,6 @@ tie %end_time_for, 'DB_File', 'end_time_for.dbm';
 # value is # of minutes past midnight
 # after which THEY decided they don't want
 # to play any more.
-
-our %uuid_ip;
-tie %uuid_ip, 'DB_File', 'uuid_ip.dbm';
-# key: uid, value: ip address 
-# so we can know where people are playing from
 
 our (%uuid_screen_name, %screen_name_uuid);
 tie %uuid_screen_name, 'DB_File', 'uuid_screen_name.dbm';
@@ -126,19 +119,8 @@ tie %definition_of, 'DB_File', 'definition_of.dbm';
 our %settings_for;
 tie %settings_for, 'DB_File', 'settings_for.dbm';
 # key is the uuid ("session" id)
-# value is 3 integers 0-2  0-1  0-2
-# for status_display, only_clues, pw_feedback
-
-our %uuid_colors_for;
-tie %uuid_colors_for, 'DB_File', 'uuid_colors_for.dbm';
-# key is uuid
-# value is a Data::Dumper created *string* representing a hash
-#     whose keys are:
-#       center_hex center_text
-#       donut_hex donut_text
-#       background letter link
-#     and whose values are colors in one of these forms:
-#       either html_name, #FFa9e4, rgb(114, 100, 29A), hsl(34, 50%, 20%)
+# value is 4 integers 0-3  0-1  0-2 0-1
+# for status_display, only_clues, pw_feedback, no_define
 
 our %full_uuid;
 tie %full_uuid, 'DB_File', 'full_uuid.dbm';

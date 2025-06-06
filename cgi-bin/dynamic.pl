@@ -28,13 +28,6 @@ $Data::Dumper::Terse  = 1;
 
 my $q = CGI->new();
 my $uuid = cgi_header($q);
-#
-# save the uuid and the ip address 
-# so we can know where people are playing from
-#
-my %uuid_ip;
-tie %uuid_ip, 'DB_File', 'uuid_ip.dbm';
-$uuid_ip{$uuid} = $ENV{REMOTE_ADDR} . '|' . $ENV{HTTP_USER_AGENT};
 
 # how often has this person entered a single word?
 my %uuid_single;

@@ -91,4 +91,6 @@ fixcurpuz.pl \
 tables.pl \
 dif \
 no_change \
+copy_dbm/fixdbm.pl \
+no_sys_maint.txt \
 buddy.txt

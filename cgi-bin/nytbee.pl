@@ -46,7 +46,6 @@ use BeeColor qw/
 /;
 use BeeDBM qw/
     %end_time_for
-    %uuid_ip
     %uuid_screen_name
     %screen_name_uuid
     %num_msgs
@@ -102,6 +101,10 @@ my @base = qw/
     Buzz
 /;
 my $q = CGI->new();
+if (-f "sys_maint.txt") {
+    print $q->header(), read_file('sys_maint.txt');
+    exit;
+}
 my $hive = $q->param('hive') || 1;
 my $uuid = cgi_header($q);
 my %colors = get_colors($uuid);
@@ -172,8 +175,6 @@ if ($params{new_words} =~ m{\A \s* idk? \s+}xmsi) {
     $params{new_words} = '';
 }
 # search for 'id' below
-
-$uuid_ip{$uuid} = $ENV{REMOTE_ADDR};
 
 my $screen_name = '';
 if (exists $uuid_screen_name{$uuid11}) {

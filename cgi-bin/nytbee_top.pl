@@ -243,7 +243,8 @@ if ($rank_for{$my_screen_name}) {
 if ($share) {
     $share = "UltraBee\\n$disp_date\\n$share";
 }
-print scalar(keys %rank_for) . " people";
+my $np = keys %rank_for;
+print "$np " . ($np == 1? 'person': 'people');
 print qq!<a style='margin-left: 1in; font-size: 15pt;' class=alink onclick="navigator.clipboard.writeText('$share');alert('You can now paste your score from the clipboard.');set_focus();">Share your score.</a></p>!;
 if (%bingo_score_for) {
     print "<table>\n";
