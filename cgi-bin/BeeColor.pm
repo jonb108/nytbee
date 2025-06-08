@@ -22,9 +22,6 @@ tie %uuid_color_schemes_for, 'DB_File', 'uuid_color_schemes_for.dbm';
 #   key of scheme name
 #   value of a string of 9 colors
 
-use BeeDBM qw/
-    %uuid_colors_for
-/;
 use Data::Dumper qw/
     Dumper
 /;
