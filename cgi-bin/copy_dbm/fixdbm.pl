@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-# These all use the uuid.
+# These dbm files all use the uuid.
 #    %cur_puzzles_store
 #    %end_time_for
 #    %full_uuid
@@ -10,6 +10,7 @@ use warnings;
 #    %screen_name_uuid
 #    %settings_for
 #    %uuid_colors_for
+#    %uuid_color_schemes_for
 #
 use File::Copy qw/
     copy
@@ -99,68 +100,6 @@ while (my ($k, $v) = each %cur) {
 #print "purged = $purged\n";
 #print "cleared = $cleared\n";
 
-# get the account along with the number of games
-# sort them by the number of games
-# if two uuids are equivalent when lowercased keep the one
-# with the larger number of games and delete the other.
-#
-my @accounts;
-while (my ($k, $v) = each %cur) {
-    my %puzz = %{ eval $v };
-    my @dates = sort grep { ! m{\A CP }xms } keys %puzz;
-    my $n = @dates;
-    #print "$k => $n";
-    if ($n) {
-        #print " $dates[0] .. $dates[-1]";
-    }
-    #print "\n";
-    push @accounts, [ lc $k, $k, $n, $v ];
-}
-@accounts = sort {
-                $a->[0] cmp $b->[0]
-                ||
-                $b->[2] <=> $a->[2]
-            }
-            @accounts;
-#print "=======\n";
-my $prev = '';
-for my $x (@accounts) {
-    if ($x->[0] eq $prev) {
-        #print "    delete $x->[1]\n";
-        delete $cur{$x->[1]};
-    }
-    else {
-        #print "$x->[0] $x->[2] $x->[1]\n";
-    }
-    $prev = $x->[0];
-}
- 
-for my $u (qw/
-    AnotherThrowawayUsernameSorry
-    blah
-    blahblah
-    brandorogers
-    carhair420
-    ear-wax
-    juloha87
-    julohja
-    k_t_goldhawk
-    labecsalot12
-    labybecsalot12
-    ladybecalot12
-    ladybecsalo12
-    ladybecsalot
-    MegMegsMegz
-    NRSKARENRN_1041975
-    SAHADEV108
-    ShadowRanger
-    SHADOWRANGER1982
-    shadowrangerrit
-    tmFY
-/) {
-    delete $cur{$u};
-}
-
 # we have trimmed down cur_...
 # at this point %cur still has upper case keys
 # that are the full uuid.
@@ -230,6 +169,12 @@ while (my ($uk, $v) = each %cur) {
         $uuid_color_schemes_for{ $k } = $csf;
     }
 }
+# the preset colors
+for my $char ('a' .. 'g') {
+    my $key = "preset $char";
+    $uuid_colors_for{$key} = $orig_uuid_colors_for{$key};
+}
+# NOW we can do the lowercasing of the cur_puzzles_store dbm file.
 while (my ($uk, $v) = each %cur) {
     if ($uk =~ m{[A-Z]}xms) {
         delete $cur{$uk};
@@ -257,4 +202,4 @@ sub fix_key {
     untie %hash;
 }
 
-fix_key('end_time_for');
+fix_key('end_time_for');    # the only one...

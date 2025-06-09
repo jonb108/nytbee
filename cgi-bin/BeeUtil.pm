@@ -34,6 +34,11 @@ our $cgi     = 'https://ultrabee.org/cgi-bin';
 our $cgi_dir = '/home4/logical9/www/ultrabee/cgi-bin';
 our $thumbs_up = '&#128077;';
 
+#use BeeDBM qw/
+#    %cur_puzzles_store
+#    %settings_for
+#/;
+
 #
 # handle the creation and maintenance of the uuid
 #
@@ -43,13 +48,36 @@ sub cgi_header {
     my $cmd = $q->param('new_words');
     my $uuid;
     if ($cmd && $cmd =~ m{\A id \s+ (\S+) \s* \z}xmsi) {
-        $uuid = $1;
-    }
-    elsif ($q->path_info() =~ m{\A / ID(.*) \z}xms) {
-        $uuid = $1;
+        $uuid = lc $1;
+#        my $old_uuid = lc $q->cookie('uuid');
+#        # check for generated one??
+#        $cur_puzzles_store{$uuid} = $cur_puzzles_store{$old_uuid};
+#        delete $cur_puzzles_store{$old_uuid};
+#
+#        # colors
+#        my %uuid_colors_for;
+#        my %uuid_color_schemes_for;
+#        tie %uuid_colors_for, 'DB_File', 'uuid_colors_for.dbm';
+#        tie %uuid_color_schemes_for, 'DB_File', 'uuid_color_schemes_for.dbm';
+#        if (exists $uuid_colors_for{$old_uuid}) {
+#            $uuid_colors_for{$uuid} = $uuid_colors_for{$old_uuid};
+#            delete $uuid_colors_for{$old_uuid};
+#        }
+#        if (exists $uuid_color_schemes_for{$old_uuid}) {
+#            $uuid_color_schemes_for{$uuid} = $uuid_color_schemes_for{$old_uuid};
+#            delete $uuid_color_schemes_for{$old_uuid};
+#        }
+#        untie %uuid_colors_for;
+#        untie %uuid_color_schemes_for;
+#
+#        # settings
+#        if (exists $settings_for{$old_uuid}) {
+#            $settings_for{$uuid} = $settings_for{$old_uuid};
+#            delete $settings_for{$old_uuid};
+#        }
     }
     else {
-        $uuid = $q->cookie('uuid');
+        $uuid = lc $q->cookie('uuid');
     }
     if (! $uuid) {
         # only load this module if it is needed

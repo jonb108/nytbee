@@ -422,8 +422,8 @@ example:
 <ul>
     <span class=cmd>ID</span> <span class=green>GERTIE4/30</span>
 </ul>
-Note that the identity string is <i>case-sensitive</i>.  As you type it you
-will only see capital letters but the case of your typing does matter.
+Note that the identity string is <i>not</i> case-sensitive.  As you type it in the text box (where you also type words in the puzzle) you
+will see capital letters but the identity string will actually be in lower case.
 <p>
 Now if your web data and browser history is cleared
 or you use a different browser
@@ -686,7 +686,7 @@ hint points as clicking on entries in the other hint table and lists.
 <p>
 The commands <span class=cmd>JR</span>
 and
-<span class=cmd>5J</span> show a random jumbled word and a 5+ letter jumbled word respectively and will work whether or not the Jumble Table is present.
+<span class=cmd>5J</span> show a random jumbled word and a random 5+ letter jumbled word respectively and will work whether or not the Jumble Table is present.
 <p>
 The Jumble Table was inspired by the <a target=_blank href='https://beebox.ghost.io'>Spelling Bee Toolbox</a> written by Kevin Kolb.
 <a name=table_display></a>
@@ -2291,6 +2291,7 @@ Dictionary definitions on request.
 <li><a target=nytbee href=http://nytbee.com>nytbee.com</a>
 by Chris McLeester. This site was the main source for the <a href=#nyt_archive>archive</a>.
 Historical analysis of the puzzles and nice graphs.  No ads &#128077;.
+<li><a target=nytbee href='https://word.tips/nyt-spelling-bee-answers/'>word.tips</a> You enter the 7 letters and it simply searches a large lexicon for you.  It doesn’t know which words were chosen to be in the “allowed list”.
 <li><a target=nytbee href='https://www.sbsolver.com'>sbsolver.com</a>
 The source for early NYT Puzzles.
 Optionally shows the table of hints and the 2 letter counts.
@@ -2409,8 +2410,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2586 puzzles with
-a total of 10679 different words!
+2589 puzzles with
+a total of 10682 different words!
 <p>
 Tallies are made of the many puzzles and words.
 See this table of the puzzles:
@@ -2448,9 +2449,11 @@ Starting an archival puzzle is simple.
 Just enter the puzzle date (like 12/16/21)
 in the text field where you would enter a word.
 <p>
-To facilitate your curiousity and research
-you can see <a target=_blank href=list/nyt_puzzles.txt>this text file</a>
-of the many puzzles.  The lines have this format:
+To facilitate your curiosity and Bee research
+see <a target=_blank href=list/nyt_puzzles.txt>this text file</a>
+of the many puzzles.  Rather than clicking on that link to load the massive amount of text into the browser I recommended that you right click (or control-click) on the link to bring up the context menu and choose Download Linked File.
+<p>
+The lines of text have this format:
 <p>
 <pre class=ind>
 yyyymmdd => seven center pangrams ... | words ...
@@ -2547,8 +2550,7 @@ list of words within the browser window.
 <li>Similar to the above cheat is to begin the process of <a href='https://ultrabee.org/mkpuz.html'>creating a community puzzle</a>
 and enter the 7 letters in the puzzle as the pangramic word.   No need for it to be an actual pangram - just enter the 7 letters in any order.   On the next screen choose the center letter.   You will then be shown many many words that would satisfy the rules of the puzzle - including all the words in the allowed list!
 And this trick would not cost you any hint points. &#128077;
-<li>One way to NOT effectively cheat is to ask chatGPT to help you.
-It is remarkably stupid at this task no matter how cleverly you ask it.
+<li>The <span class=cmd>IW</span> <a href=#incorrect>Incorrect Word</a> command can show you what words other people have tried.  This might give you hints as to what words you have missed.  The incorrect words might be misspellings.
 <li>Another way to NOT cheat is to use the command <span class=cmd>C YA</span> to clear the game and start over.  Overall hint totals are not cleared with that command!
 <li>There are probably other ways to cheat.  <script>abcd('Let me know')</script> and I’ll add
 to this list. &#128522;
@@ -2668,7 +2670,7 @@ For even more fun, using <a target=_blank href='https://en.wikipedia.org/wiki/Dc
 </ul>
 <a name=hotlink></a>
 <span class=red>3</span><br>
-This post in the HiveMind on August 14, 2023 shows that being able to click on words in the Puzzle, Donut, Lexicon, Bonus and Stash lists to get definitions of
+This post in the HiveMind on August 14, 2023 shows that being able to click on words in the Puzzle, Stash, Lexicon, Donut, and Bonus lists to get definitions of
 words is a useful and desired thing:
 <p>
 <img style="width: 600px" src=pics/definitions-8-14-23.png>
