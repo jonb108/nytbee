@@ -81,6 +81,13 @@ use File::Slurp qw/
     write_file
     read_file
 /;
+use BeeExt qw/
+    $ext_mobile_css
+    $ext_desktop_css
+    $ext_logo_base64
+    $ext_fastclick
+    $ext_script
+/;
 
 my $message = '';
 my $ymd = ymd();
@@ -3807,7 +3814,7 @@ my $heading = $show_Heading? <<"EOH": '';
     UltraBee<br>$show_date
 </div>
 <div class=float-child2>
-     <img width=53 src=$log/pics/bee-logo.png onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
+     <img width=53 src="data:image/png;base64,$ext_logo_base64" onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
 </div>
 <div class=float-child3>
     <div style="text-align: center"><a class=alink target=nytbee_help onclick="set_focus();" href='$log/help.html#toc'>Help</a>&nbsp;&nbsp;<a target=_blank class=alink href='$log/cmds.html'>Cmds</a><br><a class='alink' onclick="issue_cmd('F');" title='F'>$forum_s $num_msgs</a></div>
@@ -4272,7 +4279,8 @@ my $status =
    :$status_display == 1   ? graphical_status()
    :$status_display == 2   ? graphical_status(1)
    :                         "Score: $score $rank_image $disp_nhints<p>";
-my $css = $mobile? 'mobile_': '';
+my $css       = $mobile? $ext_mobile_css: $ext_desktop_css;
+my $fastclick = $mobile? $ext_fastclick: '';
 my $new_words_size = $mobile? 30: 40;
 my $row1_top  = 40 + ($show_Heading? 79: 0);
 my $row2_top  = 90 + ($show_Heading? 79: 0);
@@ -4409,9 +4417,9 @@ body {
     font-weight: bold;
     cursor: black;
 }
+$css
 </style>
-<link rel='stylesheet' type='text/css' href='$log/css/cgi_${css}style.css'/>
-<script src="$log/js/nytbee12.js"></script>
+$ext_script
 </head>
 <body onload='init(); $focus'>
 $heading
@@ -4455,14 +4463,7 @@ $forum_html
 </form>
 </body>
 $show_clue_form
-<script src="$log/js/fastclick.js"></script>
-<script>
-if ('addEventListener' in document) {
-    document.addEventListener('DOMContentLoaded', function() {
-        FastClick.attach(document.body);
-    }, false);
-}
-</script>
+$fastclick
 $flash_script
 </html>
 EOH
