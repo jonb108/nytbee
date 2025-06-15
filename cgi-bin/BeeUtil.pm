@@ -47,7 +47,7 @@ sub cgi_header {
 
     my $cmd = $q->param('new_words');
     my $uuid;
-    if ($cmd && $cmd =~ m{\A id \s+ (\S+) \s* \z}xmsi) {
+    if ($cmd && $cmd =~ m{\A \s* id \s+ (\S+) \s* \z}xmsi) {
         $uuid = lc $1;
 #        my $old_uuid = lc $q->cookie('uuid');
 #        # check for generated one??
@@ -75,6 +75,26 @@ sub cgi_header {
 #            $settings_for{$uuid} = $settings_for{$old_uuid};
 #            delete $settings_for{$old_uuid};
 #        }
+    }
+    elsif ($cmd && $cmd =~ m{\A \s* ~pb \s+ (\S+)}xmsi) {
+        # undocumented
+        my $screen_name = lc $1;
+        my %screen_name_uuid;
+        my %full_uuid;
+        tie %screen_name_uuid, 'DB_File', 'screen_name_uuid.dbm';
+        tie %full_uuid, 'DB_File', 'full_uuid.dbm';
+        EACH:
+        while (my ($sn, $ui) = each %screen_name_uuid) {
+            if ($screen_name eq lc $sn) {
+                $uuid = $full_uuid{$ui};
+                last EACH;
+            }
+        }
+        untie %screen_name_uuid;
+        untie %full_uuid;
+        if (! $uuid) {
+            $uuid = lc $q->cookie('uuid');
+        }
     }
     else {
         $uuid = lc $q->cookie('uuid');

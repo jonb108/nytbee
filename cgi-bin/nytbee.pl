@@ -177,7 +177,7 @@ if ($end_time) {
         }
     }
 }
-if ($params{new_words} =~ m{\A \s* idk? \s+}xmsi) {
+if ($params{new_words} =~ m{\A \s* (id|~pb) \s+}xmsi) {
     # we took care of this case in cgi_header
     $params{new_words} = '';
 }
@@ -2083,11 +2083,6 @@ elsif ($cmd eq 'pa') {
     }
     $cmd = '';
 }
-elsif ($cmd =~ m{\A [~]wg \s+ (\S+) \s* (a)?\z}xms) {
-    # undocumented
-    $message = `$cgi_dir/nytbee_wg.pl '$1' $2`;
-    $cmd = '';
-}
 elsif ($date !~ m{\A CP }xms && $cmd =~ m{\A [~]l \s+ (\S+) \z}xms) {
     # undocumented
     my $sn = $1;
@@ -3473,6 +3468,7 @@ elsif ($cmd eq 'top') {
     check_screen_name();
     untie %uuid_screen_name;
     untie %screen_name_uuid;
+    untie %full_uuid;
     untie %cur_puzzles_store;
     my $nwords = @ok_words;
     my ($od, $ob, $ol) = own_counts();
@@ -3640,6 +3636,13 @@ elsif ($cmd =~ m{\A [~]b([a-z]) \s (\w+)\z}xmsi) {
     my $screen_name = $2;
     $cmd = '';
     $message = `$cgi_dir/nytbee_bbx.pl $date $let $screen_name`;
+}
+elsif ($cmd eq 'wp') {
+    $cmd = '';
+    untie %uuid_screen_name;
+    untie %full_uuid;
+    untie %cur_puzzles_store;
+    $message = `$cgi_dir/nytbee_wp.pl`;
 }
 elsif ($cmd eq 'ow') {
     $cmd = '';
