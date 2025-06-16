@@ -80,6 +80,7 @@ my @rows = map {
                }
            }
            keys %uuids;
+my $npeople = @rows;
 unshift @rows, Tr(
                    th('Name'),
                    th('Words'),
@@ -87,7 +88,6 @@ unshift @rows, Tr(
                    th('4 Weeks'),
                    th('Total'),
                );
-my $npeople = @rows;
 my $pw = $npeople == 1? 'person': 'people';
 my $pl = $nlines == 1? '': 's';
 print "$npeople $pw, $nlines line$pl<p>\n";
