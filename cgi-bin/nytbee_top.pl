@@ -1,4 +1,5 @@
 #!/usr/bin/env perl
+# does not count people that have not achieved Good Start rank
 # look for C\s+YA? $date
 # if so mark those screen names with a &dagger;
 # to indicate possible 'trying to game the system' aka cheating.
@@ -67,6 +68,9 @@ while (my $line = <$in>) {
         next LINE;
     }
     chomp $line;
+    #
+    # they achieved a rank for today
+    #
     if (my ($r_uuid11, $rank)
             = $line =~ m{\A (\S+) \s+ = \s+
                          rank(\d) \s+ $date
@@ -125,6 +129,9 @@ while (my $line = <$in>) {
             }
         }
     }
+    #
+    # they achieved a bingo for today
+    #
     elsif (my ($b_uuid11, $bingo_score, $bingo_hints)
                = $line =~ m{\A (\S+) \s+ = \s+
                             bingo \s+ $date \s+
@@ -269,7 +276,7 @@ if (%bingo_score_for) {
 }
 print "<table>\n";
 my $name_hints = 0;
-my $prev_rank = 0;
+my $prev_rank = -1;
 my %grank = qw/
     GOTN-NP 4
     GOTN    3
