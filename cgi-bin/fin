@@ -1,4 +1,4 @@
 #!/bin/bash
-perl -p -i -e 's{nytbee2.pl}{nytbee.pl}g' nytbee2.pl
+perl -p -i -e 's{nytbee_test.pl}{nytbee.pl}g' nytbee_test.pl
 cp nytbee.pl nytbee.pl.00
-mv nytbee2.pl nytbee.pl
+mv nytbee_test.pl nytbee.pl

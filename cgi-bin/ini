@@ -1,7 +1,7 @@
 #!/bin/bash
-if [ -f nytbee2.pl ]; then
+if [ -f nytbee_test.pl ]; then
     echo Already initialized!
     exit
 fi
-cp nytbee.pl nytbee2.pl
-perl -p -i -e 's{nytbee.pl}{nytbee2.pl}g' nytbee2.pl
+cp nytbee.pl nytbee_test.pl
+perl -p -i -e 's{nytbee.pl}{nytbee_test.pl}g' nytbee_test.pl

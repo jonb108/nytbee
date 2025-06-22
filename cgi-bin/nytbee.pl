@@ -1646,10 +1646,33 @@ elsif (   $cmd =~ m{\A d \s+ ([a-z ]+) \z}xms
             $cmd = "sw $word";
             $label = 'Stash';
         }
+        my $the_definition = define($word, 1);
+        my $the_word = $word;   # for the full definition
+        # maybe change $the_word if the definition is ...???
+        # we may add some other possibilities here...
+        if ($the_definition =~ m{
+                (
+                    Common[ ]misspelling[ ]of[ ]
+                    |
+                    Alternative[ ]form[ ]of[ ]
+                    |
+                    Simple[ ]past[ ]tense[ ]and[ ]past[ ]participle[ ]of[ ]
+                    |
+                    Plural[ ]form[ ]of[ ]
+                    |
+                    Plural[ ]of[ ]
+                    |
+                    Present[ ]participle[ ]of[ ]
+                )
+                (\w+)
+            }xmsi
+        ) {
+            $the_word = $2;
+        }
         $message .= <<"EOM";
 <br>
 <span class='letter' style='cursor: pointer'
-      onclick="full_def('$word');">\U$word\E</span>
+      onclick="full_def('$the_word');">\U$word\E</span>
 EOM
         $message .= <<"EOM" if $cmd;
 <span class=alink style='margin-left: 1in;'
@@ -1663,8 +1686,8 @@ EOM
    href='https://google.com/search?q=$word'>
 Search</a>
 EOM
-        $message .=  qq!<span class=cursor_black onclick="full_def('$word');">!
-                 .  ul(define($word, 1, 1))
+        $message .=  qq!<span class=cursor_black onclick="full_def('$the_word');">!
+                 .  ul($the_definition)
                  .  '</span>'
                  ;
     }
