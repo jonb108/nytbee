@@ -3660,7 +3660,7 @@ elsif ($cmd =~ m{\A [~]b([a-z]) \s (\w+)\z}xmsi) {
     $cmd = '';
     $message = `$cgi_dir/nytbee_bbx.pl $date $let $screen_name`;
 }
-elsif ($cmd eq 'wp') {
+elsif ($cmd eq '~wp') {
     $cmd = '';
     untie %uuid_screen_name;
     untie %full_uuid;
@@ -4065,7 +4065,8 @@ sub graphical_status {
         FF6599
         CD66FF
     /;
-    my $rainbow_width = 9;
+    my $rainbow_width = 14;
+    my $stash_rainbow_width = (2/3)*$rainbow_width;
     my $mark_height = 7;
     my $width = $ind2 + $between_dots*($nwords-1) + 26;
         # 26 extra to accomodate a plus sign + at the end of the hints
@@ -4171,7 +4172,12 @@ EOH
     $x = $ind2;
     $y -= 4;
     my $nfound = grep { !m{[$ext_sig]\z}xms } @found;
-    my $nstash = grep { m{!\z}xms } @found;
+    my @stash_words = map { s/!\z//; $_; } grep { m{!\z}xms } @found;
+    my $nstash = @stash_words;
+    my $stash_score = 0;
+    for my $w (@stash_words) {
+        $stash_score += word_score($w, $is_pangram{$w});
+    }
     for my $i (1 .. $nfound) {
         $html .= "<circle cx=$x cy=$y r=$dotr2 fill=green></circle>\n";
         $x += $between_dots;
@@ -4200,6 +4206,7 @@ EOH
     # but only up to the score %
     my @pct = (0, 2, 5, 9, 15, 25, 40, 50, 70, 100);
     my $score_pct = ($score/$max_score)*100;
+    my $full_score_pct = (($score + $stash_score)/$max_score)*100;
     PCT:
     for my $i (0 .. $#pct-1) {
         my $x1 = $ind2 + ($pct[$i]/100)*($max_x - $ind2);
@@ -4210,6 +4217,22 @@ EOH
         }
         my $x2 = $ind2 + ($pct[$i+1]/100)*($max_x - $ind2);
         $html .= "<line x1=$x1 y1=$y x2=$x2 y2=$y stroke='#$color[$i]' stroke-width=$rainbow_width></line>\n";
+    }
+    #
+    # and if there are words in the stash...
+    #
+    if ($nstash) {
+        PCT:
+        for my $i (0 .. $#pct-1) {
+            my $x1 = $ind2 + ($pct[$i]/100)*($max_x - $ind2);
+            if ($full_score_pct < $pct[$i+1]) {
+                my $x2 = $ind2 + ($full_score_pct/100)*($max_x - $ind2);
+                $html .= "<line x1=$x1 y1=$y x2=$x2 y2=$y stroke='#$color[$i]' stroke-width=$stash_rainbow_width></line>\n";
+                last PCT;
+            }
+            my $x2 = $ind2 + ($pct[$i+1]/100)*($max_x - $ind2);
+            $html .= "<line x1=$x1 y1=$y x2=$x2 y2=$y stroke='#$color[$i]' stroke-width=$stash_rainbow_width></line>\n";
+        }
     }
 
     # vertical marks between ranks
@@ -4243,11 +4266,6 @@ EOH
 
     $html .= "</svg>\n";
     if ($plus_numbers) {
-        my @stash_words = map { s/!\z//; $_; } grep { m{!\z}xms } @found;
-        my $stash_score = 0;
-        for my $w (@stash_words) {
-            $stash_score += word_score($w, $is_pangram{$w});
-        }
         $nfound += $nstash;
         my $pct = int($nfound*100/$nwords);
         my $diff = $nwords - $nfound;
