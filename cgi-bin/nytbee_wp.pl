@@ -2,8 +2,8 @@
 use strict;
 use warnings;
 use DB_File;
-use Date::Simple qw/
-    today
+use BeeUtil qw/
+    my_today
 /;
 use BeeHTML qw/
     Tr
@@ -18,7 +18,7 @@ tie %full_uuid, 'DB_File', 'full_uuid.dbm';
 my %cur_puzzles_store;
 tie %cur_puzzles_store, 'DB_File', 'cur_puzzles_store.dbm';
 
-my $now    = today();
+my $now    = my_today();
 my $today  = $now->as_d8();
 my $week   = ($now-6)->as_d8();
 my $fourw  = ($now-27)->as_d8();
