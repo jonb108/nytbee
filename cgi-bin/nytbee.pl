@@ -2957,6 +2957,17 @@ if ($bonus_mode && ! $mobile) {
         }
         $lets .= "<span style='color: $color'>\u$o</span> ";
     }
+    $lets .= '<br>';
+    for my $s (@seven) {
+        my $color;
+        if (index($all, "~$s") >= 0) {
+            $color = "green";  # Bingo Bonus
+        }
+        else {
+            $color = $colors{letter};
+        }
+        $lets .= "<span style='color: $color'>\u$s</span> ";
+    }
     $extra_words = "$lets$extra_words";
 }
 my $bingo_table = '';
@@ -4379,6 +4390,26 @@ if ($forum_mode) {
 my $title_date = $date =~ m{\A CP}xms? $date
                 :                      'NYT '
                                        . date($date)->format('%B %e, %Y');
+my $mobile_bonus = '';
+if ($mobile && $bonus_mode) {
+    # ackk.  too many places have code to get @bonus.
+    # we need to initialize a puzzle object
+    # and a game object and then have methods
+    # to get seven, found, bonus, center, etc
+    #
+    my @bonus = grep { m{[*]\z}xms } @found;
+    chop @bonus;    # the *
+    my $all = join '~', '', @bonus;
+    $mobile_bonus .= '&nbsp;' x 3;
+    for my $s (@seven) {
+        my $color = index($all, "~$s") >= 0? 'green': $colors{letter};
+        $mobile_bonus .= '&nbsp;'
+                      . "<span style='color: $color'>"
+                      . uc($s)
+                      . '</span>'
+                      ;
+    }
+}
 my $flash_script = '';
 if ($pw_feedback == 1
     && ($points_added != 0 || $n_hints_added != 0)
@@ -4533,7 +4564,7 @@ $letters
        id=new_words
        name=new_words
        autocomplete=off
->
+>$mobile_bonus
 <p>
 $bingo_table
 $found_words
