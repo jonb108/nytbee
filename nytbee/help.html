@@ -347,7 +347,7 @@ There is no need to register or login to this game.  This is nice.
 ALL are welcome.
 It is helpful, however, to have <i>some</i> form of identification.
 To address this need there is an <b>identity string</b>
-and a <b>screen names</b>
+and a <b>screen name</b>
 - both of which are initially assigned to you.
 <p>
 The identity string is <i>private</i>, secret, and unique.
@@ -1234,7 +1234,7 @@ The 19 (26-7=19) additional letters are put in a table.
 Tap on them to append to the word.
 If a Bonus word has been found using a letter it will
 be shown in <span style='color: lightgreen'>lightgreen</span>.
-If there is a Bingo Bonus word that begins with the
+If there is a Bingo Bonus word that <i>begins</i> with the
 letter that letter will be shown in <span class=green>green</span>.
 There are also command links for
 <span class=cmd>Stash</span>,
@@ -1252,7 +1252,7 @@ and
 </ul>
 <p>
 When NOT on a mobile phone the <span class=cmd>BN</span> command 
-will put the 19 additional letters above the list of Bonus words.
+will put the 19 additional letters below the text field.
 <p>
 Similar to what happens in Donut Mode, when in Bonus Mode
 only Bonus words are shown – no Puzzle, Donut, Lexicon or Stash words.
@@ -1270,12 +1270,17 @@ The command <span class=cmd>BOA</span>
 will show your <span class=cmd>B</span>onus words
 in <span class=cmd>O</span>rder of the
 <span class=cmd>A</span>dditional letter.  Appended to this list is
-the count of how many additional letters were used in a
+the count of how many of the 19 additional letters were used in a
 Bonus word - this is your BOA Score.
 <p>
-The number of additional letters with
-a Bingo Bonus word is your BB score. This is also appended
-to the output of the <span class=cmd>BOA</span> command.
+The BB Score is another way of tallying the Bonus words.
+It is the count of how many different letters begin a Bonus word.
+These letters include the additional 19 letters not in the puzzle and <i>also</i> the
+7 letters in the puzzle itself.  So the maximum BB Score is 26.
+The command <span class=cmd>BB</span> will list the Bonus words in
+alphabetical order labeled with the first letter.  This will show which
+letters are not yet at the beginning of a Bonus word.  The listing ends
+with the BB Score.
 <p>
 When searching for Bonus words to increase your BOA score this list of words
 from the <a href=#lexicon>large lexicon</a> may help:
@@ -1329,7 +1334,7 @@ Furthermore, as a “very big cheat” you could select, copy, and paste all of 
 <p>
 <a name=competition></a>
 <h3>Competition</h3>
-Two commands that show how you are doing with respect to others:
+In addition to the <span class=cmd>TOP</span> command here are two more commands that show how you are doing with respect to others in the world of Extra words:
 <p>
 <table cellpadding=5>
 <tr><th class='cmd rt'>OW</th><td>This tells you which
@@ -2411,8 +2416,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2603 puzzles with
-a total of 10691 different words!
+2607 puzzles with
+a total of 10694 different words!
 <p>
 Tallies are made of the many puzzles and words.
 See this table of the puzzles:

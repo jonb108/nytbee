@@ -81,9 +81,7 @@ for my $u (keys %tally) {
         $b =~ s{[$seven]}{}xmsg;
         my $a = substr($b, 0, 1);
         $boa_lets{$a}++;
-        if (substr($w, 0, 1) eq $a) {
-            ++$bb_lets{$a};
-        }
+        ++$bb_lets{substr($w, 0, 1)};
     }
     $boa_score{$u} = scalar(keys %boa_lets);
     $bb_score{$u}  = scalar(keys %bb_lets);

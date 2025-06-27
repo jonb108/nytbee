@@ -3597,6 +3597,42 @@ elsif ($cmd eq 'abw') {
     }
     $cmd = '';
 }
+elsif ($cmd eq 'bb') {
+    my @bonus = sort grep { m{[*]\z}xms } @found;
+    chop @bonus;
+    my %bonus_starting_with = map { $_ => [] } 'a' .. 'z';
+    for my $b (@bonus) {
+        my $w = $b;
+        $w =~ s{[$seven]}{}xmsg;    # the addition letter is all that is left
+        my $c = substr($w, 0, 1);
+        my $uc = uc $c;
+        my $x = ucfirst $b;
+        $x =~ s{$c}{<span class=red>$c</span>}xmsg;
+        $x =~ s{$uc}{<span class=red>$uc</span>}xmsg;
+        push @{$bonus_starting_with{substr($b, 0, 1)}}, ucfirst $x;
+    }
+    $cmd = '';
+    $message = '';
+    my $bb = 0;
+    my @rows;
+    for my $l ('a' .. 'z') {
+        my @words = @{$bonus_starting_with{$l}};
+        ++$bb if @words;
+        my @color;
+        if (index($seven, $l) >= 0) {
+            @color = qw/ class green /;
+        }
+        push @rows, Tr(td({ valign => 'top', align => 'center', @color },
+                          uc $l),
+                       td({ class => 'lt mess'},
+                          @words)
+                      );
+    }
+    $message = table({ cellpadding => 5 }, @rows);
+    $message .= '<p>';
+    $message .= table(Tr(td('BB:'), td($bb)));
+    $message = ul($message);
+}
 elsif ($cmd eq 'boa') {
     $cmd = '';
     my %bwords_with;
@@ -3618,23 +3654,24 @@ elsif ($cmd eq 'boa') {
         push @{$bwords_with{$a}}, $bw;
     }
     my $bb_score = scalar keys %bb_lets;
-    $message = "<table>\n";
     my $boa_score = 0;
+    my @rows;
     for my $l (sort keys %bwords_with) {
         my @words = @{$bwords_with{$l}};
         if (@words) {
             ++$boa_score;
         }
-        $message .= "<tr><td valign=top style='text-align: center'>\u$l&nbsp;</td>"
-                 . "<td class='lt mess'>"
-                 . (join ' ', @words)
-                 . '</td></tr>';
+        push @rows, Tr(
+                        td({ valign => 'top', style => 'text-align: center' },
+                           uc $l),
+                        td({ class => 'lt mess'},
+                           "@words")
+                      );
     }
-    $message .= "</table><p>\n";
-    $message .= table(Tr(td('BOA:'), td($boa_score)),
-                      Tr(td('BB:'),  td($bb_score )),
-                     );
-    $message = "<ul>$message</ul>";
+    $message = table({ cellpadding => 5 }, @rows);
+    $message .= '<p>';
+    $message .= table(Tr(td('BOA:'), td($boa_score)));
+    $message = ul($message);
 }
 # an undocumented cheat for Donut words
 elsif ($cmd eq '~d') {
