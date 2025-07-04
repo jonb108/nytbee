@@ -3,6 +3,7 @@ rm -f /tmp/cgi.tar
 tar cvf /tmp/cgi.tar  \
 BeeUtil.pm \
 BeeDBM.pm \
+BeeLog.pm \
 comments.txt \
 SvgHex.pm \
 free_sn \
@@ -22,6 +23,7 @@ nytbee_wp.pl \
 nytbee_dl.pl \
 nytbee_time.pl \
 nytbee_activity.pl \
+redop.pl \
 nytbee_log.pl \
 nytbee_bbx.pl \
 indexize \
@@ -67,7 +69,6 @@ regexp.pl \
 word_pangram.pl \
 dynamic.pl \
 rand5.pl \
-show_activity.pl \
 ipstack.txt \
 definitions.txt \
 mkforum \

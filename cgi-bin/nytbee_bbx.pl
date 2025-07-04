@@ -2,12 +2,15 @@
 use strict;
 use warnings;
 use DB_File;
+use BeeLog qw/
+    open_log
+/;
 my ($date, $let, $sn) = @ARGV;
 my $uuid11;
 my %uuid_screen_name;
 tie %uuid_screen_name, 'DB_File', 'uuid_screen_name.dbm';
-open my $in, '<', "beelog/$date";
 my %sn_for;
+my $in = open_log($date);
 LINE:
 while (my $line = <$in>) {
     chomp $line;
@@ -20,6 +23,7 @@ while (my $line = <$in>) {
 close $in;
 for my $uid (keys %sn_for) {
     if ($sn_for{$uid} =~ m{\A $sn \z}xmsi) {
+        # the /i solves the case issue with the screen name
         $uuid11 = $uid;
         print "Bonus words with <span class=red>\u$let</span> found by $sn_for{$uid}:<p>\n";
         last;

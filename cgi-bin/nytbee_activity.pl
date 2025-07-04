@@ -6,7 +6,9 @@ use BeeUtil qw/
     ymd
     JON
 /;
-
+use BeeLog qw/
+    open_log
+/;
 use List::Util qw/
     max
 /;
@@ -30,11 +32,12 @@ if ($sn) {
     }
     untie %screen_name_uuid;
     if (! $uuid11) {
-        print "Unknown screen name: $sn"; exit;
+        print "Unknown screen name: $sn";
+        exit;
     }
 }
 
-open my $in, '<', "beelog/$date";
+my $in = open_log($date);
 my (@words, @grid, @cmds);
 my $i;
 LINE:

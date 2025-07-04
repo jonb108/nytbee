@@ -2106,14 +2106,13 @@ elsif ($cmd eq 'pa') {
     }
     $cmd = '';
 }
-elsif ($date !~ m{\A CP }xms && $cmd =~ m{\A [~]l \s+ (\S+) \z}xms) {
+elsif ($date !~ m{\A CP }xms && $cmd =~ m{\A [~]lg \s+ (\S+) \z}xms) {
     # undocumented
     my $sn = $1;
     $message = `$cgi_dir/nytbee_log.pl -s $date '$sn'`;
     $cmd = '';
 }
 elsif ($date !~ m{\A CP }xms && $cmd eq 'lg') {
-    my $uuid11 = substr($uuid, 0, 11);
     $message = `$cgi_dir/nytbee_log.pl $date '$uuid11'`;
     $cmd = '';
 }

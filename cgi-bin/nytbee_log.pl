@@ -4,6 +4,9 @@ use warnings;
 use BeeUtil qw/
     my_today
 /;
+use BeeLog qw/
+    open_log
+/;
 my @rank = map { my $x = $_; $x =~ s/_/ /; $x; } qw/
     Beginner
     Good_Start
@@ -28,6 +31,7 @@ if ($ARGV[0] eq '-s') {
     shift;
     my $sn;
     ($date, $sn) = @ARGV;
+    # it's tricky because of the case issue
     my %uuid_screen_name;
     tie %uuid_screen_name, 'DB_File', 'uuid_screen_name.dbm';
     open my $in, '<', "beelog/$date";
@@ -44,6 +48,7 @@ if ($ARGV[0] eq '-s') {
     close $in;
     for my $uid (keys %sn_for) {
         if ($sn_for{$uid} =~ m{\A $sn \z}xmsi) {
+            # the /i above solves the case issue
             $uuid11 = $uid;
             print "Log for $sn_for{$uid}<p>\n";
             last;
@@ -57,8 +62,7 @@ if ($ARGV[0] eq '-s') {
 else {
     ($date, $uuid11) = @ARGV;
 }
-open my $in, '<', "beelog/$date"
-    or die "wrong date: $date\n";
+my $in = open_log($date);
 my $saved_time = '';
 LINE:
 while (my $line = <$in>) {

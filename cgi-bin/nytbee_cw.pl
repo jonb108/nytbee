@@ -13,6 +13,9 @@ use BeeUtil qw/
     my_today
     JON
 /;
+use BeeLog qw/
+    open_log
+/;
 my $today = my_today();
 my $date = shift;
 my $date_obj = date($date);
@@ -48,7 +51,7 @@ for my $t (@types) {
     }
     close $tf;
 }
-open my $log, '<', "beelog/$date";
+my $log = open_log($date);
 LINE:
 while (my $line = <$log>) {
     chomp $line;

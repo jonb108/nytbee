@@ -898,7 +898,7 @@ You can’t <i>quite</i> claim that you got to Queen Bee
 <i>all by yourself</i>, but that’s okay.
 <p>
 As in the <a href=#table_list>Hint Table</a> the numbers in the BT table are <i>links</i> - to show a brief definition of the word(s). <span class=cmd>BT</span> is a toggle - the default is off.
-If a puzzle is not a Bingo no table will be shown.
+If a puzzle is not a Bingo puzzle no table will be shown.
 <p>
 If you are using the <a href=#graphical>graphical status</a> note that you can click on the
 'b' (bingo) line to toggle the Bingo Table on and off.
@@ -932,13 +932,13 @@ is GN4L (<span class=cmd>G</span>enius <span class=cmd>N</span>o <span class=cmd
 Since 4 letter words are only valued at 1 point, attaining GN4L is almost always possible.
 In the first 1530 games in the <a href=#nyt_archive>archive</a> there were
 only 8 games where GN4L was <i>not</i> possible. 10/8/19 is one example.
-If GN4L cannot be achieved this is noted in the output of the 'I' (info) command.
+If GN4L cannot be achieved this is noted in the output of the <span class=cmd>I</span> (Info) command.
 <p>
-Even though it is almost always possible, getting to GN4L isn’t easy
-and here are a few commands to help:
+Even though it is almost always possible, getting to GN4L isn’t easy.
+Here are a few commands to help:
 <p>
 <table cellpadding=5>
-<tr><td><span class=cmd>D5</span></td><td>Define a random word not yet found that has 5 or more letters.  Note that if you only have 5+ letter words in your found list the DR command will do much the same as the D5 command.</td></tr>
+<tr><td><span class=cmd>D5</span></td><td>Define a random word not yet found that has 5 or more letters.  Note that if you only have 5+ letter words in your found list the <span class=cmd>DR</span> command will do much the same as the <span class=cmd>D5</span> command.</td></tr>
 <tr><td><span class=cmd>51</span></td><td>Show a random non-zero entry from the Hint Table where the length is 5 or more.</td></tr>
 <tr><td><span class=cmd>52</span></td><td>Show a random entry from the Two Letter List of words with a length of 5 or more.</td></tr>
 <tr><td><span class=cmd>53</span></td><td>Show a random entry from the Three Letter List of words with a length of 5 or more.</td></tr>
@@ -960,9 +960,12 @@ this additional congratulatory message for GOTN:
 On the Nose! <span style='font-size: 24pt'>&#128067;</span> &#128522;
 </ul>
 <p>
+As you get close to Genius you can consult the Hint Table to see if there is a 5+ letter word remaining that will get you to Genius exactly.  If not, you could <i>stash</i> a word with the <span class=cmd>SW</span> command like this: <span class=cmd>SW</span> &lt;word&gt;.  This will adjust your score so you can then have other ways to make the score match the Genius level exactly. 
+<p>
 Two other Genius level variants are when you did not need
 a Pangram to reach Genius.  The codes for these are: GN4L-NP and GOTN-NP.
 If GN4L-NP is not possible this is also noted in the I (info) command.
+(10/19/2019 is one day when GN4L-NP was not possible.)  The “attagirl” is:
 <p>
 <ul>
 And with No Pangrams! &#128526; &#128588;
@@ -970,7 +973,6 @@ And with No Pangrams! &#128526; &#128588;
 <p>
 The <span class=cmd>PG</span> command will tell you how many more points you need to reach the Genius level. If you are at or over Genius it reports how many more words you need to reach Queen Bee.
 <p>
-As you get close to Genius you can consult the Hint Table to see if there is a 5+ letter word remaining that will get you to Genius exactly.  If not, you could <i>stash</i> a word with the <span class=cmd>SW</span> command like this: <span class=cmd>SW</span> &lt;word&gt;.  This will adjust your score so you can then have other ways to make the score match the Genius level exactly. 
 <a name=stash></a>
 <h2>The Stash
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -2144,9 +2146,9 @@ This list of terms was compiled by Monicat and appears in the NYT HiveMind Forum
 <p>
 <span class=green>GN4L</span> — Genius, No 4 Letters: You’ve reached Genius level without any four-letter words. Though we may want to say four-letter words while trying to get to Genius without them.
 <p>
-<span class=green>GN4L OTN</span> — Genius, No 4 Letters, On The Nose: You’ve scored exactly the number of points to achieve Genius without using four-letter words.
+<span class=green>GN4L OTN or GOTN</span> — Genius, No 4 Letters, On The Nose: You’ve scored exactly the number of points to achieve Genius without using four-letter words.
 <p>
-<span class=green>GNP(s)</span> — Genius, No Pangram(s): You’ve gotten to Genius without finding a pangram.
+<span class=green>GNP(s) or GN4L-NP</span> — Genius, No Pangram(s): You’ve gotten to Genius without finding a pangram.
 <p>
 <span class=green>Hivemind</span> — The name of the Spelling Bee community.
 <p>
@@ -2416,8 +2418,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2607 puzzles with
-a total of 10694 different words!
+2613 puzzles with
+a total of 10719 different words!
 <p>
 Tallies are made of the many puzzles and words.
 See this table of the puzzles:

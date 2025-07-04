@@ -23,6 +23,9 @@ use warnings;
 use BeeUtil qw/
     JON
 /;
+use BeeLog qw/
+    open_log
+/;
 use DB_File;
 my %rank_name = (
     0 => 'Beginner',
@@ -41,11 +44,8 @@ my $disp_date = $date;
 $disp_date =~ s{\A (....)(..)(..) \z}{$2/$3/$1}xms;
 my ($nbonus, $ndonut, $nlexicon, $boa, $bb);
 my $sp = '&nbsp;' x 2;
-my $in;
-if (! open $in, '<', "beelog/$date") {
-    print "No log for $disp_date";
-    exit;
-}
+my $in = open_log($date);
+
 # Bingo is complicated! :) :(
 my (%min_bingo_score_for); # < 8
 my (%max_bingo_score_for); # >= 8
