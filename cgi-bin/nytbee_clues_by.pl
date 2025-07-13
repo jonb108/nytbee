@@ -13,13 +13,27 @@ use BeeClues qw/
 
 use Date::Simple qw/
     date
+    today
 /;
 
 my $first = $param{first};
 my $all_words = $param{all_words};
 my $date = $param{date};
+if (! $date) {
+    my ($hour) = (localtime)[2];
+    my $today = today();
+    if ($hour < 1) {
+        # the machine is in MST
+        # and the "next day" doesn't start until 3:00 AM EST
+        --$today;
+    }
+    $date = $today->as_d8();
+}
 my $format = $param{format};
 my $person_id = $param{person_id};
+if (! $person_id) {
+    $person_id = 284;   # kitt
+}
 my %was_found = map { $_ => 1 }
                 split ' ', $param{found};
 # to be set:
