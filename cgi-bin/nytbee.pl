@@ -3835,45 +3835,6 @@ if ($message) {
     $has_message = 1;
 }
 
-#
-# disabled for now
-#
-
-# 18d7edac-6fee-11ed-a97e-8c36b52268c0
-# 0123456789012345678901234567890
-#           1         2         3
-sub long_form {
-    my ($uuid) = @_;
-    return substr($uuid,  8, 1) eq '-'
-        && substr($uuid, 13, 1) eq '-'
-        && substr($uuid, 18, 1) eq '-'
-        && substr($uuid, 23, 1) eq '-'? 1: 0;
-}
-
-# is the screen_name base+num?
-sub assigned_sn {
-    my ($sn) = @_;
-    if (! $sn) {
-        return 1;
-    }
-    my $base = join '|', @base;
-    return $sn =~ m{\A ($base)\d+ \z}xms? 1: 0;
-}
-
-my $lf = long_form($uuid);
-my $sn = assigned_sn($screen_name);
-if (0 && ($lf || $sn)       # not any more...
-    && keys %cur_puzzles > 2
-    && @found > 3
-) {
-    # present a different page.
-    # ask for a screen_name and an identity string.
-    # make sure to keep their settings and current puzzles.
-    # and exit;
-    system("$cgi_dir/new_sn_is.pl '$screen_name' '$sn' '$uuid' '$lf' '$date'");
-    exit;
-}
-
 # now to display everything
 # cgi-bin/style.css?
 my $num_msgs = '';

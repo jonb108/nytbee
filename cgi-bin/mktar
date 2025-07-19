@@ -24,6 +24,7 @@ nytbee_dl.pl \
 nytbee_time.pl \
 nytbee_activity.pl \
 redop.pl \
+redopc.pl \
 nytbee_log.pl \
 nytbee_bbx.pl \
 indexize \
@@ -54,6 +55,8 @@ mktar \
 go \
 dump_dbm \
 set_dbm \
+get_dbm \
+steve \
 del_dbm \
 edit_cp.pl \
 edit_cp_clues.pl \

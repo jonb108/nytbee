@@ -1,0 +1,14 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+sub oops {
+    die "usage: set_dbm file.dbm key\n";
+}
+oops unless @ARGV == 2;
+my ($hash_file, $key) = @ARGV;
+oops unless $hash_file && $hash_file =~ m{\A \S+[.]dbm \z}xms;
+oops unless defined $key;
+use DB_File;
+my %hash;
+tie %hash, 'DB_File', $hash_file or die "no tie!";
+print "$hash{$key}\n";

@@ -51,6 +51,17 @@ sub cgi_header {
         $uuid = lc $1;
 #        my $old_uuid = lc $q->cookie('uuid');
 #        # check for generated one??
+#
+# 18d7edac-6fee-11ed-a97e-8c36b52268c0
+# 0123456789012345678901234567890
+#           1         2         3
+#sub long_form {
+#    my ($uuid) = @_;
+#    return substr($uuid,  8, 1) eq '-'
+#        && substr($uuid, 13, 1) eq '-'
+#        && substr($uuid, 18, 1) eq '-'
+#        && substr($uuid, 23, 1) eq '-'? 1: 0;
+#}
 #        $cur_puzzles_store{$uuid} = $cur_puzzles_store{$old_uuid};
 #        delete $cur_puzzles_store{$old_uuid};
 #

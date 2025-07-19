@@ -1,0 +1,183 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+use CGI;
+use DB_File;
+use BeeUtil qw/
+    my_today
+    uniq_words
+    JON
+/;
+use Bee_DBH qw/
+    $dbh
+/;
+use Data::Dumper qw/
+    Dumper
+/;
+use Date::Simple qw/
+    date
+/;
+$Data::Dumper::Terse = 1;
+$Data::Dumper::Indent = 0;
+
+my $steve_person_id = 1;
+my $steve_uuid = 'steveg!';
+
+my $q = CGI->new();
+print $q->header();
+print <<"EOH";
+<html>
+<style>
+body {
+    margin: .5in;
+}
+body, textarea, input {
+    font-size: 18pt;
+}
+a {
+    text-decoration: none;
+    color: blue;
+}
+</style>
+<body>
+EOH
+my %params = $q->Vars();
+
+my $dt = my_today();
+my $d8 = $dt->as_d8();
+
+my $sth = $dbh->prepare(<<'EOS');
+    select *
+      from bee_clue
+     where person_id = ? and date = ?
+EOS
+$sth->execute($steve_person_id, $d8);
+my $href = $sth->fetchrow_hashref();
+if ($href) {
+    #
+    # already loaded today
+    # find a prior date that hasn't been loaded already
+    # and reassign $dt and $d8
+    #
+    my $sth_min = $dbh->prepare(<<'EOS');
+
+    select min(date) as minimum
+      from bee_clue
+     where person_id = ?
+
+EOS
+    $sth_min->execute($steve_person_id);
+    my ($minimum) = $sth_min->fetchrow_array();     # d8 format
+    $dt = date($minimum) - 1;       # the day before
+    $d8 = $dt->as_d8();
+}
+
+my $disp_dt  = $dt->format("%B %d, %Y");
+my $the_date = $dt->format("%Y/%m/%d");
+
+if (! %params) {
+    print <<"EOH";
+Please post Steve G.'s clues for $disp_dt.   Get them <a onclick="document.getElementById('ta').focus();" target=steveg href='https://www.nytimes.com/$the_date/crosswords/spelling-bee-forum.html#commentsContainer'>here</a>.
+<p>
+<form method=POST action=https://ultrabee.org/cgi-bin/steve>
+<textarea id=ta name=clues rows=15 cols=50 autofocus>
+</textarea>
+<p>
+<input type=submit style="background: lightgreen">
+</form>
+</body>
+</html>
+EOH
+}
+else {
+    my %puzzle_store;
+    tie %puzzle_store, 'DB_File', 'puzzle_store.dbm';
+    my ($s, $t) = split m{[|]}xms, $puzzle_store{$d8};
+    untie %puzzle_store;
+    my @words = split ' ', $t;
+
+    my $sth_ins = $dbh->prepare(<<'EOS');
+
+    insert into bee_clue
+           (person_id, date, word, clue)
+    values (?, ?, ?, ?)
+
+EOS
+
+    my $added = 0;
+    for my $line (grep  { m{\A [\d,]*[)]}xms }
+                  split m{\n}xms, $params{clues}
+    ) {
+        $line =~ s{[\n]}{}xms;
+        my ($nums, $clue) = $line =~ m{([\d,]*)[)] \s* (.*) \z}xms;
+        my @nums = $nums =~ m{(\d+)}xmsg;
+        for my $i (0 .. $#nums) {
+            my $the_clue = $clue . ($i > 0? ' +': '');
+            my $word = shift @words;
+            $sth_ins->execute($steve_person_id, $d8, $word, $the_clue);
+            ++$added;
+        }
+    }
+    my %puzzle_has_clues;
+    tie %puzzle_has_clues, 'DB_File', 'nyt_puzzle_has_clues.dbm';
+                                      # include the nyt_ here
+    if (exists $puzzle_has_clues{$d8}) {
+        my @users = split /\|/, $puzzle_has_clues{$d8};
+        push @users, $steve_uuid; 
+        $puzzle_has_clues{$d8} = join '|', uniq_words @users;
+    }
+    else {
+        $puzzle_has_clues{$d8} = $steve_uuid;
+    }
+    untie %puzzle_has_clues;
+
+    # 
+    # now write the text two files clues/$d8 and cluers/$d8
+    #
+    my $sth1 = $dbh->prepare(<<'EOS');
+    
+    SELECT person_id, word, clue
+      FROM bee_clue
+     WHERE date = ?
+ ORDER BY person_id
+
+EOS
+    $sth1->execute($d8);
+    my %clues;
+    while (my ($person_id, $word, $clue) = $sth1->fetchrow_array()) {
+        push @{$clues{$word}}, { person_id => $person_id, clue => $clue };
+    }
+    open my $out1, '>', "clues/$d8"
+        or die "no clues/$d8";
+    print {$out1} Dumper(\%clues);
+    close $out1;
+
+    my $sth2 = $dbh->prepare(<<'EOS');
+
+    SELECT id, name
+      FROM bee_person
+     WHERE id IN (SELECT distinct person_id
+                    FROM bee_clue, bee_person
+                   WHERE date = ?) 
+  ORDER BY id;
+
+EOS
+    $sth2->execute($d8);
+    my %cluers;
+    while (my ($id, $name) = $sth2->fetchrow_array()) {
+        $cluers{$id} = $name;
+    }
+    open my $out2, '>', "cluers/$d8"
+        or die "no clues/$d8";
+    print {$out2} Dumper(\%cluers);
+    close $out2;
+
+    print <<"EOL";
+Added $added clues for $disp_dt.
+<p>
+Click <a href='https://ultrabee.org/cgi-bin/steve'>here</a> to add clues for another date.
+</body>
+</html>
+EOL
+}

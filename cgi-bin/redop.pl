@@ -1,6 +1,9 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use DB_File;
+my %puzzle_store;
+tie %puzzle_store, 'DB_File', 'puzzle_store.dbm';
 
 open my $in, '<', 'nyt_puzzles.txt'
     or die "no nyt_puzzles.txt: $!\n";
@@ -48,7 +51,8 @@ while (my $line = <$in>) {
     my $gn4l    = $gn4l_score    >= $genius? 1: 0;
     my $gn4l_np = $gn4l_np_score >= $genius? 1: 0;
     #print "dt $date $seven $center npan $npangrams nperfect $nperfect nwords $nwords max $max_score bingo $bingo gn4l $gn4l gn4l_np $gn4l_np @pangrams | @words\n";
-    print {$out} "$date => $seven $center $npangrams $nperfect $nwords $max_score $bingo $gn4l $gn4l_np @pangrams | @words\n";
+    print {$out} "$date $seven $center $npangrams $nperfect $nwords $max_score $bingo $gn4l $gn4l_np @pangrams | @words\n";
+    $puzzle_store{$date} = "$seven $center $npangrams $nperfect $nwords $max_score $bingo $gn4l $gn4l_np @pangrams | @words";
 }
 close $in;
 close $out;
