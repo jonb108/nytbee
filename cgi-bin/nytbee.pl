@@ -90,7 +90,7 @@ use BeeExt qw/
 /;
 
 my $message = '';
-my $ymd = ymd();
+my $ymd = ymd();        # ymd or today_d8???
 my $ext_sig = '!*+-';   # extra word sigils
                         # ! stash * bonus + lexicon - donut
 my $not_okay_words;
@@ -237,10 +237,6 @@ else {
     # otherwise this is a brand new user...
 }
 
-sub log_it {
-    my ($msg) = @_;
-    append_file "beelog/$ymd", substr($uuid, 0, 11) . " = $msg\n";
-}
 # is the word already in the file?
 sub own_word {
     my ($type, $date, $w) = @_;
@@ -314,9 +310,19 @@ my %nyt_cluer_color_for;  # key is person_id
 my $first = date('5/9/18');
 my $date;
 my $today = my_today();
+my $today_d8 = $today->as_d8();
 my $new_puzzle = 0;
 my $path_info = uc substr $q->path_info(), 1;   # no need for the leading /
                                                 # it is either yyyymmdd or CPx
+#
+# if the current puzzle is not today's puzzle
+# log it differently so that CW (and others?) will not see it
+#
+sub log_it {
+    my ($msg) = @_;
+    my $c = $date eq $today_d8? '=': '~';
+    append_file "beelog/$ymd", substr($uuid, 0, 11) . " $c $msg\n";
+}
 
 # Puzzle from which date are we dealing with?
 # This is Very confusing, hacky, kludgy, and messy.
@@ -342,7 +348,6 @@ my $cmd = lc($params{hidden_new_words} || $params{new_words});
     # even though it looks like we are typing upper case...
     #
 $cmd = trim($cmd);
-log_it($cmd) if $cmd;
 
 my $mobile_Device   = exists $params{mobile_Device}?
                              $params{mobile_Device}: $mobile;
@@ -392,9 +397,13 @@ if (!$date || $date !~ m{\A \d{8} | CP\d+ \z}xms) {
 }
 if (! $date) {
     # today
-    $date = $today->as_d8();
+    $date = $today_d8;
     $new_puzzle = 1;
 }
+# NOW that $date is set properly from either path_info
+# or %params we can log the cmd
+# $cmd *may* reset $date but ...
+log_it($cmd) if $cmd;
 
 my $post = $params{forum_post};
 if ($cmd eq '' && $post) {
@@ -453,7 +462,7 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
         # and reget the puzzles
         @puzzles = my_puzzles();
         if (! @puzzles) {
-            $date = $today->as_d8();
+            $date = $today_d8;
             $cmd = '';
         }
         else {
@@ -479,11 +488,10 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
 elsif ($cmd eq 'x') {
     delete $cur_puzzles{$date};
     my @puzzles = my_puzzles();
-    $date = @puzzles? $puzzles[0][0]: $today->as_d8();
+    $date = @puzzles? $puzzles[0][0]: $today_d8;
     $cmd = '';
 }
 elsif ($cmd eq 'xa') {
-    my $today_d8 = $today->as_d8();
     my @puzzles = my_puzzles();
     for my $p (@puzzles) {
         my $dt = $p->[0];
@@ -513,7 +521,7 @@ elsif (my ($ncp) = $cmd =~ m{\A xcp \s* (\d+) \z}xms) {
             # and just in case it is in the current list...
             delete $cur_puzzles{"CP$ncp"};
             $message .= ul "Deleted CP$ncp";
-            $date = $today->as_d8();
+            $date = $today_d8;
             # and delete all clues
             system "$cgi_dir/cp_del_clues.pl $ncp";
         }
@@ -577,7 +585,7 @@ elsif (my ($cp_num) = $cmd =~ m{\A cp \s* (\d+) \z}xms) {
     }
 }
 elsif ($cmd eq 't') {
-    $date = $today->as_d8();
+    $date = $today_d8;
     $new_puzzle = 1;
     $cmd = '';
 }
@@ -848,9 +856,18 @@ else {
     @found     = ();
 }
 
+sub assigned_sn {
+    my ($sn) = @_;
+    if (! $sn) {
+        return 1;
+    }
+    my $base = join '|', @base;
+    return $sn =~ m{\A ($base)\d+ \z}xms? 1: 0;
+}
+
 # shall we show a message about doing ID and SN?
 if (assigned_sn($screen_name)
-    && $date eq $today->as_d8()
+    && $date eq $today_d8
     && @found == 0
     && my_puzzles() > 3
 ) {

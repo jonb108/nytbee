@@ -23,6 +23,7 @@ our @EXPORT_OK = qw/
     get_html
     $thumbs_up
     mark_up
+    puzzle_info
 /;
 use Date::Simple qw/
     today
@@ -257,6 +258,57 @@ sub mark_up {
     $s =~ s{(http\S*)}{<a target=_blank href='$1'>$1</a>}xmsg;
     $s =~ s{([\w._]+[@]\S*)}{<a target=_blank href='mailto:$1'>$1</a>}xmsg;
     return $s;
+}
+
+#
+#  input: two array refs to words and pangrams
+# output: $nwords, $max_score,
+#         $npangrams, $nperfect,
+#         $bingo, $gn4l, $gn4l_np
+#
+#  where $bingo, $gn4l, and $gn4l_np are either 0 or 1.
+#
+sub puzzle_info {
+    my ($words_aref, $pangrams_aref) = @_;
+
+    my %is_pangram = map { $_ => 1 } @$pangrams_aref;
+    my $npangrams = @$pangrams_aref;
+    my $nperfect = 0;
+    for my $p (@$pangrams_aref) {
+        if (length $p == 7) {
+            ++$nperfect;
+        }
+    }
+    my $max_score = 0;
+    my $gn4l_score = 0;
+    my $gn4l_np_score = 0;
+    my $nwords = @$words_aref;
+    my %first_letter;
+    for my $w (@$words_aref) {
+        ++$first_letter{substr($w, 0, 1)};
+        my $lw = length $w;
+        if ($lw == 4) {
+            $max_score += 1;
+        }
+        else {
+            if ($is_pangram{$w}) {
+                my $word_score = $lw + 7;
+                $max_score += $word_score;
+                $gn4l_score += $word_score;
+            }
+            else {
+                $max_score += $lw;
+                $gn4l_score += $lw;
+                $gn4l_np_score += $lw;
+            }
+        }
+    }
+    my $bingo = keys %first_letter == 7? 1: 0;
+    my $genius = int(70*$max_score/100);
+    my $gn4l    = $gn4l_score    >= $genius? 1: 0;
+    my $gn4l_np = $gn4l_np_score >= $genius? 1: 0;
+    return ($nwords, $max_score, $npangrams, $nperfect, $bingo,
+            $gn4l, $gn4l_np); 
 }
 
 1;

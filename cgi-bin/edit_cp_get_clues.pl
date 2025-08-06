@@ -80,7 +80,7 @@ $href->{clues} = \%clues;
 #
 use Data::Dumper;
 $Data::Dumper::Terse  = 1;
-$Data::Dumper::Indent = 0;
+$Data::Dumper::Indent = 1;
 open my $out, '>', $fname;
 print {$out} Dumper($href);
 close $out;

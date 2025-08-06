@@ -81,7 +81,7 @@ if (! %params) {
 Please post Steve G.'s clues for $disp_dt.   Get them <a onclick="document.getElementById('ta').focus();" target=steveg href='https://www.nytimes.com/$the_date/crosswords/spelling-bee-forum.html#commentsContainer'>here</a>.
 <p>
 <form method=POST action=https://ultrabee.org/cgi-bin/steve>
-<textarea id=ta name=clues rows=15 cols=50 autofocus>
+<textarea id=ta name=clues rows=10 cols=30 autofocus>
 </textarea>
 <p>
 <input type=submit style="background: lightgreen">
@@ -92,10 +92,13 @@ EOH
 }
 else {
     my %puzzle_store;
-    tie %puzzle_store, 'DB_File', 'puzzle_store.dbm';
+    #tie %puzzle_store, 'DB_File', 'puzzle_store.dbm';
+    # eventually use the above
+    tie %puzzle_store, 'DB_File', 'nyt_puzzles.dbm';
     my ($s, $t) = split m{[|]}xms, $puzzle_store{$d8};
     untie %puzzle_store;
     my @words = split ' ', $t;
+    my $nwords = @words;
 
     my $sth_ins = $dbh->prepare(<<'EOS');
 
@@ -105,10 +108,16 @@ else {
 
 EOS
 
+    my @lines = grep  { m{\A [\d,]*[)]}xms }
+                split m{\n}xms, $params{clues}
+                ;
+    my $nlines = @lines;
+    if (@words != @lines) {
+        print "# lines ($nlines) does not match # words ($nwords)!!\n";
+        exit;
+    }
     my $added = 0;
-    for my $line (grep  { m{\A [\d,]*[)]}xms }
-                  split m{\n}xms, $params{clues}
-    ) {
+    for my $line (@lines) {
         $line =~ s{[\n]}{}xms;
         my ($nums, $clue) = $line =~ m{([\d,]*)[)] \s* (.*) \z}xms;
         my @nums = $nums =~ m{(\d+)}xmsg;

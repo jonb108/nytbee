@@ -67,12 +67,15 @@ my $saved_time = '';
 LINE:
 while (my $line = <$in>) {
     chomp $line;
-    if (index($line, "$uuid11 = ") >= 0) {
+    if (index($line, "$uuid11 = ") >= 0     # today
+        ||
+        index($line, "$uuid11 ~ ") >= 0     # other days
+    ) {
         if ($saved_time) {
             print "<span class=gray>$saved_time</span><br>\n";
             $saved_time = '';
         }
-        $line =~ s{\A .* = \s+}{}xms;
+        $line =~ s{\A .* [=~] \s+}{}xms;
         if ($line =~ m{\A rank(\d)}xmsi) {
             my $r = $1;
             $line =~ s{rank\d \s+ (\S+)}{}xms;

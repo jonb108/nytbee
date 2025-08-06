@@ -57,6 +57,8 @@ while (my $line = <$log>) {
     chomp $line;
     my ($uid, $cmd) = $line =~ m{\A (\S+)\s*(.*) \z}xms;
     next LINE if index($cmd, '= ') == -1;
+        # the above will skip entries that are not for TODAY
+        # because they have ~ instead of =
     $cmd = substr($cmd, 2);
     next LINE if index($cmd, 'd ') == 0;
     #next LINE if $cmd =~ m{\d}xms;

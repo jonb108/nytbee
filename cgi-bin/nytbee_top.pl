@@ -65,6 +65,8 @@ tie %full_uuid, 'DB_File', 'full_uuid.dbm';
 LINE:
 while (my $line = <$in>) {
     if (index($line, ' = ') < 0) {
+        # lines from people who are not playing today's puzzle
+        # will be skipped as they have ~ instead of =
         next LINE;
     }
     chomp $line;

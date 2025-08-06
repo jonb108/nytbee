@@ -23,7 +23,7 @@ use File::Slurp qw/
 
 use Data::Dumper;
 $Data::Dumper::Terse  = 1;
-$Data::Dumper::Indent = 0;
+$Data::Dumper::Indent = 1;
 
 my $q = CGI->new();
 my $uuid = cgi_header($q);
