@@ -37,11 +37,11 @@ print "$cp\n";
         next CP;
     }
     # an lvalue of a hash slice!
-    @$href[qw/
+    @$href{qw/
         nwords max_score
         npangrams nperfect
         bingo gn4l gn4l_np
-    /] = puzzle_info($href->{words}, $href->{pangrams});
+    /} = puzzle_info($href->{words}, $href->{pangrams});
 
     print {$out} Dumper($href);
     close $in;
