@@ -111,8 +111,12 @@ EOS
     my @lines = grep  { m{\A [\d,]*[)]}xms }
                 split m{\n}xms, $params{clues}
                 ;
-    my $nlines = @lines;
-    if (@words != @lines) {
+    my $nlines = 0;
+    for my $l (@lines) {
+        my ($x) = $l =~ m{\A ([ ,\d]+) }xms;
+        $nlines += () = $x =~ m{(\d+)}xmsg;
+    }
+    if ($nwords != $nlines) {
         print "# lines ($nlines) does not match # words ($nwords)!!\n";
         exit;
     }

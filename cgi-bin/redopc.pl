@@ -1,6 +1,9 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use BeeUtil qw/
+    puzzle_info
+/;
 use Data::Dumper qw/
     Dumper
 /;
@@ -33,50 +36,12 @@ print "$cp\n";
         print "$cp no href\n";
         next CP;
     }
-    my @pangrams = @{$href->{pangrams}};
-    my $nperfect = 0;
-    for my $p (@pangrams) {
-        if (length $p == 7) {
-            ++$nperfect;
-        }
-    }
-    $href->{npangrams} = @pangrams;
-    $href->{nperfect} = $nperfect;
-
-    my %is_pangram = map { $_ => 1 } @pangrams;
-
-    my @words = @{$href->{words}};
-
-    $href->{nwords} = @words;
-    my $max_score = 0;
-    my $gn4l_score = 0;
-    my $gn4l_np_score = 0;
-    my $nwords = @words;
-    my %first_letter;
-    for my $w (@words) {
-        ++$first_letter{substr($w, 0, 1)};
-        my $lw = length $w;
-        if ($lw == 4) {
-            $max_score += 1;
-        }
-        else {
-            if ($is_pangram{$w}) {
-                my $word_score = $lw + 7;
-                $max_score += $word_score;
-                $gn4l_score += $word_score;
-            }
-            else {
-                $max_score += $lw;
-                $gn4l_score += $lw;
-                $gn4l_np_score += $lw;
-            }
-        }
-    }
-    $href->{bingo}   = keys %first_letter == 7? 1: 0;
-    $href->{max_score} = $max_score;
-    my $genius  = int(70*$max_score/100);
-    $href->{gn4l}    = $gn4l_score    >= $genius? 1: 0;
-    $href->{gn4l_np} = $gn4l_np_score >= $genius? 1: 0;
+    # an lvalue of a hash slice!
+    @$href[qw/
+        nwords max_score
+        npangrams nperfect
+        bingo gn4l gn4l_np
+    /] = puzzle_info($href->{words}, $href->{pangrams});
 
     print {$out} Dumper($href);
     close $in;
