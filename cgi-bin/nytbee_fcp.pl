@@ -14,7 +14,7 @@ if (! $dt) {
     print "$date: invalid date";
     exit;
 }
-if (! -e "community_puzzles/$cp.txt") {
+if (! -e "community_plus/$cp.txt") {
     print "$cp: no such community puzzle";
     exit;
 }

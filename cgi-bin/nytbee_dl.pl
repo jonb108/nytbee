@@ -71,7 +71,7 @@ for my $dt (sort keys %cur_puzzles) {
     # of the pangrams have been found
     if (my ($cp_num) = $dt =~ m{\ACP(\d+)}xms) {
         # community puzzle
-        my $cp_href = do "community_puzzles/$cp_num.txt";
+        my $cp_href = do "community_plus/$cp_num.txt";
         $letters = $cp_href->{seven};
         $center = $cp_href->{center};
         my @pw = @{$cp_href->{pangrams}};

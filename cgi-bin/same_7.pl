@@ -42,7 +42,7 @@ for my $l (@lines) {
             );
     }
 }
-my @fnames = `grep -l "'seven' => '$seven'" community_puzzles/*`;
+my @fnames = `grep -l "'seven' => '$seven'" community_plus/*`;
 chomp @fnames;
 for my $f (@fnames) {
     my $cp_href = do $f;

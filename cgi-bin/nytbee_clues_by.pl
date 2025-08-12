@@ -49,7 +49,7 @@ if (my ($ncp) = $date =~ m{\A CP(\d+) \z}xms) {
     # community puzzles don't need a database connection
     # some way to avoid the $dbh initialization?
     $show_date = $date;
-    my $href = do "community_puzzles/$ncp.txt";
+    my $href = do "community_plus/$ncp.txt";
     $name = $href->{name};
     %clue_for = %{$href->{clues}};
 }

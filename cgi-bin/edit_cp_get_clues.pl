@@ -21,7 +21,7 @@ print $q->header();
 my %params = $q->Vars();
 
 my $CPn = $params{CPn};
-my $fname = "community_puzzles/$CPn.txt";
+my $fname = "community_plus/$CPn.txt";
 my $href = do $fname;
 # and now replace $href->{words}
 #                 $href->{clues}

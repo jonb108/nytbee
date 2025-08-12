@@ -14,7 +14,7 @@ my $uuid = cgi_header($q);
 my $n = $q->path_info();
 $n =~ s{\A /}{}xms;
 
-my $fname = "community_puzzles/$n.txt";
+my $fname = "community_plus/$n.txt";
 
 if (! -f $fname) {
     print "no such puzzle: CP$n\n";

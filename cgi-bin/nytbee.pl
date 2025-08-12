@@ -294,7 +294,7 @@ sub puzzle_class {
           :          'Jumbo';
 }
 
-my $comm_dir = 'community_puzzles';
+my $comm_dir = 'community_plus';
 my ($seven, $center, @pangrams);
 my $Center;
 my @seven;
@@ -1609,15 +1609,66 @@ elsif ($cmd eq '~pf') {
     $cmd = '';
 }
 elsif ($cmd eq 's45') {
-    @found = map {
-                my $l = length;
-                my ($w) = m{([a-z]+)!}xmsi;
-                 $l == 4        ? "$_!"
-                : !$w && $l >= 5? $_
-                : $l > 5        ? $w
-                :                 $_;
-             }
-             @found;
+    # not undocumented per se - an internal command
+    #
+    # we just finished max bingo and it is time to
+    # go on to the next phase of looking for words in the puzzle.
+    #
+    # stash any found 4 letter words
+    # unstash any 5+ letter words
+    # but
+    # if GN4L is not possible unstash all words in the stash
+    # if GN4L is possible AND GN4L-NP is possible do not unstash pangrams
+    #
+    # rather complicated!
+    #
+    my $gn4l = 1;           # replace with global when ready??
+    my $gn4l_np = 1;
+    my @new_found;
+    for my $w (@found) {
+        if ($w =~ m{\A ([a-z]+)! \z}xmsi) {
+            my $sw = $1;
+            # it's in the stash
+            my $lsw = length $sw;
+            if (! $gn4l) {
+                push @new_found, $sw;   # unstash all words
+            }
+            elsif ($lsw == 4) {
+                push @new_found, $w;    # leave 4 letter word in stash
+            }
+            elsif (!$gn4l_np) {
+                push @new_found, $sw;   # unstash all 5+ letter words
+                                        # including pangrams
+            }
+            elsif (!$is_pangram{$sw}) {
+                push @new_found, $sw;   # unstash all 5+ letter non pangrams
+            }
+            else {
+                push @new_found, $w;   # leave pangram in stash
+            }
+        }
+        elsif ($w =~ m{\A [a-z]+ \z}xms) {
+            # a puzzle word - not in stash and not bonus, donut or lexicon
+            my $lw = length $w;
+            if (!$gn4l) {
+                push @new_found, $w;    # leave it alone
+            }
+            elsif ($lw == 4) {
+                push @new_found, "$w!"; # stash 4 letter words
+            }
+            elsif (!$gn4l_np || !$is_pangram{$w}) {
+                push @new_found, $w;    # leave it alone
+            }
+            else {
+                push @new_found, "$w!"; # stash pangrams
+            }
+        }
+        else {
+            # bonus, donut, or lexicon - leave it alone
+            push @new_found, $w;
+        }
+    }
+    @found = @new_found;
     $show_BingoTable = 0;
     $message = "You can now strive for GN4L.";
     $cmd = '';
@@ -2563,8 +2614,11 @@ sub consider_word {
                                             .  ($thumbs_up x 4)
                                             .  "<p>"
                                             .  qq!<span class=pointer style='color: $colors{alink}' onclick="issue_cmd('S45');">On to GN4L</span>!
+                                            # depending on gn4l and gn4l_np...
                                             # s45 = stash any four letter words
                                             # and unstash any 5 letter words
+                                            # but do not unstash pangrams
+                                            # if GN4L-NP is possible.
                                             ;
                             $bingo_score += 8;                
                         }

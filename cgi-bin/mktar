@@ -24,7 +24,6 @@ nytbee_dl.pl \
 nytbee_time.pl \
 nytbee_activity.pl \
 redop.pl \
-redopc.pl \
 nytbee_log.pl \
 nytbee_bbx.pl \
 indexize \

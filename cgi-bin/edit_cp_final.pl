@@ -7,6 +7,7 @@ use BeeUtil qw/
     cgi_header
     $log
     ymd
+    puzzle_info
 /;
 
 # we will save the name, location
@@ -32,7 +33,7 @@ $params{publish} |= '';   # since unchecked boxes are not sent...
 
 my $n = $params{CPn};
 
-my $dir = 'community_puzzles';
+my $dir = 'community_plus';
 my $href = do "$dir/$n.txt";
 
 # save a possibly different name and location in the database
@@ -42,7 +43,14 @@ for my $f (qw/ name location title description publish /) {
     $href->{$f} = $params{$f};
 }
 
+# an lvalue of a hash slice!
+@$href{qw/
+    nwords max_score
+    npangrams nperfect
+    bingo gn4l gn4l_np
+/} = puzzle_info($href->{words}, $href->{pangrams});
 write_file "$dir/$n.txt", Dumper($href);
+
 append_file 'beelog/' . ymd(), substr($uuid, 0, 11) . " edited CP$n\n";
 
 print <<"EOH";

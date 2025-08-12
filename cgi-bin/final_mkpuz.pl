@@ -7,6 +7,7 @@ use BeeUtil qw/
     cgi_header
     $log
     ymd
+    puzzle_info
 /;
 
 # we will save the name, location, and word => clues
@@ -39,9 +40,17 @@ $params{clues} = $clue_href;
 $params{words} = [ split ' ', $params{words} ];
 $params{pangrams} = [ split ' ', $params{pangrams} ];
 
-my $dir = 'community_puzzles';
+my $dir = 'community_plus';
 my $n;
 edit_file { $n = $_ = $_+1 } "$dir/last_num.txt";
+#write_file "$dir/$n.txt", Dumper(\%params);
+
+# an lvalue of a hash slice!
+@params{qw/
+    nwords max_score
+    npangrams nperfect
+    bingo gn4l gn4l_np
+/} = puzzle_info($params{words}, $params{pangrams});
 write_file "$dir/$n.txt", Dumper(\%params);
 
 append_file 'beelog/' . ymd(), substr($uuid, 0, 11) . " creating CP$n\n";

@@ -29,7 +29,7 @@ use Bee_DBH qw/
 
 
 my $n = $q->param('CPn');
-my $cp_href = do "community_puzzles/$n.txt";
+my $cp_href = do "community_plus/$n.txt";
 my $person_id = $cp_href->{person_id};
 
 my $seven = $cp_href->{seven};
