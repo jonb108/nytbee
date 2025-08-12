@@ -8,16 +8,13 @@ use LWP::Simple qw/
 use BeeUtil qw/
     ymd
     get_html
+    puzzle_info
 /;
 
 my $bin = '/home4/logical9/www/ultrabee/cgi-bin';
 my $bee = '/home4/logical9/www/ultrabee';
 
 use DB_File::Lock;
-my %puzzle;
-tie %puzzle, 'DB_File::Lock',
-             "$bin/nyt_puzzles.dbm",
-              O_CREAT|O_RDWR, 0666, $DB_HASH, 'write';
 my %definition_of;
 tie %definition_of, 'DB_File', 'definition_of.dbm';
 
@@ -90,13 +87,33 @@ for my $w (@words) {
 }
 untie %first_appeared;
 
-$puzzle{$dt8} = "$seven $center @pangrams | @words";
-open my $puzzle_out, '>', 'nyt_puzzles.txt';
-for my $dt (sort keys %puzzle) {
-    print {$puzzle_out} "$dt => $puzzle{$dt}\n";
-}
-close $puzzle_out;
+my $s = "$seven $center @pangrams | @words";
+my %puzzle;
+tie %puzzle, 'DB_File::Lock',
+             "$bin/nyt_puzzles.dbm",
+              O_CREAT|O_RDWR, 0666, $DB_HASH, 'write';
+$puzzle{$dt8} = $s;
 untie %puzzle;
+open my $puzzle_out, '>>', 'nyt_puzzles.txt';
+print {$puzzle_out} "$dt8 => $s\n";
+close $puzzle_out;
+
+#
+# more data in another two files
+#
+my @attrs = puzzle_info(\@words, \@pangrams);
+my $splus = "$seven $center @attrs @pangrams | @words";
+
+my %puzzle_store;
+tie %puzzle_store, 'DB_File::Lock',
+             "$bin/puzzle_store.dbm",
+              O_CREAT|O_RDWR, 0666, $DB_HASH, 'write';
+$puzzle_store{$dt8} = $splus;
+untie %puzzle_store;
+
+open my $puzzle_plus, '>>', 'nyt_puzzles_plus.txt';
+print {$dt8} "$dt8 $splus\n";
+close $puzzle_plus;
 
 # the various lists
 system("$bin/nytbee_list.pl");
@@ -104,7 +121,6 @@ system("$bin/nytbee_list.pl");
 open my $outlog, '>>', 'beelog/' . ymd();
 print {$outlog} "new puzzle for $dt8: @pangrams\n";
 close $outlog;
-
 
 # add the pangrams to nyt_pangrams.html
 # they may be there already
