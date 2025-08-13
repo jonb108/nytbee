@@ -1722,6 +1722,8 @@ elsif (   $cmd =~ m{\A d \s+ ([a-z ]+) \z}xms
                 (
                     Common[ ]misspelling[ ]of[ ]
                     |
+                    Alternative[ ]spelling[ ]of[ ]
+                    |
                     Alternative[ ]form[ ]of[ ]
                     |
                     Simple[ ]past[ ]tense[ ]and[ ]past[ ]participle[ ]of[ ]
@@ -1732,7 +1734,7 @@ elsif (   $cmd =~ m{\A d \s+ ([a-z ]+) \z}xms
                     |
                     Present[ ]participle[ ]of[ ]
                 )
-                (\w+)
+                ([\w-]+)
             }xmsi
         ) {
             $the_word = $2;
