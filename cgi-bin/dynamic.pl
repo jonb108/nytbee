@@ -37,19 +37,18 @@ my ($hint_table, $two_lets) = ('', '');
 my $today = my_today();
 my $today_d8 = $today->as_d8();
 my %puzzle;
-tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
+tie %puzzle, 'DB_File', 'puzzle_store.dbm';
 my ($s, $t) = split /[|]/, $puzzle{ $today_d8 };
-my ($seven, $center, @pangrams) = split ' ', $s;
+my ($seven, $center, 
+    $nwords, $max_score,
+    $npangrams, $nperfect,
+    $bingo, $gn4l, $gn4l_np, @pangrams) = split ' ', $s;
 my @seven = split //, $seven;
-my @ok_words = split ' ', $t;
 my %is_pangram = map { $_ => 1 }
                  @pangrams;
+my @ok_words = split ' ', $t;
 my %is_ok_word = map { $_ => 1 }
                  @ok_words;
-my $max_score = 0;
-for my $w (@ok_words) {
-    $max_score += word_score($w, $is_pangram{$w});
-}
 my @ranks = (
     { name => 'Beginner',   pct =>   0, value => 0 },
     { name => 'Good Start', pct =>   2, value => int(.02*$max_score + 0.5) },
@@ -94,7 +93,6 @@ for my $w (@words) {
         push @uwords, $uw;
     }
 }
-my $nwords = @words;
 my $placeholder = $nwords? 'Paste or or enter more words here'
                  :         'Paste words here and hit Return';
 my $pl_w = $nwords == 1? '': 's';
@@ -115,6 +113,8 @@ for my $r (reverse @ranks) {
 }
 my $suggest = '';
 my $new_form = '';
+# ?? need to update cur_puzzle_store even if
+# they are not entering single words... yes??
 # a single word?
 if ($words =~ m{\A \s* [a-z]+ \s* \z}xms) {
     ++$uuid_single{$uuid};

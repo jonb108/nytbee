@@ -16,14 +16,13 @@ cron_jon \
 final_mkpuz.pl \
 get_clues.pl \
 get_nytbee.pl \
-nyt_puzzles.txt \
+nyt_puzzles_plus.txt \
 nytbee_list.pl \
 nytbee_fcp.pl \
 nytbee_wp.pl \
 nytbee_dl.pl \
 nytbee_time.pl \
 nytbee_activity.pl \
-redop.pl \
 nytbee_log.pl \
 nytbee_bbx.pl \
 indexize \

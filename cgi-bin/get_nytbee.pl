@@ -112,7 +112,7 @@ $puzzle_store{$dt8} = $splus;
 untie %puzzle_store;
 
 open my $puzzle_plus, '>>', 'nyt_puzzles_plus.txt';
-print {$dt8} "$dt8 $splus\n";
+print {$puzzle_plus} "$dt8 $splus\n";
 close $puzzle_plus;
 
 # the various lists

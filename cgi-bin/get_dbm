@@ -2,11 +2,14 @@
 use strict;
 use warnings;
 sub oops {
-    die "usage: set_dbm file.dbm key\n";
+    die "usage: get_dbm file.dbm key\n";
 }
 oops unless @ARGV == 2;
 my ($hash_file, $key) = @ARGV;
-oops unless $hash_file && $hash_file =~ m{\A \S+[.]dbm \z}xms;
+if ($hash_file !~ m{\A \S+[.]dbm \z}xms) {
+    $hash_file .= '.dbm';
+}
+oops unless -f $hash_file;
 oops unless defined $key;
 use DB_File;
 my %hash;

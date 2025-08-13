@@ -12,14 +12,14 @@ use BeeHTML qw/
 my ($seven, $cur_date, @cur_words) = @ARGV;
 my $n_cur_words = @cur_words;
 my %cur_words = map { $_ => 1 } @cur_words;
-my @lines = `grep "=> $seven" nyt_puzzles.txt`;
+my @lines = `egrep "[0-9] $seven " nyt_puzzles_plus.txt`;
 my @rows;
 my $sp = '&nbsp;' x 2;
 for my $l (@lines) {
     my ($date, $center, $words) = $l =~ m{
         \A
            (\d{8})      # date
-           [ ] => [ ]   #  => 
+           \s+
            .{7} [ ] (.) # letters center
            .* [|] (.*)  # | words
         \z
