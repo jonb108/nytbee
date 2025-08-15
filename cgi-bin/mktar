@@ -35,7 +35,6 @@ nytbee \
 nytbee_archive \
 nytbee.pl \
 rand_nytbee.pl \
-same_nytbee.pl \
 search_nytbee.pl \
 tally_nytbee.pl \
 mknyt \
@@ -79,7 +78,6 @@ forum_flag.pl \
 fmod.pl \
 get_post.pl \
 del_post.pl \
-status.pl \
 fix_cur \
 ini \
 fin \
