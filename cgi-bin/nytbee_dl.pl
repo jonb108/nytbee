@@ -15,22 +15,21 @@ my ($uuid, $screen_name) = @ARGV;
 use DB_File;
 my %cur_puzzles_store;
 tie %cur_puzzles_store, 'DB_File', 'cur_puzzles_store.dbm';
-my %nyt_puzzles;
-tie %nyt_puzzles, 'DB_File', 'nyt_puzzles.dbm';
+my %puzzle_store;
+tie %puzzle_store, 'DB_File', 'puzzle_store.dbm';
 
 my %cur_puzzles = %{ eval $cur_puzzles_store{$uuid} };
 
 my $ext_sig = '!*+-';   # extra word sigils
                         # ! stash * bonus + lexicon - donut
 my $npuzzles = 0;
-my $nwords = 0;
+my $total_words = 0;
 
-my ($letters, $center, %is_pangram, $npp, @ok_words);
+my ($letters, $center, $npangrams, $max_score, %is_pangram, @ok_words);
 
 my $rank_name;
 my @found;
 my @ranks;
-my $max_score;
 
 sub compute_score_and_rank {
     my $score = 0;
@@ -74,33 +73,32 @@ for my $dt (sort keys %cur_puzzles) {
         my $cp_href = do "community_plus/$cp_num.txt";
         $letters = $cp_href->{seven};
         $center = $cp_href->{center};
+        $npangrams= $cp_href->{npangrams};
+        $max_score = $cp_href->{max_score};
         my @pw = @{$cp_href->{pangrams}};
-        $npp = @pw;
         %is_pangram = map { $_ => 1 } @pw;
         @ok_words = @{$cp_href->{words}};
     }
     else {
-        # split on pipe, shift two
-        my ($s, $t) = split m{[|]}xms, $nyt_puzzles{$dt};
-        ($letters, $center) = split ' ', $s;
-        my @w = split ' ', $s;
-        shift @w; shift @w;
-        $npp = @w;
-        %is_pangram = map { $_ => 1 } @w;
+        my ($s, $t) = split m{[|]}xms, $puzzle_store{$dt};
+        my ($nwords, $nperfect, $bingo, $gn4l, $gn4l_np);
+        my @pangrams;
+        ($letters, $center, $nwords, $max_score,
+         $npangrams, $nperfect,
+         $bingo, $gn4l, $gn4l_np,
+         @pangrams
+        ) = split ' ', $s;
+        %is_pangram = map { $_ => 1 } @pangrams;
         @ok_words = split ' ', $t;
     }
     # the number of hints *overall* is the second number
     my ($nhints) = $cur_puzzles{$dt} =~ m{\A \s* \d+ \s+ (\d+)}xms;
     # now get the words that were entered
     my @words = grep { !/\A-?[0-9]/xms } split ' ', $cur_puzzles{$dt};
-    $nwords += @words;
+    $total_words += @words;
     @found = grep { !/[$ext_sig]\z/xms } @words;
 
-    # determine the ranks
-    $max_score = 0;
-    for my $w (@ok_words) {
-        $max_score += word_score($w, $is_pangram{$w});
-    }
+    # given $max_score determine the ranks
     @ranks = (
     { name => 'Beginner',   pct =>   0, value => 0 },
     { name => 'Good Start', pct =>   2, value => int(.02*$max_score + 0.5) },
@@ -114,10 +112,10 @@ for my $dt (sort keys %cur_puzzles) {
     { name => 'Queen Bee',  pct => 100, value => $max_score },
     );
     my $npf = grep { $is_pangram{$_} } @found;
-    # $npp = number of pangrams in the puzzle
+    # $npangrams = number of pangrams in the puzzle
     # $npf = number of pangrams in the found list
     compute_score_and_rank();
-    my $p = $npp == $npf? 'p': 'n';
+    my $p = $npangrams == $npf? 'p': 'n';
     print {$out1} "$dt,$rank_name,$p\n";
     print {$out2} "$dt,$letters,$center,$rank_name,$p,$nhints,";
     my (@puzzle, @donut, @bonus, @lexicon, @stash);
@@ -151,7 +149,7 @@ for my $dt (sort keys %cur_puzzles) {
 close $out1;
 close $out2;
 print <<"EOH";
-$npuzzles puzzles, $nwords total words
+$npuzzles puzzles, $total_words total words
 <p>
 Links to download your puzzle files:
 <p>

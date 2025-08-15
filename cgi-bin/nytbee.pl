@@ -1722,6 +1722,8 @@ elsif (   $cmd =~ m{\A d \s+ ([a-z ]+) \z}xms
                 (
                     Common[ ]misspelling[ ]of[ ]
                     |
+                    Same[ ]as[ ]
+                    |
                     Alternative[ ]spelling[ ]of[ ]
                     |
                     Alternative[ ]form[ ]of[ ]
