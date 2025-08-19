@@ -2386,7 +2386,7 @@ sub check_word {
             }
             elsif (in_wordnik($w)) {
                 my $root = an_S_or_ES_word($w);
-                if ($root && $w !~ m{less\z}xmsi) {
+                if ($root && $w !~ m{[ln]ess\z}xmsi) {
                     return "Sorry, this word is just a plural OR a 3rd person singular simple present indicative form of " . red($root) . ".";
                 }
                 else {
