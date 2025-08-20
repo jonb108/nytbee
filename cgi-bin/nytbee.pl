@@ -3054,7 +3054,8 @@ if ($bonus_mode && ! $mobile) {
         else {
             $color = $colors{letter};
         }
-        $lets .= "<span style='color: $color'>\u$s</span> ";
+        my $size = $s eq $freq_letter? 25: 20;
+        $lets .= "<span style='color: $color; font-size: ${size}pt;'>\u$s</span> ";
     }
     $extra_words = "$lets$extra_words";
 }
@@ -4459,8 +4460,9 @@ if ($mobile && $bonus_mode) {
     $mobile_bonus .= '&nbsp;' x 3;
     for my $s (@seven) {
         my $color = index($all, "~$s") >= 0? 'green': $colors{letter};
+        my $size = ($s eq $freq_letter)? 25: 20;
         $mobile_bonus .= '&nbsp;'
-                      . "<span style='color: $color'>"
+                      . "<span style='color: $color; font-size: ${size}pt;'>"
                       . uc($s)
                       . '</span>'
                       ;
