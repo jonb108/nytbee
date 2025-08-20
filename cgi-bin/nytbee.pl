@@ -665,6 +665,8 @@ sub no_puzzle {
 }
 
 # we have a valid date. either d8 format or CP#
+# get the puzzle and its attributes
+#
 if ($date =~ m{\A\d}xms) {
     # d8 get the puzzle data from NYT Puzzles
     $show_date = date($date);
@@ -709,6 +711,18 @@ else {
     %clue_for = %{$cp_href->{clues}};
 }
 my $nwords = @ok_words;
+my $freq_letter;
+{
+    # for the Mw column in the CW (and BB) command output we need to know
+    # what letter most frequently starts an allowed word?
+    # we might also choose one of the additional 19 non puzzle letters ...
+    my %freq;
+    for my $w (@ok_words) {
+        ++$freq{substr($w, 0, 1)};
+    }
+    my @letters = sort { $freq{$b} <=> $freq{$a} } keys %freq;
+    $freq_letter = $letters[0];
+}
 my $letter_regex = qr{([^$seven])}xms;  # see sub check_word
 my $no_def = qr{No\s+definition}xms;
 my $npangrams = @pangrams;
@@ -3598,7 +3612,8 @@ elsif ($cmd =~ m{\A cw \s* (\d*) \z}xms) {
         # search the day's log and extra word files to identify
         # the top 5 (10?) locations in Donut, Lexicon, and Bonus words.
         # The C stands for Community or Competitive.
-        $message .= `$cgi_dir/nytbee_cw.pl $date $max $seven '$screen_name' $bonus_mode $donut_mode`;
+        #
+        $message .= `$cgi_dir/nytbee_cw.pl $date $max $seven '$screen_name' $bonus_mode $donut_mode $freq_letter`;
     }
     $cmd = '';
 }
@@ -3686,7 +3701,11 @@ elsif ($cmd eq 'bb') {
     my @bonus = sort grep { m{[*]\z}xms } @found;
     chop @bonus;
     my %bonus_starting_with = map { $_ => [] } 'a' .. 'z';
+    my $freq_count;
     for my $b (@bonus) {
+        if (substr($b, 0, 1) eq $freq_letter) {
+            ++$freq_count;
+        }
         my $w = $b;
         $w =~ s{[$seven]}{}xmsg;    # the addition letter is all that is left
         my $c = substr($w, 0, 1);
@@ -3715,7 +3734,9 @@ elsif ($cmd eq 'bb') {
     }
     $message = table({ cellpadding => 5 }, @rows);
     $message .= '<p>';
-    $message .= table(Tr(td('BB:'), td($bb)));
+    $message .= table(Tr(td('BB:'), td($bb)),
+                      Tr(td(uc($freq_letter) . 'w:'), td($freq_count))
+                     );
     $message = ul($message);
 }
 elsif ($cmd eq 'boa') {

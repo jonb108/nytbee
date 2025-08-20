@@ -24,6 +24,7 @@ my $seven = shift;
 my $my_screen_name = shift;
 my $bonus_mode = shift;
 my $donut_mode = shift;
+my $freq_letter = shift;
 my %words;  # hash of hash
             # keys: donut/lexicon/bonus, word
             # value: count of how many times the word was found
@@ -77,11 +78,16 @@ while (my $line = <$log>) {
 # we have all the information we need
 # about who found what words.
 # next figure out BOA values for each person
+# and the freq letter score
 my %boa_score;   # key: uuid, value: boa score
 my %bb_score;    # key: uuid, value: bb score
+my %freq_score;  # key: uuid, value: freq score
 for my $u (keys %tally) {
     my (%boa_lets, %bb_lets);
     for my $b (sort keys %{$tally{$u}{bonus}}) {
+        if (substr($b, 0, 1) eq $freq_letter) {
+            ++$freq_score{$u};
+        }
         my $w = $b;
         $b =~ s{[$seven]}{}xmsg;
         my $a = substr($b, 0, 1);
@@ -123,8 +129,11 @@ for my $u (keys %tally) {
     for my $t (@types) {
         my $n = scalar keys %{$tally{$u}{$t}};
         if ($n) {
-            push @counts, [ $u, $order{$t}, $n,
-                            $only{$u}{$t}, $boa_score{$u}, $bb_score{$u} ];
+            push @counts, [ $u, $order{$t}, $n, $only{$u}{$t},
+
+                            # and for bonus words:
+                            $boa_score{$u}, $bb_score{$u}, $freq_score{$u}
+                          ];
         }
     }
 }
@@ -153,15 +162,17 @@ my $sp = '&nbsp;' x 2;
 my $ow_printed = 0;
 print "<table cellpadding=0 border=0>\n";
 for my $aref (sort {
-                  $a->[1] <=> $b->[1]
+                  $a->[1] <=> $b->[1]   # order
                   ||
-                  $b->[2] <=> $a->[2]
+                  $b->[2] <=> $a->[2]   # num
                   || 
-                  $b->[3] <=> $a->[3]
+                  $b->[3] <=> $a->[3]   # only
                   ||
-                  $b->[4] <=> $a->[4]
+                  $b->[4] <=> $a->[4]   # boa
                   ||
-                  $b->[5] <=> $a->[5]
+                  $b->[5] <=> $a->[5]   # bb
+                  ||
+                  $b->[6] <=> $a->[6]   # freq
                   ||
                   $a->[0] cmp $b->[0]
               } @counts
@@ -182,6 +193,7 @@ for my $aref (sort {
         if (($donut_mode && $type == 2) || (! $donut_mode && $type == 1)) {
             print "<td>${sp}boa</td>"
                 . "<td>${sp}bb</td>"
+                . "<td>${sp}" . uc(${freq_letter}) . "w</td>"
                 ;
         }
         elsif ($type == 2 && $donut_mode) {
@@ -201,6 +213,7 @@ for my $aref (sort {
         if (($donut_mode && $type == 2) || (! $donut_mode && $type == 1)) {
             print "<td class=entry>$boa_score{$uid}</td>";
             print "<td class=entry>$bb_score{$uid}</td>" if $bb_score{$uid};
+            print "<td class=entry>$freq_score{$uid}</td>" if $freq_score{$uid};
         }
         print "$star</tr>\n";
     }
