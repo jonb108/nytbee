@@ -98,13 +98,16 @@ for my $u (keys %tally) {
     $bb_score{$u}  = scalar(keys %bb_lets);
 }
 # and OW values for each
-my %only;   # keys: uuid, type
+my %only;   # keys: uuid, type (including a Xw type for freq own)
             # value: ow score for the person for the type
 for my $u (keys %tally) {
     for my $t (@types) {
         for my $w (keys %{$tally{$u}{$t}}) {
             if ($words{$t}{$w} == 1) {
                 $only{$u}{$t}++;
+                if ($t eq 'bonus' && substr($w, 0, 1) eq $freq_letter) {
+                    ++$only{$u}{Xw};
+                }
             }
         }
     }
@@ -132,7 +135,8 @@ for my $u (keys %tally) {
             push @counts, [ $u, $order{$t}, $n, $only{$u}{$t},
 
                             # and for bonus words:
-                            $boa_score{$u}, $bb_score{$u}, $freq_score{$u}
+                            $boa_score{$u}, $bb_score{$u}, $freq_score{$u},
+                            $only{$u}{Xw}
                           ];
         }
     }
@@ -174,6 +178,8 @@ for my $aref (sort {
                   ||
                   $b->[6] <=> $a->[6]   # freq
                   ||
+                  $b->[7] <=> $a->[7]   # oXw
+                  ||
                   $a->[0] cmp $b->[0]
               } @counts
 ) {
@@ -191,9 +197,11 @@ for my $aref (sort {
 
         }
         if (($donut_mode && $type == 2) || (! $donut_mode && $type == 1)) {
+            my $FL = uc $freq_letter;
             print "<td>${sp}boa</td>"
                 . "<td>${sp}bb</td>"
-                . "<td>${sp}" . uc(${freq_letter}) . "w</td>"
+                . "<td>${sp}${FL}w</td>"
+                . "<td>${sp}o${FL}w</td>"
                 ;
         }
         elsif ($type == 2 && $donut_mode) {
@@ -214,6 +222,7 @@ for my $aref (sort {
             print "<td class=entry>$boa_score{$uid}</td>";
             print "<td class=entry>$bb_score{$uid}</td>" if $bb_score{$uid};
             print "<td class=entry>$freq_score{$uid}</td>" if $freq_score{$uid};
+            print "<td class=entry>$only{$uid}{Xw}</td>" if $only{$uid}{Xw};
         }
         print "$star</tr>\n";
     }
