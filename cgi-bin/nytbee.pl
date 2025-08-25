@@ -2054,7 +2054,7 @@ elsif ($cmd =~ m{\A s \s+ ([a-z]+) \z}xms) {
                @dates
                ;
     # also search the community puzzles
-    my $s = qx!cd $comm_dir; grep -l "words.*=>.*'$word'" [0-9]*.txt!;
+    my $s = qx!cd $comm_dir; grep -l "'$word'" *.txt!;
     push @rows,
         map {
             my $cpn = "CP$_";
@@ -3155,7 +3155,7 @@ EOH
     }
 }
 if ($not_okay_words) {
-    $message .= ul($not_okay_words);
+    $message = ul($not_okay_words) . $message;
 }
 
 sub color_pg {
