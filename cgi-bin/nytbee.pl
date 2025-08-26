@@ -2425,6 +2425,9 @@ sub check_word {
         my $lets;
         my $verb;
         if (@c == 1) {
+            if ($bonus_mode) {
+                return "invalid Bonus word";
+            }
             $lets = $c[0];
             $verb = 'is not';
         }
@@ -2449,6 +2452,9 @@ sub check_word {
             # count it for the score of the puzzle
             return 'donut';
         }
+        if ($donut_mode) {
+            return "invalid Donut word";
+        }
         return "does not contain: " . red($Center);
     }
     if (! exists $is_ok_word{$w}) {
@@ -2463,7 +2469,7 @@ sub check_word {
         }
         return "not in word list";
     }
-    return '';      # the word is in the allowed list
+    return '';      # ok! the word is in the allowed list
 }
 
 sub p_word {
