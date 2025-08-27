@@ -39,6 +39,7 @@ my $today_d8 = $today->as_d8();
 my %puzzle;
 tie %puzzle, 'DB_File', 'puzzle_store.dbm';
 my ($s, $t) = split /[|]/, $puzzle{ $today_d8 };
+untie %puzzle;
 my ($seven, $center, 
     $nwords, $max_score,
     $npangrams, $nperfect,

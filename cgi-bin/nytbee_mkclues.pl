@@ -2,10 +2,7 @@
 use strict;
 use warnings;
 
-# a poor man's database
 use DB_File;
-my %puzzle;
-tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
 
 use BeeUtil qw/
     cgi_header
@@ -69,9 +66,13 @@ open my $out, '>>', 'beelog/' . ymd();
 print {$out} substr($uuid, 0, 11) . " mkclues $date $all_words\n";
 close $out;
 
+my %puzzle;
+tie %puzzle, 'DB_File', 'puzzle_store.dbm';
 my $puzzle = $puzzle{$date};
-$puzzle =~ s{\A [^|]* [|]\ s* }{}xms;
-my @words = $puzzle =~ m{([a-z]+)}xmsg;
+untie %puzzle;
+
+my ($s, $t) = split /[|]/, $puzzle;
+my @words = split ' ', $t;
 my $show_date = date($date)->format("%B %e, %Y");
 
 my @found;

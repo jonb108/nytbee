@@ -87,19 +87,8 @@ for my $w (@words) {
 }
 untie %first_appeared;
 
-my $s = "$seven $center @pangrams | @words";
-my %puzzle;
-tie %puzzle, 'DB_File::Lock',
-             "$bin/nyt_puzzles.dbm",
-              O_CREAT|O_RDWR, 0666, $DB_HASH, 'write';
-$puzzle{$dt8} = $s;
-untie %puzzle;
-open my $puzzle_out, '>>', 'nyt_puzzles.txt';
-print {$puzzle_out} "$dt8 => $s\n";
-close $puzzle_out;
-
 #
-# more data in another two files
+# two puzzle files
 #
 my @attrs = puzzle_info(\@words, \@pangrams);
 my $splus = "$seven $center @attrs @pangrams | @words";

@@ -34,9 +34,6 @@ mkpuz_tally.pl \
 nytbee \
 nytbee_archive \
 nytbee.pl \
-rand_nytbee.pl \
-search_nytbee.pl \
-tally_nytbee.pl \
 mknyt \
 nytbee_mkclues.pl \
 nytbee_mkclues2.pl \

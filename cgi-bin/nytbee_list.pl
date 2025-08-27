@@ -58,34 +58,27 @@ sub arrows {
 # prepare @puzzle_rows and @word_rows
 #
 my (@puzzle_rows, @word_rows);
-open my $in, '<', 'nyt_puzzles.txt';
+open my $in, '<', 'nyt_puzzles_plus.txt';
 open my $bingo_file, '>', 'bingo_dates.txt';
 my %freq;
 while (my $line = <$in>) {
     chomp $line;
     my ($s, $t) = split /[|]/, $line;
-    my ($date, $big_arrow, $seven, $center, @pangrams) = split ' ', $s;
+    my ($date, $seven, $center, 
+        $nwords, $max_score,
+        $npangrams, $nperfect,
+        $bingo, $gn4l, $gn4l_np,
+        @pangrams) = split ' ', $s;
     my %is_pangram = map { $_ => 1 } @pangrams;
     my (@words) = split ' ', $t;
-    my $score = 0;
-    my $four = 0;
-    my %init_let = map { $_ => 1 } split //, $seven;
-    for my $w (@words) {
-        $score += word_score($w, $is_pangram{$w});
-        ++$four if length($w) == 4;
-        my $c1 = substr($w, 0, 1);
-        if ($init_let{$c1}) {
-            delete $init_let{$c1};
-        }
-    }
-    my $bingo = scalar(keys %init_let) == 0? 1: 0;
+    my $four = grep { length == 4 } @words;
     push @puzzle_rows, {
         date      => $date,
         center    => uc $center,
-        npangrams => scalar(@pangrams),
+        npangrams => $npangrams,
         four      => $four,
-        nwords    => scalar(@words),
-        score     => $score,
+        nwords    => $nwords,
+        score     => $max_score,
         bingo     => $bingo,
     };
     if ($bingo) {
@@ -99,12 +92,12 @@ while (my $line = <$in>) {
 close $in;
 close $bingo_file;
 my $npuzzles = @puzzle_rows;
-my $nwords = keys %freq;
+my $n_uniq_words = keys %freq;
 my $s = read_file("../help.html");
 $s =~ s{^\d+ \s+ puzzles \s+ with}
        {$npuzzles puzzles with}xms;
 $s =~ s{^a \s+ total \s+ of \s+ \d+ \s+ different \s+ words}
-       {a total of $nwords different words}xms;
+       {a total of $n_uniq_words different words}xms;
 write_file("../help.html", $s);
 
 my %first_appeared;
@@ -279,7 +272,7 @@ for my $f (<*.html>) {
     copy($f, $g);
     trunc($f, $g);
 }
-link '../../cgi-bin/nyt_puzzles.txt', 'nyt_puzzles.txt';
+link '/home4/logical9/www/ultrabee/cgi-bin/nyt_puzzles_plus.txt', 'nyt_puzzles_plus.txt';
 
 sub trunc {
     my ($f, $g) = @_;

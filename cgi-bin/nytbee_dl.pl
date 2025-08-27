@@ -15,10 +15,11 @@ my ($uuid, $screen_name) = @ARGV;
 use DB_File;
 my %cur_puzzles_store;
 tie %cur_puzzles_store, 'DB_File', 'cur_puzzles_store.dbm';
+my %cur_puzzles = %{ eval $cur_puzzles_store{$uuid} };
+untie %cur_puzzles_store;
+
 my %puzzle_store;
 tie %puzzle_store, 'DB_File', 'puzzle_store.dbm';
-
-my %cur_puzzles = %{ eval $cur_puzzles_store{$uuid} };
 
 my $ext_sig = '!*+-';   # extra word sigils
                         # ! stash * bonus + lexicon - donut
@@ -148,6 +149,8 @@ for my $dt (sort keys %cur_puzzles) {
 }
 close $out1;
 close $out2;
+untie %puzzle_store;
+
 print <<"EOH";
 $npuzzles puzzles, $total_words total words
 <p>

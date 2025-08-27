@@ -49,7 +49,6 @@ use BeeDBM qw/
     %uuid_screen_name
     %screen_name_uuid
     %num_msgs
-    %puzzle
     %cur_puzzles_store
     %puzzle_has_clues
     %osx_usd_words_47
@@ -225,8 +224,6 @@ my $position_attr = $mobile? 'static': 'absolute';
 #
 # when solving today's puzzle - recommend a subscription?
 #
-# make the nyt_puzzles.txt file downloadable!
-#
 
 my %cur_puzzles;
 my $cps = $cur_puzzles_store{$uuid};
@@ -295,11 +292,6 @@ sub puzzle_class {
 }
 
 my $comm_dir = 'community_plus';
-my ($seven, $center, @pangrams);
-my $Center;
-my @seven;
-my @ok_words;
-my %clue_for;
 
 # see sub load_nyt_clues
 my %nyt_clues_for;        # key is word,
@@ -667,6 +659,25 @@ sub no_puzzle {
 # we have a valid date. either d8 format or CP#
 # get the puzzle and its attributes
 #
+# Puzzle Attributes:
+my $seven; 
+my $center;
+my $nwords;
+my $max_score;
+my $npangrams;
+my $nperfect;
+my $bingo;
+my $gn4l;
+my $gn4l_np;
+my @pangrams;
+my @ok_words;
+
+# two quickly "derived" attributes
+my $Center;
+my @seven;
+# and a special attribute
+my %clue_for;
+
 if ($date =~ m{\A\d}xms) {
     # d8 get the puzzle data from NYT Puzzles
     $show_date = date($date);
@@ -676,14 +687,25 @@ if ($date =~ m{\A\d}xms) {
     $show_date = $show_date->format("%B %e, %Y");
     $show_date = qq!<span class=alink onclick="issue_cmd('I');">$show_date</span>!;
     $show_date = "<a target=_blank class=alink onclick='set_focus();' href='https://www.nytimes.com/subscription'>NYT</a> $show_date";
-    my $puzzle = $puzzle{$date};
+
+    #
+    # puzzle_store is not the best name
+    # easily confused with nyt
+    #
+    my %puzzle_store;
+    tie %puzzle_store, 'DB_File', 'puzzle_store.dbm';
+    my $puzzle = $puzzle_store{$date};
+    untie %puzzle_store;
     if (! $puzzle) {
         no_puzzle $show_date;
     }
     my ($s, $t) = split /[|]/, $puzzle;
-    ($seven, $center, @pangrams) = split ' ', $s;
-    $Center = uc $center;
-    @seven = split //, $seven;
+    ($seven, $center,
+     $nwords, $max_score,
+     $npangrams, $nperfect,
+     $bingo, $gn4l, $gn4l_np, @pangrams
+    )
+        = split ' ', $s;
     @ok_words = split ' ', $t;
     # %clue_for is initialized from the database
     # but only if needed.  see sub load_nyt_clues
@@ -702,15 +724,25 @@ else {
     if ($cp_href->{publish} ne 'yes') {
         no_puzzle $date;
     }
-    $seven = $cp_href->{seven};
-    @seven = split //, $seven;
-    $center = $cp_href->{center};
-    $Center = uc $center;
-    @pangrams = @{$cp_href->{pangrams}};
-    @ok_words = @{$cp_href->{words}};
-    %clue_for = %{$cp_href->{clues}};
+    $seven     = $cp_href->{seven};
+    $center    = $cp_href->{center};
+    $nwords    = $cp_href->{nwords};
+    $max_score = $cp_href->{max_score};
+    $npangrams = $cp_href->{npangrams};
+    $nperfect  = $cp_href->{nperfect};
+    $bingo     = $cp_href->{bingo};
+    $gn4l      = $cp_href->{gn4l};
+    $gn4l_np   = $cp_href->{gn4l_np};
+    @pangrams  = @{$cp_href->{pangrams}};
+    @ok_words  = @{$cp_href->{words}};
+    %clue_for  = %{$cp_href->{clues}};
 }
-my $nwords = @ok_words;
+
+# derived attributes
+$Center = uc $center;
+@seven = split //, $seven;
+
+# and another derived attribute
 my $freq_letter;
 {
     # for the Mw column in the CW (and BB) command output we need to know
@@ -725,9 +757,13 @@ my $freq_letter;
 }
 my $letter_regex = qr{([^$seven])}xms;  # see sub check_word
 my $no_def = qr{No\s+definition}xms;
-my $npangrams = @pangrams;
 
-# get ready for hive == 2 (seven straight letters)
+# some lookup tables
+my %is_pangram = map { $_ => 1 } @pangrams;
+my %is_ok_word = map { $_ => 1 } @ok_words;     # the curated accepted word list
+
+# get ready for hive == 2 (seven/six [when donut mode] straight letters)
+# we need to know the order of the letters
 my @seven_let;
 if ($params{seven_let} && $date eq $params{date}) {
     @seven_let = split ' ', $params{seven_let};
@@ -736,8 +772,6 @@ else {
     @seven_let = map { uc } shuffle @seven;
 }
 
-my %is_pangram = map { $_ => 1 } @pangrams;
-my %is_ok_word = map { $_ => 1 } @ok_words;     # the curated accepted word list
 my @six;
 if ($params{six} && $date eq $params{date}) {
     @six = split ' ', $params{six};
@@ -748,6 +782,8 @@ else {
            shuffle
            @seven;
 }
+
+# OK.  The puzzle has finally been initialized.
 
 if ((! $cmd || $cmd eq 'nooop') && ! $params{has_message}) {
     # We hit Return in an empty text field so
@@ -800,10 +836,6 @@ sub load_nyt_clues {
     }
 }
 
-my $max_score = 0;
-for my $w (@ok_words) {
-    $max_score += word_score($w, $is_pangram{$w});
-}
 my @ranks = (
     { name => 'Beginner',   pct =>   0, value => 0 },
     { name => 'Good Start', pct =>   2, value => int(.02*$max_score + 0.5) },
@@ -1023,9 +1055,9 @@ sub do_define {
     my $msg = '';
     my $line = "&mdash;" x 4;
     if ($term eq 'p') {
-        my $npangrams =  0;
+        my $np =  0;
         for my $p (grep { !$is_found{$_} } @pangrams) {
-            ++$npangrams;
+            ++$np;
             my $def = define($p, 0);
             add_hints($nhints) unless $def =~ $no_def;
             if ($def) {
@@ -1035,7 +1067,7 @@ sub do_define {
         $msg =~ s{--\z}{}xms;
         $msg =~ s{--}{$line<br>}xmsg;
         if ($msg) {
-            my $pl = $npangrams == 1? '': 's';
+            my $pl = $np == 1? '': 's';
             $msg = "Pangram$pl:$msg";
         }
         $cmd = '';
@@ -2036,12 +2068,15 @@ elsif ($cmd =~ m{\A s \s+ ([a-z]+) \z}xms) {
     my %is_in_list = map { $_->[0] => 1 } my_puzzles();
     my $word = $1;
     my @dates;
-    while (my ($dt, $puz) = each %puzzle) {
-        $puz =~ s{\A [^|]* [|]}{}xms;
+    my %puzzle_store;
+    tie %puzzle_store, 'DB_File', 'puzzle_store.dbm';
+    while (my ($dt, $puz) = each %puzzle_store) {
+        $puz =~ s{..* [|]}{}xms;
         if ($puz =~ m{\b$word\b}xms) {
             push @dates, $dt;
         }
     }
+    untie %puzzle_store;
     my @rows = map {
                    Tr(td(qq!<span class=alink onclick="issue_cmd('$_');">!
                          . slash_date($_) . "</span>"),
@@ -2743,7 +2778,7 @@ if ($old_rank < $rank || ($n_minus > 0 && $score == $ranks[8]{value})) {
                        :            "Queen Bee " . ($thumbs_up x 3)
                     );
         if ($rank == 8) {
-            my $npangrams = grep { $is_pangram{$_} } @found;
+            my $np = grep { $is_pangram{$_} } @found;
             my @four = grep { ! m{[$ext_sig]\z}xms && length == 4 } @found;
             if (! @four) {
                 $message .= ul('And you did it without ANY 4 letter words! '
@@ -2755,7 +2790,7 @@ if ($old_rank < $rank || ($n_minus > 0 && $score == $ranks[8]{value})) {
                 else {
                     $gn4l = 'GN4L';
                 }
-                if ($npangrams == 0) {
+                if ($np == 0) {
                     $message .= ul('And with No Pangrams! &#128526; &#128588;');
                     $gn4l .= "-NP";
                 }
@@ -3295,15 +3330,6 @@ $found_words
 EOH
 }
 
-# we unfortunately may have determined the bingo
-# status once before - see show_BingoTable above.
-my %first_char;
-for my $w (@ok_words) {
-    my $c1 = substr($w, 0, 1);
-    $first_char{$c1} = 1,
-}
-my $bingo = keys %first_char == 7? qq!, <a class=alink onclick="issue_cmd('BT');">Bingo</a>!: '';
-
 # perhaps $cmd was not words to add after all...
 # JON - move these!  Move lots of others as well.
 # Put the words_to_add near the top!!
@@ -3406,47 +3432,32 @@ sub td_pangram {
      . 'pangram')
 }
 
-my $perfect = '';
-my $nperfect = 0;
-for my $p (keys %is_pangram) {
-    if (length $p == 7) {
-        ++$nperfect;
-    }
-}
-if ($nperfect) {
-    $perfect = " ($nperfect Perfect)"
-}
-my $need_show_clue_form = 0;
+my $show_perfect = $nperfect? " ($nperfect Perfect)": '';
+my $we_have_clues = 0;
 my $show_clue_form = '';
 if ($cmd eq 'i') {
-    # is GN4L possible?
-    my $gn4l = '';
-    my $tot = 0;
-    my $np_tot = 0;
-    for my $w (@ok_words) {
-        my $lw = length $w;
-        if ($lw > 4) {
-            $tot += $lw;
-            if ($is_pangram{$w}) {
-                $tot += 7;
-            }
-            else {
-                $np_tot += $lw;
-            }
-        }
-    }
-    my $genius = $ranks[8]{value};
-    if ($tot < $genius) {
-        $gn4l = ', ' . red("No GN4L");
-    }
-    elsif ($np_tot < $genius) {
-        $gn4l = ', ' . red("No GN4L-NP");
-    }
     if (! $show_Heading && $date !~ m{\A cp}xmsi) {
         $message .= date($date)->format("%B %e, %Y") . '<br>';
     }
     $message .= "Words: $nwords, Points: $max_score, "
-             . "Pangrams: $npangrams$perfect$bingo$gn4l";
+             .  "Pangrams: $npangrams$show_perfect"
+             ;
+    my $s = $bingo? qq!<a class=alink onclick="issue_cmd('BT');">Bingo</a>!
+           :        ''
+           ;
+    my $show_gn4l = ! $gn4l   ? red("No GN4L")
+                   :! $gn4l_np? red("No GN4L-NP")
+                   :            ''
+                   ;
+    if ($show_gn4l) {
+        if ($s) {
+            $s .= ', ';
+        }
+        $s .= $show_gn4l;
+    }
+    if ($s) {
+        $message .= "<br>$s";
+    }
     if ($date =~ m{\A CP}xms) {
         my ($n) = $date =~ m{(\d+)}xms;
         my $created = date($cp_href->{created})->format("%B %e, %Y");
@@ -3455,7 +3466,7 @@ if ($cmd eq 'i') {
 EOH
         $message .= "<br>Community Puzzle #$n - $created<br>Created by $s";
         $message .= cp_message($cp_href, $n);
-        $need_show_clue_form = 1;
+        $we_have_clues = 1;
     }
     else {
         load_nyt_clues;
@@ -3477,14 +3488,15 @@ EOH
                   ;
             }
             $message .= "<br>Clues by " . join ', ', @names;
-            $need_show_clue_form = 1;
+            $we_have_clues = 1;
         }
         if ($date >= 20210920) {
             my ($year, $month, $day) = unpack "A4A2A2", $date;
-            $message .= "<a style='margin-left: .5in;' class=alink target=_blank href='https://www.nytimes.com/$year/$month/$day/crosswords/spelling-bee-forum.html#commentsContainer'>HiveMind</a>";
+            $message .= $we_have_clues? '&nbsp;'x6 : '<br>';
+            $message .= "<a class=alink target=_blank href='https://www.nytimes.com/$year/$month/$day/crosswords/spelling-bee-forum.html#commentsContainer'>HiveMind</a>";
         }
     }
-    if ($need_show_clue_form) {
+    if ($we_have_clues) {
         $show_clue_form = <<"EOH";
 <form target=_blank
       id=clues_by

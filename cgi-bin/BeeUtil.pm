@@ -304,7 +304,7 @@ sub puzzle_info {
         }
     }
     my $bingo = keys %first_letter == 7? 1: 0;
-    my $genius = int(70*$max_score/100);
+    my $genius = int(70*$max_score/100 + 0.5);
     my $gn4l    = $gn4l_score    >= $genius? 1: 0;
     my $gn4l_np = $gn4l_np_score >= $genius? 1: 0;
     return ($nwords, $max_score, $npangrams, $nperfect, $bingo,

@@ -8,7 +8,6 @@ our @EXPORT_OK = qw/
     %uuid_screen_name
     %screen_name_uuid
     %num_msgs
-    %puzzle
     %cur_puzzles_store
     %puzzle_has_clues
     %osx_usd_words_47
@@ -44,12 +43,6 @@ tie %screen_name_uuid, 'DB_File', 'screen_name_uuid.dbm';
 our %num_msgs;
 tie %num_msgs, 'DB_File', 'num_msgs.dbm';
 # how many msgs in the forum for the puzzle?
-
-our %puzzle;
-tie %puzzle, 'DB_File', 'nyt_puzzles.dbm';
-# the NYT archive
-# key is d8
-# value is seven center pangrams... | words
 
 our %cur_puzzles_store;
 tie %cur_puzzles_store, 'DB_File::Lock', 'cur_puzzles_store.dbm',
