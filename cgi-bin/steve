@@ -92,9 +92,7 @@ EOH
 }
 else {
     my %puzzle_store;
-    #tie %puzzle_store, 'DB_File', 'puzzle_store.dbm';
-    # eventually use the above
-    tie %puzzle_store, 'DB_File', 'nyt_puzzles.dbm';
+    tie %puzzle_store, 'DB_File', 'puzzle_store.dbm';
     my ($s, $t) = split m{[|]}xms, $puzzle_store{$d8};
     untie %puzzle_store;
     my @words = split ' ', $t;

@@ -257,7 +257,7 @@ people are doing with the Extra words and introduces a bit of
 <li><a href=#bonus>Bonus</a> - Toggle <a href=#bonus>Bonus</a> mode to more easily look for <a href=#bonus>Bonus</a> words.
 <li><a href=#bingo>Bingo</a> - This link may appear if the puzzle is a <a href=#bingo>Bingo</a> puzzle.  It will toggle the <a href=#bingo>Bingo</a> Table.
 </ul>
-For a very simple and minimalistic interface you can turn all of the above links <b>off</b>.  Enter these commands: <span class=cmd>HE</span>, <span class=cmd>LN</span>, <span class=cmd>WL</span>, and <span class=cmd>ST</span> (cycle through 4 types until the status is off).  And for ultimate purists the <span class=cmd>H</span> command will show the 7 letters inline.
+For a very simple and minimalistic interface you can turn all of the above links <b>off</b>.  Enter these commands: <span class=cmd>HE</span>, <span class=cmd>LN</span>, <span class=cmd>WL</span>, and <span class=cmd>ST3</span>.  And for ultimate purists the <span class=cmd>H</span> command will show the 7 letters inline.
 <ul>
 <img src=pics/minimal.png>
 </ul>
@@ -2086,7 +2086,12 @@ in the other puzzles that occur in the current puzzle.</td></tr>
 <tr><td colspan=2>If you are a minimalist:</td></tr>
 <tr><td><span class=cmd>HE</span></td><td>Toggle the showing of the <span class=cmd>he</span>ader.  Default is to show it.</td></tr>
 <tr><td><span class=cmd>LN</span></td><td>Toggle the showing of the many <span class=cmd>l</span>i<span class=cmd>n</span>ks when not in mobile mode. Default is to show them.</td></tr>
-<tr><td><span class=cmd>ST</span></td><td>The ST command cycles through 4 different status displays.  The last will turn it completely OFF.</td></tr>
+<tr><td><span class=cmd>ST</span></td><td>The ST command cycles through 4 different status displays.  The last will turn it completely OFF.
+You can also add a digit (0-3) after the ST to jump directly to
+one of the four status settings.  
+<span class=cmd>ST0</span> is the numeric status.  
+<span class=cmd>ST3</span> is no status at all.
+</td></tr>
 <tr><td><span class=cmd>WL</span></td><td>Toggle the showing of the list of found words.  Default is to show the <span class=cmd>w</span>ord <span class=cmd>l</span>ists (Puzzle, Donut, Lexicon, Bonus and Stash).</td></tr>
 <tr><td><span class=cmd>WL &lt;which&gt;</span></td><td>Similar to WL above but you can specify which word lists you want to see: <span class=cmd>&lt;which&gt;</span> is one or more of <span class=cmd>P</span>, <span class=cmd>D,</span> <span class=cmd>L,</span> <span class=cmd>B,</span> and <span class=cmd>S</span>.<p><ul><span class=cmd>P</span>uzzle<br><span class=cmd>D</span>onut<br><span class=cmd>L</span>exicon<br><span class=cmd>B</span>onus<br><span class=cmd>S</span>tash<br><span class=cmd>A</span>ll</ul>Like so:<p>
 <ul>
@@ -2427,7 +2432,7 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2668 puzzles with
+2669 puzzles with
 a total of 10795 different words!
 <p>
 Tallies are made of the many puzzles and words.

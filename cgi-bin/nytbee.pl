@@ -142,8 +142,8 @@ sub redo_settings {
                 = (0, 0, 0, 0);
         }
     }
-    elsif ($how eq 'st') {
-        $status_display = ($status_display + 1) % 4;
+    elsif ($how =~ m{\A st([0-3])? \z}xms) {
+        $status_display = defined $1? $1: (($status_display + 1) % 4);
     }
     elsif ($how eq 'oc') {
         $only_clues = $only_clues? 0: 1;
@@ -1531,8 +1531,8 @@ elsif ($cmd eq 'im') {
     $show_RankImage = $show_RankImage? 0: 1;
     $cmd = '';
 }
-elsif ($cmd eq 'st') {
-    redo_settings('st');
+elsif ($cmd =~ m{\A st \s* ([0-3])? \z}xms) {
+    redo_settings("st$1");
     $cmd = '';
 }
 # do we have a reveal command?
