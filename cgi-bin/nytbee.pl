@@ -1668,8 +1668,6 @@ elsif ($cmd eq 's45') {
     #
     # rather complicated!
     #
-    my $gn4l = 1;           # replace with global when ready??
-    my $gn4l_np = 1;
     my @new_found;
     for my $w (@found) {
         if ($w =~ m{\A ([a-z]+)! \z}xmsi) {
@@ -1716,7 +1714,15 @@ elsif ($cmd eq 's45') {
     }
     @found = @new_found;
     $show_BingoTable = 0;
-    $message = "You can now strive for GN4L.";
+    if ($gn4l_np) {
+        $message = "You can now strive for GN4L-NP.";
+    }
+    elsif ($gn4l) {
+        $message = "You can now strive for GN4L.";
+    }
+    else {
+        $message = "Since GN4L is not possible all words were unstashed.";
+    }
     $cmd = '';
 }
 elsif (my ($gt, $item) =
@@ -2668,16 +2674,15 @@ sub consider_word {
                                             ;
                             $bingo_score += 4;                
                         }
-                        if ($max) {
+                        elsif ($max) {
+                            my $msg = $gn4l_np? "On to GN4L-NP"
+                                     :$gn4l   ? "On to GN4L"
+                                     :          "Continue"
+                                     ;
                             $not_okay_words .= 'AND with a MAXIMUM score! '
                                             .  ($thumbs_up x 4)
                                             .  "<p>"
-                                            .  qq!<span class=pointer style='color: $colors{alink}' onclick="issue_cmd('S45');">On to GN4L</span>!
-                                            # depending on gn4l and gn4l_np...
-                                            # s45 = stash any four letter words
-                                            # and unstash any 5 letter words
-                                            # but do not unstash pangrams
-                                            # if GN4L-NP is possible.
+                                            .  qq!<span class=pointer style='color: $colors{alink}' onclick="issue_cmd('S45');">$msg</span>!
                                             ;
                             $bingo_score += 8;                
                         }
@@ -3512,15 +3517,18 @@ EOH
     }
     $cmd = '';
 }
-elsif ($cmd =~ m{\A (n?iw) \s+ ([a-z]+) \z}xms) {
+elsif ($cmd =~ m{\A (n?iw) \s+ ([a-z]+)([0-9]*) \z}xms) {
     my $numeric = $1 eq 'niw';
     my $prefix = $2;
+    my $len = $3;
     open my $in, '<', "incorrect/$date";
     my %words;
-    while (my $line = <$in>) {
-        chomp $line;
-        if ($line =~ m{\A $prefix}xms) {
-            ++$words{$line};
+    while (my $w = <$in>) {
+        chomp $w;
+        if ($w =~ m{\A $prefix}xms
+            && (!$len || length $w == $len)
+        ) {
+            ++$words{$w};
         }
     }
     close $in;
