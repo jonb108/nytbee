@@ -1776,6 +1776,8 @@ elsif (   $cmd =~ m{\A d \s+ ([a-z ]+) \z}xms
                     |
                     Same[ ]as[ ]
                     |
+                    Obsolete[ ]spelling[ ]of[ ]
+                    |
                     Alternative[ ]spelling[ ]of[ ]
                     |
                     Alternative[ ]form[ ]of[ ]
