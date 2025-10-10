@@ -1527,6 +1527,10 @@ elsif ($cmd eq 'f') {
     $bonus_mode = $donut_mode = 0;
     $cmd = '';
 }
+elsif ($cmd =~ m{\A f \s+ (\S.*) \z}xms) {
+    $message .= `$cgi_dir/forum_search.pl '$1'`;
+    $cmd = '';
+}
 elsif ($cmd eq 'im') {
     $show_RankImage = $show_RankImage? 0: 1;
     $cmd = '';

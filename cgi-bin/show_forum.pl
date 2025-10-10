@@ -37,7 +37,7 @@ EOS
         $post_text =~ s{<br>}{\n}xmsg;
     }
 }
-my $pics = '../pics';
+my $pics = '/pics';
 my $height = 'height=20';
 print <<"EOH";
 <script>

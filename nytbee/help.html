@@ -812,7 +812,7 @@ Note that the command <span class=cmd>C Y</span> clears puzzle words but
 not the Extra words.  If you want to start <i>completely</i> fresh the
 command <span class=cmd>C YA</span> will clear <i>all</i> words.
 <li>A different kind of activity is to find all the words in today’s puzzle
-(however you wish, even with the <span class=cmd>G YP</span> command &#128556;) and
+(however you wish, even with the <span class=cmd>G Y</span> command &#128556;) and
 then add some clever inventive <a href=#clues>clues</a>.
 This will help everyone else
 who is playing the game with this software.  You can also copy and paste
@@ -1554,7 +1554,7 @@ at your leisure.
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
 We are social beings.  We like to share.
-The HiveMind Forum of the New York Times is a very active community
+The HiveMind Forum of the New York Times is a <i>very</i> active community
 of people who enjoy the challenge of the daily puzzle and
 also enjoy discussing it.  Yes, it is full of complaints and bragging
 but that’s okay! &#128522;  There is also a great deal of poetry
@@ -1575,7 +1575,7 @@ press the Submit button.   Your message will appear below
 along with your <a href=#screen_names>screen name</a> and the time.
 Messages are shown in reverse chronological order.
 <p>
-<img src=pics/forum2.png width=650>
+<img src=pics/forum2a.png width=650>
 <ul>
 <li>Edit your own message by clicking the pencil icon <img src=pics/pencil.png width=20>.
 <li>Delete your own message by clicking the trash can icon <img src=pics/trashcan.png width=20> and it will be removed after confirmation.
@@ -1611,6 +1611,38 @@ After viewing the current messages and posting your own you
 can toggle back to the normal display.  Even while you are in
 Forum Mode you can still enter commands and any new words
 that you have found.
+<a name=fsearch></a>
+<h3>Forum Search</h3>
+Messages in the forum can be searched by giving a search term to the <span class=cmd>F</span> command:
+<ul>
+<span class=cmd>F RUN</span>
+</ul>
+This will search for and display all forum messages that contain the word 'run' in the text of
+the message.  The search is case insensitive and the word 'run' will be <i>italicized</i> in the display.
+<ul>
+<span class=cmd>F RUN S</span>
+</ul>
+The trailing ' S' indicates that you want a <b>substring</b> search.  This will also find the words '<span class=red1>run</span>ning', 'over<span class=red1>run'</span>, and 't<span class=red1>run</span>k'.
+<p>
+The displayed messages include the screen name, date, and time of the forum post.
+You can click on the date to go to that puzzle to see the forum conversation.
+<p>
+You can also search for a screen name to see all of the messages
+that someone posted:
+<ul>
+<span class=cmd>F SHADOW S</span>
+</ul>
+or
+<ul>
+<span class=cmd>F ZOMBEE</span>
+</ul>
+To search for an emoji in a message (or in a screen name)
+you need to find the decimal number of the <a target=_blank href='https://www.w3schools.com/charsets/ref_emoji_smileys.asp'>HTML Character Entity</a> that represents the emoji.
+The emoji for a 'smiling face with sunglasses' is &#128526 and its number is 128526.
+<ul>
+<span class=cmd>F 128526</span>
+</ul>
+will find all messages with &#128526.
 <a name=colors></a>
 <h2>Colors
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -2434,8 +2466,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2694 puzzles with
-a total of 10854 different words!
+2711 puzzles with
+a total of 10884 different words!
 <p>
 Tallies are made of the many puzzles and words.
 See this table of the puzzles:
@@ -2526,7 +2558,7 @@ reveal the entire list of allowed words.
 to reveal the words.  Select and copy them, switch back to your own <span class=cmd>ID</span>,
 and paste the words.
 <li>Use the <span class=cmd>I</span> command which shows the people who have created a set
-of clues (e.g. Kitt Richards).  Clicking on their name will show
+of clues (e.g. Kitt Richards, Steve G.).  Clicking on their name will show
 all of their clues and not charge you any hint points.
 You can also consult the HiveMind forum on the NYT site (there’s a HiveMind link in the <span class=cmd>I</span> command output). 
 Many people offer clues there.
@@ -2545,7 +2577,7 @@ are other puzzles that use the same 7 letters.  There is usually
 a different center letter in these puzzles but many of the words in their
 allowed list might also be words (or Donut words) in the current puzzle.
 The pangrams will certainly be the same.
-You can use the <span class=cmd>G YP</span> command to reveal the words
+You can use the <span class=cmd>G Y</span> command to reveal the words
 in these other puzzles
 and then copy-paste them into the current puzzle – without being
 charged any hint points.

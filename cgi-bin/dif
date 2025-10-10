@@ -5,14 +5,6 @@ if (! -f 'nytbee_test.pl') {
     die "not initialized\n";
 }
 my $dif = qx!diff nytbee.pl nytbee_test.pl | grep -v '^[0-9]' | grep -v nytbee_test.pl | grep -v nytbee.pl!;
-my $no_change = <<'EONC';
-< # then there is the path_info - appended to nytbee.pl/ 
-> # then there is the path_info - appended to nytbee_test.pl/ 
-<      <img width=53 src=$log/pics/bee-logo.png onclick="navigator.clipboard.writeText('$cgi/nytbee.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
->      <img width=53 src=$log/pics/bee-logo.png onclick="navigator.clipboard.writeText('$cgi/nytbee_test.pl/$date');show_copied('logo');set_focus();" class=link><br><span class=copied id=logo></span>
-< <form id=main name=form method=POST action='$cgi/nytbee.pl'>
-> <form id=main name=form method=POST action='$cgi/nytbee_test.pl'>
-EONC
 $dif =~ s{---\n}{}xmsg;
 if (!$dif) {
     print "no change yet\n";
