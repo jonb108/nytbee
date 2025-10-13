@@ -1778,6 +1778,8 @@ elsif (   $cmd =~ m{\A d \s+ ([a-z ]+) \z}xms
                 (
                     Common[ ]misspelling[ ]of[ ]
                     |
+                    See[ ]
+                    |
                     Same[ ]as[ ]
                     |
                     Obsolete[ ]spelling[ ]of[ ]
