@@ -2,6 +2,7 @@
 rm -f /tmp/html.tar
 tar cvf /tmp/html.tar \
 help.html \
+more_space.html \
 dyn_help.html \
 index.html \
 mkpuz.html \
