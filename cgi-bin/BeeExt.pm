@@ -1383,29 +1383,46 @@ function init() {
 function empty(s) {
     return s.trim().length === 0;
 }
+var lets_font_size = 28;    // initial numeric value
 function add_let(c) {
     var x = c.substring(0, 1);
     if (x == '+' || x == '-') {
+        // for the PF command flash mode
+        // c is actually a string like +4 or -10
         lets.style.fontSize = '20pt'; 
         lets.innerHTML += c;
+        // let it show for a little while
+        // then restore the original font size
+        // for subsequent word letters
         setTimeout(() => {
             lets.style.fontSize = '28pt'; 
         }, 1300);
-    }
-    else {
-        lets.innerHTML += c;
+        return;
     }
     if (c == ' ') {
         var dis = document.getElementById('pos31');
         if (dis && dis.style.display != 'none') {
+            // turn off these links so there is more room
+            // for words
             for (num = 1; num <= 3; ++num) {
                 document.getElementById('pos3' + num).style.display = 'none';
             }
         }
-        else if (lets.innerHTML.length > 16) {
+        var len = lets.innerHTML.length;
+        var last_char = lets.innerHTML.substring(len-1);
+        if (last_char == ' ') {
+            lets_font_size -= 1;
+            lets.style.fontSize = lets_font_size.toString()+'px';
+            // no need to append another blank
+            return;
+        }
+        if (lets_font_size == 28 && len > 16) {
+            lets_font_size = 24;
             lets.style.fontSize = '24px';
         }
     }
+    // just append the character (whatever it is)
+    lets.innerHTML += c;
 }
 function add_redlet(c) {
     lets.innerHTML += '<span class=red>' + c + '</span>';
