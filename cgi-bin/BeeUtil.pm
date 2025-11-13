@@ -118,7 +118,7 @@ sub cgi_header {
     }
     my $uuid_cookie = $q->cookie(
         -name    => 'uuid',
-        -value    => $uuid,
+        -value   => $uuid,
         -expires => '+20y',
     );
     if ($another_cookie) {

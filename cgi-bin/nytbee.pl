@@ -1818,10 +1818,16 @@ EOM
    href='https://google.com/search?q=$word'>
 Search</a>
 EOM
-        $message .=  qq!<span class=cursor_black onclick="full_def('$the_word');">!
-                 .  ul($the_definition)
-                 .  '</span>'
-                 ;
+        if (index($the_definition, '>No definition<') < 0) {
+            $message .= "<span class=cursor_black"
+                     .  qq! onclick="full_def('$the_word');">!
+                     .  ul($the_definition)
+                     .  '</span>'
+                     ;
+        }
+        else {
+            $message .= ul($the_definition);
+        }
     }
     $message =~ s{\A <br>}{}xms;
     $cmd = '';

@@ -26,6 +26,9 @@ my $steve_uuid = 'steveg!';
 
 my $q = CGI->new();
 print $q->header();
+my $other = $q->param('dt');
+my $clues = $q->param('clues');
+
 print <<"EOH";
 <html>
 <style>
@@ -42,9 +45,8 @@ a {
 </style>
 <body>
 EOH
-my %params = $q->Vars();
 
-my $dt = my_today();
+my $dt = $other? date($other): my_today();
 my $d8 = $dt->as_d8();
 
 my $sth = $dbh->prepare(<<'EOS');
@@ -76,11 +78,12 @@ EOS
 my $disp_dt  = $dt->format("%B %d, %Y");
 my $the_date = $dt->format("%Y/%m/%d");
 
-if (! %params) {
+if (! $clues) {
     print <<"EOH";
 Please post Steve G.'s clues for $disp_dt.   Get them <a onclick="document.getElementById('ta').focus();" target=steveg href='https://www.nytimes.com/$the_date/crosswords/spelling-bee-forum.html#commentsContainer'>here</a>.
 <p>
 <form method=POST action=https://ultrabee.org/cgi-bin/steve>
+<input type=hidden name=dt value=$d8>
 <textarea id=ta name=clues rows=10 cols=30 autofocus>
 </textarea>
 <p>
@@ -107,7 +110,7 @@ else {
 EOS
 
     my @lines = grep  { m{\A [\d,]*[)]}xms }
-                split m{\n}xms, $params{clues}
+                split m{\n}xms, $clues
                 ;
     my $nlines = 0;
     for my $l (@lines) {
