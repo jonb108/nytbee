@@ -127,6 +127,18 @@ sub now_secs {
     return 60*60*$hour + 60*$minute + $second;
 }
 
+#
+sub duplicate_letter {
+    my ($s) = @_;
+    my %seen;
+    for my $l (split //, $s) {
+        if ($seen{$l}++) {
+            return uc $l;
+        }
+    }
+    return '';
+}
+
 my ($status_display, $only_clues, $pw_feedback, $no_define);
 sub redo_settings {
     my ($how) = @_;
@@ -303,7 +315,6 @@ my $first = date('5/9/18');
 my $date;
 my $today = my_today();
 my $today_d8 = $today->as_d8();
-my $new_puzzle = 0;
 my $path_info = uc substr $q->path_info(), 1;   # no need for the leading /
                                                 # it is either yyyymmdd or CPx
 #
@@ -361,7 +372,8 @@ my $forum_mode      = exists $params{forum_mode}?
                              $params{forum_mode}: 0;
 my $show_RankImage  = exists $params{show_RankImage}?
                              $params{show_RankImage}: 1;
-
+my $linear_prefix   =  exists $params{linear_prefix}? 
+                              $params{linear_prefix}: '';
 my $forum_post_to_edit = 0;
 
 #
@@ -390,7 +402,7 @@ if (!$date || $date !~ m{\A \d{8} | CP\d+ \z}xms) {
 if (! $date) {
     # today
     $date = $today_d8;
-    $new_puzzle = 1;
+    $linear_prefix = '';
 }
 # NOW that $date is set properly from either path_info
 # or %params we can log the cmd
@@ -474,6 +486,7 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
                 $date = $puzzles[-1][0];
             }
         }
+        $linear_prefix = '';
         $cmd = '';
     }
 }
@@ -481,6 +494,7 @@ elsif ($cmd eq 'x') {
     delete $cur_puzzles{$date};
     my @puzzles = my_puzzles();
     $date = @puzzles? $puzzles[0][0]: $today_d8;
+    $linear_prefix = '';
     $cmd = '';
 }
 elsif ($cmd eq 'xa') {
@@ -491,10 +505,8 @@ elsif ($cmd eq 'xa') {
             delete $cur_puzzles{$dt};
         }
     }
-    if ($date ne $today_d8) {
-        $new_puzzle = 1;
-    }
     $date = $today_d8;
+    $linear_prefix = '';
     $cmd = '';
 }
 elsif (my ($ncp) = $cmd =~ m{\A xcp \s* (\d+) \z}xms) {
@@ -514,6 +526,7 @@ elsif (my ($ncp) = $cmd =~ m{\A xcp \s* (\d+) \z}xms) {
             delete $cur_puzzles{"CP$ncp"};
             $message .= ul "Deleted CP$ncp";
             $date = $today_d8;
+            $linear_prefix = '';
             # and delete all clues
             system "$cgi_dir/cp_del_clues.pl $ncp";
         }
@@ -536,6 +549,7 @@ elsif (my ($puz_num) = $cmd =~ m{\A p \s* ([1-9]\d*) \z}xms) {
             # CP\d+
             $date = uc $puz_id;
         }
+        $linear_prefix = '';
     }
     $cmd = '';
 }
@@ -544,7 +558,7 @@ elsif ($cmd eq 'nr') {
     my $ndays = $today - $first + 1;
     $date = $first + int(rand $ndays);
     $date = $date->as_d8();
-    $new_puzzle = 1;
+    $linear_prefix = '';
     $cmd = '';
 }
 elsif ($cmd eq 'nrb') {
@@ -553,7 +567,7 @@ elsif ($cmd eq 'nrb') {
     close $in;
     $date = $dates[ rand @dates ];
     chomp $date;
-    $new_puzzle = 1;
+    $linear_prefix = '';
     $cmd = '';
 }
 elsif (my ($cp_num) = $cmd =~ m{\A cp \s* (\d+) \z}xms) {
@@ -570,15 +584,15 @@ elsif (my ($cp_num) = $cmd =~ m{\A cp \s* (\d+) \z}xms) {
         }
         else {
             $date = "CP$cp_num";
+            $linear_prefix = '';
             $message .= cp_message($cp_href, $cp_num);
-            $new_puzzle = 1;
             $cmd = '';
         }
     }
 }
 elsif ($cmd eq 't') {
     $date = $today_d8;
-    $new_puzzle = 1;
+    $linear_prefix = '';
     $cmd = '';
 }
 elsif ($cmd eq 'y') {
@@ -594,7 +608,7 @@ elsif ($cmd eq 'y') {
             $date = $new_date;
         }
     }
-    $new_puzzle = 1;
+    $linear_prefix = '';
     $cmd = '';
 }
 elsif ($cmd eq 'n' || $cmd eq 'p') {
@@ -605,6 +619,7 @@ elsif ($cmd eq 'n' || $cmd eq 'p') {
             my $x = $cmd eq 'n'? ($n == $#puzzles?         0: $n+1) 
                    :             ($n == 0        ? $#puzzles: $n-1);
             $date = $puzzles[$x][0];
+            $linear_prefix = '';
             $cmd = '';
             last PUZ;
         }
@@ -624,7 +639,7 @@ elsif (   $cmd ne '1'
         # it is a valid date but is it in the range?
         if ($first <= $dt && $dt <= $today) {
             $date = $dt->as_d8();
-            $new_puzzle = 1;
+            $linear_prefix = '';
             $cmd = '';
         }
         else {
@@ -764,6 +779,7 @@ my %is_ok_word = map { $_ => 1 } @ok_words;     # the curated accepted word list
 
 # get ready for hive == 2 (seven/six [when donut mode] straight letters)
 # we need to know the order of the letters
+# @seven_let is only used when the letter display is linear
 my @seven_let;
 if ($params{seven_let} && $date eq $params{date}) {
     @seven_let = split ' ', $params{seven_let};
@@ -791,7 +807,17 @@ if ((! $cmd || $cmd eq 'nooop') && ! $params{has_message}) {
     # and we didn't hit Return simply to clear a message
     # shuffle the @six and @seven_let
     @six = shuffle(@six);
-    @seven_let = shuffle(@seven_let);
+    if ($linear_prefix) {
+        @seven_let = split //, uc $linear_prefix;
+        my @the_rest;
+        for my $c (@seven) {
+            push @the_rest, uc $c if index($linear_prefix, $c) < 0;
+        }
+        push @seven_let, shuffle @the_rest;
+    }
+    else {
+        @seven_let = shuffle @seven_let;
+    }
 }
 if ($cmd eq 'nooop') {
     $cmd = '';
@@ -2128,7 +2154,45 @@ elsif ($cmd =~ m{\A s \s+ ([a-z]+) \z}xms) {
     $cmd = '';
 }
 elsif ($cmd eq 'h') {
+    $linear_prefix = '';
     $hive = $hive == 1? 2: 1;
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A h \s+ ([a-z]+) \z}xms) {
+    my $prefix = $1;
+    # are all letters in the prefix one of the seven?
+    my $not = '';
+    for my $c (split //, $prefix) {
+        if (index($seven, $c) < 0) {
+            $not .= $c;
+        }
+    }
+    if ($not) {
+        $not = join ' and ', split //, uc $not;
+        $message = $not
+                 . ' ' 
+                 . ((length $not == 1)? 'is': 'are')
+                 . ' not in '
+                 . uc $seven
+                 ;
+    }
+    elsif (my $l = duplicate_letter($prefix)) {
+        $message = "$l appears twice in " . uc $prefix;
+    }
+    else {
+        # time to rearrange the seven letters
+        # we do this again when hitting Return and
+        # there is no message to clear
+        #
+        $linear_prefix = $prefix;
+        @seven_let = split //, uc $linear_prefix;
+        my @the_rest;
+        for my $c (@seven) {
+            push @the_rest, uc $c if index($linear_prefix, $c) < 0;
+        }
+        push @seven_let, shuffle @the_rest;
+        $hive = 2;      # force it to 2 even if we are already on 2
+    }
     $cmd = '';
 }
 elsif ($cmd =~ m{\A [~]le \s+ (\S{6}) \s* \z}xms) {
@@ -4168,7 +4232,7 @@ EOS
         for my $c (@seven_let) {
             if ($c eq uc $center) {
                 if (! $donut_mode) {
-                    $letters .= "<span class=red2>$c$sp</span> ";
+                    $letters .= "<span class=red2>$c$sp</span>";
                 }
             }
             else {
@@ -4649,6 +4713,7 @@ $heading
 <input type=hidden name=which_wl value=$which_wl>
 <input type=hidden name=forum_mode value=$forum_mode>
 <input type=hidden name=show_RankImage value=$show_RankImage>
+<input type=hidden name=linear_prefix value='$linear_prefix'>
 $letters
 <div style="width: 640px">$message</div>
 <input type=hidden

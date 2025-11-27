@@ -236,7 +236,7 @@ acceptable.  Any error messages will appear above the text field.
 Words you have found will appear below the text field in alphabetical order.
 <p>
 Pressing Return when the text field is empty will clear any messages.
-If there are no messages to clear, the 6 outer letters will be permuted.
+If there are no messages to clear, the 6 outer letters will be shuffled (aka permuted).
 <p>
 If you lose focus on the text field you can restore it by
 hitting the Tab key.
@@ -2045,6 +2045,8 @@ Good!, Nice!, or Awesome!.
 <p>
 When you ask for hints the number of hints that you were
 charged is flashed as well.
+<p>
+When in Inline mode you will not see the flashing puzzle feedback.
 <li>Silent – No feedback at all.  Silence is golden.
 </ul>
 Like your <span class=cmd>ST</span> status choice your
@@ -2052,7 +2054,9 @@ Like your <span class=cmd>ST</span> status choice your
 associated with your <span class=cmd>ID</span>
 and will be preserved across the days and different browsers.
 <td></tr>
-<tr><td width=12%><a name=lm></a><span class=cmd>LM #mins</span></td><td>Set a <span class=cmd>l</span>i<span class=cmd>m</span>it of how much longer you want to play.
+</table>
+<table>
+<tr><td width=150><a name=lm></a><span class=cmd>LM #mins</span></td><td>Set a <span class=cmd>l</span>i<span class=cmd>m</span>it of how much longer you want to play.
 <span class=cmd>LM 10</span> will allow you to play for 10 more minutes.
 <span class=cmd>LM</span> without a number will show how much more time remains.
 When the time has expired this message will be shown:<br>
@@ -2065,6 +2069,8 @@ This command may prove helpful for those who feel that they
 are spending too much time on this silly game.
 </td><tr>
 <tr><td><span class=cmd>PA</span></td><td><span class=cmd>Pa</span>use your <span class=cmd>LM</span> time limit.  Any action will resume the time.  This would be useful if you only want to play for 30 minutes today but would like to do it in three 10 minute sessions throughout the day.</td></tr>
+</table>
+<table>
 <tr><td><span class=cmd>AC</span></td><td>Show a stacked bar graph of <i>everyone’s</i> <span class=cmd>ac</span>tivity through the day.  <span style='color: green'>Green</span>: #words, <span class=red1>Red</span>: #commands, <span style='color: blue'>Blue</span>: #dynamic grid queries.  The X-axis is hours since midnight, U.S. Pacific Time.  The Y-axis is number of entries.  Monitoring began on December 22, 2022.   It looks like this:
 <p>
 <img src=pics/ac.png width=100%>
@@ -2074,13 +2080,14 @@ To show only <i>your</i> activity there is the command <span class=cmd>MAC</span
 </table>
 <a name=inline></a>
 <table>
-<tr><td><span class=cmd>H</span></td><td>Toggle the presentation
+<p>
+<tr><td width=100><span class=cmd>H</span></td><td>Toggle the presentation
 of the 7 letters  - either the Letter <span class=cmd>H</span>exagons or Inline Letters:<br>
 <img height=250 src=pics/df_honeycomb.png>
-<br>
 <img height=120 src=pics/df_inline.png>
 <br>
-Since the letters in words occur in a line the Inline presentation
+Since the letters in words in normal text occur in a <i>line</i></i>
+the Inline presentation
 (instead of the hexagonal) is somehow more natural.
 Repeated random shuffling of the inline letters can sometimes
 give you ideas for new words that you might not have noticed
@@ -2101,7 +2108,40 @@ DIA<span class=red>C</span>RTF  <span class=idea>diacritic</span>
 TRAFI<span class=red>C</span>D  <span class=idea>traffic</span>
 </pre>
 <p>
-When in Inline mode you will not see the flashing <a href=#pf>puzzle feedback</a>.
+An extension of the <span class=cmd>H</span> command is to give a
+sequence of letters from the puzzle:
+<ul>
+<span class=cmd>H&nbsp;&nbsp;DIF</span>
+</ul>
+The <span class=cmd>DIF</span> is a <i>prefix</i>.
+Now when the letters are displayed and shuffled in inline mode they
+will always <i>start with</i> DIF:
+<p>
+<pre style="font-size: 24pt; margin-left: 1in; margin-bottom: .2in">
+DIFR<span class=red>C</span>TA
+DIF<span class=red>C</span>ATR
+DIFA<span class=red>C</span>RT
+DIFT<span class=red>C</span>AR
+</pre>
+This should be helpful when you have a good idea of 
+what the word you are looking for starts with.
+<p>
+When in Inline mode you can issue another <span class=cmd>H &lt;prefix&gt;</span> command and you will <i>stay</i> in Inline mode with the new prefix.
+<ul>
+<span class=cmd>H&nbsp;&nbsp;TR</span>
+</ul>
+<p>
+<pre style="font-size: 24pt; margin-left: 1in; margin-bottom: .2in">
+TRD<span class=red>C</span>IFA
+TRIF<span class=red>C</span>DA
+TRFAD<span class=red>C</span>I
+TRAIF<span class=red>C</span>D
+</pre>
+<p>
+You <i>can</i> give the center letter in the prefix if you wish.
+When in Donut Mode the center letter is not displayed, of course.
+<br>
+<br>
 </td>
 </tr>
 <tr><td><span class=cmd>R%</span></td><td>Show the <span class=cmd>r</span>ankings with the percentage of the maximum score.</td></tr>
@@ -2111,6 +2151,8 @@ When in Inline mode you will not see the flashing <a href=#pf>puzzle feedback</a
 <tr><td><span class=cmd>#B</span></td><td>How many words beginning with B remain to be found?</td></tr>
 <tr><td><span class=cmd>#4</span></td><td>How many 4 letter words remain to be found?</td></tr>
 <tr><td><span class=cmd>#&gt;4</span></td><td>How many words with more than 4 letters remain to be found? This might be useful if you are trying for GN4L: <a href=#gn4l>Genius No 4 Letters</a>.<br><br></td></tr>
+</table>
+<table>
 <tr><td colspan=2>Searching the Puzzles</td></tr>
 <tr><td><span class=cmd>CL</span></td><td>Find puzzles for which you have added clues.</td></tr>
 <tr><td><span class=cmd>F7</span></td><td>Find puzzles that use the <a href=#same>same seven letters</a> as the current puzzle.
@@ -2129,7 +2171,7 @@ in the other puzzles that occur in the current puzzle.</td></tr>
 <tr><td><span class=cmd>W!/&lt;pattern&gt;</span></td><td>Show the found words that do NOT match the pattern.  To see the words that do <i>not</i> end in ING or ED enter this command:<div style="color: red; margin-left: .2in; font-family: Courier; margin-top: 2mm; margin-bottom: 2mm">W!/(ING|ED)$</div></td></tr>
 <tr><td><span class=cmd>1W</span></td><td>Show the found words in a single column.  This may be more convenient if you wish to copy/paste the word list.</td></tr>
 <tr><td><span class=cmd>SL</span></td><td>Show the groups of found words that share the <span class=cmd>s</span>ame <span class=cmd>l</span>etters.</td></tr>
-<tr><td><span class=cmd>FT</span></td><td>Show the found words that are appearing for the <span class=cmd>f</span>irst <span class=cmd>t</span>ime in this puzzle.</td></tr>
+<tr><td><span class=cmd>FT</span></td><td>Show the found words that are appearing for the <span class=cmd>f</span>irst <span class=cmd>t</span>ime in this puzzle.<p></td></tr>
 <tr><td colspan=2><p>However the Found Word List is shown you can click on each word to get a brief definition of that word. <a href=#hotlink><sup class=red>3</sup></a>  This includes the Donut, Lexicon, Bonus, and Stash words.  Click on the brief definition to see the <i>complete</i> definition at wordnik.com in another window.  
 <br><br></td></tr>
 <tr><td><span class=cmd>FT&nbsp;&nbsp;&lt;word&gt;</span></td><td>Show the date on which the given word appeared for the <span class=cmd>f</span>irst <span class=cmd>t</span>ime.<br><br></td></tr>
@@ -2482,8 +2524,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2746 puzzles with
-a total of 10916 different words!
+2760 puzzles with
+a total of 10927 different words!
 <p>
 Tallies are made of the many puzzles and words.
 See this table of the puzzles:
