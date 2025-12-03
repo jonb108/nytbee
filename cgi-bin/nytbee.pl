@@ -2095,6 +2095,49 @@ elsif ($cmd =~ m{\A ([bd])[>] \z}xms) {
     }
     $cmd = '';
 }
+elsif ($cmd =~ m{\A rm \s+ ([a-z]+) \z}xms) {
+    my $xword = $1;
+    if ($is_found{$xword}) {
+        my @new_found;
+        my $char = '';
+        for my $w (@found) {
+            if ($w =~ m{\A $xword ([!*+-])? \z }xms) {
+                $char = $1;
+            }
+            else {
+                push @new_found, $w;
+            }
+        }
+        @found = @new_found;
+        delete $is_found{$xword};
+        ++$n_minus;
+        # puzzle feedback?
+        # ! stash * bonus + lexicon - donut
+        my $type = $char eq '' ? 'Puzzle'
+                  :$char eq '!'? 'Stash'
+                  :$char eq '*'? 'Bonus'
+                  :$char eq '+'? 'Lexicon'
+                  :              'Donut'
+                  ;
+        my $ws = '';
+        if ($type eq 'Puzzle') {
+            my $n = word_score($xword, $is_pangram{$xword});
+            $ws = " -$n";
+            $points_added -= $n;
+                # in case $pw_feedback is 1
+        }
+        if ($pw_feedback == 0) {
+            $message .= ul(red(uc $xword)
+                     . ": $type word removed$ws<br>");
+        }
+    }
+    else {
+        $not_okay_words = "<span class=not_okay>"
+                        . uc($xword)
+                        . "</span>: not a found word";
+    }
+    $cmd = '';
+}
 elsif ($cmd =~ m{\A ft \s+ ([a-z]+) \z}xms) {
     my $word = $1;
     # when did this word first appear?

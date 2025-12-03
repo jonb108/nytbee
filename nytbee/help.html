@@ -27,7 +27,6 @@ function abcd(efg) {
 <br>
 <span class=nyt>UltraBee</span>
 </h1>
-<a name=introduction></a>
 <h2>Introduction</h2>
 The New York Times has had the Spelling Bee
 puzzle in the print version of the weekly New York Times Magazine since 2014.
@@ -65,7 +64,7 @@ And I have.  The complete source code for this project is on
 <h2>Table of Contents</h2>
 <p>
 <div class=toc>
-<a href=#introduction>Introduction</a><br>
+<a href=#>Introduction</a><br>
 <a href=#videos>Videos</a><br>
 <a href=#how>How to Play</a><br>
 <a href=#advantages>Advantages</a><br>
@@ -2145,7 +2144,6 @@ When in Donut Mode the center letter is not displayed, of course.
 </td>
 </tr>
 <tr><td><span class=cmd>R%</span></td><td>Show the <span class=cmd>r</span>ankings with the percentage of the maximum score.</td></tr>
-<tr><td><span class=cmd>-&lt;word&gt;</span></td><td>Remove the word from the found list. (That’s a dash or hyphen or - or a minus sign before the word.) This might be used if you are trying for GOTN: <a href=#gn4l>Genius On the Nose</a>.  Better than removing the word would be to stash it – by clicking on the word for a definition and then choosing <span class=blue>Stash</span>.<br><br></td></tr>
 <tr><td colspan=2>Instead of the full Hint Table</td></tr>
 <tr><td><span class=cmd>#</span></td><td>How many words remain to be found?</td></tr>
 <tr><td><span class=cmd>#B</span></td><td>How many words beginning with B remain to be found?</td></tr>
@@ -2171,10 +2169,16 @@ in the other puzzles that occur in the current puzzle.</td></tr>
 <tr><td><span class=cmd>W!/&lt;pattern&gt;</span></td><td>Show the found words that do NOT match the pattern.  To see the words that do <i>not</i> end in ING or ED enter this command:<div style="color: red; margin-left: .2in; font-family: Courier; margin-top: 2mm; margin-bottom: 2mm">W!/(ING|ED)$</div></td></tr>
 <tr><td><span class=cmd>1W</span></td><td>Show the found words in a single column.  This may be more convenient if you wish to copy/paste the word list.</td></tr>
 <tr><td><span class=cmd>SL</span></td><td>Show the groups of found words that share the <span class=cmd>s</span>ame <span class=cmd>l</span>etters.</td></tr>
-<tr><td><span class=cmd>FT</span></td><td>Show the found words that are appearing for the <span class=cmd>f</span>irst <span class=cmd>t</span>ime in this puzzle.<p></td></tr>
+<tr><td><span class=cmd>FT</span></td><td>Show the found words that are appearing for the <span class=cmd>f</span>irst <span class=cmd>t</span>ime in this puzzle.</td></tr>
+<tr><td><span class=cmd>FT&nbsp;&nbsp;&lt;word&gt;</span></td><td>Show the date on which the given word appeared for the <span class=cmd>f</span>irst <span class=cmd>t</span>ime.</td></tr>
+<tr><td><span class=cmd>RM &lt;word&gt;</span></td><td>Remove the word from the found list.  This might be used if you are trying for GOTN: <a href=#gn4l>Genius On the Nose</a>.  Better than removing the word would be to stash it – by clicking on the word for a definition and then choosing <span class=blue>Stash</span>.<p>
+You can also do this to remove words:
+<ul>
+    HELLO -CHAT -NOON GOODBYE
+</ul>
+HELLO and GOODBYE will be added.  CHAT and NOON will be removed.<p></td></tr>
 <tr><td colspan=2><p>However the Found Word List is shown you can click on each word to get a brief definition of that word. <a href=#hotlink><sup class=red>3</sup></a>  This includes the Donut, Lexicon, Bonus, and Stash words.  Click on the brief definition to see the <i>complete</i> definition at wordnik.com in another window.  
 <br><br></td></tr>
-<tr><td><span class=cmd>FT&nbsp;&nbsp;&lt;word&gt;</span></td><td>Show the date on which the given word appeared for the <span class=cmd>f</span>irst <span class=cmd>t</span>ime.<br><br></td></tr>
 <tr><td colspan=2>If you are a minimalist:</td></tr>
 <tr><td><span class=cmd>HE</span></td><td>Toggle the showing of the <span class=cmd>he</span>ader.  Default is to show it.</td></tr>
 <tr><td><span class=cmd>LN</span></td><td>Toggle the showing of the many <span class=cmd>l</span>i<span class=cmd>n</span>ks when not in mobile mode. Default is to show them.</td></tr>
@@ -2197,7 +2201,7 @@ The space is optional so <span class=cmd>WLPS</span> is okay.
 Note that if you have issued <span class=cmd>WL&nbsp;&nbsp;PS</span> and then wish to
 see ALL 5 of the word lists, just issue <span class=cmd>WLA</span> to see ALL.
 </td></tr>
-<tr><td><span class=cmd>IM</span></td><td>Toggle the showing of the <span class=cmd>im</span>age for the ranks of Amazing, Genius, and Queen Bee.  Default is to show it.  This is for the default numeric status display.</td></tr>
+<tr><td><span class=cmd>IM</span></td><td>Toggle the showing of the <span class=cmd>im</span>age for the ranks of Amazing, Genius, and Queen Bee.  Default is to show it.  This is for the default numeric status display.<p></td></tr>
 <tr><td colspan=2><a name=power_id></a>Preserving Your Identity</td></tr>
 <tr><td><span class=cmd>ID</span></td><td>
 The ID and the SN commands are explained thoroughly <a href=#screen_names>here</a>.
@@ -2219,6 +2223,7 @@ example:
 Now if your cookies were cleared you can easily re-establish your identity.
 <p>
 The ID and the SN commands are explained thoroughly <a href=#screen_names>here</a>.
+<br><br>
 </td></tr>
 <tr><td colspan=2>The Ultimate Hint:</td></tr>
 <tr><td><span class=cmd>G&nbsp;&nbsp;Y</span></td><td>
@@ -2262,7 +2267,7 @@ This list of terms was compiled by Monicat and appears in the NYT HiveMind Forum
 <p>
 <span class=green>QBABM</span> — Queen Bee All By Myself: You’ve gotten to Queen Bee without any hints from the Hivemind.
 <p>
-<span class=green>QBWG+H+2LL</span> — Queen Bee With Grid (plus hints): You’ve gotten to Queen Bee with the use of hints, the two letter list or the grid, which appears in each Spelling Bee column.
+<span class=green>QBWG+H+2LL</span> — Queen Bee With Grid (plus hints): You’ve gotten to Queen Bee with the use of the grid, hints, and/or the two letter list.
 <p>
 <span class=green>QB-1</span> — One word away from Queen Bee.
 <p>
@@ -2524,8 +2529,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2760 puzzles with
-a total of 10927 different words!
+2766 puzzles with
+a total of 10928 different words!
 <p>
 Tallies are made of the many puzzles and words.
 See this table of the puzzles:
