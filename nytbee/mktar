@@ -3,6 +3,7 @@ rm -f /tmp/html.tar
 tar cvf /tmp/html.tar \
 help.html \
 more_space.html \
+more_more.html \
 dyn_help.html \
 index.html \
 qbonus.html \

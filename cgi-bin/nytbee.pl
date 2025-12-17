@@ -1611,6 +1611,87 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     $message .= ul(table({ cellpadding => 4}, @rows));
     $cmd = '';
 }
+elsif ($cmd =~ m{\A ([bdil])w \s* ([ln])? \z}xms) {
+    #
+    # second column of numbers is the # of people who found the word
+    # DW, LW, BW - sort by the word
+    # DW N, LW N, BW N - sort by the numbers descending, then the word
+    # DW L, LW L, BW L - sort by the length of the word descending, then the word
+    # pangram (green), perfect pangram (purple)
+    # word is skyblue if you found it
+    # you can click on each word to get definition (not for I) and
+    # then on the definition to get full wordnik definition.
+    #
+    my $let = uc $1;
+    my $numeric = $2;   # l or n or empty
+    if ($date eq $ymd && $let ne 'I') {
+        $message .= "Sorry, you cannot do \U$cmd\E for today's puzzle.<br>You will need to wait until tomorrow.";
+    }
+    else {
+        my $name = { qw/ D donut L lexicon B bonus I incorrect/ }->{$let};
+            # fun!  learned this at Aruba
+        open my $in, '<', "$name/$date";
+        my (%n_diff_people_found, %len);
+        my $total = 0;
+        while (my $w = <$in>) {
+            chomp $w;
+            ++$n_diff_people_found{$w};
+            $len{$w} = length($w);
+            ++$total;
+        }
+        close $in;
+        my $nwords = keys %n_diff_people_found;
+        my $pl = $nwords == 1? '': 's';
+        $message .= "$nwords " . ' unique ' . ucfirst($name) . " word$pl<br>\n";
+        $message .= "$total Total<p>";
+        my @rows;
+        my $sort_function = $numeric eq 'n'?
+                                sub {
+                                    $n_diff_people_found{$b} <=> $n_diff_people_found{$a}
+                                    ||
+                                    $a cmp $b
+                                }
+                           :$numeric eq 'l'?
+                                sub {
+                                    $len{$b} <=> $len{$a}
+                                    ||
+                                    $a cmp $b
+                                }
+                           :    
+                                 sub { $a cmp $b }
+                           ;
+        my $prev_len = 0;
+        for my $w (sort $sort_function keys %n_diff_people_found) {
+            if ($numeric eq 'l') {
+                my $l = length($w);
+                if (!$prev_len || $l != $prev_len) {
+                    push @rows, Tr(td({ class => 'lt' }, $l));
+                    $prev_len = $l;
+                }
+            }
+            my $dw = $let eq 'I'? $w: def_word($w, $w);
+            my $nuchars = uniq_chars($w);
+            my $lw = length $w;
+            my $pangram;
+            if ($let eq 'B' && $nuchars == 8) {
+                $pangram = td_pangram($lw == 8);
+            }
+            elsif ($let eq 'D' && $nuchars == 6) {
+                $pangram = td_pangram($lw == 6);
+            }
+            elsif ($let eq 'L' && $nuchars == 7) {
+                $pangram = td_pangram($lw == 7);
+            }
+            my $found = $let ne 'I' && $is_found{$w}? ' found_bonus': '';
+            push @rows, Tr(td({ class => "lt$found" }, $dw),
+                           td({ class => 'rt' }, $n_diff_people_found{$w}),
+                           $pangram,
+                        );
+        }
+        $message .= table(@rows);
+    }
+    $cmd = '';
+}
 elsif ($cmd =~ m{\A d(p|r|5|[a-z]\d+|[a-z][a-z]|[-][a-z][a-z][a-z]) \z}xms) {
     do_define($1);
     $cmd = '';
@@ -3688,87 +3769,6 @@ elsif ($cmd =~ m{\A iw([ln]?) \s+ ([a-z]+)([0-9]*) \z}xms) {
                     );
     }
     $message .= table(@rows);
-    $cmd = '';
-}
-elsif ($cmd =~ m{\A ([bdil])w \s* ([ln])? \z}xms) {
-    #
-    # second column of numbers is the # of people who found the word
-    # DW, LW, BW - sort by the word
-    # DW N, LW N, BW N - sort by the numbers descending, then the word
-    # DW L, LW L, BW L - sort by the length of the word descending, then the word
-    # pangram (green), perfect pangram (purple)
-    # word is skyblue if you found it
-    # you can click on each word to get definition (not for I) and
-    # then on the definition to get full wordnik definition.
-    #
-    my $let = uc $1;
-    my $numeric = $2;   # l or n or empty
-    if ($date eq $ymd && $let ne 'I') {
-        $message .= "Sorry, you cannot do \U$cmd\E for today's puzzle.<br>You will need to wait until tomorrow.";
-    }
-    else {
-        my $name = { qw/ D donut L lexicon B bonus I incorrect/ }->{$let};
-            # fun!  learned this at Aruba
-        open my $in, '<', "$name/$date";
-        my (%n_diff_people_found, %len);
-        my $total = 0;
-        while (my $w = <$in>) {
-            chomp $w;
-            ++$n_diff_people_found{$w};
-            $len{$w} = length($w);
-            ++$total;
-        }
-        close $in;
-        my $nwords = keys %n_diff_people_found;
-        my $pl = $nwords == 1? '': 's';
-        $message .= "$nwords " . ' unique ' . ucfirst($name) . " word$pl<br>\n";
-        $message .= "$total Total<p>";
-        my @rows;
-        my $sort_function = $numeric eq 'n'?
-                                sub {
-                                    $n_diff_people_found{$b} <=> $n_diff_people_found{$a}
-                                    ||
-                                    $a cmp $b
-                                }
-                           :$numeric eq 'l'?
-                                sub {
-                                    $len{$b} <=> $len{$a}
-                                    ||
-                                    $a cmp $b
-                                }
-                           :    
-                                 sub { $a cmp $b }
-                           ;
-        my $prev_len = 0;
-        for my $w (sort $sort_function keys %n_diff_people_found) {
-            if ($numeric eq 'l') {
-                my $l = length($w);
-                if (!$prev_len || $l != $prev_len) {
-                    push @rows, Tr(td({ class => 'lt' }, $l));
-                    $prev_len = $l;
-                }
-            }
-            my $dw = $let eq 'I'? $w: def_word($w, $w);
-            my $nuchars = uniq_chars($w);
-            my $lw = length $w;
-            my $pangram;
-            if ($let eq 'B' && $nuchars == 8) {
-                $pangram = td_pangram($lw == 8);
-            }
-            elsif ($let eq 'D' && $nuchars == 6) {
-                $pangram = td_pangram($lw == 6);
-            }
-            elsif ($let eq 'L' && $nuchars == 7) {
-                $pangram = td_pangram($lw == 7);
-            }
-            my $found = $let ne 'I' && $is_found{$w}? ' found_bonus': '';
-            push @rows, Tr(td({ class => "lt$found" }, $dw),
-                           td({ class => 'rt' }, $n_diff_people_found{$w}),
-                           $pangram,
-                        );
-        }
-        $message .= table(@rows);
-    }
     $cmd = '';
 }
 elsif ($cmd eq 'top') {
