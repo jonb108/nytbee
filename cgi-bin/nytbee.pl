@@ -642,8 +642,12 @@ elsif (   $cmd ne '1'
             $linear_prefix = '';
             $cmd = '';
         }
+        elsif ($dt < $first) {
+            $message = 'The first NYT Spelling Bee Puzzle was on May 9, 2018.';
+            $cmd = 'nooop';
+        }
         else {
-            $message .= "Illegal date: $new_date";
+            $message .= "Illegal future date: $new_date";
             $cmd = 'nooop';
         }
     }
@@ -3638,49 +3642,67 @@ EOH
     }
     $cmd = '';
 }
-elsif ($cmd =~ m{\A (n?iw) \s+ ([a-z]+)([0-9]*) \z}xms) {
-    my $numeric = $1 eq 'niw';
+elsif ($cmd =~ m{\A iw([ln]?) \s+ ([a-z]+)([0-9]*) \z}xms) {
+    my $numeric = $1;
     my $prefix = $2;
     my $len = $3;
     open my $in, '<', "incorrect/$date";
-    my %words;
+    my (%n_diff_people_found, %len);
     while (my $w = <$in>) {
         chomp $w;
         if ($w =~ m{\A $prefix}xms
             && (!$len || length $w == $len)
         ) {
-            ++$words{$w};
+            ++$n_diff_people_found{$w};
+            $len{$w} = length $w;
         }
     }
     close $in;
-    my @words = $numeric? (sort {
-                               $words{$b} <=> $words{$a}
-                               ||
-                               $a cmp $b
-                           }
-                           keys %words)
-               :          (sort keys %words)
-               ;
+    my $sort_function = $numeric eq 'n'?
+                            sub {
+                                $n_diff_people_found{$b} <=> $n_diff_people_found{$a}
+                                ||
+                                $a cmp $b
+                            }
+                       :$numeric eq 'l'?
+                            sub {
+                                $len{$b} <=> $len{$a}
+                                ||
+                                $a cmp $b
+                            }
+                       :    
+                             sub { $a cmp $b }
+                       ;
     my @rows;
-    for my $w (@words) {
+    my $prev_len = 0;
+    for my $w (sort $sort_function keys %n_diff_people_found) {
+        if ($numeric eq 'l') {
+            my $l = length($w);
+            if (!$prev_len || $l != $prev_len) {
+                push @rows, Tr(td({ class => 'lt' }, $l));
+                $prev_len = $l;
+            }
+        }
         push @rows, Tr(td({ class => 'lt' }, $w),
-                       td({ class => 'rt' }, $words{$w}),
+                       td({ class => 'rt' }, $n_diff_people_found{$w}),
                     );
     }
     $message .= table(@rows);
     $cmd = '';
 }
-elsif ($cmd =~ m{\A (n)?([dlbi])w \z}xms) {
-    # second column of numbers is the # of people who found it
+elsif ($cmd =~ m{\A ([bdil])w \s* ([ln])? \z}xms) {
+    #
+    # second column of numbers is the # of people who found the word
     # DW, LW, BW - sort by the word
-    # NDW, NLW, NBW - sort by the numbers descending then the word
+    # DW N, LW N, BW N - sort by the numbers descending, then the word
+    # DW L, LW L, BW L - sort by the length of the word descending, then the word
     # pangram (green), perfect pangram (purple)
     # word is skyblue if you found it
-    # you can click on each word to get definition and
+    # you can click on each word to get definition (not for I) and
     # then on the definition to get full wordnik definition.
     #
-    my $numeric = $1;
-    my $let = uc $2;
+    my $let = uc $1;
+    my $numeric = $2;   # l or n or empty
     if ($date eq $ymd && $let ne 'I') {
         $message .= "Sorry, you cannot do \U$cmd\E for today's puzzle.<br>You will need to wait until tomorrow.";
     }
@@ -3688,28 +3710,44 @@ elsif ($cmd =~ m{\A (n)?([dlbi])w \z}xms) {
         my $name = { qw/ D donut L lexicon B bonus I incorrect/ }->{$let};
             # fun!  learned this at Aruba
         open my $in, '<', "$name/$date";
-        my %words;
+        my (%n_diff_people_found, %len);
         my $total = 0;
         while (my $w = <$in>) {
             chomp $w;
-            ++$words{$w};
+            ++$n_diff_people_found{$w};
+            $len{$w} = length($w);
             ++$total;
         }
         close $in;
-        my $nwords = keys %words;
+        my $nwords = keys %n_diff_people_found;
         my $pl = $nwords == 1? '': 's';
         $message .= "$nwords " . ' unique ' . ucfirst($name) . " word$pl<br>\n";
         $message .= "$total Total<p>";
         my @rows;
-        my @words = $numeric? (sort {
-                                   $words{$b} <=> $words{$a}
-                                   ||
-                                   $a cmp $b
-                               }
-                               keys %words)
-                   :          (sort keys %words)
-                   ;
-        for my $w (@words) {
+        my $sort_function = $numeric eq 'n'?
+                                sub {
+                                    $n_diff_people_found{$b} <=> $n_diff_people_found{$a}
+                                    ||
+                                    $a cmp $b
+                                }
+                           :$numeric eq 'l'?
+                                sub {
+                                    $len{$b} <=> $len{$a}
+                                    ||
+                                    $a cmp $b
+                                }
+                           :    
+                                 sub { $a cmp $b }
+                           ;
+        my $prev_len = 0;
+        for my $w (sort $sort_function keys %n_diff_people_found) {
+            if ($numeric eq 'l') {
+                my $l = length($w);
+                if (!$prev_len || $l != $prev_len) {
+                    push @rows, Tr(td({ class => 'lt' }, $l));
+                    $prev_len = $l;
+                }
+            }
             my $dw = $let eq 'I'? $w: def_word($w, $w);
             my $nuchars = uniq_chars($w);
             my $lw = length $w;
@@ -3723,10 +3761,9 @@ elsif ($cmd =~ m{\A (n)?([dlbi])w \z}xms) {
             elsif ($let eq 'L' && $nuchars == 7) {
                 $pangram = td_pangram($lw == 7);
             }
-            push @rows, Tr(td({ class => 'lt' },
-                              $is_found{$w}? span({ class => 'found_bonus' }, $dw)
-                             :               $dw),
-                           td({ class => 'rt' }, $words{$w}),
+            my $found = $let ne 'I' && $is_found{$w}? ' found_bonus': '';
+            push @rows, Tr(td({ class => "lt$found" }, $dw),
+                           td({ class => 'rt' }, $n_diff_people_found{$w}),
                            $pangram,
                         );
         }
@@ -3765,9 +3802,9 @@ elsif ($cmd =~ m{\A cw \s* (\d*) \z}xms) {
     }
     $cmd = '';
 }
-elsif ($cmd eq 'abw') {
+elsif ($cmd =~ m{\A bw \s* a \z}xms) {
     if ($date eq $ymd) {
-        $message .= "Sorry, you cannot do ABW for today's puzzle.<br>You will need to wait until tomorrow.";
+        $message .= "Sorry, you cannot do BWA for today's puzzle.<br>You will need to wait until tomorrow.";
     }
     else {
         # a separate piece of code for the fancy ABW
@@ -3825,10 +3862,9 @@ elsif ($cmd eq 'abw') {
             if ($nuchars == 8) {
                 $pangram = td_pangram($lw == 8);
             } 
+            my $found = $is_found{$w}? ' found_bonus': '';
             push @rows, Tr(td(''),
-                           td({ class => 'lt' },
-                              $is_found{$w}? span({ class => 'found_bonus' }, $dw)
-                             :               $dw),
+                           td({ class => "lt$found" }, $dw),
                            td({ class => 'rt' }, $count),
                            $pangram,
                         );

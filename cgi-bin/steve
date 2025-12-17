@@ -100,6 +100,7 @@ else {
     untie %puzzle_store;
     my @words = split ' ', $t;
     my $nwords = @words;
+JON "nw $nwords @words";
 
     my $sth_ins = $dbh->prepare(<<'EOS');
 

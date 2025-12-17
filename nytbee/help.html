@@ -1244,7 +1244,7 @@ Searching for Bonus words on a mobile phone is somewhat awkward.
 The additional letter is (of course!) not in the 7 displayed letters
 so you would need to enter the words in the text field.
 The onscreen keyboard occupies a lot of the screen real estate.
-When you toggle Bonus Mode ON
+When you toggle Bonus Mode ON with the <span class=cmd>BN</span> command
 the mobile display will look like this:
 <p>
 <img src=pics/doodad.png style="width: 80%" border=1>
@@ -1332,24 +1332,29 @@ leave the Extra words.  <span class=cmd>C YA</span> will clear <i><span class=cm
 <h3>Global Lists of Extra Words</h3>
 There is, of course, no “official” list of these Extra words.
 This makes it more fun, in a way.  More creative.
-Here are 7 commands to show the Extra words found by the
+Here are several commands to show the Extra words found by the
 <i>entire</i> global world-wide community.
 You cannot use these commands on the same day of the puzzle – otherwise, people
 could “cheat” and use words found by others, yes?
 The command <span class=cmd>Y</span> is convenient here to go
-to yesterday’s puzzle.
+to yesterday’s puzzle (and then <span class=cmd>T</span> to return to today).
+<p>
 The words that <i>you</i> found are shown in
 <span class=found_bonus>sky blue</span>.
 <span class=green>Pangrams</span> and <span class=purple>Perfect Pangrams</span> are marked.
+The numbers in a second column show how many different people found that word.
 <p>
 <table cellpadding=5>
 <tr><th class='cmd rt'>DW</th><td>Show all Donut words in alphabetic order.</td></tr>
 <tr><th class='cmd rt'>LW</th><td>Show all Lexicon words in alphabetic order.</td></tr>
 <tr><th class='cmd rt'>BW</th><td>Show all Bonus words in alphabetic order.</td></tr>
-<tr><th class='cmd rt'>NDW</th><td>Show all Donut words in order of how many different people found them.</td></tr>
-<tr><th class='cmd rt'>NLW</th><td>Show all Lexicon words in order of how many different people found them.</td></tr>
-<tr><th class='cmd rt'>NBW</th><td>Show all Bonus words in order of how many different people found them.</td></tr>
-<tr><th class='cmd rt'>ABW</th><td>Show all Bonus words in order of the additional letter.  Within that additional letter the sort is by the number of people who found the word and then alphabetically. At the end are tallies of the number of words containing the center letter and also by length.</td></tr>
+</table>
+<p>
+You can suffix these commands with <span class=cmd>L</span> to order the words by length or with <span class=cmd>N</span> to order them
+by the number of people who found them.
+<p>
+<table cellpadding=5>
+<tr><th class='cmd rt'>BWA</th><td>Show all Bonus words in order of the additional letter.  Within that additional letter the sort is by the number of people who found the word and then alphabetically. At the end are tallies of the number of words containing the center letter and also by length.</td></tr>
 </table>
 If you see a word you don’t know you can click on it to see a brief definition
 (and then go back in the browser to see the list again) and, as usual, click on the brief definition to see a complete definition at wordnik.com.
@@ -1399,10 +1404,16 @@ another category of words is Incorrect words.
 These are words that were tried but were not found in the allowed list
 nor in the large lexicon nor in
 <a href='https://www.wordnik.com'>wordnik.com</a> or for some other reason
-were not accepted. Similar to <span class=cmd>BW</span> and <span class=cmd>NBW</span> there are commands
-<span class=cmd>IW</span> and <span class=cmd>NIW</span> to show the accumulated Incorrect words.  There are four differences:
+were not accepted. Similar to <span class=cmd>BW</span>,
+<span class=cmd>BWL</span>,
+and
+<span class=cmd>BWN</span>
+there are commands
+<span class=cmd>IW</span>,
+<span class=cmd>IWL</span>,
+and <span class=cmd>IWN</span> to show the accumulated Incorrect words.  There are four differences:
 <ul>
-<li><span class=cmd>IW</span> and <span class=cmd>NIW</span> can be entered <i>on</i> the day of the puzzle.
+<li>These incorrect word commands can be entered <i>on</i> the day of the puzzle.
 <li>You cannot click on the words to get a definition.
 <li>You can give a prefix parameter - like <span
 class=cmd>IW T</span> - to only show words that <i>begin</i> with T.
@@ -2529,8 +2540,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2766 puzzles with
-a total of 10928 different words!
+2779 puzzles with
+a total of 10934 different words!
 <p>
 Tallies are made of the many puzzles and words.
 See this table of the puzzles:
