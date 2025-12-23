@@ -1732,8 +1732,8 @@ elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms  # sw at the front
                           :$x =~ m{[+]\z}xms? 'Lexicon'
                           :                   'Bonus'
                           ;
-                $message .= red(uc($w))
-                         . " is a $type word not a puzzle word so it cannot be stashed!";
+                $message .= ul(red(uc($w))
+                         . " is a $type word not a puzzle word so it cannot be stashed!");
             }
             else {
                 # we are stashing a puzzle word we already found

@@ -117,7 +117,7 @@ while (my $href = $get_msgs_sth->fetchrow_hashref()) {
     my ($e, $x) = ('', '');
     if ($href->{screen_name} eq $screen_name) {
         $e = "<span class=cursor_black id=e$id onclick='edit_post($id);'><img src=$pics/pencil.png $height></span> ";
-        $x = "<span class=cursor_black id=x$id onclick='del_post($id);'><img src=$pics/trashcan.png height=20></span> ";
+        $x = "<span class=cursor_black id=x$id onclick='del_post($id);'><img src=$pics/trashcan.png $height></span> ";
     }
     print <<"EOH";
 <span class=stamp>$href->{screen_name}&nbsp;&nbsp;$t</span> <span style='float: right'>$e$x$flag</span><br>
