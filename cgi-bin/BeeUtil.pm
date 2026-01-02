@@ -163,8 +163,16 @@ sub uniq_words {
 }
 
 sub jumble {
-    my ($w) = @_;
+    my ($w, $type) = @_;
     my @chars = split '', $w;
+    if ($type eq 'a') {
+        my $s = join '', sort @chars;
+        # if the word is an 'ascendogram'
+        # we fall through and jumble it
+        if ($s ne $w) {
+            return $s;
+        }
+    }
     my $jw = '';
     while (@chars) {
         $jw .= splice @chars, int(rand(@chars)), 1;

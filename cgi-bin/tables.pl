@@ -25,7 +25,10 @@ use BeeHTML qw/
     table
 /;
 
-use BeeUtil 'JON';
+use BeeUtil qw/
+    JON
+    jumble
+/;
 my ($ht, $tl, $t3, $jt, $alink_color, @words) = @ARGV;
 # @words are word that have not yet been found
 
@@ -182,16 +185,6 @@ if ($t3) {
     push @out, $three_lets. '<br>';
 }
 
-sub jumble {
-    my ($w) = @_;
-    my @chars = split '', $w;
-    my $jw = '';
-    while (@chars) {
-        $jw .= splice @chars, int(rand(@chars)), 1;
-    }
-    return $jw eq $w? jumble($w): $jw;
-}
-
 sub revword {
     my ($w) = @_;
     return scalar reverse $w;
@@ -212,7 +205,7 @@ if ($jt) {
                    $a->[1] cmp $b->[1]
                }
                map {
-                   [ length $_, jumble($_), $_ ]
+                   [ length $_, jumble($_, $jt), $_ ]
                }
                @words
     ) {

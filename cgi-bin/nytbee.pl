@@ -1416,16 +1416,16 @@ elsif ($cmd eq 'ht') {
     }
     $cmd = '';
 }
-elsif ($cmd eq 'jt') {
+elsif ($cmd =~ m{\A jt \s* (a)? \z}xms) {
     if (! $jt_chosen) {
-        $jt_chosen = 1;
         add_hints(20);
     }
+    $jt_chosen = $1 || 1;
     $cmd = '';
 }
 elsif ($cmd eq 'jr') {
     my @un_found = grep { !$is_found{$_} } @ok_words;
-    $message = uc jumble $un_found[ rand @un_found ];
+    $message = uc jumble($un_found[ rand @un_found ], $jt_chosen);
     add_hints(3);
     $cmd = '';
 }
@@ -3627,7 +3627,7 @@ elsif ($cmd eq '5j') {
     if (@words) {
         add_hints(1);
         my $word = $words[ rand @words ];
-        $message .= uc jumble($word);
+        $message .= uc jumble($word, $jt_chosen);
     }
     else {
         $message .= 'No more 5+ words.';
