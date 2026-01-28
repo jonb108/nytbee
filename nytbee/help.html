@@ -247,7 +247,7 @@ There are several links on the page.
 <li><span class=blue>Help</span> - Show this document.
 <li><a target=_blank href=cmds.html>Cmds</a> - Show the very long <a target=_blank href=cmds.html>list of commands</a> you can enter in the text field.
 <li><a href=#forum>Forum</a> - Toggle <a href=#forum>Forum</a> mode to share your thoughts and see what other people have offered.
-<li><a href=#definitions>Define</a> - Show the definition of a random word in the allowed list that has not yet been found.
+<li><a href=#definitions>Define</a> - Show the definition of a random word in the allowed list that has not yet been found.  This link can be turned off with the <span class=cmd>ND</span> toggle command.
 <li><a href=#competition>Own</a> - Show which words <i>only you</i> have found - your own words.
 <li><span class=blue>Top</span> - Show how other people have done with the puzzle - and how many hints they needed.  
 <li><span class=blue>Standings</span> - This will show you how other
@@ -256,10 +256,6 @@ people are doing with the Extra words and introduces a bit of
 <li><a href=#donut>Donut</a> - Toggle <a href=#donut>Donut</a> mode to more easily look for <a href=#donut>Donut </a>words.
 <li><a href=#bonus>Bonus</a> - Toggle <a href=#bonus>Bonus</a> mode to more easily look for <a href=#bonus>Bonus</a> words.
 <li><a href=#bingo>Bingo</a> - This link may appear if the puzzle is a <a href=#bingo>Bingo</a> puzzle.  It will toggle the <a href=#bingo>Bingo</a> Table.
-</ul>
-For a very simple and minimalistic interface you can turn all of the above links <b>off</b>.  Enter these commands: <span class=cmd>HE</span>, <span class=cmd>LN</span>, <span class=cmd>WL</span>, and <span class=cmd>ST3</span>.  And for ultimate purists the <span class=cmd>H</span> command will show the 7 letters inline.
-<ul>
-<img src=pics/minimal.png>
 </ul>
 Here are a few of the many commands you can enter in the text field:
 <p>
@@ -479,7 +475,7 @@ Tapping on letters will copy them to the area on the right:
 <p>
 Tap on <span class=cmd>Stash</span> to add the word to <a href=#stash>The Stash</a>.
 <br>
-Tap on <span class=cmd>Define</span> to do a <span class=cmd>DR</span> command to define a random unfound word.
+Tap on <span class=cmd>Define</span> to do a <span class=cmd>DR</span> command to define a random unfound word.  This can be turned off with the <span class=cmd>ND</span> command toggle.
 <br>
 Tap on <span class=cmd>Donut</span> to switch into <a href=#donut>Donut Mode</a>.
 <br>
@@ -634,6 +630,7 @@ you have set Only Clues the charge is reduced to 2 hint points.
 <p>
 If you do not want to accidentally get definitions there is the
 <span class=cmd>ND</span> command to toggle showing the Define link or not.
+This applies to the BT, HT, TL, T3, and JT tables as well.
 </td></tr>
 <tr><td colspan=2 class=green>Revealing Letters</td></tr>
 <tr><td><span class=cmd>V2P</span></td><td>Reveal the first two letters (and the length) of the pangrams.</td></tr>
@@ -667,7 +664,8 @@ about the table and list.
 the numbers in the table and lists will <i>change</i>.
 The numbers represent the number of words that <i>remain</i> to be found.
 <li>You can <b>click</b> on the entries in the table and lists to
-get definitions <i>and clues</i> for the words.
+get definitions <i>and clues</i> for the words.  Note that this can be turned
+off with the <span class=cmd>ND</span> command toggle.
 </ol>
 <p>
 For those who work on the puzzle at nytimes.com or with
@@ -2557,8 +2555,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2796 puzzles with
-a total of 10948 different words!
+2822 puzzles with
+a total of 10962 different words!
 <p>
 Tallies are made of the many puzzles and words.
 See this table of the puzzles:

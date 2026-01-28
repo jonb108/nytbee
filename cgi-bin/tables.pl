@@ -1,23 +1,6 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-print <<'EOH';
-<style>
-td, th {
-    text-align: right;
-}
-.rt {
-    text-align: right;
-}
-.lt {
-    text-align: left;
-}
-.pointer {
-    cursor: pointer;
-}
-</style>
-<div class=table_div>
-EOH
 use BeeHTML qw/
     Tr
     td
@@ -29,7 +12,7 @@ use BeeUtil qw/
     JON
     jumble
 /;
-my ($ht, $tl, $t3, $jt, $alink_color, @words) = @ARGV;
+my ($no_define, $ht, $tl, $t3, $jt, $alink_color, $letter_color, @words) = @ARGV;
 # @words are word that have not yet been found
 
 my $spc = '&nbsp;' x 3;
@@ -59,8 +42,31 @@ for my $w (@words) {
     ++$three_lets{substr($w, 0, 3)} if $t3;
 }
 
+print <<"EOH";
+<style>
+td, th {
+    text-align: right;
+}
+.rt {
+    text-align: right;
+}
+.lt {
+    text-align: left;
+}
+.xx {
+    cursor: pointer;
+    color: $alink_color;
+}
+.yy {
+    color: $letter_color;
+}
+</style>
+<div class=table_div>
+EOH
+
 my @out;
 
+# HINT TABLE
 if ($ht) {
     # how many Non-zero columns and rows?
     my $ncols = 0;
@@ -102,8 +108,13 @@ if ($ht) {
             my $n = $sums{$c}{$l};
             my %attrs;
             if ($n) {
-                $attrs{class} = 'rt xx';
-                $attrs{onclick} = qq!issue_cmd("D$c$l")!;
+                if ($no_define) {
+                    $attrs{class} = 'rt';
+                }
+                else {
+                    $attrs{class} = 'rt xx';
+                    $attrs{onclick} = qq!issue_cmd("D$c$l")!;
+                }
             }
             else {
                 $attrs{class} = 'rt';
@@ -129,16 +140,10 @@ if ($ht) {
         }
         push @rows, Tr(@th);
     }
-    my $style = <<"STYLE";
-<style>
-.xx {
-    cursor: pointer;
-    color: $alink_color;
+    push @out, table({ cellpadding => 2 }, @rows);
 }
-</style>
-STYLE
-    push @out, $style . table({ cellpadding => 2 }, @rows);
-}
+
+# TWO LETTER LIST
 if ($tl) {
     my $two_lets = '';
     my @two = grep {
@@ -153,7 +158,9 @@ if ($tl) {
             next TWO;
         }
         my $ns = $n == 1? '': "-$n";
-        $two_lets .= qq!<span class='pointer' style='color: $alink_color' onclick="issue_cmd('D$two[$i]');">!
+        $two_lets .= '<span '
+                  . ($no_define? 'class=yy>'
+                    :            qq!class=xx onclick="issue_cmd('D$two[$i]');">!)
                   .  qq!$two[$i]$ns</span>!;
         if ($i < $#two
             && substr($two[$i], 0, 1) ne substr($two[$i+1], 0, 1)
@@ -166,6 +173,8 @@ if ($tl) {
     }
     push @out, $two_lets . '<br>';
 }
+
+# THREE LETTER LIST
 if ($t3) {
     my $three_lets = '';
     my $prev = '';
@@ -180,7 +189,11 @@ if ($t3) {
             $three_lets .= "<br>";
         }
         $prev = $fl;
-        $three_lets .= qq!<span class='pointer' style='color: $alink_color' onclick='issue_cmd("D-$w3")'>$s</span>$spc!
+        $three_lets .= '<span '
+                    .  ($no_define? 'class=yy>'
+                       :            qq!class=xx onclick='issue_cmd("D-$w3")'>!)
+                    . "$s</span>$spc"
+                    ;
     }
     push @out, $three_lets. '<br>';
 }
@@ -190,6 +203,7 @@ sub revword {
     return scalar reverse $w;
 }
 
+# JUMBLE TABLE
 if ($jt) {
     my $prev_len = 0;
     # words of length 4 get 6 columns
@@ -223,11 +237,13 @@ if ($jt) {
                     ;
         my $rw = revword($w->[2]);
         my $jw = $w->[1];
-        my %attrs = (class => 'xx');
+        my %attrs = (class => $no_define? 'yy': 'xx');
         if ($len >= 6) {
             $attrs{colspan} = $len <= 7? 2: 3;
         }
-        $attrs{onclick} = qq!issue_cmd("D~$rw=$jw")!;
+        if (! $no_define) {
+            $attrs{onclick} = qq!issue_cmd("D~$rw=$jw")!;
+        }
         push @cols, td(\%attrs, $jw);
         if (@cols == $maxcol) {
             push @rows, Tr(@cols);
@@ -239,10 +255,6 @@ if ($jt) {
     }
     my $style = <<"STYLE";
 <style>
-.xx {
-    cursor: pointer;
-    color: $alink_color;
-}
 td {
     text-align: left;
 }

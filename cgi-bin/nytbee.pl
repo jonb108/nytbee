@@ -775,7 +775,7 @@ my $freq_letter;
     $freq_letter = $letters[0];
 }
 my $letter_regex = qr{([^$seven])}xms;  # see sub check_word
-my $no_def = qr{No\s+definition}xms;
+my $no_def = qr{No \s+ definition|No \s+ Clues}xms;
 
 # some lookup tables
 my %is_pangram = map { $_ => 1 } @pangrams;
@@ -1050,6 +1050,10 @@ sub define {
                  ;
         }
         # just one word but perhaps several hints for that word
+    }
+    if (! $fullword && $only_clues && ! exists $nyt_clues_for{$word}) {
+        $def .= "No Clues";
+        # see the regex $no_def
     }
     if ($fullword || ! $only_clues) {
         if (! exists $definition_of{$word}) {
@@ -1514,8 +1518,12 @@ elsif ($cmd eq 'oc') {
 }
 elsif ($cmd eq 'nd') {
     redo_settings('nd');
-    $message = $no_define? 'NO Define Link'
-              :            'Define Link';
+    my $s = (($show_BingoTable && $bingo)
+             || $ht_chosen || $tl_chosen
+             || $t3_chosen || $jt_chosen)? 's'
+           :                               '';
+    $message = $no_define? "NO Define Link$s"
+              :            "Define Link$s";
     $cmd = '';
 }
 elsif ($cmd eq 'pf') {
@@ -1960,6 +1968,7 @@ elsif ($cmd =~ m{\A c \s+ y \s*(a?) \z}xms) {
     $tl_chosen = 0;
     $t3_chosen = 0;
     $jt_chosen = 0;
+    $show_BingoTable = 0;
     $score_at_first_hint = -1;
     $cmd = '';
 }
@@ -3356,7 +3365,8 @@ EOH
     my @rows;
     my @lets = sort keys %bingo_table;
     if (@lets == 7) {
-        my $span = "<span class=pointer style='color: $colors{alink}'";
+        my $span = $no_define? "<span style='color: $colors{letter}'"
+                  :            "<span class=pointer style='color: $colors{alink}'";
         # LETTERS
         push @rows, Tr(
                         td('&nbsp;'),
@@ -3372,7 +3382,8 @@ EOH
                         map {
                             my $min = $bingo_table{$_}{minlen};
                             td($span
-                               . qq! onclick="issue_cmd('D$_$min');">!
+                               . ($no_define? '>'
+                                 :            qq! onclick="issue_cmd('D$_$min');">!)
                                . $min
                                . "</span>"
                             );
@@ -3385,7 +3396,8 @@ EOH
                         map {
                             my $max = $bingo_table{$_}{maxlen};
                             td($span
-                               . qq! onclick="issue_cmd('D$_$max');">!
+                               . ($no_define? '>'
+                                 :            qq! onclick="issue_cmd('D$_$max');">!)
                                . $max
                                . "</span>"
                             );
@@ -4328,7 +4340,7 @@ if (! ($forum_mode || $bonus_mode || $donut_mode)
 ) {
     my @words = grep { ! $is_found{$_} } @ok_words;
     if (@words) {
-        $hint_table_list = `$cgi_dir/tables.pl $ht_chosen $tl_chosen $t3_chosen $jt_chosen $colors{alink} \U@words`;
+        $hint_table_list = `$cgi_dir/tables.pl $no_define $ht_chosen $tl_chosen $t3_chosen $jt_chosen $colors{alink} $colors{letter} \U@words`;
     }
 }
 
