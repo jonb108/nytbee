@@ -4307,12 +4307,14 @@ EOS
             }
         }
         $letters .= "</tr></table>\n";
-        my $the_cmd = $donut_mode? 'CW'       : $no_define? 'TOP': 'DR';
-        my $the_lab = $donut_mode? 'Standings': $no_define? 'Top': 'Define';
+        my $the_cmd = $donut_mode? "issue_cmd('CW')"
+                     :             'stash_lets();';
+        my $the_lab = $donut_mode? 'Standings'
+                     :             'Stash';
         $letters .= "<table style='width: 100%; margin-bottom: 10mm'><tr>"
                  .  "<td class='h3cmd alink' onclick='del_let()'>Delete</td>"
                  .  qq!<td class='h3cmd alink' onclick="issue_cmd('H');">Hexagon</td>!
-                 .  qq!<td class='h3cmd alink' onclick="issue_cmd('$the_cmd');">$the_lab</td>!
+                 .  qq!<td class='h3cmd alink' onclick="$the_cmd">$the_lab</td>!
                  .  "<td class='h3cmd alink' onclick='sub_lets()'>Enter</td>"
                  .  "</tr></table>"
                  ;
