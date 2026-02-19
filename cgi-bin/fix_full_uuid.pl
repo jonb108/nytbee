@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use lib '.';
 
 # right befor executing this:
 #  mv full_uuid.dbm copy_full_uuid.dbm

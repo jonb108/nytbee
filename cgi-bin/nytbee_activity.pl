@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use lib '.';
 use v5.10;
 use BeeUtil qw/
     ymd

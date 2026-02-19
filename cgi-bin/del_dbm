@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+use lib '.';
 my ($hash_file, $key) = @ARGV;
 sub oops {
     die "usage: del_dbm file.dbm key\n";

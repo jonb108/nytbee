@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use lib '.';
 use BeeHTML qw/
     Tr
     td
@@ -53,6 +54,9 @@ td, th {
 .lt {
     text-align: left;
 }
+.cn {
+    text-align: center;
+}
 .xx {
     cursor: pointer;
     color: $alink_color;
@@ -99,7 +103,7 @@ if ($ht) {
             next CHAR;
         }
         my @cells;
-        push @cells, th({ class => 'lt' }, $c);
+        push @cells, th({ class => 'cn' }, $c);
         LEN:
         for my $l (4 .. $max_len) {
             if ($sums{1}{$l} == 0) {
@@ -127,7 +131,7 @@ if ($ht) {
         push @rows, Tr(@cells);
     }
     if ($nrows > 1) {
-        @th = th({ class => 'rt' }, '&Sigma;');
+        @th = th({ class => 'cn' }, '&Sigma;');
         LEN:
         for my $l (4 .. $max_len) {
             if ($sums{1}{$l} == 0) {

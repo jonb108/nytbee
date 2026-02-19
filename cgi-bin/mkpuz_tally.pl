@@ -11,6 +11,7 @@
 #       vegan and progressive centric
 use strict;
 use warnings;
+use lib '.';
 use CGI;
 my $q = CGI->new();
 my $uuid = cgi_header($q);

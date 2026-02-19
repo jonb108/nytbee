@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+use lib '.';
 sub oops {
     die "usage: set_dbm file.dbm key val\n";
 }

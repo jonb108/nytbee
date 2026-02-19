@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+use lib '.';
 my $fname = shift;
 my $heading = join ' ', @ARGV;
 my $out_fname = $fname;

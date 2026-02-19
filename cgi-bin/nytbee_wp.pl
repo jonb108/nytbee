@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use lib '.';
 use DB_File;
 use BeeUtil qw/
     my_today

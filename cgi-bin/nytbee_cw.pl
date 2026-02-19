@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use warnings;
 use strict;
+use lib '.';
 use Data::Dumper;
 use DB_File;
 my %uuid_screen_name;   # hash key: uid, value: 

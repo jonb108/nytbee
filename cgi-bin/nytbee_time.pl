@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use lib '.';
 use File::Slurp qw/
     append_file
 /;

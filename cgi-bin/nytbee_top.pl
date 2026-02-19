@@ -20,6 +20,7 @@
 # Show this at the end - if the puzzle is a bingo
 use strict;
 use warnings;
+use lib '.';
 use BeeUtil qw/
     JON
 /;

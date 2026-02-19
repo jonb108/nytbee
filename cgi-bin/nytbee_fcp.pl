@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use lib '.';
 use DB_File;
 my %fcp_date;
 tie %fcp_date, 'DB_File', 'fcp_date.dbm';

@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+use lib '.';
 use CGI;
 use CGI::Carp qw/
     fatalsToBrowser
@@ -1412,6 +1413,20 @@ elsif ($cmd =~ m{\A sa \s+ (.+) \z}xmsi) {
         delete $is_found{$w};
     }
     $cmd = "@stash";
+}
+elsif ($cmd eq 'ah' || $cmd eq 'aah') {
+    $ht_chosen = 1;
+    $tl_chosen = 1;
+    $jt_chosen = $cmd eq 'aah'? 'a': 1;
+    $t3_chosen = 1;
+    $show_BingoTable = 1;
+    my @pwords = grep { /[a-z]($|!)/ } @found;
+    my $nleft = $nwords - @pwords;
+    if ($nleft) {
+        my $x = int(30*(($nleft + 1)/$nwords)); # max of 30
+        add_hints($x || 1);     # minimum of 1
+    }
+    $cmd = '';
 }
 elsif ($cmd eq 'ht') {
     if (! $ht_chosen) {

@@ -2,6 +2,7 @@
 # new_sn_is = New Screen Name and Identity String
 use strict;
 use warnings;
+use lib '.';
 my ($screen_name, $sn, $uuid, $lf, $cur_game) = @ARGV;
 open my $log, '>>', 'sn_is_log.txt';
 print {$log} "$screen_name - $uuid = in dialog\n";

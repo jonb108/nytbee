@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use warnings;
 use strict;
+use lib '.';
 use Bee_DBH qw/
     $dbh
 /;

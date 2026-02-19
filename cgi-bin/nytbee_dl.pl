@@ -3,6 +3,7 @@
 # it works. :)
 use warnings;
 use strict;
+use lib '.';
 use Date::Simple qw/
     today
 /;

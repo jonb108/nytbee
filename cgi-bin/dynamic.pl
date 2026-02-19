@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+use lib '.';
 use CGI;
 use CGI::Carp qw/
     warningsToBrowser

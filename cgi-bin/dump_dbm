@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+use lib '.';
 die "usage: dump_dbm file.dbm\n"
     unless @ARGV && $ARGV[0] =~ m{\S+[.]dbm \z}xms;
 use DB_File;

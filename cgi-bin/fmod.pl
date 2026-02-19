@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use lib '.';
 my %num_msgs;
 tie %num_msgs, 'DB_File', 'num_msgs.dbm';
 use Bee_DBH qw/

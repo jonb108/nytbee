@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+use lib '.';
 
 my $html = shift or die "usage: de_indexize fname.html\n";
 if ($html !~ m{[.]html \z}xms) {

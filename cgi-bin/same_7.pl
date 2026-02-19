@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 use warnings;
 use strict;
+use lib '.';
 use BeeUtil qw/
     slash_date
 /;

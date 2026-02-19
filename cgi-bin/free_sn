@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+use lib '.';
 
 my $sn = shift or die "usage: free_sn name\n";
 use DB_File;
