@@ -73,7 +73,7 @@ And I have.  The complete source code for this project is on
 <a href=#mobile>Playing on a Mobile Phone or Tablet</a><br>
 <a href=#space>Space and Multiple Words</a><br>
 <a href=#hint_commands>Hint Commands</a><br>
-<a href=#table_list>The Hint Table, Two Letter List, Three Letter List, and Jumble Table</a><br>
+<a href=#table_list>The Hint Table, Two Letter List, Three Letter List, Jumble Table, and All Hints</a><br>
 <a href=#hint>Hint Strategy</a><br>
 <a href=#games>Games within the Game</a><br>
 <a href=#bingo>Bingo</a><br>
@@ -641,7 +641,7 @@ This applies to the BT, HT, TL, T3, and JT tables as well.
 <p>
 Note that there is no <span class=cmd>V4MIN</span> (or <span class=cmd>E4MIN</span>) command to reveal 4 letters of words beginning with MIN as this would be just <i>too much</i>.  Yes, this <i>is</i> the <span style='color: red'>Ultra</span>Bee but one has to have <i>some</i> limit, right? &#128522;
 <a name=table_list></a>
-<h2>The Hint Table, Two Letter List, Three Letter List, and the Jumble Table
+<h2>The Hint Table, Two Letter List, Three Letter List, Jumble Table, and All Hints
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
 </h2>
 <p>
@@ -721,7 +721,21 @@ word BELOW in the allowed list.  It also has ELBOW and
 BOWEL.  All three of these words have the alphagram BELOW.
 If a word is its own alphagram it will be shown in randomly jumbled order.
 So ... on 11/18/20 you will see BELOW twice (for ELBOW and BOWEL) and
-a jumbled version for BELOW (like LEOWB or OLWBE).  Fun, huh? &#128522;
+a jumbled non-alphagram version for BELOW (like LEOWB or OLWBE).  Fun, huh? &#128522;
+Finally, if you launch the Jumble Table with <span class=cmd>JT</span> but decide
+you prefer alphagrams instead you can enter <span class=cmd>JTA</span>
+without incurring any further hint points.
+<a name=all_hints></a>
+<h3>All Hints</h3>
+Just for fun (and for Art's sake), there is the command <span class=cmd>AH</span>
+to turn on <i>all</i> of the above tables and lists to get
+<span class=cmd>a</span>ll <span class=cmd>h</span>ints - more than you probably want or need! &#128540;
+When you use <span class=cmd>AH</span> you are charged a <i>variable</i> number
+of hints based on how many words remain to be found and on which tables and lists are already present.  The maximum hint charge is 32 and the minimum is 1 (or 0 if all tables and lists are already present).
+You can see how many hints would be incurred <i>before</i> using
+<span class=cmd>AH</span> with the command <span class=cmd>AH?</span>.
+Finally, (and for even more linguistic fun) the command <span class=cmd>AAH</span> is the
+same as <span class=cmd>AH</span> but will ensure that the Jumble Table is showing alphagrams.  (Note that <span class=cmd>AAH?</span> will also show the number of hints that would be incurred.)
 <a name=table_display></a>
 <h3>Table and List Display</h3>
 When playing on a mobile phone these 4 hint tables and lists (all are optional, of course) are displayed below the found word lists so you have to scroll to see them.
@@ -2555,7 +2569,7 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2844 puzzles with
+2845 puzzles with
 a total of 10974 different words!
 <p>
 Tallies are made of the many puzzles and words.

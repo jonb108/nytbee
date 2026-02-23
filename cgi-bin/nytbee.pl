@@ -1414,17 +1414,36 @@ elsif ($cmd =~ m{\A sa \s+ (.+) \z}xmsi) {
     }
     $cmd = "@stash";
 }
-elsif ($cmd eq 'ah' || $cmd eq 'aah') {
-    $ht_chosen = 1;
-    $tl_chosen = 1;
-    $jt_chosen = $cmd eq 'aah'? 'a': 1;
-    $t3_chosen = 1;
-    $show_BingoTable = 1;
+elsif ($cmd =~ m{\A aa?h[?]? \z}xms) {
+    my $max = 32;
+    $max -= 8 if $ht_chosen;
+    $max -= 8 if $tl_chosen;
+    $max -= 8 if $t3_chosen;
+    $max -= 8 if $jt_chosen;
+    my $nhints;
     my @pwords = grep { /[a-z]($|!)/ } @found;
     my $nleft = $nwords - @pwords;
     if ($nleft) {
-        my $x = int(30*(($nleft + 1)/$nwords)); # max of 30
-        add_hints($x || 1);     # minimum of 1
+        $nhints = int($max*(($nleft + 1)/$nwords));
+        if ($nhints == 33) {
+            $nhints = 32;
+        }
+        if ($max != 0 && $nhints == 0) {
+            $nhints = 1;
+        }
+    }
+    if ($cmd =~ m{[?] \z}xms) {
+        my $pl = $nhints == 1? '': 's';
+        chop $cmd;  # fun!
+        $message = "The command \U$cmd\E would incur $nhints hint$pl.";
+    }
+    else {
+        $ht_chosen = 1;
+        $tl_chosen = 1;
+        $jt_chosen = $cmd eq 'aah'? 'a': 1;
+        $t3_chosen = 1;
+        $show_BingoTable = 1;
+        add_hints($nhints);
     }
     $cmd = '';
 }
