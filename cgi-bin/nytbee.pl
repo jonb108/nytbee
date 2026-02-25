@@ -1420,7 +1420,7 @@ elsif ($cmd =~ m{\A aa?h[?]? \z}xms) {
     $max -= 8 if $tl_chosen;
     $max -= 8 if $t3_chosen;
     $max -= 8 if $jt_chosen;
-    my $nhints;
+    my $nhints = 0;
     my @pwords = grep { /[a-z]($|!)/ } @found;
     my $nleft = $nwords - @pwords;
     if ($nleft) {
