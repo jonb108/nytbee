@@ -1797,9 +1797,10 @@ elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms  # sw at the front
             $nwords_stashed += consider_word($w, 1);
         }
     }
-    if ($nwords_stashed && $bonus_mode) {
+    if ($nwords_stashed && ($bonus_mode || $pw_feedback == 1)) {
         # we give this message because we are not
         # showing the Stash word list in Bonus mode.
+        # OR we are only flashing the puzzle word score
         my $pl = $nwords_stashed == 1? '': 's';
         $not_okay_words .= "$nwords_stashed word$pl stashed<br>";
     }
