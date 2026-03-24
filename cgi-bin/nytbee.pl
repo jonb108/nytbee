@@ -1769,7 +1769,7 @@ elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms  # sw at the front
             if (grep { /\b$w!/ } @found) {
                 $not_okay_words .= red(uc $w) . ": already stashed<br>";
             }
-            elsif (my ($x) = grep { /\b$w[*+-]/ } @found) {
+            elsif (my ($x) = grep { m!\A $w[*+-] \z!xms } @found) {
                 my $type = $x =~ m{[-]\z}xms? 'Donut'
                           :$x =~ m{[+]\z}xms? 'Lexicon'
                           :                   'Bonus'
