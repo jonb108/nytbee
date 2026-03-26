@@ -1936,6 +1936,8 @@ elsif (   $cmd =~ m{\A d \s+ ([a-z ]+) \z}xms
                     |
                     Same[ ]as[ ]
                     |
+                    Of[ ]or[ ]pertaining[ ]to[ ]
+                    |
                     Obsolete[ ]spelling[ ]of[ ]
                     |
                     Alternative[ ]spelling[ ]of[ ]
