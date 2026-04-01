@@ -31,7 +31,6 @@ get_pangrams \
 gwords.pl \
 load_nytbee \
 mkpuz_tally.pl \
-nytbee \
 nytbee_archive \
 nytbee.pl \
 mknyt \

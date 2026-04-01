@@ -2168,7 +2168,7 @@ sequence of letters from the puzzle:
 </ul>
 The <span class=cmd>DIF</span> is a <i>prefix</i>.
 Now when the letters are displayed and shuffled in inline mode they
-will always <i>start with</i> DIF:
+will always <i>begin</i> DIF:
 <p>
 <pre style="font-size: 24pt; margin-left: 1in; margin-bottom: .2in">
 DIFR<span class=red>C</span>TA
@@ -2177,9 +2177,9 @@ DIFA<span class=red>C</span>RT
 DIFT<span class=red>C</span>AR
 </pre>
 This should be helpful when you have a good idea of 
-what the word you are looking for starts with.
+what the word you are looking for <i>starts with</i>.
 <p>
-When in Inline mode you can issue another <span class=cmd>H &lt;prefix&gt;</span> command and you will <i>stay</i> in Inline mode with the new prefix.
+When in this Inline mode you can issue another <span class=cmd>H &lt;prefix&gt;</span> command and you will <i>stay</i> in Inline mode with the new prefix.
 <ul>
 <span class=cmd>H&nbsp;&nbsp;TR</span>
 </ul>
@@ -2193,11 +2193,36 @@ TRAIF<span class=red>C</span>D
 <p>
 You <i>can</i> give the center letter in the prefix if you wish.
 When in Donut Mode the center letter is not displayed, of course.
-<br>
-<br>
+<p>
+A natural extension of this <span class=cmd>H</span> command with a fixed prefix is to add a fixed <i>suffix</i>:
+<ul>
+<span class=cmd>H&nbsp;&nbsp;D&nbsp;T</span>
+</ul>
+This will fix the D at the beginning and the T at the end.
+<p>
+<pre style="font-size: 24pt; margin-left: 1in; margin-bottom: .2in">
+DAR<span class=red>C</span>IFT
+DRIF<span class=red>C</span>AT
+DRFA<span class=red>C</span>IT
+DRAIF<span class=red>C</span>T
+</pre>
+An alternate syntax is:
+<ul>
+<span class=cmd>H&nbsp;&nbsp;D-T</span>
+</ul>
+If you only want a fixed suffix do this:
+<ul>
+<span class=cmd>H&nbsp;&nbsp;-IC</span>
+</ul>
+<pre style="font-size: 24pt; margin-left: 1in; margin-bottom: .2in">
+TARFDI<span class=red>C</span>
+ARDTFI<span class=red>C</span>
+FARTDI<span class=red>C</span>
+RDTAFI<span class=red>C</span>
+</pre>
 </td>
 </tr>
-<tr><td><span class=cmd>R%</span></td><td>Show the <span class=cmd>r</span>ankings with the percentage of the maximum score.</td></tr>
+<tr><td><span class=cmd>R%</span></td><td>Show the <span class=cmd>r</span>ankings with the percentage of the maximum score.<p></td></tr>
 <tr><td colspan=2>Instead of the full Hint Table</td></tr>
 <tr><td><span class=cmd>#</span></td><td>How many words remain to be found?</td></tr>
 <tr><td><span class=cmd>#B</span></td><td>How many words beginning with B remain to be found?</td></tr>
@@ -2583,8 +2608,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2882 puzzles with
-a total of 11004 different words!
+2885 puzzles with
+a total of 11011 different words!
 <p>
 Tallies are made of the many puzzles and words.
 See this table of the puzzles:

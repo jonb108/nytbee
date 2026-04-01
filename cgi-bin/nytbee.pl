@@ -327,6 +327,17 @@ sub log_it {
     my $c = $date eq $today_d8? '=': '~';
     append_file "beelog/$ymd", substr($uuid, 0, 11) . " $c $msg\n";
 }
+my $script_to_execute = '';
+sub stx {
+    my ($url) = @_;
+    $script_to_execute = <<"EOF";
+<script>
+setTimeout(() => {
+    window.open('$url');
+}, 500);
+</script>
+EOF
+}
 
 # Puzzle from which date are we dealing with?
 # This is Very confusing, hacky, kludgy, and messy.
@@ -375,6 +386,8 @@ my $show_RankImage  = exists $params{show_RankImage}?
                              $params{show_RankImage}: 1;
 my $linear_prefix   =  exists $params{linear_prefix}? 
                               $params{linear_prefix}: '';
+my $linear_suffix   =  exists $params{linear_suffix}? 
+                              $params{linear_suffix}: '';
 my $forum_post_to_edit = 0;
 
 #
@@ -404,6 +417,7 @@ if (! $date) {
     # today
     $date = $today_d8;
     $linear_prefix = '';
+    $linear_suffix = '';
 }
 # NOW that $date is set properly from either path_info
 # or %params we can log the cmd
@@ -488,6 +502,7 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
             }
         }
         $linear_prefix = '';
+        $linear_suffix = '';
         $cmd = '';
     }
 }
@@ -496,6 +511,7 @@ elsif ($cmd eq 'x') {
     my @puzzles = my_puzzles();
     $date = @puzzles? $puzzles[0][0]: $today_d8;
     $linear_prefix = '';
+    $linear_suffix = '';
     $cmd = '';
 }
 elsif ($cmd eq 'xa') {
@@ -508,6 +524,7 @@ elsif ($cmd eq 'xa') {
     }
     $date = $today_d8;
     $linear_prefix = '';
+    $linear_suffix = '';
     $cmd = '';
 }
 elsif (my ($ncp) = $cmd =~ m{\A xcp \s* (\d+) \z}xms) {
@@ -528,6 +545,7 @@ elsif (my ($ncp) = $cmd =~ m{\A xcp \s* (\d+) \z}xms) {
             $message .= ul "Deleted CP$ncp";
             $date = $today_d8;
             $linear_prefix = '';
+            $linear_suffix = '';
             # and delete all clues
             system "$cgi_dir/cp_del_clues.pl $ncp";
         }
@@ -551,6 +569,7 @@ elsif (my ($puz_num) = $cmd =~ m{\A p \s* ([1-9]\d*) \z}xms) {
             $date = uc $puz_id;
         }
         $linear_prefix = '';
+        $linear_suffix = '';
     }
     $cmd = '';
 }
@@ -560,6 +579,7 @@ elsif ($cmd eq 'nr') {
     $date = $first + int(rand $ndays);
     $date = $date->as_d8();
     $linear_prefix = '';
+    $linear_suffix = '';
     $cmd = '';
 }
 elsif ($cmd eq 'nrb') {
@@ -569,6 +589,7 @@ elsif ($cmd eq 'nrb') {
     $date = $dates[ rand @dates ];
     chomp $date;
     $linear_prefix = '';
+    $linear_suffix = '';
     $cmd = '';
 }
 elsif (my ($cp_num) = $cmd =~ m{\A cp \s* (\d+) \z}xms) {
@@ -586,6 +607,7 @@ elsif (my ($cp_num) = $cmd =~ m{\A cp \s* (\d+) \z}xms) {
         else {
             $date = "CP$cp_num";
             $linear_prefix = '';
+            $linear_suffix = '';
             $message .= cp_message($cp_href, $cp_num);
             $cmd = '';
         }
@@ -594,6 +616,7 @@ elsif (my ($cp_num) = $cmd =~ m{\A cp \s* (\d+) \z}xms) {
 elsif ($cmd eq 't') {
     $date = $today_d8;
     $linear_prefix = '';
+    $linear_suffix = '';
     $cmd = '';
 }
 elsif ($cmd eq 'y') {
@@ -610,6 +633,7 @@ elsif ($cmd eq 'y') {
         }
     }
     $linear_prefix = '';
+    $linear_suffix = '';
     $cmd = '';
 }
 elsif ($cmd eq 'n' || $cmd eq 'p') {
@@ -621,6 +645,7 @@ elsif ($cmd eq 'n' || $cmd eq 'p') {
                    :             ($n == 0        ? $#puzzles: $n-1);
             $date = $puzzles[$x][0];
             $linear_prefix = '';
+            $linear_suffix = '';
             $cmd = '';
             last PUZ;
         }
@@ -641,6 +666,7 @@ elsif (   $cmd ne '1'
         if ($first <= $dt && $dt <= $today) {
             $date = $dt->as_d8();
             $linear_prefix = '';
+            $linear_suffix = '';
             $cmd = '';
         }
         elsif ($dt < $first) {
@@ -805,6 +831,19 @@ else {
 }
 
 # OK.  The puzzle has finally been initialized.
+#
+sub constrained_shuffle {
+    my ($pref, $suf) = @_;
+    my @pref_let = split //, uc $pref;
+    my @suf_let  = split //, uc $suf;
+    my @the_rest;
+    for my $c (@seven) {
+        if (index($pref, $c) < 0 && index($suf, $c) < 0) {
+            push @the_rest, uc $c;
+        }
+    }
+    return @pref_let, shuffle(@the_rest), @suf_let;
+}
 
 if ((! $cmd || $cmd eq 'nooop') && ! $params{has_message}) {
     # We hit Return in an empty text field so
@@ -812,13 +851,8 @@ if ((! $cmd || $cmd eq 'nooop') && ! $params{has_message}) {
     # and we didn't hit Return simply to clear a message
     # shuffle the @six and @seven_let
     @six = shuffle(@six);
-    if ($linear_prefix) {
-        @seven_let = split //, uc $linear_prefix;
-        my @the_rest;
-        for my $c (@seven) {
-            push @the_rest, uc $c if index($linear_prefix, $c) < 0;
-        }
-        push @seven_let, shuffle @the_rest;
+    if ($linear_prefix || $linear_suffix) {
+        @seven_let = constrained_shuffle($linear_prefix, $linear_suffix);
     }
     else {
         @seven_let = shuffle @seven_let;
@@ -859,6 +893,7 @@ sub load_nyt_clues {
                 $nyt_cluer_name_of{$a} cmp $nyt_cluer_name_of{$b}
             }
             # keys are person_id
+
             keys %nyt_cluer_name_of
         ) {
             $nyt_cluer_color_for{$person_id} = $cluer_colors[$n];
@@ -972,6 +1007,56 @@ if ($cmd eq 'q' || $cmd eq '?') {
         $cmd = "d $word";
     }
 }
+# power user commands that pop up a new window
+# HP
+# G, WN
+# G word, WN word
+# CM, CMA
+#
+# need to set the browser preference to allow
+# a popup from ultrabee.org
+#
+elsif ($cmd eq 'hp') {
+    stx('https://ultrabee.org/help.html#toc');
+    $cmd = '';
+}
+elsif ($cmd eq 'g' || $cmd eq 'wn') {
+    # the last word
+    my $word = $found[-1];
+    if (! $word) {
+        $message = "No words have been found.";
+    }
+    else {
+        $word =~ s{[$ext_sig]\z}{}xms;
+        if ($cmd eq 'g') {
+            stx("https://google.com/search?q=$word");
+        }
+        else {
+            stx("https://wordnik.com/words/$word");
+        }
+    }
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A (g|wn) \s+ ([a-z-]+) \z}xms) {
+    my $site = $1;
+    my $word = $2;
+    if ($site eq 'g') {
+        stx("https://google.com/search?q=$word");
+    }
+    else {
+        stx("https://wordnik.com/words/$word");
+    }
+    $cmd = '';
+}
+elsif ($cmd eq 'cm') {
+    stx('https://ultrabee.org/cmds.html');
+    $cmd = '';
+}
+elsif ($cmd eq 'cma') {
+    stx('https://ultrabee.org/scmds.html');
+    $cmd = '';
+}
+
 my %is_found = map {
                    my $x = $_;
                    $x =~ s{[$ext_sig]\z}{}xms;
@@ -2329,14 +2414,23 @@ elsif ($cmd =~ m{\A s \s+ ([a-z]+) \z}xms) {
 }
 elsif ($cmd eq 'h') {
     $linear_prefix = '';
+    $linear_suffix = '';
     $hive = $hive == 1? 2: 1;
+    if ($hive == 2 && $mobile) {
+        $bonus_mode = 0;    # the 19 letters will not be shown so ...
+    }
     $cmd = '';
 }
-elsif ($cmd =~ m{\A h \s+ ([a-z]+) \z}xms) {
-    my $prefix = $1;
-    # are all letters in the prefix one of the seven?
+elsif ($cmd =~ m{\A h \s+ ([a-z-]+) \z}xms
+       ||
+       $cmd =~ m{\A h \s+ ([a-z]+) \s+ ([a-z]+) \z}xms
+) {
+    my $param = $2? "$1-$2": $1;
+    # are all letters in $param one of the seven?
     my $not = '';
-    for my $c (split //, $prefix) {
+    LET:
+    for my $c (split //, $param) {
+        next LET if $c eq '-';
         if (index($seven, $c) < 0) {
             $not .= $c;
         }
@@ -2350,21 +2444,29 @@ elsif ($cmd =~ m{\A h \s+ ([a-z]+) \z}xms) {
                  . uc $seven
                  ;
     }
-    elsif (my $l = duplicate_letter($prefix)) {
-        $message = "$l appears twice in " . uc $prefix;
+    elsif (my $l = duplicate_letter($param)) {
+        $message = "$l appears twice in " . uc $param;
     }
     else {
         # time to rearrange the seven letters
         # we do this again when hitting Return and
         # there is no message to clear
         #
-        $linear_prefix = $prefix;
-        @seven_let = split //, uc $linear_prefix;
-        my @the_rest;
-        for my $c (@seven) {
-            push @the_rest, uc $c if index($linear_prefix, $c) < 0;
+        my $dash = index($param, '-');
+        if ($dash >= 0) {
+            $linear_prefix = substr($param, 0, $dash);
+            $linear_suffix = substr($param, $dash+1);
         }
-        push @seven_let, shuffle @the_rest;
+        else {
+            $linear_prefix = $param;
+            $linear_suffix = '';
+        }
+        @seven_let = constrained_shuffle($linear_prefix, $linear_suffix);
+        if ($mobile) {
+            $bonus_mode = 0;    # the 19 letters will not be shown so ...
+            # they COULD do a BN when in linear mode
+            # let them...
+        }
         $hive = 2;      # force it to 2 even if we are already on 2
     }
     $cmd = '';
@@ -4844,6 +4946,7 @@ $heading
 <input type=hidden name=forum_mode value=$forum_mode>
 <input type=hidden name=show_RankImage value=$show_RankImage>
 <input type=hidden name=linear_prefix value='$linear_prefix'>
+<input type=hidden name=linear_suffix value='$linear_suffix'>
 $letters
 <div style="width: 640px">$message</div>
 <input type=hidden
@@ -4851,6 +4954,7 @@ $letters
        id=hidden_new_words
 >
 <input class=new_words
+       onclick='set_focus();'
        type=text
        size=$new_words_size
        style="background: $colors{bg_input}; color: $colors{text_input};"
@@ -4866,6 +4970,7 @@ $extra_words
 $status$hint_table_list
 $forum_html
 </form>
+$script_to_execute
 </body>
 $show_clue_form
 $fastclick
