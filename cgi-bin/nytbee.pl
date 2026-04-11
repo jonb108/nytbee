@@ -1037,7 +1037,8 @@ elsif ($cmd eq 'g' || $cmd eq 'wn') {
     }
     $cmd = '';
 }
-elsif ($cmd =~ m{\A (g|wn) \s+ ([a-z-]+) \z}xms) {
+    # an exception for G Y    !!
+elsif ($cmd =~ m{\A (g|wn) \s+ ([a-z-]+) \z}xms && $2 ne 'y') {
     my $site = $1;
     my $word = $2;
     if ($site eq 'g') {
@@ -1736,6 +1737,54 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
         push @rows, Tr($cols);
     }
     $message .= ul(table({ cellpadding => 4}, @rows));
+    $cmd = '';
+}
+elsif ($cmd =~ m{\A iw([ln]?) \s+ ([a-z]+)([0-9]*) \z}xms) {
+    my $numeric = $1;
+    my $prefix = $2;
+    my $len = $3;
+    open my $in, '<', "incorrect/$date";
+    my (%n_diff_people_found, %len);
+    while (my $w = <$in>) {
+        chomp $w;
+        if ($w =~ m{\A $prefix}xms
+            && (!$len || length $w == $len)
+        ) {
+            ++$n_diff_people_found{$w};
+            $len{$w} = length $w;
+        }
+    }
+    close $in;
+    my $sort_function = $numeric eq 'n'?
+                            sub {
+                                $n_diff_people_found{$b} <=> $n_diff_people_found{$a}
+                                ||
+                                $a cmp $b
+                            }
+                       :$numeric eq 'l'?
+                            sub {
+                                $len{$b} <=> $len{$a}
+                                ||
+                                $a cmp $b
+                            }
+                       :    
+                             sub { $a cmp $b }
+                       ;
+    my @rows;
+    my $prev_len = 0;
+    for my $w (sort $sort_function keys %n_diff_people_found) {
+        if ($numeric eq 'l') {
+            my $l = length($w);
+            if (!$prev_len || $l != $prev_len) {
+                push @rows, Tr(td({ class => 'lt' }, $l));
+                $prev_len = $l;
+            }
+        }
+        push @rows, Tr(td({ class => 'lt' }, $w),
+                       td({ class => 'rt' }, $n_diff_people_found{$w}),
+                    );
+    }
+    $message .= table(@rows);
     $cmd = '';
 }
 elsif ($cmd =~ m{\A ([bdil])w \s* ([ln])? \z}xms) {
@@ -3874,54 +3923,6 @@ EOH
     }
     $cmd = '';
 }
-elsif ($cmd =~ m{\A iw([ln]?) \s+ ([a-z]+)([0-9]*) \z}xms) {
-    my $numeric = $1;
-    my $prefix = $2;
-    my $len = $3;
-    open my $in, '<', "incorrect/$date";
-    my (%n_diff_people_found, %len);
-    while (my $w = <$in>) {
-        chomp $w;
-        if ($w =~ m{\A $prefix}xms
-            && (!$len || length $w == $len)
-        ) {
-            ++$n_diff_people_found{$w};
-            $len{$w} = length $w;
-        }
-    }
-    close $in;
-    my $sort_function = $numeric eq 'n'?
-                            sub {
-                                $n_diff_people_found{$b} <=> $n_diff_people_found{$a}
-                                ||
-                                $a cmp $b
-                            }
-                       :$numeric eq 'l'?
-                            sub {
-                                $len{$b} <=> $len{$a}
-                                ||
-                                $a cmp $b
-                            }
-                       :    
-                             sub { $a cmp $b }
-                       ;
-    my @rows;
-    my $prev_len = 0;
-    for my $w (sort $sort_function keys %n_diff_people_found) {
-        if ($numeric eq 'l') {
-            my $l = length($w);
-            if (!$prev_len || $l != $prev_len) {
-                push @rows, Tr(td({ class => 'lt' }, $l));
-                $prev_len = $l;
-            }
-        }
-        push @rows, Tr(td({ class => 'lt' }, $w),
-                       td({ class => 'rt' }, $n_diff_people_found{$w}),
-                    );
-    }
-    $message .= table(@rows);
-    $cmd = '';
-}
 elsif ($cmd eq 'top') {
     check_screen_name();
     untie %uuid_screen_name;
@@ -4356,7 +4357,7 @@ $row2
 </table>
 EOH
             $letters .= <<"EOH";
-<span class=lets id=lets></span>
+<span class=lets id=lets>$params{save_lets}</span>
 <span class='pos11 alink' onclick="stash_lets();">Stash</span>
 <span class='pos21 alink' onclick="sub_lets();">Enter</span>
 <span class='pos22 alink' onclick="del_let();">Delete</span>
@@ -4368,7 +4369,7 @@ EOH
         }
         elsif ($donut_mode) {
             $letters .= <<"EOH";
-<span class=lets id=lets></span>
+<span class=lets id=lets>$params{save_lets}</span>
 <span class='pos11 alink' onclick="stash_lets();">Stash</span>
 <span class='pos21 alink' onclick="sub_lets();">Enter</span>
 <span class='pos22 alink' onclick="del_let();">Delete</span>
@@ -4390,7 +4391,7 @@ $define
 <span class='pos13 cursor_black' $st onclick="issue_cmd('DN');">Donut</span>
 <span class='pos21 cursor_black' $st onclick="sub_lets();">Enter</span>
 
-<span class=lets id=lets></span>
+<span class=lets id=lets>$params{save_lets}</span>
 
 <span class='pos22 cursor_black' $st onclick="del_let();">Delete</span>
 <span class='pos23 cursor_black' $st onclick="issue_cmd('BN');">Bonus</span>
@@ -4402,7 +4403,7 @@ EOH
     }
     else {
         # not mobile - still need span id=lets
-        $letters .= "<span class=lets id=lets></span>\n";
+        $letters .= "<span class=lets id=lets>$params{save_lets}</span>\n";
         # and we have the various links as well
         if ($show_Links) {
             my $donut = $donut_mode? '<s>Donut</s>': 'Donut';
@@ -4820,9 +4821,11 @@ if ($pw_feedback == 1
     $flash_script = <<"EOJ";
 <script>
 init();
+var save = lets.innerHTML;
+lets.innerHTML = '';
 add_let('$s');
 setTimeout(() => {
-    lets.innerHTML = "";
+    lets.innerHTML = save;
 }, 1300);
 </script>
 EOJ
@@ -4947,6 +4950,8 @@ $heading
 <input type=hidden name=show_RankImage value=$show_RankImage>
 <input type=hidden name=linear_prefix value='$linear_prefix'>
 <input type=hidden name=linear_suffix value='$linear_suffix'>
+<input type=hidden name=save_lets id=save_lets>
+<input type=hidden name=save_nw   id=save_nw>
 $letters
 <div style="width: 640px">$message</div>
 <input type=hidden
@@ -4961,6 +4966,7 @@ $letters
        id=new_words
        name=new_words
        autocomplete=off
+       value='$params{save_nw}'
 >$mobile_bonus
 <p>
 $bingo_table

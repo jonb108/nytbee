@@ -1378,6 +1378,7 @@ function init() {
     nw   = document.getElementById('new_words');
     hnw  = document.getElementById('hidden_new_words');
     lets = document.getElementById('lets');
+    save_lets = document.getElementById('save_lets');
     main = document.getElementById('main');
 }
 function empty(s) {
@@ -1440,7 +1441,14 @@ function del_let() {
     }
     lets.innerHTML = s;
 }
+// value vs textContent vs innerHTML ...???
 function issue_cmd(s) {
+    // first save any values of lets and new words
+    save_lets.value = lets.innerHTML;
+        // innerHTML rather than value
+        // to capture any red Bonus letters
+    save_nw.value = nw.value;
+
     hnw.value = s;
     main.submit();
 }
@@ -1449,7 +1457,7 @@ function stash_lets() {
     main.submit();
 }
 function sub_lets() {
-    hnw.value = lets.textContent;
+    hnw.value = nw.value + ' ' + lets.textContent;
     main.submit();
 }
 function check_name_location() {
