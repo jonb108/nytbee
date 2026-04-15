@@ -1739,7 +1739,7 @@ elsif ($cmd =~ m{\A r\s* (%?) \z}xms) {
     $message .= ul(table({ cellpadding => 4}, @rows));
     $cmd = '';
 }
-elsif ($cmd =~ m{\A iw([ln]?) \s+ ([a-z]+)([0-9]*) \z}xms) {
+elsif ($cmd =~ m{\A iw([ln]?) \s+ ([a-z]+)?([0-9]*) \z}xms) {
     my $numeric = $1;
     my $prefix = $2;
     my $len = $3;
@@ -2086,10 +2086,11 @@ elsif (   $cmd =~ m{\A d \s+ ([a-z ]+) \z}xms
                     |
                     Present[ ]participle[ ]of[ ]
                 )
-                ([\w-]+)
+                ([\S-]+)
             }xmsi
         ) {
             $the_word = $2;
+            $the_word =~ s{[.,;!?<]+.*\z}{}xms;
         }
         $message .= <<"EOM";
 <br>
