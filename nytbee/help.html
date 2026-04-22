@@ -1039,7 +1039,8 @@ The <span class=cmd>PG</span> command will tell you how many more points you nee
 </h2>
 When striving for <a href=#bingo>Bingo</a> or <a href=#gn4l>GN4L</a>
 you can effectively use "the stash".  The Stash is a place you can
-store words that you have found but don’t want to enter quite yet.
+store words that you have found but don’t want to Enter quite yet.
+<h3>Bingo</h3>
 Let’s say you are trying for minimal <a href=#bingo>Bingo</a> with
 this puzzle:
 <p style="margin-left: .5in">
@@ -1051,23 +1052,25 @@ or 5+ letter words that do not fit in with minimal Bingo.
 You can “stash” these words
 so you don’t forget them!
 <ul>
-<span class=cmd>SW CONDITION ADDICT DICTA</spaN>
+<span class=cmd>SW</span> CONDITION ADDICT DICTA
 </ul>
 <span class=cmd>SW</span> stands for <span class=cmd>S</span>tash <span class=cmd>W</span>ords.
 <p>
-More conveniently, the <span class=cmd>SW</span> (or just an S) could be entered <i>at the end</i>, if you wish:
+More conveniently, the <span class=cmd>SW</span> (or just an <span class=cmd>S</span>) could be entered <i>at the end</i>, if you wish:
 <ul>
-<span class=cmd>CONDITION ADDICT DICTA SW</span><br>
-or<br>
-<span class=cmd>CONDITION ADDICT DICTA S</span>
+CONDITION ADDICT DICTA <span class=cmd>SW</span><p>
+or<p>
+CONDITION ADDICT DICTA <span class=cmd>S</span>
+</ul>
+<p>
+The words in the Stash are shown below the Puzzle words.
+Something like this:
+<ul>
+Stash: Acid Addict Coda Condition Dicta Data ...
 </ul>
 <p>
 Note that words are checked before stashing.  Only valid puzzle
-words are stashed.  Extra words will be added as usual.
-<p>
-Note that if you see a Bonus or Donut word
-it’s okay to enter them <i>whenever</i> you wish.
-The <span class=cmd>C Y</span> command will <i>not</i> clear them.
+words are stashed.  Bonus, Donut, and Lexicon words will be added as usual.
 <p>
 When you finish with minimal Bingo you likely want to
 go on to maximal Bingo (which is much harder) or <a href=#gn4l>GN4L</a>.
@@ -1077,27 +1080,34 @@ forget the 4 letter words you entered!  There is a command to help:
 <span class=cmd>SWA</span>
 </ul>
 This will stash <span class=cmd>a</span>ll of your puzzle words.
+<h3>GN4L</h3>
+Let‛s say you are striving for <a href=#gn4l>GN4L</a> (Genius No 4 Letter) and have entered this:
+<ul>
+    ADDICT ADDICTION DICTA DATA ACID CONDITION
+</ul>
+You realize that you don’t want to <i>Enter</i> them because there are two
+four letter words in the list.   And you <i>also</i> don’t want to <i>Stash</i> them
+because you have those good 5+ letter words!  The solution is
+the <span class=cmd>SF</span> command to <span class=cmd>s</span>tash the <span class=cmd>f</span>our letter puzzle words and Enter the rest.  Either of these
+will work:
+<ul>
+    ADDICT ADDICTION DICTA DATA ACID CONDITION <span class=cmd>SF</span><p>
+    or<p>
+    <span class=cmd>SF</span> ADDICT ADDICTION DICTA DATA ACID CONDITION
+</ul>
+<h3>UNstashing</h3>
+There are various ways to move words <i>out</i> of the stash.
 <p>
-The words in the Stash are shown below the Puzzle words.
-Something like this:
-<ul>
-Stash: Acid Addict Coda Condition Dicta Data ...
-</ul>
-When you go on to <a href=#gn4l>GN4L</a> you can add all of
-the 5+ letter words in the stash with:
-<ul>
-<span class=cmd>SA5</span>
-</ul>
-The stash will now contain only 4 letter words:
-<ul>
-Stash: Acid Coda Data ...
-</ul>
-When you reach reach Genius and <a href=#gn4l>GN4L</a> you can now enter
-your remembered 4 letter stash words with:
 <ul>
 <span class=cmd>SA</span>
 </ul>
 <span class=cmd>SA</span> stands for <span class=cmd>S</span>tash <span class=cmd>A</span>dd.  <i>All</i> words will be UNstashed.
+<p>
+You can UNstash just the 5+ letter words with:
+<ul>
+<span class=cmd>SA5</span>
+</ul>
+The stash will now contain only 4 letter words:
 <p>
 There is a variant on the <span class=cmd>SA</span> command:
 <ul>
@@ -1114,8 +1124,8 @@ ACIDIC ADDICT ADDICTION ANACONDA CICADA
 </ul>
 you could UNstash ADDICTION with:
 <ul>
-<span class=cmd>SA TI</span><br>
-or<br>
+<span class=cmd>SA TI</span><p>
+or<p>
 <span class=cmd>SA IO</span>
 </ul>
 <p>
@@ -1129,21 +1139,6 @@ A fun variant of this is when you want to stash a word that
 is already in your list of <i>found</i> puzzle words - perhaps
 to help achieve <a href=#gotn>GOTN</a>.  Click on the word for a definition.
 You will have a link labeled <span class=blue>Stash</span>.
-<p>
-For power users: In the command <span class=cmd>SA XX</span> the XX is actually a <a target=_blank href='https://perldoc.perl.org/perlretut'>Perl regular expression</a> (with the /x flag) so with this in the stash:
-<ul>
-CHALLAH CHALLENGE HALL HANG LEECH TENT
-</ul>
-You could unstash CHALLENGE with:
-<ul>
-<span class=cmd>SA E$</span>
-</ul>
-because it is the only word that ends in E.
-And you could unstash LEECH with:
-<ul>
-<span class=cmd>SA ^L</span>
-</ul>
-because it is the only word that begins with L.
 <a name=donut></a>
 <h2>Donut, Lexicon, and Bonus Words
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -1345,9 +1340,19 @@ alphabetical order labeled with the first letter.  This will show which
 letters are not yet at the beginning of a Bonus word.  The listing ends
 with the BB Score.
 <p>
-For yet <i>another</i> way of tallying Bonus words there is the Xw score. X is the puzzle letter that begins the most words in the puzzle and the Xw score is how many of your Bonus words begin with X.  This score is shown at the end of the output of the <span class=cmd>BB</span> command and is also included in the <span class=cmd>CW</span> command output.  This is yet <i>another</i> way to foster a little competition in finding Bonus words.  It’s all fun, right? &#128522;  Note that the X letter will change from day to day.  How does one know which letter is the X “letter of the day”?  When in Bonus Mode the X letter of the day will be shown in larger font than the other six in the display. Like the letter R here on 8/14/2025:
+For yet <i>another</i> way of tallying Bonus words there is the Xw score. X is the puzzle letter that begins the most words in the puzzle and the Xw score is how many of your Bonus words begin with X.  This score is shown at the end of the output of the <span class=cmd>BB</span> command and is also included in the <span class=cmd>CW</span> command output.  This is yet <i>another</i> way to foster a little competition in finding Bonus words.  It’s all fun, right? &#128522;  Note that the X letter will change from day to day.  How does one know which letter is the X “letter of the day”?  When in Bonus Mode the X letter of the day will be shown in larger font than the other six in the display of the 19+7 letters. Like the letter C here on 4/20/2026:
 <p>
 <img src=pics/letter_day.png width=600>
+<p>
+Note that there is a chance that 2 or more letters will
+have the <i>same</i> number of words in the puzzle that
+begin with that letter.   As of April 2026 this occurred
+in 8% of the puzzles.  One extreme example was on
+12/13/25 where there were 5 letters that had 7 words each!
+In these cases there will be 2 or more Xw scores.  The output
+of the <span class=cmd>CW</span> command (the <span class=blue>Standings</span> link)
+will choose one of them randomly so there will be multiple 
+Xw “competitions”.
 <p>
 When searching for Bonus words to increase your BOA, BB, and Xw scores this list of “open secret” words from the <a href=#lexicon>large lexicon</a> may help:
 <ul>
@@ -1371,7 +1376,7 @@ listed below the words you have found in the allowed list.  Like so:
 <img src=pics/list3.png width=600>
 <p>
 Note that the command <span class=cmd>C Y</span> will clear puzzle words but
-leave the Extra words.  <span class=cmd>C YA</span> will clear <i><span class=cmd>a</span>ll</i> words.
+leave the Extra words.  <span class=cmd>C YA</span> will clear <i><span class=cmd>a</span>ll</i> words (but preserve your “overall” hint total).
 <h3>Global Lists of Extra Words</h3>
 There is, of course, no “official” list of these Extra words.
 This makes it more fun, in a way.  More creative.
@@ -2610,8 +2615,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-2899 puzzles with
-a total of 11014 different words!
+2906 puzzles with
+a total of 11031 different words!
 <p>
 Tallies are made of the many puzzles and words.
 See this table of the puzzles:

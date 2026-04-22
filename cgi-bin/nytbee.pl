@@ -1887,15 +1887,26 @@ elsif ($cmd eq 'sw') {
     # a no op - ignore
     $cmd = '';
 }
-elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms  # sw at the front
+elsif ($cmd =~ m{\A (s[wf]) \s+ ([a-z ]*) \z}xms   # sw or sf at the front
        ||
-       $cmd =~ m{\A ([a-z ]*) \s+ sw? \z}xms # sw or s at the end
+       $cmd =~ m{\A ([a-z ]*) \s+ (s[wf]*) \z}xms # s or sw or sf or swf at the end
 ) {
     # adding words to the stash.
     # we first check the words.
     # give errors for unqualified words and
     # Extra words get added as normal.
-    my $stash = $1;
+    # perhaps do not stash 5+ letter words but just enter them
+    my ($no5, $stash);
+    my $m1 = $1;
+    my $m2 = $2;
+    if ($m1 =~ m{s[wf]}xms) {
+        $no5 = index($m1, 'f') >= 0;
+        $stash = $m2;
+    }
+    else {
+        $no5 = index($m2, 'f') >= 0;
+        $stash = $m1;
+    }
     my @words = split ' ', $stash;
     my $nwords_stashed = 0;
     for my $w (@words) {
@@ -1928,7 +1939,11 @@ elsif ($cmd =~ m{\A sw \s+ ([a-z ]*) \z}xms  # sw at the front
             }
         }
         else {
-            $nwords_stashed += consider_word($w, 1);
+            my $stash_it = 1;
+            if ($no5 && length($w) >= 5) {
+                $stash_it = 0;
+            }
+            $nwords_stashed += consider_word($w, $stash_it);
         }
     }
     if ($nwords_stashed && ($bonus_mode || $pw_feedback == 1)) {
@@ -2321,7 +2336,7 @@ elsif ($cmd eq 'cl') {
     }
     $cmd = '';
 }
-elsif ($cmd eq 'f7') {
+elsif ($cmd eq 'f7' || $cmd eq 'fs') {
     # look for same 7
     $message = `$cgi_dir/same_7.pl $seven $date @ok_words`;
     $cmd = '';
