@@ -1153,6 +1153,23 @@ sub define {
                 # undo an earlier masking
                 $s =~ s{[*]{2,}}{$word}xmsg;
             }
+            if (!$fullword
+                && $s =~ m{\A Present[ ]participle[ ]of[ ]([a-z]+)}xms
+            ) {
+                # for example;
+                #
+                # Present participle of abandon.
+                #
+                # this is too much of a clue!
+                #
+                # we'll make it a******.
+                #
+                my $word = $1;
+                my $lw = length($word);
+                my $x = ($lw <= 4)? substr($word, 0, 1) . ('*' x ($lw-1))
+                       :            substr($word, 0, 2) . ('*' x ($lw-2));
+                $s =~ s{$word}{$x}xms;
+            }
             if ($def) {
                 $def .= "<li>$s</li>";
             }
@@ -4842,7 +4859,7 @@ lets.innerHTML = '';
 add_let('$s');
 setTimeout(() => {
     lets.innerHTML = save;
-}, 1300);
+}, 800);
 </script>
 EOJ
 }
