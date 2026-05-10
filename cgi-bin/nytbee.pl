@@ -81,7 +81,7 @@ use File::Slurp qw/
     write_file
     read_file
 /;
-use BeeExt qw/
+use BeeExt2 qw/
     $ext_mobile_css
     $ext_desktop_css
     $ext_logo_base64
@@ -432,6 +432,7 @@ if ($cmd eq '' && $post) {
     $post =~ s{\n}{<br>}xmsg;
     $post =~ s{"}{&#34;}xmsg;
     if ($post) {    # is anything there?
+JON "message = $post";
         system(qq!$cgi_dir/get_post.pl $date "$screen_name" "$post"!);
     }
 }
@@ -2097,6 +2098,10 @@ elsif (   $cmd =~ m{\A d \s+ ([a-z ]+) \z}xms
         if ($the_definition =~ m{
                 (
                     Common[ ]misspelling[ ]of[ ]
+                    |
+                    An[ ]obsolete[ ]variant[ ]of[ ]
+                    |
+                    An[ ]amended[ ]spelling[ ]of[ ]
                     |
                     See[ ]
                     |
