@@ -1409,8 +1409,16 @@ function add_let(c) {
                 document.getElementById('pos3' + num).style.display = 'none';
             }
         }
-        var len = lets.innerHTML.length;
-        var last_char = lets.innerHTML.substring(len-1);
+        var str = lets.innerHTML.replaceAll('<span class="red">', '');
+        var str2 = str.replaceAll('</span>', '');
+// looks okay
+// now to preserve the font size when switching
+// from Bonus to not Bonus and other switches
+// and eliminate the 3 links when going to not Bonus
+// and there is a string in the lets place
+            
+        var len = str2.length;
+        var last_char = str2.substring(len-1);
         if (last_char == ' ') {
             lets_font_size -= 1;
             lets.style.fontSize = lets_font_size.toString()+'px';

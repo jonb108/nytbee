@@ -81,7 +81,7 @@ use File::Slurp qw/
     write_file
     read_file
 /;
-use BeeExt2 qw/
+use BeeExt qw/
     $ext_mobile_css
     $ext_desktop_css
     $ext_logo_base64
