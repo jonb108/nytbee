@@ -432,7 +432,6 @@ if ($cmd eq '' && $post) {
     $post =~ s{\n}{<br>}xmsg;
     $post =~ s{"}{&#34;}xmsg;
     if ($post) {    # is anything there?
-JON "message = $post";
         system(qq!$cgi_dir/get_post.pl $date "$screen_name" "$post"!);
     }
 }
@@ -2096,6 +2095,7 @@ elsif (   $cmd =~ m{\A d \s+ ([a-z ]+) \z}xms
         # maybe change $the_word if the definition is ...???
         # we may add some other possibilities here...
         if ($the_definition =~ m{
+                r[>]        # <span class=letter>...
                 (
                     Common[ ]misspelling[ ]of[ ]
                     |

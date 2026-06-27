@@ -24,6 +24,7 @@ our @EXPORT_OK = qw/
     $thumbs_up
     mark_up
     puzzle_info
+    is_prime_day
 /;
 use Date::Simple qw/
     today
@@ -317,6 +318,14 @@ sub puzzle_info {
     my $gn4l_np = $gn4l_np_score >= $genius? 1: 0;
     return ($nwords, $max_score, $npangrams, $nperfect, $bingo,
             $gn4l, $gn4l_np); 
+}
+
+sub is_prime_day {
+    my ($d8) = @_;
+    my %is_prime = map { $_ => 1 } qw(
+                       3 5 7 11 13 17 19 23 29 31
+                   );
+    return $is_prime{int(substr($d8, 6, 2))};
 }
 
 1;

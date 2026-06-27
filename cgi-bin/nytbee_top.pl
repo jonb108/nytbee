@@ -23,6 +23,7 @@ use warnings;
 use lib '.';
 use BeeUtil qw/
     JON
+    is_prime_day
 /;
 use BeeLog qw/
     open_log
@@ -41,6 +42,7 @@ my %rank_name = (
     9 => 'Queen Bee',
 );
 my ($date, $qb_nwords, $seven, $my_screen_name, $od, $ob, $ol) = @ARGV;
+my $prime = is_prime_day($date);
 my $disp_date = $date;
 $disp_date =~ s{\A (....)(..)(..) \z}{$2/$3/$1}xms;
 my ($nbonus, $ndonut, $nlexicon, $boa, $bb);
@@ -271,7 +273,11 @@ if (%bingo_score_for) {
                     ||
                     $bingo_hints_for{$a} <=> $bingo_hints_for{$b}
                     ||
-                    $a cmp $b
+                    # for fun,
+                    # on prime days we sort the screen names
+                    # in reverse alphabetical order
+                    #
+                    ($prime? $b cmp $a: $a cmp $b)
                 }
                 keys %bingo_score_for
     ) {
@@ -304,7 +310,7 @@ for my $screen_name (sort {
                          ||
                          $queen_minus_for{$a} <=> $queen_minus_for{$b}
                          ||
-                         $a cmp $b
+                         ($prime? $b cmp $a: $a cmp $b)
                      }
                      keys %rank_for
 ) {
