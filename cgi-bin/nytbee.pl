@@ -507,11 +507,16 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
     }
 }
 elsif ($cmd eq 'x') {
-    delete $cur_puzzles{$date};
-    my @puzzles = my_puzzles();
-    $date = @puzzles? $puzzles[0][0]: $today_d8;
-    $linear_prefix = '';
-    $linear_suffix = '';
+    if ($date eq $today_d8) {
+       $message = "Sorry, you cannot delete today's puzzle."; 
+    }
+    else {
+        delete $cur_puzzles{$date};
+        my @puzzles = my_puzzles();
+        $date = @puzzles? $puzzles[0][0]: $today_d8;
+        $linear_prefix = '';
+        $linear_suffix = '';
+    }
     $cmd = '';
 }
 elsif ($cmd eq 'xa') {
@@ -1190,7 +1195,7 @@ sub do_define {
     my $nhints = $only_clues? 2: 3;
 
     load_nyt_clues;
-    my $msg = '';
+    my $msg = '';   # will set $message at the end...
     my $line = "&mdash;" x 4;
     if ($term eq 'p') {
         my $np =  0;
