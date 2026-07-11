@@ -201,7 +201,7 @@ for my $aref (sort {
         print "<tr><td colspan=$colspan class='lt head'>$ty</td>";
         if ($donut_mode || ($type != 3 && ! $ow_printed)) {
             print "<td title='# of $ty words' class=entry>#</td>"
-                . "<td title='# of $ty Own Words'>${sp}ow</td>";
+                . "<td title='# of Own $ty words'>${sp}ow</td>";
             $ow_printed = 1;
 
         }
