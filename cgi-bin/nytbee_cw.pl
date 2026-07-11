@@ -196,13 +196,12 @@ for my $aref (sort {
 ) {
     my ($uid, $type, $n) = @$aref;
     if ($type ne $prev) {
-        #my $colspan = ($type != 1)? 3: 2;
         my $colspan = 2;
         my $ty = ucfirst $name{$type};
         print "<tr><td colspan=$colspan class='lt head'>$ty</td>";
         if ($donut_mode || ($type != 3 && ! $ow_printed)) {
             print "<td title='# of $ty words' class=entry>#</td>"
-                . "<td title='# of Own Words'>${sp}ow</td>";
+                . "<td title='# of $ty Own Words'>${sp}ow</td>";
             $ow_printed = 1;
 
         }
