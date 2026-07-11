@@ -198,21 +198,20 @@ for my $aref (sort {
     if ($type ne $prev) {
         #my $colspan = ($type != 1)? 3: 2;
         my $colspan = 2;
-        print "<tr><td colspan=$colspan class='lt head'>"
-            . ucfirst $name{$type}
-            . "</td>";
+        my $ty = ucfirst $name{$type};
+        print "<tr><td colspan=$colspan class='lt head'>$ty</td>";
         if ($donut_mode || ($type != 3 && ! $ow_printed)) {
-            print "<td class=entry>#</td>"
-                . "<td>${sp}ow</td>";
+            print "<td title='# of $ty words' class=entry>#</td>"
+                . "<td title='# of Own Words'>${sp}ow</td>";
             $ow_printed = 1;
 
         }
         if (($donut_mode && $type == 2) || (! $donut_mode && $type == 1)) {
             my $FL = uc $freq_letter;
-            print "<td>${sp}boa</td>"
-                . "<td>${sp}bb</td>"
-                . "<td>${sp}${FL}w</td>"
-                . "<td>${sp}o${FL}w</td>"
+            print "<td title='# of of the 19 additional letters used in a Bonus word'>${sp}boa</td>"
+                . "<td title='# of the 26 A-Z letters that begin a Bonus word'>${sp}bb</td>"
+                . "<td title='# of Bonus words that begin with ${FL}'>${sp}${FL}w</td>"
+                . "<td title='# of Own Bonus words that begin with ${FL}'>${sp}o${FL}w</td>"
                 . "<td style='cursor: pointer;' onclick='explain_headings();'>${sp}&#9432;</td>"
                 ;
         }

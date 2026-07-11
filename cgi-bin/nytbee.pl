@@ -2116,6 +2116,8 @@ elsif (   $cmd =~ m{\A d \s+ ([a-z ]+) \z}xms
                     |
                     Obsolete[ ]spelling[ ]of[ ]
                     |
+                    Nonstandard[ ]spelling[ ]of[ ]
+                    |
                     Alternative[ ]spelling[ ]of[ ]
                     |
                     Alternative[ ]form[ ]of[ ]
