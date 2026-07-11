@@ -158,6 +158,16 @@ print <<'EOH';
     text-align: right;
 }
 </style>
+<script>
+function explain_headings() {
+    window.open(
+        "https://ultrabee.org/bonus_acronyms.html",
+        '_blank',
+        //'left=100,width=685,height=420'
+        'left=100,width=600,height=340'
+    );
+}
+</script>
 EOH
 if ($date_obj ne $today) {
     print "Final results for " . $date_obj->format("%D") . ":<p>\n";
@@ -203,6 +213,7 @@ for my $aref (sort {
                 . "<td>${sp}bb</td>"
                 . "<td>${sp}${FL}w</td>"
                 . "<td>${sp}o${FL}w</td>"
+                . "<td style='cursor: pointer;' onclick='explain_headings();'>${sp}&#9432;</td>"
                 ;
         }
         elsif ($type == 2 && $donut_mode) {
