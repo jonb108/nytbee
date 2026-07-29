@@ -2099,42 +2099,10 @@ elsif (   $cmd =~ m{\A d \s+ ([a-z ]+) \z}xms
         my $the_word = $word;   # for the full definition
         # maybe change $the_word if the definition is ...???
         # we may add some other possibilities here...
-        if ($the_definition =~ m{
-                r[>]        # <span class=letter>...
-                (
-                    Common[ ]misspelling[ ]of[ ]
-                    |
-                    An[ ]obsolete[ ]variant[ ]of[ ]
-                    |
-                    An[ ]amended[ ]spelling[ ]of[ ]
-                    |
-                    See[ ]
-                    |
-                    Same[ ]as[ ]
-                    |
-                    Of[ ]or[ ]pertaining[ ]to[ ]
-                    |
-                    Obsolete[ ]spelling[ ]of[ ]
-                    |
-                    Nonstandard[ ]spelling[ ]of[ ]
-                    |
-                    Alternative[ ]spelling[ ]of[ ]
-                    |
-                    Alternative[ ]form[ ]of[ ]
-                    |
-                    Simple[ ]past[ ]tense[ ]and[ ]past[ ]participle[ ]of[ ]
-                    |
-                    Plural[ ]form[ ]of[ ]
-                    |
-                    Plural[ ]of[ ]
-                    |
-                    Present[ ]participle[ ]of[ ]
-                )
-                ([\S-]+)
-            }xmsi
-        ) {
-            $the_word = $2;
-            $the_word =~ s{[.,;!?<]+.*\z}{}xms;
+        # we certainly have!
+        my ($wn_word) = `$cgi_dir/wordnik.pl '$the_definition'`;
+        if ($wn_word) {
+            $the_word = $wn_word;;
         }
         $message .= <<"EOM";
 <br>

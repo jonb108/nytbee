@@ -21,6 +21,7 @@ nytbee_list.pl \
 nytbee_fcp.pl \
 nytbee_wp.pl \
 nytbee_dl.pl \
+wordnik.pl \
 nytbee_time.pl \
 nytbee_activity.pl \
 nytbee_log.pl \
