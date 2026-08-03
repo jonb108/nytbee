@@ -12,6 +12,8 @@ if ($def =~ m{
             |
             An[ ]amended[ ]spelling[ ]of
             |
+            An[ ]old[ ]spelling[ ]of
+            |
             See
             |
             Same[ ]as

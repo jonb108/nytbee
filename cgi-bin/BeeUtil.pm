@@ -323,7 +323,7 @@ sub puzzle_info {
 sub is_prime_day {
     my ($d8) = @_;
     my %is_prime = map { $_ => 1 } qw(
-                       3 5 7 11 13 17 19 23 29 31
+                       2 3 5 7 11 13 17 19 23 29 31
                    );
     return $is_prime{int(substr($d8, 6, 2))};
 }
