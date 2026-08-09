@@ -3925,7 +3925,7 @@ EOH
 <form target=_blank
       id=clues_by
       action=$log/cgi-bin/nytbee_clues_by.pl
-      method=POST
+      method=GET
 >
 <input type=hidden id=person_id name=person_id>
 <input type=hidden id=date name=date value=$date>
