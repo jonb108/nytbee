@@ -63,16 +63,27 @@ if ($href) {
     # find a prior date that hasn't been loaded already
     # and reassign $dt and $d8
     #
-    my $sth_min = $dbh->prepare(<<'EOS');
+    my $sth_another = $dbh->prepare(<<'EOS');
 
-    select min(date) as minimum
-      from bee_clue
-     where person_id = ?
+    SELECT distinct(date) as date
+      FROM bee_clue
+     WHERE person_id = ?
+  ORDER BY date desc
 
 EOS
-    $sth_min->execute($steve_person_id);
-    my ($minimum) = $sth_min->fetchrow_array();     # d8 format
-    $dt = date($minimum) - 1;       # the day before
+    $sth_another->execute($steve_person_id);
+    my ($dt1) = $sth_another->fetchrow_array();
+    $dt1 = date($dt1);
+    my $dt2;
+    DATE:
+    while (($dt2) = $sth_another->fetchrow_array()) {
+        $dt2 = date($dt2);
+        if ($dt2 != $dt1 - 1) {
+            last DATE;
+        }
+        $dt1 = $dt2;
+    }
+    $dt = $dt1 - 1;
     $d8 = $dt->as_d8();
 }
 
@@ -101,7 +112,6 @@ else {
     untie %puzzle_store;
     my @words = split ' ', $t;
     my $nwords = @words;
-JON "nw $nwords @words";
 
     my $sth_ins = $dbh->prepare(<<'EOS');
 
