@@ -8,6 +8,8 @@ if ($def =~ m{
         (?:
             Common[ ]misspelling[ ]of
             |
+            Misspelled[ ]form[ ]of
+            |
             An[ ]obsolete[ ]variant[ ]of
             |
             An[ ]amended[ ]spelling[ ]of
