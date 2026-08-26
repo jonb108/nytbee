@@ -15,4 +15,10 @@ oops unless defined $key;
 use DB_File;
 my %hash;
 tie %hash, 'DB_File', $hash_file or die "no tie!";
-print "$hash{$key}\n";
+my $v = $hash{$key};
+if (! $v) {
+    print "key not found\n";
+}
+else {
+    print "$v\n";
+}

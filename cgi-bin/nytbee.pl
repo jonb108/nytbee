@@ -2806,8 +2806,32 @@ sub pangram_check {
     return '';
 }
 
+sub is_misspell {
+    my ($def) = @_;
+    if (index($def, 'misspell') >= 0) {
+        if ($def =~ m{
+                misspelling \s+ of
+                |
+                misspelled \s+ form
+            }xms
+        ) {
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+}
+
 sub in_wordnik {
     my ($word) = @_;
+    if (exists $definition_of{$word}) {
+        my $def = $definition_of{$word};
+        if (is_misspell($def)) {
+            return 0;
+        }
+        return 1;
+    }
     my $json = get_html("https://api.wordnik.com/v4/word.json/$word/definitions?api_key=jtatm78lwq4i5ed4y0touh93ftt29832ti8o24bbh6ek5ta5l");
     if (! $json) {
         return 0;
@@ -2820,9 +2844,16 @@ sub in_wordnik {
             $def =~ s{[&][#]39;}{'}xmsg;
             $def =~ s{$word}{'*' x length($word)}xmsegi;
             $def =~ s{[^[:ascii:]]}{}xmsg;
+            # keep the definition so we don't need to ask again
+            # however, if the definition contains 'misspelling of'
+            # or 'misspelled form' the
+            # word will not qualify as a Lexicon, Donut, or Bonus word.
             $definition_of{$word} = $def;
-            return 1;
-        }
+            if (is_misspell($def)) {
+                return 0;
+            }
+                return 1;
+            }
     }
     return 0;
 }
