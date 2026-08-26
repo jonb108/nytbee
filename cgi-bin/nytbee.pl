@@ -122,6 +122,14 @@ if (! exists $full_uuid{$uuid11}) {
 }
 my %params = $q->Vars();
 
+# some fancy hacky work here
+my $save_lets = $params{save_lets};
+my $lets_font = "style='font-size: 28pt;'";
+if ($save_lets =~ s{\A (\d+p[xt])}{}xms) {
+    $lets_font = "style='font-size: $1;'";
+}
+my $save_lets_blank = index($save_lets, ' ') >= 0;
+
 sub now_secs {
     my ($second, $minute, $hour) = (localtime)[0 .. 2];
     --$hour;    # west coast time
@@ -4325,6 +4333,9 @@ if ($hive == 1) {        # bee hive honeycomb
     }
 
     my $st = "style='color: $colors{alink}'";
+    # For Top Help Forum - in case we have a blank in the saved letters
+    my $st2 = "style='color: $colors{alink};"
+            . ($save_lets_blank? "display: none;'": "'");
     if ($mobile) {
         # enter, wordlets, delete, define
         # all positioned absolutely as well
@@ -4370,7 +4381,7 @@ $row2
 </table>
 EOH
             $letters .= <<"EOH";
-<span class=lets id=lets>$params{save_lets}</span>
+<span class=lets id=lets $lets_font>$save_lets</span>
 <span class='pos11 alink' onclick="stash_lets();">Stash</span>
 <span class='pos21 alink' onclick="sub_lets();">Enter</span>
 <span class='pos22 alink' onclick="del_let();">Delete</span>
@@ -4382,7 +4393,7 @@ EOH
         }
         elsif ($donut_mode) {
             $letters .= <<"EOH";
-<span class=lets id=lets>$params{save_lets}</span>
+<span class=lets id=lets $lets_font>$save_lets</span>
 <span class='pos11 alink' onclick="stash_lets();">Stash</span>
 <span class='pos21 alink' onclick="sub_lets();">Enter</span>
 <span class='pos22 alink' onclick="del_let();">Delete</span>
@@ -4404,19 +4415,19 @@ $define
 <span class='pos13 cursor_black' $st onclick="issue_cmd('DN');">Donut</span>
 <span class='pos21 cursor_black' $st onclick="sub_lets();">Enter</span>
 
-<span class=lets id=lets>$params{save_lets}</span>
+<span class=lets id=lets $lets_font>$save_lets</span>
 
 <span class='pos22 cursor_black' $st onclick="del_let();">Delete</span>
 <span class='pos23 cursor_black' $st onclick="issue_cmd('BN');">Bonus</span>
-<span id=pos31 class='pos31 cursor_black' $st onclick="issue_cmd('TOP');">Top</span>
-<span id=pos32 class='pos32 cursor_black'><a class='cursor_black' $st target=_blank href='$log/help.html#toc'">Help</a></span>
-<span id=pos33 class='pos33 cursor_black' $st onclick="issue_cmd('F');">$forum_s $num_msgs</span>
+<span id=pos31 class='pos31 cursor_black' $st2 onclick="issue_cmd('TOP');">Top</span>
+<span id=pos32 class='pos32 cursor_black'><a class='cursor_black' $st2 target=_blank href='$log/help.html#toc'">Help</a></span>
+<span id=pos33 class='pos33 cursor_black' $st2 onclick="issue_cmd('F');">$forum_s $num_msgs</span>
 EOH
         }
     }
     else {
         # not mobile - still need span id=lets
-        $letters .= "<span class=lets id=lets>$params{save_lets}</span>\n";
+        $letters .= "<span class=lets id=lets $lets_font>$save_lets</span>\n";
         # and we have the various links as well
         if ($show_Links) {
             my $donut = $donut_mode? '<s>Donut</s>': 'Donut';

@@ -1384,7 +1384,7 @@ function init() {
 function empty(s) {
     return s.trim().length === 0;
 }
-var lets_font_size = 28;    // initial numeric value
+var lets_font_size = parseInt(lets.style.fontSize);   // get it again ...
 function add_let(c) {
     var x = c.substring(0, 1);
     if (x == '+' || x == '-') {
@@ -1419,9 +1419,10 @@ function add_let(c) {
             
         var len = str2.length;
         var last_char = str2.substring(len-1);
+        lets_font_size = parseInt(lets.style.fontSize);  // get it again ...
         if (last_char == ' ') {
             lets_font_size -= 1;
-            lets.style.fontSize = lets_font_size.toString()+'px';
+            lets.style.fontSize = lets_font_size.toString()+'pt';
             // no need to append another blank
             return;
         }
@@ -1452,7 +1453,7 @@ function del_let() {
 // value vs textContent vs innerHTML ...???
 function issue_cmd(s) {
     // first save any values of lets and new words
-    save_lets.value = lets.innerHTML;
+    save_lets.value = lets.style.fontSize + lets.innerHTML;
         // innerHTML rather than value
         // to capture any red Bonus letters
     save_nw.value = nw.value;

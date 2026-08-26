@@ -3,6 +3,8 @@ rm -f /tmp/html.tar
 tar cvf /tmp/html.tar \
 help.html \
 more_space.html \
+report.html \
+ai.html \
 bonus_acronyms.html \
 eliza.html \
 more_more.html \
