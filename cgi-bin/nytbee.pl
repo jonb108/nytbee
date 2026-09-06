@@ -2341,7 +2341,9 @@ elsif ($cmd eq 'cl') {
     }
     $cmd = '';
 }
-elsif ($cmd eq 'f7' || $cmd eq 'fs') {
+elsif ($cmd eq 'ss'
+      || $cmd eq 'fs' || $cmd eq 'f7'   # used to be these
+) {
     # look for same 7
     $message = `$cgi_dir/same_7.pl $seven $date @ok_words`;
     $cmd = '';
