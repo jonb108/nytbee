@@ -476,7 +476,12 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
         my $npuzzles = @puzzles;
         for my $n (@nums) {
             if ($n > $npuzzles) {
-                $message .= "$n: There are only $npuzzles current puzzles";
+                if ($n == 1) {
+                    $message .= "$n: There is only one current puzzle.";
+                }
+                else {
+                    $message .= "$n: There are only $npuzzles current puzzles";
+                }
                 $cmd = '';
             }
         }
@@ -484,7 +489,11 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
     if ($cmd) {
         # @nums are valid puzzle numbers (base 1)
         for my $n (@nums) {
-            delete $cur_puzzles{ $puzzles[$n-1][0] };
+            my $key = $puzzles[$n-1][0];
+            if ($key ne $today_d8) {
+                # can't delete today's puzzle
+                delete $cur_puzzles{ $key };
+            }
         }
         # and reget the puzzles
         @puzzles = my_puzzles();
