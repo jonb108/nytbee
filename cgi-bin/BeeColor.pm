@@ -253,7 +253,7 @@ sub color_schemes {
     my $s = $uuid_color_schemes_for{$uuid};
     my @schemes;
     if ($s) {
-        @schemes = keys %{ eval $s; };
+        @schemes = sort keys %{ eval $s; };
     }
     if (@schemes) {
         return "Your color schemes: "

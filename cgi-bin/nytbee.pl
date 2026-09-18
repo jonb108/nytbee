@@ -2979,6 +2979,13 @@ sub p_word {
     ;
 }
 
+# non 7 letters should be in pink
+sub bonus_pink {
+    my ($w) = @_;
+    $w =~ s{([^$seven])}{<span style='color: pink'>$1</span>}xmsgi;
+    $w;
+}
+
 #
 # check the word
 # and either add it, stash it, or give an error message.
@@ -3034,7 +3041,7 @@ sub consider_word {
                 my $super = length $w >= 7 && index($w, $center) >= 0?
                                 'Super ': '';
                 $not_okay_words .= "<span class=not_okay>"
-                                .  def_word(uc($w), $w)
+                                .  def_word(bonus_pink(uc $w), $w)
                                 .  "</span>: ${bingo}${super}Bonus ${own}word $thumbs_up<br>"
                                 .  pangram_check($w, 8, $seven);
                 add_4word('bonus', $date, $w);
@@ -3171,7 +3178,7 @@ sub consider_word {
         $not_okay_words .= "<span class=not_okay>"
                         .  "<a target=_blank onclick='set_focus()'"
                         .  " href='https://google.com/search?q=$w'>"
-                        .  "<span style='color: red'>" . uc($w) . "</span>"
+                        .  "<span style='color: red'>" . bonus_pink(uc($w)) . "</span>"
                         .  "</a>"
                         .  "</span>: $mess<br>";
     }
