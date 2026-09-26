@@ -63,12 +63,12 @@ while (my $line = <$in>) {
     if (index($line, ' = rank') >= 0 && $line =~ m{rank\d}) {
         next LINE;
     }
-    my ($u11) = $line =~ m{\A (.*) [ ]=[ ]}xms;
+    my ($u11) = $line =~ m{\A (.*) [ ][=~][ ]}xms;
     if ($uuid11 && $u11 ne $uuid11) {
         next LINE;
     }
-    if (index($line, ' = ') >= 0) {
-        if ($line =~ m{[ ]=[ ].*[a-z]{4,}}xms) {
+    if ($line =~ m{[ ][=~][ ]}xms) {
+        if ($line =~ m{[ ][=~][ ].*[a-z]{4,}}xms) {
             ++$words[$i];
         }
         else {

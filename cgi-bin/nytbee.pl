@@ -476,11 +476,11 @@ if (my ($nums) = $cmd =~ m{\A x \s* ([\d,\s-]+) \z}xms) {
         my $npuzzles = @puzzles;
         for my $n (@nums) {
             if ($n > $npuzzles) {
-                if ($n == 1) {
-                    $message .= "$n: There is only one current puzzle.";
+                if ($npuzzles == 1) {
+                    $message .= "$n: There is only one current puzzle.<br>";
                 }
                 else {
-                    $message .= "$n: There are only $npuzzles current puzzles";
+                    $message .= "$n: There are only $npuzzles current puzzles.<br>";
                 }
                 $cmd = '';
             }
