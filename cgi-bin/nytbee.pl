@@ -4533,7 +4533,8 @@ EOS
                  ;
     }
     else {
-        $letters = "<pre style='font-family: Arial; font-size: 40pt'>\n  ";
+        # add the id=lets span so that the issue_cmd function will work.
+        $letters = "<span id=lets></span><pre style='font-family: Arial; font-size: 40pt'>\n  ";
         my $sp = '&nbsp;' x 2;
         for my $c (@seven_let) {
             if ($c eq uc $center) {

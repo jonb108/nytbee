@@ -121,12 +121,17 @@ else {
 
 EOS
 
-    my @lines = grep  { m{\A [\d,]*[)]}xms }
+    my $minimal = $clues =~ m{MINIMALIST}xms;
+    my @lines = grep  {
+                    $minimal? m{[(] [ \d,]+ [)] \s* \z}xms
+                   :          m{\A  \s* [ \d,]+[)]}xms
+                }
                 split m{\n}xms, $clues
                 ;
     my $nlines = 0;
     for my $l (@lines) {
-        my ($x) = $l =~ m{\A ([ ,\d]+) }xms;
+        my ($x) = $minimal? $l =~ m{[(] ([ \d,]+) [)] \s* \z}xms
+                 :          $l =~ m{\A  ([ \d,]+)    }xms;
         $nlines += () = $x =~ m{(\d+)}xmsg;
     }
     if ($nwords != $nlines) {
@@ -135,8 +140,14 @@ EOS
     }
     my $added = 0;
     for my $line (@lines) {
-        $line =~ s{[\n]}{}xms;
-        my ($nums, $clue) = $line =~ m{([\d,]*)[)] \s* (.*) \z}xms;
+        # not needed? $line =~ s{[\n]}{}xms;
+        my ($nums, $clue);
+        if ($minimal) {
+            ($clue, $nums) = $line =~ m{\A (.*) \s* [(] ([ \d,]+) [)] \s*\z}xms;
+        }
+        else {
+            ($nums, $clue) = $line =~ m{([ \d,]+)[)] \s* (.*) \z}xms;
+        }
         my @nums = $nums =~ m{(\d+)}xmsg;
         for my $i (0 .. $#nums) {
             my $the_clue = $clue . ($i > 0? ' +': '');
