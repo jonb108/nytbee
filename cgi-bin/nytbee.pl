@@ -2012,7 +2012,7 @@ elsif ($cmd =~ m{\A (s[wf]) \s+ ([a-z ]*) \z}xms   # sw or sf at the front
         $nwords_stashed += $n;
         $n_minus += $n;
         my $pl = $n == 1? '': 's';
-        $message = "<ul>$n other four-letter puzzle word$pl stashed</ul</ul>>"
+        $message = "<ul>$n other four-letter puzzle word$pl stashed</ul>"
                 if $n;
     }
     if ($nwords_stashed && ($bonus_mode || $pw_feedback == 1)) {
