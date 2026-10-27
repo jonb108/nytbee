@@ -1393,6 +1393,20 @@ sub get_words {
            @ok_words;
 }
 
+# all 4 letter puzzle words
+# should be moved to the stash
+# return how many were stashed.
+sub stash4 {
+    my $n = 0;
+    for my $w (@found) {
+        if (length($w) == 4) {
+            $w =~ s{([a-z])$}{$1!}xms;
+            ++$n;
+        }
+    }
+    return $n;
+}
+
 sub do_reveal {
     my ($ev, $nlets, $term) = @_;
     my $err = 0;
@@ -1926,6 +1940,13 @@ elsif ($cmd eq 'sw') {
     # a no op - ignore
     $cmd = '';
 }
+elsif ($cmd eq 'sf') {
+    my $n = stash4();
+    my $pl = $n == 1? '': 's';
+    $message = "<ul>$n four-letter word$pl stashed</ul>" if $n;
+    $n_minus += $n;
+    $cmd = '';
+}
 elsif ($cmd =~ m{\A (s[wf]) \s+ ([a-z ]*) \z}xms   # sw or sf at the front
        ||
        $cmd =~ m{\A ([a-z ]*) \s+ (s[wf]*) \z}xms # s or sw or sf or swf at the end
@@ -1935,6 +1956,7 @@ elsif ($cmd =~ m{\A (s[wf]) \s+ ([a-z ]*) \z}xms   # sw or sf at the front
     # give errors for unqualified words and
     # Extra words get added as normal.
     # perhaps do not stash 5+ letter words but just enter them
+    # with sf or swf stash all 4 letter puzzle words
     my ($no5, $stash);
     my $m1 = $1;
     my $m2 = $2;
@@ -1984,6 +2006,14 @@ elsif ($cmd =~ m{\A (s[wf]) \s+ ([a-z ]*) \z}xms   # sw or sf at the front
             }
             $nwords_stashed += consider_word($w, $stash_it);
         }
+    }
+    if ($no5) {
+        my $n = stash4();
+        $nwords_stashed += $n;
+        $n_minus += $n;
+        my $pl = $n == 1? '': 's';
+        $message = "<ul>$n other four-letter puzzle word$pl stashed</ul</ul>>"
+                if $n;
     }
     if ($nwords_stashed && ($bonus_mode || $pw_feedback == 1)) {
         # we give this message because we are not
