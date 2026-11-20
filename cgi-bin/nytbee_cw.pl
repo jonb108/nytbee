@@ -63,6 +63,7 @@ while (my $line = <$log>) {
         # because they have ~ instead of =
     $cmd = substr($cmd, 2);
     next LINE if index($cmd, 'd ') == 0;
+    next LINE if $cmd =~ m{\A \s+ rm \s+}xms;
     #next LINE if $cmd =~ m{\d}xms;
     next LINE if length($cmd) < 4;
     my @words = $cmd =~ m{\b[a-z]{4,}\b}xmsg;

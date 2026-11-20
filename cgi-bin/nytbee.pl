@@ -536,9 +536,12 @@ elsif ($cmd eq 'x') {
     }
     $cmd = '';
 }
-elsif ($cmd eq 'xa') {
+elsif ($cmd eq 'xa' || $cmd eq 'xb') {
+    my $only_queen_bee = $cmd eq 'xb';
     my @puzzles = my_puzzles();
+    PUZZLE:
     for my $p (@puzzles) {
+        next PUZZLE if $only_queen_bee && $p->[2] != 9;
         my $dt = $p->[0];
         if ($dt ne $today_d8) {
             delete $cur_puzzles{$dt};
@@ -1624,7 +1627,7 @@ elsif ($cmd eq 'he') {
     $show_Heading = $show_Heading? 0: 1;
     $cmd = '';
 }
-elsif ($cmd eq 'ln') {
+elsif ($cmd eq 'lk') {
     $show_Links = $show_Links? 0: 1;
     $cmd = '';
 }
@@ -1681,6 +1684,11 @@ elsif ($cmd =~ m{\A wl \s* ([pdlbsa]+)}xms) {
 }
 elsif ($cmd eq 'bt') {
     $show_BingoTable = $show_BingoTable? 0: 1;
+    $cmd = '';
+}
+elsif ($cmd eq 'bt2') {
+    $show_BingoTable = 2;
+    add_hints(2);
     $cmd = '';
 }
 elsif ($cmd eq 'oc') {
@@ -2336,10 +2344,14 @@ elsif ($cmd eq 'ycp') {
              . table({ cellpadding => 5 }, @rows);
     $cmd = '';
 }
-elsif ($cmd eq 'l') {
-    my $n = 1;
+elsif ($cmd eq 'l' || $cmd eq 'ln') {
+    my $no_queen_bee = $cmd eq 'ln';
+    my $n = 0;
     my $msg = '';
+    PUZZLE:
     for my $p (my_puzzles()) {
+        ++$n;
+        next PUZZLE if $no_queen_bee && $p->[2] == 9;
         my $cur = $p->[0] eq $date? '*': '';
         my $pg  = $p->[1]? '&nbsp;&nbsp;<span class=green>p</span>': '';
         $msg .= Tr(
@@ -2352,7 +2364,6 @@ elsif ($cmd eq 'l') {
                       td({ class => 'lt' }, $ranks[$p->[2]]->{name}),
                       td($pg)
                     );
-        ++$n;
     }
     $message .= table({ cellpadding => 4}, $msg);
     $cmd = '';
@@ -3626,6 +3637,7 @@ EOH
                 minlen => 99,
                 maxlen => 0,
                 pangram => 0,
+                max_second_let => '',
             };
         }
         my $l = length $w;
@@ -3640,6 +3652,7 @@ EOH
             $href->{max} = $sc;
             $href->{maxlen} = $l;
             $href->{pangram} = $pangram;
+            $href->{max_second_let} = substr($w, 1, 1);
         }
     }
     my %first_found;
@@ -3692,6 +3705,16 @@ EOH
                         }
                         @lets,
                     );
+        # optional second letter
+        if ($show_BingoTable == 2) {
+            push @rows, Tr(
+                            td(''),
+                            map {
+                                td(uc $bingo_table{$_}{max_second_let})
+                            }
+                            @lets,
+                        );
+        }
         # PANGRAMS
         push @rows, Tr(
                         td('&nbsp;'),

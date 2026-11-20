@@ -1572,12 +1572,14 @@ Commands to access the large NY Times <a href=#nyt_archive>Archive</a> of Spelli
 <tr><td><span class=cmd>Y</span></td><td>From today’s puzzle move to yesterday’s NYT puzzle.  If on another NYT puzzle date it will move to the day before.</td></tr>
 <tr><td><span class=cmd>-1, -7</span></td><td>Move to yesterday’s puzzle (-1) or the puzzle from a week ago (-7).</td></tr>
 <tr><td><span class=cmd>L</span></td><td>List the current puzzles.  * marks the current puzzle.  <span class=green>p</span> marks puzzles where all pangrams have been found.  You can click on the puzzle date to switch to that puzzle.</td></tr>
+<tr><td><span class=cmd>LN</span></td><td>Similar to <span class=cmd>L</span> but only show puzzles where the rank of Queen Bee has <span class=cmd>n</span>ot yet been achieved.</td></tr>
 <tr><td><span class=cmd>N</span></td><td>Move to the next puzzle in the list - wrapping from last to first.</td></tr>
 <tr><td><span class=cmd>P</span></td><td>Move to the previous puzzle in the list - wrapping from first to last.</td></tr>
 <tr><td><span class=cmd>P&lt;num&gt;</span></td><td>Move to puzzle #num in the list.</td></tr>
 <tr><td><span class=cmd>X</span></td><td>Remove the current puzzle from the list and move to the first in the list - or today. This clears the words you found in the removed puzzle so if you choose the puzzle again you will start afresh.</td></tr>
 <tr><td><span class=cmd>X&lt;nums&gt;</span></td><td>Remove the numbered puzzles from the list. You can give a range.  For example: <span class=cmd>X 2 4-6 9</span></td></tr>
 <tr><td><span class=cmd>XA</span></td><td>Remove all puzzles from the list and return to today’s NYT puzzle.</td></tr>
+<tr><td><span class=cmd>XB</span></td><td>Remove all puzzles from the list where Queen Bee has been achieved.</td></tr>
 <tr><td colspan=2>Note that you cannot remove today’s puzzle.<br><br></td></tr>
 <tr><td colspan=2>Community Puzzles</td></tr>
 <tr><td><span class=cmd>LCP</span></td><td>List the 5 most recent Community Puzzles.  <span class=cmd>LCP 10</span> will list 10 puzzles.  <span class=cmd>LCP &lt;pattern&gt;</span> will show the puzzles created by people whose names match the pattern.  Click on the <span class=blue>CP##</span> to start solving the puzzle.</td></tr>
@@ -2287,7 +2289,7 @@ HELLO and GOODBYE will be added.  CHAT and NOON will be removed.<p></td></tr>
 <br><br></td></tr>
 <tr><td colspan=2>If you are a minimalist:</td></tr>
 <tr><td><span class=cmd>HE</span></td><td>Toggle the showing of the <span class=cmd>he</span>ader.  Default is to show it.</td></tr>
-<tr><td><span class=cmd>LN</span></td><td>Toggle the showing of the many <span class=cmd>l</span>i<span class=cmd>n</span>ks when not in mobile mode. Default is to show them.</td></tr>
+<tr><td><span class=cmd>LK</span></td><td>Toggle the showing of the many <span class=cmd>l</span>in<span class=cmd>k</span>s when not in mobile mode. Default is to show them.</td></tr>
 <tr><td><span class=cmd>ST</span></td><td>The ST command cycles through 4 different status displays.  The last will turn it completely OFF.
 You can also add a digit (0-3) after the ST to jump directly to
 one of the four status settings.  
@@ -2661,8 +2663,8 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-3094 puzzles with
-a total of 11235 different words!
+3117 puzzles with
+a total of 11237 different words!
 <p>
 Tallies are made of the many puzzles and words.
 See this table of the puzzles:
