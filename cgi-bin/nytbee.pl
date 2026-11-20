@@ -1627,7 +1627,7 @@ elsif ($cmd eq 'he') {
     $show_Heading = $show_Heading? 0: 1;
     $cmd = '';
 }
-elsif ($cmd eq 'lk') {
+elsif ($cmd eq 'ln') {
     $show_Links = $show_Links? 0: 1;
     $cmd = '';
 }
@@ -2344,14 +2344,19 @@ elsif ($cmd eq 'ycp') {
              . table({ cellpadding => 5 }, @rows);
     $cmd = '';
 }
-elsif ($cmd eq 'l' || $cmd eq 'ln') {
-    my $no_queen_bee = $cmd eq 'ln';
+elsif ($cmd eq 'l' || $cmd eq 'lnq' || $cmd eq 'lq') {
+    my $no_queen_bee = $cmd eq 'lnq';
+    my $only_queen_bee = $cmd eq 'lq';
     my $n = 0;
+    my $count = 0;
     my $msg = '';
     PUZZLE:
     for my $p (my_puzzles()) {
         ++$n;
-        next PUZZLE if $no_queen_bee && $p->[2] == 9;
+        my $qb = $p->[2] == 9;
+        next PUZZLE if $no_queen_bee && $qb;
+        next PUZZLE if $only_queen_bee && !$qb;
+        ++$count;
         my $cur = $p->[0] eq $date? '*': '';
         my $pg  = $p->[1]? '&nbsp;&nbsp;<span class=green>p</span>': '';
         $msg .= Tr(
@@ -2366,6 +2371,10 @@ elsif ($cmd eq 'l' || $cmd eq 'ln') {
                     );
     }
     $message .= table({ cellpadding => 4}, $msg);
+    if ($no_queen_bee || $only_queen_bee) {
+        my $pl = $count == 1? '': 's';
+        $message .= "<p>$count puzzle$pl";
+    }
     $cmd = '';
 }
 elsif ($cmd eq 'cl') {
