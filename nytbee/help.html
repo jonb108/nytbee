@@ -811,6 +811,7 @@ The number of hints are tallied like so:
 <tr><td><span class=cmd>#B, #4, #&gt;4</span></td><td align=right>1</td></tr>
 <tr><td><span class=cmd>#</span></td><td align=right>0</td></tr>
 <tr><td><span class=cmd>BT</span></td><td align=right>0</td></tr>
+<tr><td><span class=cmd>BT2</span></td><td align=right>2</td></tr>
 <tr><td><span class=cmd>G&nbsp;Y</span></td><td align=right>5</td><td>for each word</td></tr>
 </table>
 </ul>
@@ -998,6 +999,64 @@ When doing both min and max Bingo you need the <span class=cmd>C Y</span> comman
 <span class=cmd>SWA</span> is better than <span class=cmd>C Y</span> - see <a href=#stash>The Stash</a>.
 Even better and more convenient, after a Minimum Score Bingo (also affectionately known as Mingo) the message will contain a link: "On to Max Bingo" which will do the 'SWA' for you.
 And after a Maximum Score Bingo (aka Maxgo &#128522;) the message will contain a link: "You can now strive for GN4L" which will stash any four letter words and unstash any 5+ letter words and ... turn off the Bingo Table.   The message will be different if GN4L (or GN4L-NP) is not possible.  It should be self-explanatory.
+<p>
+Since Maxgo is much harder than Mingo there is the command <span class=cmd>BT2</span> which will
+add a line of second letters for the letter columns.  This <i>does</i> cost you, but only 2 hint points.
+<ul>
+<table cellpadding=6>
+<tr>
+<th>&nbsp;</th>
+<th style='text-align: center'>C</th>
+<th style='text-align: center'>E</th>
+<th style='text-align: center'>I</th>
+<th style='text-align: center'>N</th>
+<th style='text-align: center'>O</th>
+<th style='text-align: center'>T</th>
+<th style='text-align: center'>V</th>
+</tr>
+<tr>
+<td class=rt>Min</td>
+<td class='rt blue'>4</td>
+<td class='rt blue'>5</td>
+<td class='rt blue'>4</td>
+<td class='rt blue'>4</td>
+<td class='rt blue'>5</td>
+<td class='rt blue'>4</td>
+<td class='rt blue'>4</td>
+</tr>
+<tr>
+<td class=rt>Max</td>
+<td class='rt blue'>10</td>
+<td class='rt blue'>8</td>
+<td class='rt blue'>12</td>
+<td class='rt blue'>8</td>
+<td class='rt blue'>5</td>
+<td class='rt blue'>8</td>
+<td class='rt blue'>6</td>
+</tr>
+<tr>
+<th>&nbsp;</th>
+<th style='text-align: center'>O</th>
+<th style='text-align: center'>V</th>
+<th style='text-align: center'>N</th>
+<th style='text-align: center'>I</th>
+<th style='text-align: center'>N</th>
+<th style='text-align: center'>E</th>
+<th style='text-align: center'>O</th>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td class='red rt'>*</td>
+<td class='red rt'>*</td>
+<td class='red rt'>*</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+</table>
+</ul>
+The E in the T column means that the second letter of the T8 word is E - TECTONIC.
 <a name=gn4l></a>
 <h2>Genius No 4 Letter
 <a class=top href=#toc><img src=pics/top.gif height=25></a>
@@ -2664,7 +2723,7 @@ It is now added to daily at 3:00 a.m. EST by extracting the words
 from the New York Times site.  There are daily puzzles going all the way
 back to May 9, 2018.   There are now
 <!-- Do NOT mess with the next two lines - see cgi-bin/nytbee_list.pl! -->
-3118 puzzles with
+3119 puzzles with
 a total of 11237 different words!
 <p>
 Tallies are made of the many puzzles and words.
